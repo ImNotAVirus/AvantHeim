@@ -13,7 +13,7 @@
     key: "{{ lookup('file', 'id_rsa.pub') }}"
     state: present
 
-- name: Disable Password Authentication
+- name: disable Password Authentication
   lineinfile:
     dest: /etc/ssh/sshd_config
     regexp: '^PasswordAuthentication'

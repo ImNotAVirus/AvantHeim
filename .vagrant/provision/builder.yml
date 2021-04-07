@@ -7,3 +7,4 @@
   roles:
     - common
     - create_user
+    - install_elixir

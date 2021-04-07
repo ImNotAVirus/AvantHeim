@@ -1,0 +1,12 @@
+---
+# tasks file for ./provision/roles/install_elixir
+
+- name: add Erlang Solutions repository
+  apt:
+    deb: https://packages.erlang-solutions.com/erlang-solutions_2.0_all.deb
+
+- name: install Erlang/OTP platform
+  apt:
+    name: ['esl-erlang', 'elixir']
+    state: present
+    update_cache: yes
