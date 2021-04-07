@@ -1,0 +1,43 @@
+# Ignore everything except some directories
+*
+!/.deliver/
+!/.deliver/**/
+!/.vagrant/
+!/.vagrant/**/
+!/.deploy/
+!/.deploy/**/
+!/apps/
+!/apps/**/
+!/config/
+!/config/**/
+!/rel/
+!/rel/**/
+
+# Github files
+!/.gitignore
+!/.travis.yml
+!/.editorconfig
+!/CODE_OF_CONDUCT.md
+!/LICENSE
+!/README.md
+!/TODOLIST.md
+
+# Code
+!/mix.exs
+!/mix.lock
+!/.formatter.exs
+!/config/**/*.exs
+!/apps/**/*.ex
+!/apps/**/*.exs
+!/apps/**/.gitkeep
+!/apps/**/README.md
+
+# Additionals files
+!/.deliver/*
+!/.deploy/*
+!/.vagrant/Vagrantfile
+!/.vagrant/README.md
+!/.vagrant/provision/**/*
+!/rel/**/*.eex
+!/rel/**/*.exs
+!/rel/vm.args
