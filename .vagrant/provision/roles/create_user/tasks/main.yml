@@ -1,0 +1,24 @@
+---
+# tasks file for ./provision/roles/create_user
+
+- name: create the elixir user
+  user:
+    name: "{{ elixir_user }}"
+    shell: "{{ elixir_shell }}"
+    createhome: yes
+
+- name: add the host ssh key to authorized_key
+  authorized_key:
+    user: "{{ elixir_user }}"
+    key: "{{ lookup('file', 'id_rsa.pub') }}"
+    state: present
+
+- name: Disable Password Authentication
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    regexp: '^PasswordAuthentication'
+    line: "PasswordAuthentication no"
+    state: present
+    backup: yes
+  notify:
+    - restart ssh

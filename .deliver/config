@@ -1,7 +1,7 @@
 APP="world_manager"
 
 BUILD_HOST="192.168.50.10"
-BUILD_USER="deploy"
+BUILD_USER="elixir_builder"
 BUILD_AT="/tmp/edeliver/$APP/builds"
 
 RELEASE_DIR="$BUILD_AT/apps/$APP/rel/$APP"
@@ -10,9 +10,9 @@ RELEASE_DIR="$BUILD_AT/apps/$APP/rel/$APP"
 # GIT_CLEAN_PATHS="_build rel priv/static"
 
 STAGING_HOSTS="192.168.50.50"
-STAGING_USER="deploy"
+STAGING_USER="elixir_deployer"
 TEST_AT="/tmp/deploy/${APP}_staging"
 
 PRODUCTION_HOSTS="192.168.50.51"
-PRODUCTION_USER="deploy"
+PRODUCTION_USER="elixir_deployer"
 DELIVER_TO="/home/deploy/$APP"

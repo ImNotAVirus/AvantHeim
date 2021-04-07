@@ -41,3 +41,5 @@
 !/rel/**/*.eex
 !/rel/**/*.exs
 !/rel/vm.args
+
+/.vagrant/provision/**/*.pub

@@ -10,13 +10,13 @@ Vagrant.configure(2) do |config|
       v.cpus = 2
   end
 
-  config.vm.define "build" do |node|
+  config.vm.define "builder" do |node|
     node.vm.box = IMAGE_NAME
     node.vm.network "private_network", ip: "192.168.50.10"
-    node.vm.hostname = "build"
-    # node.vm.provision "ansible" do |ansible|
-    #     # ansible.verbose = "v"
-    #     ansible.playbook = "provision/playbook1.yml"
-    # end
+    node.vm.hostname = "builder"
+    node.vm.provision "ansible" do |ansible|
+        ansible.playbook = "provision/builder.yml"
+        ansible.groups = { "builders" => ["builder"] }
+    end
   end
 end
