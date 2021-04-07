@@ -1,0 +1,9 @@
+---
+# tasks file for ./provision/roles/common
+
+- name: install apt dependencies
+  apt:
+    name:
+      - git
+    state: present
+    update_cache: yes
