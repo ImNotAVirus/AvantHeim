@@ -20,4 +20,14 @@ Vagrant.configure(2) do |config|
         ansible.groups = { "builders" => ["builder"] }
     end
   end
+
+  config.vm.define "deployer" do |node|
+    node.vm.box = IMAGE_NAME
+    node.vm.network "private_network", ip: "192.168.50.50"
+    node.vm.hostname = "deployer"
+    node.vm.provision "ansible" do |ansible|
+        ansible.playbook = "provision/deployer.yml"
+        ansible.groups = { "deployers" => ["deployer"] }
+    end
+  end
 end

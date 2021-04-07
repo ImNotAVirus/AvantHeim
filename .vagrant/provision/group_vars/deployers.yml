@@ -1,0 +1,5 @@
+---
+# Variables listed here are applicable to the deployers group
+
+elixir_user: elixir_deployer
+elixir_shell: /bin/bash

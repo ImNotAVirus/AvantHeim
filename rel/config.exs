@@ -52,4 +52,3 @@ release :world_manager do
     :runtime_tools
   ]
 end
-

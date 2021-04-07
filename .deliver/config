@@ -5,14 +5,12 @@ BUILD_USER="elixir_builder"
 BUILD_AT="/tmp/edeliver/$APP/builds"
 
 RELEASE_DIR="$BUILD_AT/_build/prod/rel/$APP"
-
-# prevent re-installing node modules; this defaults to "."
-# GIT_CLEAN_PATHS="_build rel priv/static"
+GIT_CLEAN_PATHS="_build rel"
 
 STAGING_HOSTS="192.168.50.50"
 STAGING_USER="elixir_deployer"
-TEST_AT="/tmp/deploy/${APP}_staging"
+TEST_AT="/home/$STAGING_USER/${APP}_staging"
 
-PRODUCTION_HOSTS="192.168.50.51"
+PRODUCTION_HOSTS="192.168.50.50"
 PRODUCTION_USER="elixir_deployer"
-DELIVER_TO="/home/deploy/$APP"
+DELIVER_TO="/home/$PRODUCTION_USER/$APP"

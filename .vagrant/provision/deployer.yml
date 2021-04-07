@@ -1,0 +1,9 @@
+---
+# This playbook provides the creation of the deployer
+
+- name: Setup the deployer
+  hosts: deployers
+  become: yes
+  roles:
+    - common
+    - create_user
