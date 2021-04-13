@@ -9,8 +9,22 @@
 # move said applications out of the umbrella.
 import Config
 
+## General configs
+
 config :logger, :console,
   level: :debug,
   format: "$time $metadata[$level] $message\n",
   metadata: [:application],
   colors: [info: :green]
+
+## Login configs
+
+config :login_endpoint,
+  client_version: System.get_env("CLIENT_VERSION", "0.9.5.3115")
+
+config :login_endpoint, LoginEndpoint.Endpoint,
+  listener_name: :login_endpoint,
+  transport: :ranch_tcp,
+  transport_opts: [ip: {127, 0, 0, 1}, port: 4002],
+  protocol: LoginEndpoint.Endpoint.Protocol,
+  protocol_opts: []
