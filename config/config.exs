@@ -28,3 +28,13 @@ config :login_endpoint, LoginEndpoint.Endpoint,
   transport_opts: [ip: {127, 0, 0, 1}, port: 4002],
   protocol: LoginEndpoint.Endpoint.Protocol,
   protocol_opts: []
+
+## Database configs
+
+config :database_service, ecto_repos: [DatabaseService.Repo]
+
+config :database_service, DatabaseService.Repo,
+  database: "elvengard_dev",
+  username: "postgres",
+  password: "postgres",
+  hostname: "localhost"
