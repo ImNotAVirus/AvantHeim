@@ -11,6 +11,7 @@ defmodule LoginEndpoint.Endpoint.Protocol do
   @behaviour :ranch_protocol
 
   @startup_timeout 5_000
+  @timeout 5_000
   @separator [" ", "\v"]
 
   ## Ranch Protocol behaviour
@@ -42,18 +43,15 @@ defmodule LoginEndpoint.Endpoint.Protocol do
 
     Logger.debug("New message from #{id} (len: #{byte_size(message)})")
 
-    reply =
-      case parse_message(message, socket) do
-        {:ok, {header, args}} ->
-          PacketHandler.handle_packet(header, args, socket)
-          :normal
+    with {:ok, {header, args}} <- parse_message(message, socket) do
+      PacketHandler.handle_packet(header, args, socket)
+    else
+      {:error, msg} -> Logger.warn(msg)
+    end
 
-        {:error, error} ->
-          {:shutdown, error}
-      end
-
+    transport.setopts(transport_pid, active: :once)
     transport.shutdown(transport_pid, :read_write)
-    {:stop, reply, socket}
+    {:noreply, socket, @timeout}
   end
 
   def handle_info({:tcp_closed, transport_pid}, socket) do
@@ -84,18 +82,13 @@ defmodule LoginEndpoint.Endpoint.Protocol do
 
   defp decrypt_message(message, socket) do
     case Cryptography.decrypt(message) do
-      "NoS0575 " <> _ = decrypted ->
-        {:ok, decrypted}
-
-      _ ->
-        Logger.warn("Unable to decrypt login packet from #{socket.id}")
-        {:error, :invalid}
+      "NoS0575 " <> _ = decrypted -> {:ok, decrypted}
+      _ -> {:error, "Unable to decrypt login packet from #{socket.id}"}
     end
   end
 
   defp prepare_args(splitted, socket) when length(splitted) != 9 do
-    Logger.warn("Invalid args length #{socket.id}")
-    {:error, :invalid}
+    {:error, "Invalid packet args length for #{socket.id}"}
   end
 
   defp prepare_args(["NoS0575" = header | str_args], _socket) do

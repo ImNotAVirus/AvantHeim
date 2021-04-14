@@ -20,8 +20,7 @@ config :logger, :console,
 ## Login configs
 
 config :login_endpoint,
-  client_version: System.get_env("CLIENT_VERSION", "0.9.5.3115"),
-  client_checksum: System.get_env("CLIENT_CHECKSUM", "6AB80B091A3C7443F5DF0CFDB5185460")
+  client_version: System.get_env("CLIENT_VERSION", "0.9.8.3115")
 
 config :login_endpoint, LoginEndpoint.Endpoint,
   listener_name: :login_endpoint,
