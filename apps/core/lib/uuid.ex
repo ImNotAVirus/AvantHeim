@@ -1,4 +1,4 @@
-defmodule AvantHeim.UUID do
+defmodule Core.UUID do
   @moduledoc ~S"""
   UUID helpers inspired by `zyro/elixir-uuid`
   """
@@ -12,7 +12,7 @@ defmodule AvantHeim.UUID do
   ## Examples`
 
   ```elixir
-  iex> AvantHeim.UUID.uuid4()
+  iex> UUID.uuid4()
   "fb49a0ec-d60c-4d20-9264-3b4cfe272106"
   ```
   """

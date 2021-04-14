@@ -24,7 +24,7 @@ defmodule LoginEndpoint.Endpoint.Protocol do
     {:ok, transport_pid} = :ranch.handshake(ref)
 
     socket = %{
-      id: AvantHeim.UUID.uuid4(),
+      id: Core.UUID.uuid4(),
       transport_pid: transport_pid,
       transport: transport
     }
