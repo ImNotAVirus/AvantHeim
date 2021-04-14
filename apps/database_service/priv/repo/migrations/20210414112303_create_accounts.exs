@@ -1,5 +1,9 @@
-defmodule DatabaseService.Repo.Migrations.CreateCreateAccounts do
+defmodule DatabaseService.Repo.Migrations.CreateAccounts do
   use Ecto.Migration
+  
+  import DatabaseService.EctoAuthority, only: [authority: 1]
+  
+  alias DatabaseService.EctoAuthority
 
   def change do
     execute(
@@ -10,7 +14,7 @@ defmodule DatabaseService.Repo.Migrations.CreateCreateAccounts do
     create table(:accounts) do
       add :username, :string, null: false
       add :password, :string, null: false, size: 128
-      add :authority, :integer, null: false, default: 0
+      add :authority, EctoAuthority.type(), null: false, default: authority(:player)
       add :language, :language_enum, null: false, default: "en"
 
       timestamps()
