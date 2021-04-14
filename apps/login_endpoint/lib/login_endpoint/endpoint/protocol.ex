@@ -5,6 +5,7 @@ defmodule LoginEndpoint.Endpoint.Protocol do
 
   require Logger
 
+  alias Core.Socket
   alias LoginEndpoint.Endpoint.{Cryptography, PacketHandler}
 
   @behaviour :ranch_protocol
@@ -27,11 +28,7 @@ defmodule LoginEndpoint.Endpoint.Protocol do
     {:ok, transport_pid} = :ranch.handshake(ref)
     {:ok, {address, port}} = :inet.peername(transport_pid)
 
-    socket = %{
-      id: Core.UUID.uuid4(),
-      transport_pid: transport_pid,
-      transport: transport
-    }
+    socket = Socket.new(transport, transport_pid)
 
     Logger.info("New connection: #{socket.id} (#{:inet.ntoa(address)}:#{port})")
 
@@ -41,7 +38,7 @@ defmodule LoginEndpoint.Endpoint.Protocol do
 
   @impl true
   def handle_info({:tcp, transport_pid, message}, socket) do
-    %{id: id, transport_pid: ^transport_pid, transport: transport} = socket
+    %Socket{id: id, transport_pid: ^transport_pid, transport: transport} = socket
 
     Logger.debug("New message from #{id} (len: #{byte_size(message)})")
 
@@ -60,13 +57,13 @@ defmodule LoginEndpoint.Endpoint.Protocol do
   end
 
   def handle_info({:tcp_closed, transport_pid}, socket) do
-    %{id: id, transport_pid: ^transport_pid} = socket
+    %Socket{id: id, transport_pid: ^transport_pid} = socket
     Logger.info("#{id} is now disconnected")
     {:stop, :normal, socket}
   end
 
   def handle_info(:timeout, socket) do
-    %{id: id, transport_pid: transport_pid, transport: transport} = socket
+    %Socket{id: id, transport_pid: transport_pid, transport: transport} = socket
     Logger.error("An error occured with client #{id}: :timeout")
     transport.shutdown(transport_pid, :read_write)
     {:stop, {:shutdown, :timeout}, socket}
