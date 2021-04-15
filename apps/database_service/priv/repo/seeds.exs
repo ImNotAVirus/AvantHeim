@@ -10,14 +10,15 @@
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.
 
-# alias DatabaseService.Player.Accounts
+alias DatabaseService.Players.Accounts
 
-# Accounts.create!(%{
-#   username: "admin",
-#   password: :crypto.hash(:sha512, "admin") |> Base.encode16()
-# })
+Accounts.create!(%{
+  username: "admin",
+  password: "admin",
+  authority: :administrator
+})
 
-# Accounts.create!(%{
-#   username: "user",
-#   password: :crypto.hash(:sha512, "user") |> Base.encode16()
-# })
+Accounts.create!(%{
+  username: "user",
+  password: "user"
+})
