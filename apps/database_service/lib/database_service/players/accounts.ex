@@ -6,6 +6,11 @@ defmodule DatabaseService.Players.Accounts do
   alias DatabaseService.Players.Account
   alias DatabaseService.Repo
 
+  @spec log_in(String.t(), String.t()) :: Ecto.Schema.t() | nil
+  def log_in(username, hashed_password) do
+    Repo.get_by(Account, username: username, hashed_password: hashed_password)
+  end
+
   @spec create(map) :: {:ok, Ecto.Schema.t()} | {:error, Ecto.Changeset.t()}
   def create(attrs) do
     %Account{}

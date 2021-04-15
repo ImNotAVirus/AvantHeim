@@ -6,33 +6,50 @@ defmodule LoginEndpoint.Endpoint.PacketHandler do
   require Logger
 
   alias Core.Socket
+  alias DatabaseService.Players.{Account, Accounts}
+  alias LoginEndpoint.Endpoint.{Cryptography, Views}
 
   ## Public API
 
   @spec handle_packet(String.t(), map, map) :: any
-  def handle_packet("NoS0575", args, %Socket{} = socket) do
-    with {:ok, _client_version} <- check_client_version(args, socket),
-         {:ok, _client_checksum} <- check_client_checksum(args, socket),
-         {:ok, _guid} <- check_guid(args, socket),
-         {:ok, {_username, _password}} <- check_credentials(args, socket) do
-    else
-      {:error, error} -> Logger.warn(error)
-    end
+  def handle_packet("NoS0575", args, %Socket{id: socket_id} = socket) do
+    render =
+      with {:ok, _client_version} <- check_client_version(args, socket),
+           {:ok, _client_checksum} <- check_client_checksum(args, socket),
+           {:ok, _guid} <- check_guid(args, socket),
+           {:ok, account} <- check_credentials(args, socket),
+           {:ok, session_id} <- create_session(args, socket) do
+        Logger.debug("Authentication succeed for #{socket_id} (username: #{args.username})")
+        Views.render(:login_succeed, %{username: account.username, session_id: session_id})
+      else
+        {:error, :client_version} ->
+          Logger.warn("Invalid client version for #{socket_id} (got: #{args.version})")
+          Views.render(:login_error, %{error: :old_client})
 
-    IO.inspect(args)
-    IO.inspect(socket)
-    :ok
+        {:error, :client_checksum} ->
+          Logger.warn("Invalid client checksum for #{socket_id} (got: #{args.version})")
+          Views.render(:login_error, %{error: :old_client})
+
+        {:error, :bad_credentials} ->
+          Logger.warn("Invalid credentials for #{socket_id} (username: #{args.username})")
+          Views.render(:login_error, %{error: :bad_credentials})
+
+        e ->
+          Logger.warn("Got unknown login error: #{inspect(e)}")
+          Views.render(:login_error, %{})
+      end
+
+    Socket.send(socket, Cryptography.encrypt(render))
   end
 
   ## Private functions
 
-  defp check_client_version(%{client_version: version}, socket) do
+  defp check_client_version(%{client_version: version}, _socket) do
     requirement = Application.fetch_env!(:login_endpoint, :client_version)
-    err = "Invalid client version for #{socket.id} (got: #{version}; expected: #{requirement})"
 
     case version do
       ^requirement -> {:ok, version}
-      _ -> {:error, err}
+      _ -> {:error, :client_version}
     end
   end
 
@@ -45,19 +62,21 @@ defmodule LoginEndpoint.Endpoint.PacketHandler do
   defp check_guid(%{guid: guid}, socket) do
     # Currently unused
     # TODO: Can be saved later in database to check multiclients/multiaccounts for example
+    # Or if user is banned
     Logger.debug("GUID for #{socket.id}: #{guid}")
     {:ok, guid}
   end
 
-  defp check_credentials(%{username: username, password: password}, socket) do
-    # Currently unused
-    # TODO: Check in database later
-    expected_pass =
-      "C7AD44CBAD762A5DA0A452F9E854FDC1E0E7A52A38015F23F3EAB1D80B931DD472634DFAC71CD34EBC35D16AB7FB8A90C81F975113D6C7538DC69DD8DE9077EC"
-
-    case {username, password} do
-      {"admin", ^expected_pass} = credentials -> {:ok, credentials}
-      _ -> {:error, "Invalid credentials for #{socket.id} (username: #{username})"}
+  defp check_credentials(%{username: username, password: password}, _socket) do
+    case Accounts.log_in(username, password) do
+      %Account{} = account -> {:ok, account}
+      nil -> {:error, :bad_credentials}
     end
+  end
+
+  defp create_session(%{session_id: session_id}, _socket) do
+    # Currently unused
+    # TODO: Create a session_service / check if already logged
+    {:ok, session_id}
   end
 end
