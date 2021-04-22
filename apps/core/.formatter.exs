@@ -9,5 +9,13 @@ inputs =
 
 [
   # inputs: ["{mix,.formatter}.exs", "{config,lib,test}/**/*.{ex,exs}"]
-  inputs: inputs
+  inputs: inputs,
+  export: [
+    locals_without_parens: [
+      packet: 2,
+      field: 2,
+      field: 3,
+      resolve: 2
+    ]
+  ]
 ]
