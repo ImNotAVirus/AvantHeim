@@ -6,13 +6,14 @@ defmodule LoginEndpoint.Endpoint.Protocol do
   require Logger
 
   alias Core.Socket
-  alias LoginEndpoint.Endpoint.{Cryptography, PacketHandler}
+  alias LoginEndpoint.Endpoint.Cryptography
 
   @behaviour :ranch_protocol
 
   @startup_timeout 5_000
   @timeout 5_000
   @separator [" ", "\v"]
+  @packet_schemas Application.fetch_env!(:login_endpoint, :packet_schemas)
 
   ## Ranch Protocol behaviour
 
@@ -44,13 +45,14 @@ defmodule LoginEndpoint.Endpoint.Protocol do
     Logger.debug("New message from #{id} (len: #{byte_size(message)})")
 
     with {:ok, {header, args}} <- parse_message(message, socket) do
-      PacketHandler.handle_packet(header, args, socket)
+      @packet_schemas.resolve(header, args, socket)
     else
       {:error, msg} -> Logger.warn(msg)
     end
 
     transport.setopts(transport_pid, active: :once)
     transport.shutdown(transport_pid, :read_write)
+
     {:noreply, socket, @timeout}
   end
 
@@ -76,7 +78,7 @@ defmodule LoginEndpoint.Endpoint.Protocol do
     with {:ok, decrypted} <- decrypt_message(message, socket),
          packet <- String.replace_trailing(decrypted, "\n", ""),
          splitted <- String.split(packet, @separator) do
-      prepare_args(splitted, socket)
+      @packet_schemas.parse_packet_args(splitted, socket)
     end
   end
 
@@ -85,33 +87,5 @@ defmodule LoginEndpoint.Endpoint.Protocol do
       "NoS0575 " <> _ = decrypted -> {:ok, decrypted}
       _ -> {:error, "Unable to decrypt login packet from #{socket.id}"}
     end
-  end
-
-  defp prepare_args(splitted, socket) when length(splitted) != 9 do
-    {:error, "Invalid packet args length for #{socket.id}"}
-  end
-
-  defp prepare_args(["NoS0575" = header | str_args], _socket) do
-    [
-      session_id,
-      username,
-      password,
-      guid,
-      _,
-      client_version,
-      "0",
-      client_checksum
-    ] = str_args
-
-    args = %{
-      session_id: String.to_integer(session_id),
-      username: username,
-      password: password,
-      guid: guid,
-      client_version: client_version,
-      client_checksum: client_checksum
-    }
-
-    {:ok, {header, args}}
   end
 end

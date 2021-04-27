@@ -20,6 +20,7 @@ config :logger, :console,
 ## Login configs
 
 config :login_endpoint,
+  packet_schemas: LoginEndpoint.PacketSchemas,
   client_version: System.get_env("CLIENT_VERSION", "0.9.8.3115"),
   world_ip: "127.0.0.1",
   world_port: 5000

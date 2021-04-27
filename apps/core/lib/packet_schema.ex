@@ -49,35 +49,8 @@ defmodule Core.PacketSchema do
     env.module
     |> Module.get_attribute(:packet_defs)
     |> Enum.reverse()
-    |> Enum.map(fn def ->
-      %{
-        doc: doc,
-        header: header,
-        fields: fields,
-        resolver: resolver
-      } = def
-
-      field_names = Enum.map(fields, &elem(&1, 0))
-      field_types = Enum.map(fields, &elem(&1, 1))
-      args_ast = fields_to_args_ast(header, fields)
-      {resolver_module, resolver_function} = resolver
-
-      quote do
-        defdelegate unquote(:"resolve_#{header}")(header, args, socket),
-          to: unquote(resolver_module),
-          as: unquote(resolver_function)
-
-        @doc unquote(doc)
-        def unquote(:"parse_#{header}!")(unquote(args_ast) = split, socket) do
-          [header | str_args] = split
-
-          [str_args, unquote(field_names), unquote(field_types)]
-          |> Enum.zip()
-          |> Enum.map(&unquote(__MODULE__).parse_arg!/1)
-          |> Enum.into(%{})
-        end
-      end
-    end)
+    |> Enum.map(&define_handler/1)
+    |> Kernel.++([default_handlers()])
   end
 
   ## Internal functions
@@ -110,14 +83,7 @@ defmodule Core.PacketSchema do
         raise "packet resolver must be defined for #{inspect(__MODULE__)}:#{@packet_header}"
       end
 
-      doc =
-        case Module.get_attribute(__MODULE__, :doc) do
-          nil -> nil
-          {_, doc} -> doc
-        end
-
       @packet_defs %{
-        doc: doc,
         header: @packet_header,
         fields: Enum.reverse(@packet_fields),
         resolver: @packet_resolver
@@ -127,7 +93,6 @@ defmodule Core.PacketSchema do
 
   defp reset_context() do
     quote do
-      Module.delete_attribute(__MODULE__, :doc)
       Module.delete_attribute(__MODULE__, :packet_header)
       Module.delete_attribute(__MODULE__, :packet_fields)
       Module.delete_attribute(__MODULE__, :packet_resolver)
@@ -141,5 +106,52 @@ defmodule Core.PacketSchema do
       {name, _type, using} -> {:=, [], [using, {name, [], __MODULE__}]}
     end)
     |> List.insert_at(0, header)
+  end
+
+  defp define_handler(def) do
+    %{
+      header: header,
+      fields: fields,
+      resolver: resolver
+    } = def
+
+    field_names = Enum.map(fields, &elem(&1, 0))
+    field_types = Enum.map(fields, &elem(&1, 1))
+    args_ast = fields_to_args_ast(header, fields)
+    {resolver_module, resolver_function} = resolver
+
+    quote do
+      def resolve(unquote(header), args, socket) do
+        apply(
+          unquote(resolver_module),
+          unquote(resolver_function),
+          [unquote(header), args, socket]
+        )
+      end
+
+      def parse_packet_args(unquote(args_ast) = split, socket) do
+        [unquote(header) | str_args] = split
+
+        args =
+          [str_args, unquote(field_names), unquote(field_types)]
+          |> Enum.zip()
+          |> Enum.map(&unquote(__MODULE__).parse_arg!/1)
+          |> Enum.into(%{})
+
+        {:ok, {unquote(header), args}}
+      end
+    end
+  end
+
+  defp default_handlers() do
+    quote do
+      def resolve(header, args, socket) do
+        raise "unkown resolver for #{header} with args #{inspect(args)} (from #{socket.id})"
+      end
+
+      def parse_packet_args(packet_args, socket) do
+        {:error, "Invalid packet from #{socket.id}: #{inspect(packet_args)}"}
+      end
+    end
   end
 end

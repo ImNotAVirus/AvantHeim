@@ -7,12 +7,12 @@ defmodule LoginEndpoint.PacketSchemas do
 
   alias LoginEndpoint.Endpoint.PacketHandler
 
-  @doc """
-  The login packet (GameForge old client)
-
-  Example: "NoS0575 4745632 admin [sha512_hash] 0047BA11\v0.9.3.3086 0 [md5_hash]"
-  """
-  packet "NoS0575P" do
+  #######
+  # The login packet (GameForge old client)
+  # ---
+  # Example: "NoS0575 4745632 admin [sha512_hash] 0047BA11\v0.9.3.3086 0 [md5_hash]"
+  #######
+  packet "NoS0575" do
     field :session_id, :integer
     field :username, :string
     field :password, :string
