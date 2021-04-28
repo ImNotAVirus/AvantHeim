@@ -32,6 +32,15 @@ config :login_endpoint, LoginEndpoint.Endpoint,
   protocol: LoginEndpoint.Endpoint.Protocol,
   protocol_opts: []
 
+## Channel configs
+
+config :channel_endpoint, ChannelEndpoint.Endpoint,
+  listener_name: :channel_endpoint,
+  transport: :ranch_tcp,
+  transport_opts: [ip: {127, 0, 0, 1}, port: 5000],
+  protocol: ChannelEndpoint.Endpoint.Protocol,
+  protocol_opts: []
+
 ## Database configs
 
 config :database_service, ecto_repos: [DatabaseService.Repo]
