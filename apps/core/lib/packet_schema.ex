@@ -150,7 +150,7 @@ defmodule Core.PacketSchema do
       end
 
       def parse_packet_args(packet_args, socket) do
-        {:error, "Invalid packet from #{socket.id}: #{inspect(packet_args)}"}
+        {:error, "Invalid packet: #{inspect(packet_args)}"}
       end
     end
   end

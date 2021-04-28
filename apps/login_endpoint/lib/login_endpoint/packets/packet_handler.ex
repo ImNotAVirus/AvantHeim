@@ -7,7 +7,7 @@ defmodule LoginEndpoint.Endpoint.PacketHandler do
 
   alias Core.Socket
   alias DatabaseService.Players.{Account, Accounts}
-  alias LoginEndpoint.Endpoint.{Cryptography, Views}
+  alias LoginEndpoint.Endpoint.Views
 
   ## Public API
 
@@ -23,23 +23,23 @@ defmodule LoginEndpoint.Endpoint.PacketHandler do
         Views.render(:login_succeed, %{username: account.username, session_id: session_id})
       else
         {:error, :client_version} ->
-          Logger.warn("Invalid client version for #{socket_id} (got: #{args.version})")
+          Logger.warn("Invalid client version (got: #{args.version})", socket_id: socket_id)
           Views.render(:login_error, %{error: :old_client})
 
         {:error, :client_checksum} ->
-          Logger.warn("Invalid client checksum for #{socket_id} (got: #{args.version})")
+          Logger.warn("Invalid client checksum (got: #{args.version})", socket_id: socket_id)
           Views.render(:login_error, %{error: :old_client})
 
         {:error, :bad_credentials} ->
-          Logger.warn("Invalid credentials for #{socket_id} (username: #{args.username})")
+          Logger.warn("Invalid credentials (username: #{args.username})", socket_id: socket_id)
           Views.render(:login_error, %{error: :bad_credentials})
 
         e ->
-          Logger.warn("Got unknown login error: #{inspect(e)}")
+          Logger.warn("Got unknown login error: #{inspect(e)}", socket_id: socket_id)
           Views.render(:login_error, %{})
       end
 
-    Socket.send(socket, Cryptography.encrypt(render))
+    Socket.send(socket, render)
   end
 
   ## Private functions

@@ -6,13 +6,14 @@ defmodule LoginEndpoint.Endpoint.Protocol do
   require Logger
 
   alias Core.Socket
-  alias LoginEndpoint.Endpoint.Cryptography
 
   @behaviour :ranch_protocol
 
   @startup_timeout 5_000
   @timeout 5_000
   @separator [" ", "\v"]
+
+  @packet_encoder LoginEndpoint.Endpoint.Cryptography
   @packet_schemas Application.fetch_env!(:login_endpoint, :packet_schemas)
 
   ## Ranch Protocol behaviour
@@ -30,7 +31,7 @@ defmodule LoginEndpoint.Endpoint.Protocol do
     {:ok, transport_pid} = :ranch.handshake(ref)
     {:ok, {address, port}} = :inet.peername(transport_pid)
 
-    socket = Socket.new(transport, transport_pid)
+    socket = Socket.new(transport, transport_pid, @packet_encoder)
 
     Logger.info("New connection: #{socket.id} (#{:inet.ntoa(address)}:#{port})")
 
@@ -47,7 +48,7 @@ defmodule LoginEndpoint.Endpoint.Protocol do
     with {:ok, {header, args}} <- parse_message(message, socket) do
       @packet_schemas.resolve(header, args, socket)
     else
-      {:error, msg} -> Logger.warn(msg)
+      {:error, msg} -> Logger.warn(msg, socket_id: socket.id)
     end
 
     transport.setopts(transport_pid, active: :once)
@@ -83,9 +84,10 @@ defmodule LoginEndpoint.Endpoint.Protocol do
   end
 
   defp decrypt_message(message, socket) do
-    case Cryptography.decrypt(message) do
-      "NoS0575 " <> _ = decrypted -> {:ok, decrypted}
-      _ -> {:error, "Unable to decrypt login packet from #{socket.id}"}
+    case Socket.handle_in(message, socket) do
+      {:ok, "NoS0575 " <> _} = decrypted -> decrypted
+      {:ok, packet} -> {:error, "Invalid packet received: #{inspect(packet)}"}
+      e -> {:error, "Unable to decrypt login packet (#{inspect(e)})"}
     end
   end
 end

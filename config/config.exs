@@ -13,8 +13,8 @@ import Config
 
 config :logger, :console,
   level: :debug,
-  format: "$time $metadata[$level] $message\n",
-  metadata: [:application],
+  format: "[$time] [$level] $metadata$message\n",
+  metadata: [:application, :socket_id],
   colors: [info: :green]
 
 ## Login configs

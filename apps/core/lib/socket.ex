@@ -12,29 +12,32 @@ defmodule Core.Socket do
 
   alias Core.{Socket, UUID}
 
-  @enforce_keys [:id, :transport, :transport_pid]
+  @enforce_keys [:id, :transport, :transport_pid, :encoder]
 
   defstruct id: nil,
             transport: nil,
             transport_pid: nil,
+            encoder: nil,
             assigns: %{}
 
   @type t :: %Socket{
           id: String.t(),
           transport: atom,
           transport_pid: port,
+          encoder: module,
           assigns: map
         }
 
   @doc """
   Create a new structure
   """
-  @spec new(atom, port) :: Socket.t()
-  def new(transport, transport_pid) do
+  @spec new(atom, port, module) :: Socket.t()
+  def new(transport, transport_pid, encoder) do
     %Socket{
       id: UUID.uuid4(),
       transport: transport,
-      transport_pid: transport_pid
+      transport_pid: transport_pid,
+      encoder: encoder
     }
   end
 
@@ -47,8 +50,21 @@ defmodule Core.Socket do
   """
   @spec send(Socket.t(), any) :: :ok | {:error, atom}
   def send(%Socket{} = socket, message) do
-    %Socket{transport: transport, transport_pid: transport_pid} = socket
-    transport.send(transport_pid, message)
+    %Socket{transport: transport, transport_pid: transport_pid, encoder: encoder} = socket
+    encoded = encoder.encrypt(message)
+    transport.send(transport_pid, encoded)
+  end
+
+  @doc """
+  Handles incoming socket messages.
+  """
+  @spec handle_in(iodata(), Socket.t()) ::
+          {:ok, data :: any()}
+          | {:error, reason :: any()}
+  def handle_in(message, %Socket{} = socket) do
+    {:ok, socket.encoder.decrypt(message)}
+  rescue
+    e -> {:error, e}
   end
 
   @doc """
