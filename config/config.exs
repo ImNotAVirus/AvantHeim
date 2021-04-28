@@ -34,6 +34,9 @@ config :login_endpoint, LoginEndpoint.Endpoint,
 
 ## Channel configs
 
+config :channel_endpoint,
+  packet_schemas: ChannelEndpoint.PacketSchemas
+
 config :channel_endpoint, ChannelEndpoint.Endpoint,
   listener_name: :channel_endpoint,
   transport: :ranch_tcp,
