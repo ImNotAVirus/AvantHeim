@@ -49,7 +49,7 @@ defmodule ChannelEndpoint.Endpoint.Protocol do
     {:ok, decoded} = Socket.handle_in(message, socket)
     {:ok, new_socket} = maybe_store_key(decoded, socket)
 
-    ## TODO: packet handling
+    # TODO: packet handling
 
     transport.setopts(transport_pid, active: :once)
     {:noreply, new_socket, @timeout}

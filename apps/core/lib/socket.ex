@@ -10,6 +10,8 @@ defmodule Core.Socket do
     * `:assigns` - The map of socket assigns, default: `%{}`
   """
 
+  import Core.Socket.Serializer, only: [serialize_term: 1]
+
   alias Core.{Socket, UUID}
 
   @enforce_keys [:id, :transport, :transport_pid, :encoder]
@@ -51,7 +53,7 @@ defmodule Core.Socket do
   @spec send(Socket.t(), any) :: :ok | {:error, atom}
   def send(%Socket{} = socket, message) do
     %Socket{transport: transport, transport_pid: transport_pid, encoder: encoder} = socket
-    encoded = encoder.encrypt(message)
+    encoded = message |> serialize_term() |> encoder.encrypt()
     transport.send(transport_pid, encoded)
   end
 
