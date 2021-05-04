@@ -45,10 +45,14 @@ defmodule ChannelEndpoint.Endpoint.Protocol do
 
     Logger.debug("New message from #{id} (len: #{byte_size(message)})")
 
+    # Decode packets and store key
+    {:ok, decoded} = Socket.handle_in(message, socket)
+    {:ok, new_socket} = maybe_store_key(decoded, socket)
+
     ## TODO: packet handling
 
     transport.setopts(transport_pid, active: :once)
-    {:noreply, socket, @timeout}
+    {:noreply, new_socket, @timeout}
   end
 
   def handle_info({:tcp_closed, transport_pid}, socket) do
@@ -63,4 +67,13 @@ defmodule ChannelEndpoint.Endpoint.Protocol do
     transport.shutdown(transport_pid, :read_write)
     {:stop, {:shutdown, :timeout}, socket}
   end
+
+  ## Private functions
+
+  defp maybe_store_key(decoded, %Socket{assigns: %{session_key: nil}} = socket) do
+    if decoded != "0", do: Logger.warn("Session key is not 0", socket_id: socket.id)
+    {:ok, Socket.assign(socket, :session_key, decoded)}
+  end
+
+  defp maybe_store_key(_decoded, socket), do: {:ok, socket}
 end

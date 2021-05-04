@@ -62,7 +62,7 @@ defmodule Core.Socket do
           {:ok, data :: any()}
           | {:error, reason :: any()}
   def handle_in(message, %Socket{} = socket) do
-    {:ok, socket.encoder.decrypt(message)}
+    {:ok, socket.encoder.decrypt(message, socket.assigns)}
   rescue
     e -> {:error, e}
   end

@@ -32,10 +32,18 @@ defmodule ChannelEndpoint.Endpoint.Cryptography do
   end
 
   @doc """
-  Decrypt the first packet who contains the session_key.
+  Decrypt a channel packet.
   """
-  @spec decrypt_session(binary()) :: String.t()
-  def decrypt_session(binary) do
+  @spec decrypt(binary, map) :: String.t()
+  def decrypt(binary, %{session_key: session_key}), do: decrypt_channel(binary, session_key)
+  def decrypt(binary, _), do: decrypt_session(binary)
+
+  ## Private functions
+
+  @typep packet() :: String.t()
+
+  @spec decrypt_session(binary) :: String.t()
+  defp decrypt_session(binary) do
     binary
     |> world_xor(-1, true)
     |> unpack(@table)
@@ -44,30 +52,15 @@ defmodule ChannelEndpoint.Endpoint.Cryptography do
     |> Kernel.elem(1)
   end
 
-  @doc """
-  Decrypt a world packet.
-
-  ## Examples
-
-  """
-  @spec decrypt(binary(), integer(), boolean()) :: [binary | {integer, binary}]
-  def decrypt(binary, session_key, keepalive? \\ false) do
+  @spec decrypt_channel(binary, integer, boolean) :: [binary | {integer, binary}]
+  defp decrypt_channel(binary, session_key, keepalive? \\ false) do
     binary
     |> world_xor(session_key, false)
     |> unpack(@table)
     |> split_keepalive(keepalive?)
   end
 
-  ## Private functions
-
-  @typep packet() :: String.t()
-
-  @doc false
-  @spec world_xor(
-          raw :: binary(),
-          session_key :: non_neg_integer(),
-          is_key_packet :: boolean()
-        ) :: binary()
+  @spec world_xor(raw :: binary, session_key :: integer, is_key_packet :: boolean) :: binary
   defp world_xor(binary, _, true) do
     for <<c <- binary>>, into: "", do: do_world_xor(c, -1, -1)
   end
@@ -78,24 +71,21 @@ defmodule ChannelEndpoint.Endpoint.Cryptography do
     for <<c <- binary>>, into: "", do: do_world_xor(c, offset, decryption_type)
   end
 
-  @doc false
-  @spec do_world_xor(pos_integer(), pos_integer(), integer()) :: binary()
+  @spec do_world_xor(pos_integer, integer, integer) :: binary
   defp do_world_xor(char, offset, 0), do: <<char - offset - 0x40 &&& 0xFF>>
   defp do_world_xor(char, offset, 1), do: <<char + offset + 0x40 &&& 0xFF>>
   defp do_world_xor(char, offset, 2), do: <<(char - offset - 0x40) ^^^ 0xC3 &&& 0xFF>>
   defp do_world_xor(char, offset, 3), do: <<(char + offset + 0x40) ^^^ 0xC3 &&& 0xFF>>
   defp do_world_xor(char, _, _), do: <<char - 0x0F &&& 0xFF>>
 
-  @doc false
-  @spec unpack(binary(), charlist()) :: [packet(), ...]
+  @spec unpack(binary, [<<_::8>>, ...]) :: [packet]
   defp unpack(binary, chars_to_unpack) do
     binary
     |> :binary.split(<<0xFF>>, [:global, :trim_all])
     |> Enum.map(&do_unpack(&1, chars_to_unpack))
   end
 
-  @doc false
-  @spec do_unpack(binary(), charlist(), charlist()) :: packet()
+  @spec do_unpack(binary, [<<_::8>>, ...], [binary]) :: packet
   defp do_unpack(binary, chars_to_unpack, result \\ [])
   defp do_unpack("", _, result), do: result |> Enum.reverse() |> Enum.join()
 
@@ -112,10 +102,10 @@ defmodule ChannelEndpoint.Endpoint.Cryptography do
 
   @doc false
   @spec decode_chunk(
-          chunk :: binary(),
-          chars_to_unpack :: charlist(),
-          is_packed :: boolean()
-        ) :: binary()
+          chunk :: binary,
+          chars_to_unpack :: [<<_::8>>, ...],
+          is_packed :: boolean
+        ) :: binary
   defp decode_chunk(chunk, _, false) do
     for <<c <- chunk>>, into: "", do: <<c ^^^ 0xFF>>
   end
@@ -128,9 +118,7 @@ defmodule ChannelEndpoint.Endpoint.Cryptography do
     end
   end
 
-  @doc false
-  @spec split_keepalive([packet(), ...], boolean()) ::
-          [packet(), ...] | [{integer(), packet()}, ...]
+  @spec split_keepalive([packet], boolean) :: [packet] | [{integer, packet}]
   defp split_keepalive(packet, false), do: packet
 
   defp split_keepalive(packet, true) do
@@ -139,7 +127,6 @@ defmodule ChannelEndpoint.Endpoint.Cryptography do
     |> Enum.map(fn [l, r] -> {String.to_integer(l), r} end)
   end
 
-  @doc false
   @spec do_encrypt(char, integer, integer) :: binary
   defp do_encrypt(char, index, _) when rem(index, 0x7E) != 0, do: <<(~~~char)>>
 
