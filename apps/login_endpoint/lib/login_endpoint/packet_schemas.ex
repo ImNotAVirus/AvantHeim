@@ -5,7 +5,7 @@ defmodule LoginEndpoint.PacketSchemas do
 
   use Core.PacketSchema
 
-  alias LoginEndpoint.Endpoint.PacketHandler
+  alias LoginEndpoint.Endpoint.AuthActions
 
   #######
   # The login packet (GameForge old client)
@@ -22,6 +22,6 @@ defmodule LoginEndpoint.PacketSchemas do
     field :always_0, :string, using: "0"
     field :client_checksum, :string
 
-    resolve PacketHandler, :handle_packet
+    resolve AuthActions, :login
   end
 end

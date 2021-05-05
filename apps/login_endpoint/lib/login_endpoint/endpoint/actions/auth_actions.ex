@@ -1,4 +1,4 @@
-defmodule LoginEndpoint.Endpoint.PacketHandler do
+defmodule LoginEndpoint.Endpoint.AuthActions do
   @moduledoc """
   TODO: Documentation
   """
@@ -11,8 +11,8 @@ defmodule LoginEndpoint.Endpoint.PacketHandler do
 
   ## Public API
 
-  @spec handle_packet(String.t(), map, map) :: any
-  def handle_packet("NoS0575", args, %Socket{id: socket_id} = socket) do
+  @spec login(String.t(), map, map) :: any
+  def login("NoS0575", args, %Socket{id: socket_id} = socket) do
     render =
       with {:ok, _client_version} <- check_client_version(args, socket),
            {:ok, _client_checksum} <- check_client_checksum(args, socket),
