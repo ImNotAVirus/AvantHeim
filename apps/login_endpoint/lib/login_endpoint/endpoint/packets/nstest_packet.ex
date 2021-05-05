@@ -3,7 +3,7 @@ defmodule LoginEndpoint.Endpoint.NsTeSTPacket do
   TODO: Documentation.
   """
 
-  use Core.SerializablePacket
+  use Core.SerializableStruct
 
   alias __MODULE__
   alias LoginEndpoint.Endpoint.NsTeST.Channel

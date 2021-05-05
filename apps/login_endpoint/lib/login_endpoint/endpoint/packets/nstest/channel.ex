@@ -3,6 +3,8 @@ defmodule LoginEndpoint.Endpoint.NsTeST.Channel do
   TODO: Documentation
   """
 
+  use Core.SerializableStruct
+
   alias __MODULE__
 
   @enforce_keys [:id, :world_id, :world_name, :ip, :port, :population]
@@ -17,8 +19,7 @@ defmodule LoginEndpoint.Endpoint.NsTeST.Channel do
           population: non_neg_integer
         }
 
-  ## Public API
-
+  @impl true
   def serialize(%Channel{} = struct, _) do
     %Channel{
       id: id,
@@ -30,13 +31,5 @@ defmodule LoginEndpoint.Endpoint.NsTeST.Channel do
     } = struct
 
     "#{ip}:#{port}:#{population}:#{world_id}.#{id}.#{world_name}"
-  end
-
-  ## Implementation
-
-  defimpl Core.Socket.SerializerProtocol do
-    def serialize(data, opts) do
-      Channel.serialize(data, opts)
-    end
   end
 end

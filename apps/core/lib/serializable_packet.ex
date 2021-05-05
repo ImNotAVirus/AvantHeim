@@ -1,4 +1,4 @@
-defmodule Core.SerializablePacket do
+defmodule Core.SerializableStruct do
   @moduledoc ~S"""
   TODO: Documentation
   """

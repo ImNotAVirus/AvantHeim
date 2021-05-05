@@ -3,7 +3,7 @@ defmodule LoginEndpoint.Endpoint.FailcPacket do
   TODO: Documentation.
   """
 
-  use Core.SerializablePacket
+  use Core.SerializableStruct
 
   alias __MODULE__
 
