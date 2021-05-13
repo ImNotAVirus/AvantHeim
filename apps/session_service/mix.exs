@@ -1,9 +1,9 @@
-defmodule LoginEndpoint.MixProject do
+defmodule SessionService.MixProject do
   use Mix.Project
 
   def project do
     [
-      app: :login_endpoint,
+      app: :session_service,
       version: "0.1.0",
       build_path: "../../_build",
       config_path: "../../config/config.exs",
@@ -19,17 +19,14 @@ defmodule LoginEndpoint.MixProject do
   def application do
     [
       extra_applications: [:logger],
-      mod: {LoginEndpoint.Application, []}
+      mod: {SessionService.Application, []}
     ]
   end
 
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:core, in_umbrella: true},
-      {:database_service, in_umbrella: true},
-      {:session_service, in_umbrella: true},
-      {:ranch, "~> 2.0"}
+      {:core, in_umbrella: true}
     ]
   end
 end

@@ -2,7 +2,7 @@ defmodule Core.Socket.Serializer do
   @moduledoc """
   TODO: Documentation
   """
-  
+
   @doc """
   Converts the argument to an iodata according to the
   `Core.Socket.SerializerProtocol` protocol.

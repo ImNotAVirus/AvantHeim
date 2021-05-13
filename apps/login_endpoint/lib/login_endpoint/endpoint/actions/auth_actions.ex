@@ -34,6 +34,10 @@ defmodule LoginEndpoint.Endpoint.AuthActions do
           Logger.warn("Invalid credentials (username: #{args.username})", socket_id: socket_id)
           Views.render(:login_error, %{error: :bad_credentials})
 
+        {:error, :already_connected} ->
+          Logger.warn("Already connected (username: #{args.username})", socket_id: socket_id)
+          Views.render(:login_error, %{error: :already_connected})
+
         e ->
           Logger.warn("Got unknown login error: #{inspect(e)}", socket_id: socket_id)
           Views.render(:login_error, %{})
@@ -74,9 +78,10 @@ defmodule LoginEndpoint.Endpoint.AuthActions do
     end
   end
 
-  defp create_session(%{session_id: session_id}, _socket) do
-    # Currently unused
-    # TODO: Create a session_service / check if already logged
-    {:ok, session_id}
+  defp create_session(%{username: username, password: password}, _socket) do
+    case SessionService.create_session(username, password) do
+      {:ok, session} -> {:ok, session.id}
+      {:error, _} = e -> e
+    end
   end
 end
