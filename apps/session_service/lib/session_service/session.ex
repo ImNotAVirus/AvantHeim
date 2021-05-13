@@ -9,7 +9,7 @@ defmodule SessionService.Session do
   defstruct @enforce_keys ++ [state: :authenticated, expire: :infinity, monitor: nil]
 
   @states [:authenticated, :in_lobby, :in_game, :disconnected]
-  @default_ttl 10
+  @default_ttl 120
 
   @type state :: :authenticated | :in_lobby | :in_game | :disconnected
   @type optional_reference :: reference | nil
