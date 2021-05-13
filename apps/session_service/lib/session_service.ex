@@ -4,4 +4,5 @@ defmodule SessionService do
   """
 
   defdelegate create_session(username, password), to: SessionService.Worker
+  defdelegate authenticate(session_id, password), to: SessionService.Worker
 end

@@ -44,6 +44,25 @@ defmodule Core.Socket do
   end
 
   @doc """
+  Receive a packet from the client.
+
+  ## Examples
+
+      iex> recv(socket, 12)
+      iex> recv(socket, 0, 2000)
+  """
+  @spec recv(Socket.t(), non_neg_integer, timeout) ::
+          {:ok, data :: any} | {:error, reason :: atom}
+  def recv(%Socket{} = socket, length, timeout \\ :infinity) do
+    %Socket{transport: transport, transport_pid: transport_pid} = socket
+
+    case transport.recv(transport_pid, length, timeout) do
+      {:error, _} = e -> e
+      {:ok, packet} -> handle_in(packet, socket)
+    end
+  end
+
+  @doc """
   Send a packet to the client.
 
   ## Examples
@@ -60,9 +79,9 @@ defmodule Core.Socket do
   @doc """
   Handles incoming socket messages.
   """
-  @spec handle_in(iodata(), Socket.t()) ::
-          {:ok, data :: any()}
-          | {:error, reason :: any()}
+  @spec handle_in(iodata, Socket.t()) ::
+          {:ok, data :: any}
+          | {:error, reason :: any}
   def handle_in(message, %Socket{} = socket) do
     {:ok, socket.encoder.decrypt(message, socket.assigns)}
   rescue

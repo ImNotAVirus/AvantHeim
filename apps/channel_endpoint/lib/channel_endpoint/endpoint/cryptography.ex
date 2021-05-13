@@ -34,15 +34,17 @@ defmodule ChannelEndpoint.Endpoint.Cryptography do
   @doc """
   Decrypt a channel packet.
   """
-  @spec decrypt(binary, map) :: String.t()
-  def decrypt(binary, %{session_key: session_key}), do: decrypt_channel(binary, session_key)
+  @spec decrypt(binary, map) :: [String.t()]
+  def decrypt(binary, %{session_key: session_key}) when not is_nil(session_key),
+    do: decrypt_channel(binary, session_key)
+
   def decrypt(binary, _), do: decrypt_session(binary)
 
   ## Private functions
 
   @typep packet() :: String.t()
 
-  @spec decrypt_session(binary) :: String.t()
+  @spec decrypt_session(binary) :: [String.t()]
   defp decrypt_session(binary) do
     binary
     |> world_xor(-1, true)
@@ -53,11 +55,12 @@ defmodule ChannelEndpoint.Endpoint.Cryptography do
   end
 
   @spec decrypt_channel(binary, integer, boolean) :: [binary | {integer, binary}]
-  defp decrypt_channel(binary, session_key, keepalive? \\ false) do
+  defp decrypt_channel(binary, session_key, _remove_keepalive? \\ true) do
     binary
     |> world_xor(session_key, false)
     |> unpack(@table)
-    |> split_keepalive(keepalive?)
+    # |> split_keepalive(keepalive?)
+    |> remove_keepalive()
   end
 
   @spec world_xor(raw :: binary, session_key :: integer, is_key_packet :: boolean) :: binary
@@ -125,6 +128,13 @@ defmodule ChannelEndpoint.Endpoint.Cryptography do
     packet
     |> Stream.map(&String.split(&1, " ", parts: 2))
     |> Enum.map(fn [l, r] -> {String.to_integer(l), r} end)
+  end
+
+  @spec remove_keepalive([packet]) :: [packet]
+  defp remove_keepalive(packet) do
+    packet
+    |> Stream.map(&String.split(&1, " ", parts: 2))
+    |> Enum.map(fn [_, packet] -> packet end)
   end
 
   @spec do_encrypt(char, integer, integer) :: binary

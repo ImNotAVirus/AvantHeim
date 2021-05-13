@@ -30,6 +30,29 @@ defmodule SessionService.Sessions do
     end
   end
 
+  @spec authenticate(pos_integer, String.t(), ets_ctx) :: optional_session
+  def authenticate(session_id, password, {table_pid, _}) do
+    # :ets.fun2ms(fn {_, session} when session.id == 123 and session.password == "password" -> session end)
+    query = [
+      {{:_, :"$1"},
+       [
+         {:andalso, {:==, {:map_get, :id, :"$1"}, session_id},
+          {:==, {:map_get, :password, :"$1"}, password}}
+       ], [:"$1"]}
+    ]
+
+    case :ets.select(table_pid, query) do
+      [] -> nil
+      [session] -> session
+    end
+  end
+
+  @spec update(Session.t(), ets_ctx) :: :ok
+  def update(session, {table_pid, _}) do
+    true = :ets.insert(table_pid, {session.username, session})
+    :ok
+  end
+
   @spec create(String.t(), String.t(), ets_ctx) :: Session.t()
   def create(username, password, {table_pid, counter_ref}) do
     id = :counters.get(counter_ref, 1)
@@ -37,6 +60,22 @@ defmodule SessionService.Sessions do
     session = Session.new(id, username, password)
     true = :ets.insert(table_pid, {username, session})
     session
+  end
+
+  @spec delete_monitored(reference, ets_ctx) ::
+          {:ok, Session.t()} | {:error, :unknown_monitor_ref}
+  def delete_monitored(ref, {table_pid, _}) do
+    # :ets.fun2ms(fn {_, session} = x when session.monitor_ref == 123 -> x end)
+    query = [{{:_, :"$1"}, [{:==, {:map_get, :monitor_ref, :"$1"}, ref}], [:"$_"]}]
+
+    case :ets.select(table_pid, query) do
+      [] ->
+        {:error, :unknown_monitor_ref}
+
+      [{_, session} = object] ->
+        :ets.delete_object(table_pid, object)
+        {:ok, session}
+    end
   end
 
   @spec clean_expired_keys(ets_ctx) :: any

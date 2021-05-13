@@ -6,7 +6,7 @@ defmodule SessionService.Session do
   alias SessionService.Session
 
   @enforce_keys [:id, :username, :password]
-  defstruct @enforce_keys ++ [state: :authenticated, expire: :infinity, monitor: nil]
+  defstruct @enforce_keys ++ [state: :authenticated, expire: :infinity, monitor_ref: nil]
 
   @states [:authenticated, :in_lobby, :in_game, :disconnected]
   @default_ttl 120
@@ -21,7 +21,7 @@ defmodule SessionService.Session do
             password: String.t(),
             state: state,
             expire: timeout,
-            monitor: optional_reference
+            monitor_ref: optional_reference
           }
 
   ## Public API

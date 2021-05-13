@@ -25,6 +25,11 @@ defmodule SessionService.Worker do
     GenServer.call(__MODULE__, {:create_session, username, password})
   end
 
+  @spec authenticate(pos_integer, String.t()) :: {:ok, Session.t()} | {:error, any}
+  def authenticate(session_id, password) do
+    GenServer.call(__MODULE__, {:authenticate, session_id, password})
+  end
+
   ## GenServer behaviour
 
   @impl true
@@ -57,8 +62,32 @@ defmodule SessionService.Worker do
   end
 
   @impl true
+  def handle_call({:authenticate, session_id, password}, {from_pid, _}, state) do
+    case Sessions.authenticate(session_id, password, state) do
+      nil ->
+        {:reply, {:error, :invalid_credentials}, state}
+
+      session ->
+        ref = Process.monitor(from_pid)
+        new_session = %Session{session | expire: :infinity, state: :in_lobby, monitor_ref: ref}
+        :ok = Sessions.update(new_session, state)
+        {:reply, {:ok, new_session}, state}
+    end
+  end
+
+  @impl true
   def handle_info(:clean_expired_keys, state) do
     Sessions.clean_expired_keys(state)
+    {:noreply, state}
+  end
+
+  @impl true
+  def handle_info({:DOWN, ref, :process, _object, reason}, state) do
+    {:ok, session} = Sessions.delete_monitored(ref, state)
+
+    # TODO: Clean player here (remove from map etc...) and save state to the database
+
+    Logger.info("#{inspect(session.username)} is now disconnected (reason: #{inspect(reason)})")
     {:noreply, state}
   end
 end
