@@ -7,13 +7,17 @@ defmodule DatabaseService.Players.Account do
 
   import Ecto.Changeset
 
+  require DatabaseService.PlayerEnums
+
+  alias DatabaseService.PlayerEnums
+
   ## Schema
 
   schema "accounts" do
     field :username, :string
     field :password, :string, virtual: true
     field :hashed_password, :string
-    field :authority, DatabaseService.EctoAuthority
+    field :authority, Ecto.Enum, values: PlayerEnums.authority(:__keys__)
     field :language, Ecto.Enum, values: [:en, :fr]
 
     timestamps()

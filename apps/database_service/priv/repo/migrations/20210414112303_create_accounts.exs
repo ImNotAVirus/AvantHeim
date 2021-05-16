@@ -1,20 +1,26 @@
 defmodule DatabaseService.Repo.Migrations.CreateAccounts do
   use Ecto.Migration
   
-  import DatabaseService.EctoAuthority, only: [authority: 1]
+  require DatabaseService.EctoEnumHelpers
+  require DatabaseService.PlayerEnums
   
-  alias DatabaseService.EctoAuthority
+  alias DatabaseService.{EctoEnumHelpers, PlayerEnums}
 
   def change do
     execute(
-      "CREATE TYPE language_enum AS ENUM ('en', 'fr')",
-      "DROP TYPE language_enum"
+      EctoEnumHelpers.create_query(PlayerEnums, :authority),
+      EctoEnumHelpers.drop_query(:authority)
+    )
+
+    execute(
+      EctoEnumHelpers.create_query(PlayerEnums, :language),
+      EctoEnumHelpers.drop_query(:language)
     )
 
     create table(:accounts) do
       add :username, :string, null: false
       add :hashed_password, :string, null: false, size: 128
-      add :authority, EctoAuthority.type(), null: false, default: authority(:player)
+      add :authority, :authority_enum, null: false, default: "player"
       add :language, :language_enum, null: false, default: "en"
 
       timestamps()

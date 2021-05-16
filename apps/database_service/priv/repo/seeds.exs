@@ -10,9 +10,11 @@
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.
 
-alias DatabaseService.Players.Accounts
+alias DatabaseService.Players.{Account, Accounts, Characters}
 
-Accounts.create!(%{
+## Accounts
+
+%Account{id: admin_id} = Accounts.create!(%{
   username: "admin",
   password: "admin",
   authority: :administrator
@@ -21,4 +23,33 @@ Accounts.create!(%{
 Accounts.create!(%{
   username: "user",
   password: "user"
+})
+
+## Characters
+
+Characters.create!(%{
+  account_id: admin_id,
+  slot: 1,
+  name: "DarkyZ",
+  gender: :male,
+  hair_style: :hair_style_a,
+  hair_color: :yellow,
+  class: :wrestler,
+  faction: :demon,
+  map_id: 1,
+  map_x: 40,
+  map_y: 60,
+  gold: 1_000_000_000,
+  biography: "Hi guys! I'm DarkyZ",
+  level: 96,
+  job_level: 80,
+  hero_level: 25,
+  level_xp: 3_000,
+  job_level_xp: 4_500,
+  hero_level_xp: 1_000,
+  reputation: 5_000_000,
+  dignity: 100,
+  sp_points: 10_000,
+  sp_additional_points: 500_000,
+  compliment: 2_000
 })
