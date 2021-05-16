@@ -56,7 +56,10 @@ defmodule Core.SerializableStruct do
     quote do
       defimpl Core.Socket.SerializerProtocol do
         def serialize(data, opts) do
-          unquote(mod).serialize(data, opts)
+          case unquote(mod).serialize(data, opts) do
+            x when is_binary(x) -> x
+            x when is_list(x) -> serialize_term(x, joiner: " ")
+          end
         end
       end
     end

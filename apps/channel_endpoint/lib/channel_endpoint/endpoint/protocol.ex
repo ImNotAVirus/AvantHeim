@@ -6,6 +6,9 @@ defmodule ChannelEndpoint.Endpoint.Protocol do
   require Logger
 
   alias Core.Socket
+  alias SessionService.Session
+  alias ChannelEndpoint.Endpoint.LobbyViews
+  alias DatabaseService.Players.{Account, Accounts, Characters}
 
   @behaviour :ranch_protocol
 
@@ -43,22 +46,19 @@ defmodule ChannelEndpoint.Endpoint.Protocol do
     new_socket = recv_session_key(socket)
     {session_id, password} = recv_credentials(new_socket)
 
-    result =
-      case SessionService.authenticate(session_id, password) do
-        {:ok, _session} ->
-          {:noreply, new_socket, @timeout}
-
-        {:error, _} = e ->
-          Logger.debug("Invalid Handshake #{session_id}:#{password} (#{inspect(e)})")
-          %Socket{transport: transport, transport_pid: transport_pid} = new_socket
-          transport.shutdown(transport_pid, :read_write)
-          {:stop, :normal, new_socket}
-      end
-
     %Socket{transport_pid: transport_pid, transport: transport} = new_socket
-    transport.setopts(transport_pid, active: :once)
 
-    result
+    with {:ok, session} <- SessionService.authenticate(session_id, password),
+         {:ok, account} <- get_account(session),
+         :ok <- send_character_list(account, new_socket) do
+      transport.setopts(transport_pid, active: :once)
+      {:noreply, Socket.assign(new_socket, account: account), @timeout}
+    else
+      e ->
+        Logger.info("Invalid Handshake (reason: #{inspect(e)})", socket_id: socket.id)
+        transport.shutdown(transport_pid, :read_write)
+        {:stop, :normal, new_socket}
+    end
   end
 
   @impl true
@@ -69,7 +69,6 @@ defmodule ChannelEndpoint.Endpoint.Protocol do
 
     {:ok, decoded} = Socket.handle_in(message, socket)
 
-    IO.inspect(socket)
     IO.inspect(decoded)
 
     # TODO: packet handling
@@ -92,6 +91,22 @@ defmodule ChannelEndpoint.Endpoint.Protocol do
   end
 
   ## Private functions
+
+  defp get_account(%Session{} = session) do
+    %Session{username: username, password: password} = session
+
+    case Accounts.log_in(username, password) do
+      %Account{} = acc -> {:ok, acc}
+      _ -> {:error, :cant_fetch_account}
+    end
+  end
+
+  defp send_character_list(%Account{} = account, socket) do
+    character_list = Characters.all_by_account_id(account.id)
+    Socket.send(socket, LobbyViews.render(:clist_start, nil))
+    Enum.each(character_list, &Socket.send(socket, LobbyViews.render(:clist, &1)))
+    Socket.send(socket, LobbyViews.render(:clist_end, nil))
+  end
 
   defp recv_session_key(socket) do
     {:ok, session_key} = Socket.recv(socket, 0, @handshake_timeout)
