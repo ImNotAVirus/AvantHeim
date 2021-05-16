@@ -6,11 +6,11 @@ defmodule Core.Socket.Serializers do
   defimpl Core.Socket.SerializerProtocol, for: Integer do
     def serialize(data, _opts), do: Integer.to_string(data)
   end
-  
+
   defimpl Core.Socket.SerializerProtocol, for: BitString do
     def serialize(data, opts) do
       escape = Keyword.get(opts, :escape, true)
-      
+
       case {data, escape} do
         {"", _} -> "-"
         {x, false} -> x
@@ -18,7 +18,7 @@ defmodule Core.Socket.Serializers do
       end
     end
   end
-  
+
   defimpl Core.Socket.SerializerProtocol, for: Atom do
     def serialize(data, opts) do
       {as, new_opts} = Keyword.pop(opts, :as)
@@ -35,7 +35,7 @@ defmodule Core.Socket.Serializers do
   end
 
   defimpl Core.Socket.SerializerProtocol, for: List do
-    def serialize([], opts), do: "-1"
+    def serialize([], _), do: "-1"
 
     def serialize(data, opts) do
       {joiner, new_opts} = Keyword.pop(opts, :joiner, ".")

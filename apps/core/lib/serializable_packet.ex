@@ -5,7 +5,7 @@ defmodule Core.SerializableStruct do
 
   ## Callbacks
 
-  @callback serialize(data :: any, opts :: Keyword.t()) :: iodata
+  @callback serialize(data :: any, opts :: Keyword.t()) :: String.t() | list
 
   ## Public API
 
