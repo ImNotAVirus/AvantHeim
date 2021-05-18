@@ -1,14 +1,11 @@
 ---
 # tasks file for ./provision/roles/common
 
-- name: Upgrade APT to the latest packages
+- name: upgrade APT to the latest packages
   apt: upgrade=safe
-
-- name: Update APT package cache
-  apt: update_cache=yes cache_valid_time=3600
 
 - name: install apt dependencies
   apt:
-    name:
-      - git
+    name: ['git']
     state: present
+    update_cache: yes

@@ -4,6 +4,10 @@
 elixir_user: elixir_deployer
 elixir_shell: /bin/bash
 
+db_user: postgres
+db_password: postgres
+db_name: elvengard
+
 ssh_port: 22
 public_keys:
   - ~/.ssh/id_rsa.pub
