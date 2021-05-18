@@ -146,11 +146,11 @@ defmodule Core.PacketSchema do
   defp default_handlers() do
     quote do
       def resolve(header, args, socket) do
-        raise "unkown resolver for #{header} with args #{inspect(args)} (from #{socket.id})"
+        raise "unkown resolver for '#{header}' with args #{inspect(args)} (from #{socket.id})"
       end
 
       def parse_packet_args(packet_args, socket) do
-        {:error, "Invalid packet: #{inspect(packet_args)}"}
+        {:error, :invalid, packet_args}
       end
     end
   end

@@ -67,11 +67,19 @@ defmodule ChannelEndpoint.Endpoint.Protocol do
 
     Logger.debug("New message from #{id} (len: #{byte_size(message)})")
 
-    {:ok, decoded} = Socket.handle_in(message, socket)
+    with {:ok, packets} <- parse_message(message, socket) do
+      Enum.each(packets, fn
+        {:ok, {header, args}} ->
+          @packet_schemas.resolve(header, args, socket)
 
-    IO.inspect(decoded)
-
-    # TODO: packet handling
+        {:error, :invalid, [header | args]} ->
+          Logger.warn("Invalid packet '#{header}' with args #{inspect(args)}",
+            socket_id: socket.id
+          )
+      end)
+    else
+      {:error, msg} -> Logger.warn(msg, socket_id: socket.id)
+    end
 
     transport.setopts(transport_pid, active: :once)
     {:noreply, socket, @timeout}
@@ -118,5 +126,22 @@ defmodule ChannelEndpoint.Endpoint.Protocol do
     {:ok, [session_id, password]} = Socket.recv(new_socket, 0, @handshake_timeout)
     hashed_password = :sha512 |> :crypto.hash(password) |> Base.encode16()
     {String.to_integer(session_id), hashed_password}
+  end
+
+  defp parse_message(message, socket) do
+    case Socket.handle_in(message, socket) do
+      {:ok, packets} ->
+        result =
+          packets
+          |> Stream.map(&String.replace_trailing(&1, "\n", ""))
+          |> Stream.map(&String.replace_trailing(&1, " ", ""))
+          |> Stream.map(&String.split(&1, @separator))
+          |> Enum.map(&@packet_schemas.parse_packet_args(&1, socket))
+
+        {:ok, result}
+
+      e ->
+        {:error, "Unable to decrypt login packet (#{inspect(e)})"}
+    end
   end
 end
