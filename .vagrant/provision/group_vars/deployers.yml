@@ -3,3 +3,9 @@
 
 elixir_user: elixir_deployer
 elixir_shell: /bin/bash
+
+ssh_port: 22
+public_keys:
+  - ~/.ssh/id_rsa.pub
+
+logwatch_email: toto@test.com

@@ -10,8 +10,16 @@
 - name: add the host ssh key to authorized_key
   authorized_key:
     user: "{{ elixir_user }}"
-    key: "{{ lookup('file', 'id_rsa.pub') }}"
+    key: "{{ lookup('file', item) }}"
     state: present
+  loop: "{{ public_keys }}"
+
+# - name: Add deploy user to sudoers
+#   lineinfile:
+#     dest: /etc/sudoers
+#     regexp: "{{ elixir_user }} ALL"
+#     line: "{{ elixir_user }} ALL=(ALL) ALL"
+#     state: present
 
 - name: disable Password Authentication
   lineinfile:
@@ -20,5 +28,4 @@
     line: "PasswordAuthentication no"
     state: present
     backup: yes
-  notify:
-    - restart ssh
+  notify: restart ssh
