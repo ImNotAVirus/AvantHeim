@@ -3,7 +3,13 @@
 
 - name: install security packages
   apt:
-    name: ['ufw', 'fail2ban', 'unattended-upgrades', 'logwatch']
+    name:
+      - ufw
+      - fail2ban
+      - unattended-upgrades
+      - logwatch
+      - sendmail
+      - net-tools
     state: present
     update_cache: yes
 
@@ -76,7 +82,7 @@
   lineinfile:
     dest: /etc/cron.daily/00logwatch
     regexp: "^/usr/sbin/logwatch"
-    line: "/usr/sbin/logwatch --output mail --mailto {{ logwatch_email }} --detail high"
+    line: "/usr/sbin/logwatch --output mail --mailto {{ logwatch_email }} --detail high --service all --range today"
     state: present
     create: yes
   tags: logwatch
