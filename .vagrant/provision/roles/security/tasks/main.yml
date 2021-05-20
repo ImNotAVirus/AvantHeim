@@ -135,4 +135,21 @@
   notify: restart ssh
   tags: ssh
 
+- name: ssh | remove banner
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    regexp: '^#Banner '
+    line: 'Banner none'
+    state: present
+  notify: restart ssh
+  tags: ssh
+
+- name: ssh | remove banner (Debian)
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    line: 'DebianBanner no'
+    state: present
+  notify: restart ssh
+  tags: ssh
+
   ## TODO: Fail2ban rules
