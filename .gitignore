@@ -35,8 +35,10 @@
 # Additionals files
 !/.deliver/*
 !/.deploy/*
-!/.vagrant/Vagrantfile
 !/.vagrant/README.md
+!/.vagrant/Vagrantfile
+!/.vagrant/ansible.cfg
+!/.vagrant/digitalocean_inventory
 !/.vagrant/provision/**/*
 !/rel/**/*.eex
 !/rel/**/*.exs

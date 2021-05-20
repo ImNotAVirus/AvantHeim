@@ -1,6 +1,9 @@
 ---
 # Variables listed here are applicable to the deployers group
 
+sudo_user: root
+sudo_password: sudo_password
+sudo_shell: /bin/bash
 elixir_user: elixir_deployer
 elixir_shell: /bin/bash
 
@@ -13,3 +16,8 @@ public_keys:
   - ~/.ssh/id_rsa.pub
 
 logwatch_email: toto@test.com
+
+postfix_gmail:
+  enable: no
+  email: example@gmail.com
+  password: gmail_password

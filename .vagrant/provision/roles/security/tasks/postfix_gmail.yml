@@ -1,0 +1,66 @@
+---
+# Thx to: https://www.it-connect.fr/configurer-postfix-pour-envoyer-des-mails-avec-gmail/
+
+- name: postfix | install apt packages
+  apt:
+    name:
+      - postfix
+      - mailutils
+      - libsasl2-2
+      - ca-certificates
+      - libsasl2-modules
+      - python3-openssl
+    state: present
+    update_cache: yes
+  tags: postfix
+
+- name: postfix | set relay host
+  lineinfile:
+    dest: /etc/postfix/main.cf
+    regexp: '^relayhost ='
+    line: 'relayhost = [smtp.gmail.com]:587'
+    state: present
+    backup: yes
+  tags: postfix
+
+- name: postfix | enable ssl auth
+  blockinfile:
+    dest: /etc/postfix/main.cf
+    block: |
+      smtp_sasl_auth_enable = yes
+      smtp_sasl_password_maps = hash:/etc/postfix/sasl_passwd
+      smtp_sasl_security_options = noanonymous
+      smtp_tls_CAfile = /etc/postfix/cacert.pem
+      smtp_use_tls = yes
+    state: present
+  tags: postfix
+
+- name: postfix | set gmail credentials
+  copy:
+    dest: /etc/postfix/sasl_passwd
+    content: '[smtp.gmail.com]:587 {{ postfix_gmail.email }}:{{ postfix_gmail.password }}'
+    mode: 400
+  tags: postfix
+
+- name: postfix | create credentials db
+  shell: postmap /etc/postfix/sasl_passwd
+  tags: postfix
+
+- name: postfix | create private key
+  openssl_privatekey:
+    path: /etc/postfix/cacert.key
+    size: 2048
+  tags: postfix
+
+- name: postfix | create certificate
+  openssl_certificate:
+    provider: selfsigned
+    path: /etc/postfix/cacert.pem
+    privatekey_path: /etc/postfix/cacert.key
+  tags: postfix
+
+- name: postfix | restart
+  service:
+    name: postfix
+    state: restarted
+  tags: postfix

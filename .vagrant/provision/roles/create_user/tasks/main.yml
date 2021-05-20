@@ -14,13 +14,6 @@
     state: present
   loop: "{{ public_keys }}"
 
-# - name: Add deploy user to sudoers
-#   lineinfile:
-#     dest: /etc/sudoers
-#     regexp: "{{ elixir_user }} ALL"
-#     line: "{{ elixir_user }} ALL=(ALL) ALL"
-#     state: present
-
 - name: disable Password Authentication
   lineinfile:
     dest: /etc/ssh/sshd_config

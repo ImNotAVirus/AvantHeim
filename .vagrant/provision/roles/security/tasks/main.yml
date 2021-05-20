@@ -13,6 +13,23 @@
     state: present
     update_cache: yes
 
+## Create sudo user
+
+- name: sudo_user | create the sudo user
+  user:
+    name: "{{ sudo_user }}"
+    password: '{{ sudo_password | password_hash("sha512") }}'
+    shell: "{{ sudo_shell }}"
+    groups: sudo
+    createhome: yes
+
+- name: sudo_user | add the host ssh key to authorized_key
+  authorized_key:
+    user: "{{ sudo_user }}"
+    key: "{{ lookup('file', item) }}"
+    state: present
+  loop: "{{ public_keys }}"
+
 ## Firewall
 
 - name: ufw | reset configuration
@@ -29,7 +46,7 @@
 - name: ufw | allow ssh traffic
   ufw:
     rule: limit
-    port: "{{ ssh_port }}"
+    port: "{{ ssh_port | string }}"
     proto: tcp
   tags: ufw
 
@@ -65,18 +82,20 @@
     dest: /etc/apt/apt.conf.d/10periodic
   tags: apt_periodic
 
+## Configure Postfix for Gmail
+
+- include: postfix_gmail.yml
+  when: postfix_gmail.enable
+
 ## Configure Logwatch
 
-- name: logwatch | set up Postfix to relay mail
-  debconf:
-    name: postfix
-    question: '{{ item.question }}'
-    value: '{{ item.value }}'
-    vtype: '{{ item.vtype }}'
-  with_items:
-    - { question: 'postfix/mailname', value: '{{ ansible_fqdn }}', vtype: 'string' }
-    - { question: 'postfix/main_mailer_type', value: 'Internet Site', vtype: 'string' }
-  tags: logwatch
+- name: logwatch | modify host file for postmail
+  lineinfile:
+    dest: /etc/hosts
+    insertafter: '^127.0.0.1 '
+    line: 127.0.0.1 localhost.localdomain
+    firstmatch: no
+    create: yes
 
 - name: logwatch | email log summary daily
   lineinfile:
