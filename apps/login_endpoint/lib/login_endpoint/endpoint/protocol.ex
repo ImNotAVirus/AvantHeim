@@ -86,6 +86,7 @@ defmodule LoginEndpoint.Endpoint.Protocol do
   defp decrypt_message(message, socket) do
     case Socket.handle_in(message, socket) do
       {:ok, "NoS0575 " <> _} = decrypted -> decrypted
+      {:ok, "NoS0577 " <> _} = decrypted -> decrypted
       {:ok, packet} -> {:error, "Invalid packet received: #{inspect(packet)}"}
       e -> {:error, "Unable to decrypt login packet (#{inspect(e)})"}
     end

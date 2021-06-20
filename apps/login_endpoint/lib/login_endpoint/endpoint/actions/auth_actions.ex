@@ -11,36 +11,21 @@ defmodule LoginEndpoint.Endpoint.AuthActions do
 
   ## Public API
 
-  @spec login(String.t(), map, map) :: any
-  def login("NoS0575", args, %Socket{id: socket_id} = socket) do
+  @doc """
+  Header can be "NoS0575" or "NoS0577"
+  """
+  @spec login(String.t(), map, Socket.t()) :: any
+  def login(_header, args, %Socket{id: socket_id} = socket) do
     render =
       with {:ok, _client_version} <- check_client_version(args, socket),
            {:ok, _client_checksum} <- check_client_checksum(args, socket),
            {:ok, _guid} <- check_guid(args, socket),
            {:ok, account} <- check_credentials(args, socket),
-           {:ok, session_id} <- create_session(args, socket) do
-        Logger.debug("Authentication succeed for #{socket_id} (username: #{args.username})")
+           {:ok, session_id} <- create_session(account, socket) do
+        Logger.debug("Authentication succeed for #{socket_id} (username: #{account.username})")
         Views.render(:login_succeed, %{username: account.username, session_id: session_id})
       else
-        {:error, :client_version} ->
-          Logger.warn("Invalid client version (got: #{args.version})", socket_id: socket_id)
-          Views.render(:login_error, %{error: :old_client})
-
-        {:error, :client_checksum} ->
-          Logger.warn("Invalid client checksum (got: #{args.version})", socket_id: socket_id)
-          Views.render(:login_error, %{error: :old_client})
-
-        {:error, :bad_credentials} ->
-          Logger.warn("Invalid credentials (username: #{args.username})", socket_id: socket_id)
-          Views.render(:login_error, %{error: :bad_credentials})
-
-        {:error, :already_connected} ->
-          Logger.warn("Already connected (username: #{args.username})", socket_id: socket_id)
-          Views.render(:login_error, %{error: :already_connected})
-
-        e ->
-          Logger.warn("Got unknown login error: #{inspect(e)}", socket_id: socket_id)
-          Views.render(:login_error, %{})
+        reason -> render_error(reason, args, socket_id)
       end
 
     Socket.send(socket, render)
@@ -63,12 +48,24 @@ defmodule LoginEndpoint.Endpoint.AuthActions do
     {:ok, client_checksum}
   end
 
-  defp check_guid(%{guid: guid}, socket) do
+  defp check_guid(%{installation_guid: guid}, socket) do
     # Currently unused
     # TODO: Can be saved later in database to check multiclients/multiaccounts for example
     # Or if user is banned
     Logger.debug("GUID for #{socket.id}: #{guid}")
     {:ok, guid}
+  end
+
+  defp check_credentials(%{token: token}, socket) do
+    decoded_token = Base.decode16!(token)
+
+    # TODO: Finish the launcher and use caching service
+    if decoded_token == "deadbeef" do
+      password = :crypto.hash(:sha512, "admin") |> Base.encode16()
+      check_credentials(%{username: "admin", password: password}, socket)
+    else
+      {:error, :bad_credentials}
+    end
   end
 
   defp check_credentials(%{username: username, password: password}, _socket) do
@@ -78,10 +75,36 @@ defmodule LoginEndpoint.Endpoint.AuthActions do
     end
   end
 
-  defp create_session(%{username: username, password: password}, _socket) do
+  defp create_session(%Account{username: username, hashed_password: password}, _socket) do
     case SessionService.create_session(username, password) do
       {:ok, session} -> {:ok, session.id}
       {:error, _} = e -> e
+    end
+  end
+
+  defp render_error(reason, args, socket_id) do
+    case reason do
+      {:error, :client_version} ->
+        Logger.warn("Invalid client version (got: #{args.client_version})", socket_id: socket_id)
+        Views.render(:login_error, %{error: :old_client})
+
+      {:error, :client_checksum} ->
+        Logger.warn("Invalid client checksum (got: #{args.client_checksum})", socket_id: socket_id)
+
+        Views.render(:login_error, %{error: :old_client})
+
+      {:error, :bad_credentials} ->
+        Logger.warn("Invalid credentials", socket_id: socket_id)
+        Views.render(:login_error, %{error: :bad_credentials})
+
+      {:error, :already_connected} ->
+        user = Map.get(args, :username) || Map.get(args, :token)
+        Logger.warn("Already connected (username: #{user})", socket_id: socket_id)
+        Views.render(:login_error, %{error: :already_connected})
+
+      e ->
+        Logger.warn("Got unknown login error: #{inspect(e)}", socket_id: socket_id)
+        Views.render(:login_error, %{})
     end
   end
 end

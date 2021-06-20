@@ -21,6 +21,16 @@ defmodule DatabaseService.Players.Characters do
     |> Repo.all()
   end
 
+  @spec get_by_account_id_and_slot(pos_integer, non_neg_integer) :: Character.t() | nil
+  def get_by_account_id_and_slot(account_id, slot) do
+    from(a in Character,
+      where:
+        a.account_id == ^account_id and
+          a.slot == ^slot and a.disabled == false
+    )
+    |> Repo.one()
+  end
+
   @spec create(map) :: {:ok, Ecto.Schema.t()} | {:error, Ecto.Changeset.t()}
   def create(attrs) do
     %Character{}

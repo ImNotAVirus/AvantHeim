@@ -44,7 +44,7 @@ defmodule ChannelEndpoint.PacketSchemas do
   end
 
   #######
-  # Select a character and enter in game
+  # Select a character
   # ---
   # Example: "select 2"
   #######
@@ -52,5 +52,14 @@ defmodule ChannelEndpoint.PacketSchemas do
     field :slot, :integer
 
     resolve LobbyActions, :select_character
+  end
+
+  #######
+  # Enter in game
+  # ---
+  # Example: "game_start"
+  #######
+  packet "game_start" do
+    resolve LobbyActions, :game_start
   end
 end

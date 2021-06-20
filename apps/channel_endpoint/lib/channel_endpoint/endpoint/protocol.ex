@@ -68,15 +68,7 @@ defmodule ChannelEndpoint.Endpoint.Protocol do
     Logger.debug("New message from #{id} (len: #{byte_size(message)})")
 
     with {:ok, packets} <- parse_message(message, socket) do
-      Enum.each(packets, fn
-        {:ok, {header, args}} ->
-          @packet_schemas.resolve(header, args, socket)
-
-        {:error, :invalid, [header | args]} ->
-          Logger.warn("Invalid packet '#{header}' with args #{inspect(args)}",
-            socket_id: socket.id
-          )
-      end)
+      Enum.reduce_while(packets, socket, &resolve_packet/2)
     else
       {:error, msg} -> Logger.warn(msg, socket_id: socket.id)
     end
@@ -143,5 +135,30 @@ defmodule ChannelEndpoint.Endpoint.Protocol do
       e ->
         {:error, "Unable to decrypt login packet (#{inspect(e)})"}
     end
+  end
+
+  defp resolve_packet({:ok, {header, args}}, socket) do
+    case @packet_schemas.resolve(header, args, socket) do
+      {:cont, %Socket{}} = x ->
+        x
+
+      {:halt, {:ok, _args}, %Socket{}} ->
+        raise "unimplemented halt return"
+
+      {:halt, {:error, _reason}, %Socket{}} ->
+        raise "unimplemented halt return"
+
+      x ->
+        raise """
+        handler for #{header} #{inspect(args)} must return `{:cont, socket}`, \
+        `{:halt, {:ok, :some_args}, socket}`, or `{:halt, {:error, reason}, socket} `. \
+        Returned: #{inspect(x)}
+        """
+    end
+  end
+
+  defp resolve_packet({:error, :invalid, [header | args]}, socket) do
+    Logger.warn("Invalid packet '#{header}' with args #{inspect(args)}", socket_id: socket.id)
+    {:cont, socket}
   end
 end
