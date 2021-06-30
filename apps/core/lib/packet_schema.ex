@@ -17,6 +17,21 @@ defmodule Core.PacketSchema do
   end
 
   @doc """
+  Define an unused packet
+  """
+  defmacro ignore_packet(header) do
+    quote do
+      def resolve(unquote(header), args, socket) do
+        {:cont, socket}
+      end
+
+      def parse_packet_args([unquote(header) | args], socket) do
+        {:ignore, {unquote(header), args}}
+      end
+    end
+  end
+
+  @doc """
   Define a new packet handler
   """
   defmacro packet(header, do: exp) do

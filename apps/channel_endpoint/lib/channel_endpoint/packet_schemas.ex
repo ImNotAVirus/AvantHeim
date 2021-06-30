@@ -9,10 +9,10 @@ defmodule ChannelEndpoint.PacketSchemas do
 
   ## Ignore some packets
 
-  # ignore_packet "0"
-  # ignore_packet "c_close"
-  # ignore_packet "f_stash_end"
-  # ignore_packet "lbs"
+  ignore_packet "0"
+  ignore_packet "c_close"
+  ignore_packet "f_stash_end"
+  ignore_packet "lbs"
 
   ## Lobby packets
 

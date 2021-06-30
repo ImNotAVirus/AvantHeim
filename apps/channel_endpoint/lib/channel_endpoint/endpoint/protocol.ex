@@ -157,6 +157,11 @@ defmodule ChannelEndpoint.Endpoint.Protocol do
     end
   end
 
+  defp resolve_packet({:ignore, {header, args}}, socket) do
+    Logger.debug("Ignored packet '#{header}' with args #{inspect(args)}")
+    {:cont, socket}
+  end
+
   defp resolve_packet({:error, :invalid, [header | args]}, socket) do
     Logger.warn("Invalid packet '#{header}' with args #{inspect(args)}", socket_id: socket.id)
     {:cont, socket}

@@ -12,6 +12,7 @@ inputs =
   inputs: inputs,
   export: [
     locals_without_parens: [
+      ignore_packet: 1,
       packet: 2,
       field: 2,
       field: 3,
