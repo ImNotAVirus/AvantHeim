@@ -18,6 +18,7 @@ defmodule LoginEndpoint.PacketSchemas do
     field :password, :string
     field :installation_guid, :string
     field :unknown, :string
+    field :region_code, :integer
     field :client_version, :string
     field :always_0, :string, using: "0"
     field :client_checksum, :string

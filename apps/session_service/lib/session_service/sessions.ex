@@ -31,13 +31,13 @@ defmodule SessionService.Sessions do
   end
 
   @spec authenticate(pos_integer, String.t(), ets_ctx) :: optional_session
-  def authenticate(session_id, password, {table_pid, _}) do
-    # :ets.fun2ms(fn {_, session} when session.id == 123 and session.password == "password" -> session end)
+  def authenticate(session_id, username, {table_pid, _}) do
+    # :ets.fun2ms(fn {_, session} when session.id == 123 and session.username == "username" -> session end)
     query = [
       {{:_, :"$1"},
        [
          {:andalso, {:==, {:map_get, :id, :"$1"}, session_id},
-          {:==, {:map_get, :password, :"$1"}, password}}
+          {:==, {:map_get, :username, :"$1"}, username}}
        ], [:"$1"]}
     ]
 

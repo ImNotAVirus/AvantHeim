@@ -25,7 +25,29 @@ defmodule LoginEndpoint.Endpoint.NsTeSTPacket do
       server_list: server_list
     } = struct
 
+    # International (cf. NoS0577)
+    region = 0
+    # 0 = ORG, 1 = STEAM, 2 = GF
+    auth_type = 2
+
     serialized_servers = serialize_term(server_list, joiner: " ")
-    "NsTeST #{session_id} #{username} #{serialized_servers} -1:-1:-1:10000.10000.1"
+
+    unused_servers =
+      ["-99 0 -99 0 -99 0 -99 0"]
+      |> Stream.cycle()
+      |> Enum.take(3)
+      |> Enum.join(" ")
+
+    # TODO: Implement characters count
+    # "<channel_id> <characters_count> x4"
+    "NsTeST #{region} #{username} #{auth_type} " <>
+      "-99 0 -99 0 -99 0 -99 0 " <>
+      "-99 0 -99 0 -99 0 -99 0 " <>
+      "-99 0 -99 0 -99 0 -99 0 " <>
+      "-99 0 -99 0 -99 0 -99 0 " <>
+      "-99 0 -99 0 -99 0 -99 0 " <>
+      "-99 0 -99 0 -99 0 -99 0 " <>
+      unused_servers <>
+      "0 #{session_id} #{serialized_servers} -1:-1:-1:10000.10000.1"
   end
 end

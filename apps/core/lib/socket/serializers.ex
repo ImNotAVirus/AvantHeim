@@ -9,7 +9,7 @@ defmodule Core.Socket.Serializers do
 
   defimpl Core.Socket.SerializerProtocol, for: BitString do
     def serialize(data, opts) do
-      escape = Keyword.get(opts, :escape, true)
+      escape = Keyword.get(opts, :escape, false)
 
       case {data, escape} do
         {"", _} -> "-"

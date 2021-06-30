@@ -23,7 +23,7 @@ defmodule ChannelEndpoint.Endpoint.Cryptography do
   def encrypt(packet) do
     bytes =
       packet
-      |> to_charlist
+      |> to_charlist()
       |> Enum.with_index()
 
     length = length(bytes)

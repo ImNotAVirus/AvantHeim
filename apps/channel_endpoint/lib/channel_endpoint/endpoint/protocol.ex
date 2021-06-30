@@ -43,12 +43,13 @@ defmodule ChannelEndpoint.Endpoint.Protocol do
 
   @impl true
   def handle_continue(:client_handshake, socket) do
-    new_socket = recv_session_key(socket)
-    {session_id, password} = recv_credentials(new_socket)
+    session_key = recv_session_key(socket)
+    new_socket = Socket.assign(socket, session_key: session_key)
+    username = recv_username(new_socket)
 
     %Socket{transport_pid: transport_pid, transport: transport} = new_socket
 
-    with {:ok, session} <- SessionService.authenticate(session_id, password),
+    with {:ok, session} <- SessionService.authenticate(session_key, username),
          {:ok, account} <- get_account(session),
          :ok <- send_character_list(account, new_socket) do
       transport.setopts(transport_pid, active: :once)
@@ -110,14 +111,13 @@ defmodule ChannelEndpoint.Endpoint.Protocol do
 
   defp recv_session_key(socket) do
     {:ok, session_key} = Socket.recv(socket, 0, @handshake_timeout)
-    if session_key != "0", do: Logger.warn("Session key is not 0", socket_id: socket.id)
-    Socket.assign(socket, session_key: String.to_integer(session_key))
+    String.to_integer(session_key)
   end
 
-  defp recv_credentials(new_socket) do
-    {:ok, [session_id, password]} = Socket.recv(new_socket, 0, @handshake_timeout)
-    hashed_password = :sha512 |> :crypto.hash(password) |> Base.encode16()
-    {String.to_integer(session_id), hashed_password}
+  defp recv_username(new_socket) do
+    {:ok, [username, "thisisgfmode"]} = Socket.recv(new_socket, 0, @handshake_timeout)
+    [username, "GF 0"] = String.split(username, " ", parts: 2)
+    username
   end
 
   defp parse_message(message, socket) do

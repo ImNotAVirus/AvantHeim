@@ -26,8 +26,8 @@ defmodule SessionService.Worker do
   end
 
   @spec authenticate(pos_integer, String.t()) :: {:ok, Session.t()} | {:error, any}
-  def authenticate(session_id, password) do
-    GenServer.call(__MODULE__, {:authenticate, session_id, password})
+  def authenticate(session_id, username) do
+    GenServer.call(__MODULE__, {:authenticate, session_id, username})
   end
 
   ## GenServer behaviour
@@ -62,8 +62,8 @@ defmodule SessionService.Worker do
   end
 
   @impl true
-  def handle_call({:authenticate, session_id, password}, {from_pid, _}, state) do
-    case Sessions.authenticate(session_id, password, state) do
+  def handle_call({:authenticate, session_id, username}, {from_pid, _}, state) do
+    case Sessions.authenticate(session_id, username, state) do
       nil ->
         {:reply, {:error, :invalid_credentials}, state}
 
