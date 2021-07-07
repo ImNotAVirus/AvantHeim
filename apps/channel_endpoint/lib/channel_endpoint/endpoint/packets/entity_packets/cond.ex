@@ -4,7 +4,7 @@ defmodule ChannelEndpoint.Endpoint.EntityPackets.Cond do
   """
 
   use Core.SerializableStruct
-  
+
   import DatabaseService.EntityEnums, only: [entity_type: 1]
 
   alias __MODULE__
@@ -13,12 +13,12 @@ defmodule ChannelEndpoint.Endpoint.EntityPackets.Cond do
   defstruct @enforce_keys
 
   @type t :: %Cond{
-    entity_type: atom,
-    entity_id: pos_integer,
-    no_attack: boolean,
-    no_move: boolean,
-    speed: non_neg_integer,
-  }
+          entity_type: atom,
+          entity_id: pos_integer,
+          no_attack: boolean,
+          no_move: boolean,
+          speed: non_neg_integer
+        }
 
   @impl true
   def serialize(%Cond{} = struct, _) do
@@ -29,7 +29,7 @@ defmodule ChannelEndpoint.Endpoint.EntityPackets.Cond do
       no_move: no_move,
       speed: speed
     } = struct
-    
+
     ["cond", entity_type(entity_type_atom), entity_id, no_attack, no_move, speed]
   end
 end

@@ -17,9 +17,9 @@ defmodule ChannelEndpoint.Endpoint.PlayerPackets.Tit do
     %Tit{class: class, name: name} = struct
     "tit #{i18n_class(class)} #{name}"
   end
-  
+
   ## Private functions
-  
+
   defp i18n_class(:adventurer), do: 35
   defp i18n_class(:swordman), do: 36
   defp i18n_class(:archer), do: 37

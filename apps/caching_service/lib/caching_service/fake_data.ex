@@ -50,4 +50,7 @@ defmodule FakeData do
   def equipments(character_id: _) do
     [nil] |> Stream.cycle() |> Enum.take(10)
   end
+
+  def reputation_icon(character_id: 1), do: 32
+  def compliment(character_id: 1), do: 500
 end
