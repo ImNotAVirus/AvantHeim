@@ -6,6 +6,7 @@ defmodule FakeData.Character do
     :class,
     :hair_color,
     :hair_style,
+    :faction,
     :map_id,
     :map_x,
     :map_y,
@@ -33,6 +34,7 @@ defmodule FakeData do
       class: :martial_artist,
       hair_color: :dark_purple,
       hair_style: :hair_style_a,
+      faction: :demon,
       #
       map_id: 1,
       map_x: :rand.uniform(3) + 77,
@@ -51,6 +53,9 @@ defmodule FakeData do
     [nil] |> Stream.cycle() |> Enum.take(10)
   end
 
-  def reputation_icon(character_id: 1), do: 32
+  def dignity(character_id: _), do: 100
+  def dignity_icon_id(character_id: _), do: 1
+  def reputation(character_id: 1), do: 10_000_000
+  def reputation_icon_id(character_id: 1), do: 32
   def compliment(character_id: 1), do: 500
 end

@@ -27,7 +27,7 @@ defmodule ChannelEndpoint.Endpoint.PlayerPackets.CInfo do
     :hair_style,
     :hair_color,
     :class,
-    :reputation_icon,
+    :reputation_icon_id,
     :compliment,
     :morph,
     :invisible,
@@ -49,7 +49,7 @@ defmodule ChannelEndpoint.Endpoint.PlayerPackets.CInfo do
           hair_style: atom,
           hair_color: atom,
           class: atom,
-          reputation_icon: integer,
+          reputation_icon_id: integer,
           compliment: non_neg_integer,
           morph: non_neg_integer,
           invisible: boolean,
@@ -72,7 +72,7 @@ defmodule ChannelEndpoint.Endpoint.PlayerPackets.CInfo do
       hair_style: hair_style,
       hair_color: hair_color,
       class: class,
-      reputation_icon: reputation_icon,
+      reputation_icon_id: reputation_icon_id,
       compliment: compliment,
       morph: morph,
       invisible: invisible,
@@ -84,10 +84,11 @@ defmodule ChannelEndpoint.Endpoint.PlayerPackets.CInfo do
     family_i18n =
       if family_id < 0, do: "-1", else: "#{family_id}.#{i18n_family_rank(family_rank)}"
 
+    # TODO: Change reputation_icon_id (display reputation_icon_id or dignity_icon_id)
     [
       "c_info", name, "-", group_id, family_i18n, family_name, character_id,
       name_color_id, gender(gender), hair_style(hair_style), hair_color(hair_color),
-      character_class(class), reputation_icon, compliment, morph, invisible,
+      character_class(class), reputation_icon_id, compliment, morph, invisible,
       family_level, morph_upgrade, arena_winner
     ]
   end
