@@ -1,4 +1,4 @@
-defmodule ChannelEndpoint.Endpoint.ClistPacket do
+defmodule ChannelEndpoint.Endpoint.LobbyPackets.Clist do
   @moduledoc """
   TODO: Documentation.
   """
@@ -24,11 +24,11 @@ defmodule ChannelEndpoint.Endpoint.ClistPacket do
   ]
   defstruct @enforce_keys ++ [design: 0, pets: []]
 
-  @type t :: %ClistPacket{}
+  @type t :: %Clist{}
 
   @impl true
-  def serialize(%ClistPacket{} = clist, _) do
-    %ClistPacket{
+  def serialize(%Clist{} = clist, _) do
+    %Clist{
       slot: slot,
       name: name,
       gender: gender,

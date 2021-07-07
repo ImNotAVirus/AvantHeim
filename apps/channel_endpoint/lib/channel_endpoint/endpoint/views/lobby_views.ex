@@ -5,27 +5,28 @@ defmodule ChannelEndpoint.Endpoint.LobbyViews do
 
   alias DatabaseService.Players.Character
 
-  alias ChannelEndpoint.Endpoint.{
-    ClistStartPacket,
-    ClistEndPacket,
-    ClistPacket
+  alias ChannelEndpoint.Endpoint.LobbyPackets.{
+    ClistStart,
+    ClistEnd,
+    Clist,
+    Ok
   }
 
   ## Public API
 
   @spec render(atom, any) :: any
-  def render(:clist_start, _), do: %ClistStartPacket{}
-  def render(:clist_end, _), do: %ClistEndPacket{}
+  def render(:ok, _), do: %Ok{}
+  def render(:clist_start, _), do: %ClistStart{}
+  def render(:clist_end, _), do: %ClistEnd{}
 
-  def render(:clist, %Character{} = character) do
-    # TODO: Get it from DB
-    equipments = [nil] |> Stream.cycle() |> Enum.take(10)
+  def render(:clist, %Character{id: character_id} = character) do
+    equipments = FakeData.equipments(character_id: character_id)
 
     fields =
       character
       |> Map.take(~w(slot name gender hair_style hair_color class level hero_level job_level)a)
       |> Map.put(:equipments, equipments)
 
-    struct!(ClistPacket, fields)
+    struct!(Clist, fields)
   end
 end

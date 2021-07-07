@@ -5,7 +5,10 @@ defmodule ChannelEndpoint.PacketSchemas do
 
   use Core.PacketSchema
 
-  alias ChannelEndpoint.Endpoint.LobbyActions
+  alias ChannelEndpoint.Endpoint.{
+    LobbyActions,
+    PlayerActions
+  }
 
   ## Ignore some packets
 
@@ -60,6 +63,6 @@ defmodule ChannelEndpoint.PacketSchemas do
   # Example: "game_start"
   #######
   packet "game_start" do
-    resolve LobbyActions, :game_start
+    resolve PlayerActions, :game_start
   end
 end

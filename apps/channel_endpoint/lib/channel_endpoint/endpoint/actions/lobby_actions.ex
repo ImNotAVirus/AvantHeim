@@ -6,8 +6,8 @@ defmodule ChannelEndpoint.Endpoint.LobbyActions do
   require Logger
 
   alias Core.Socket
-  # alias ChannelEndpoint.Endpoint.LobbyViews
-  # alias DatabaseService.Players.{Account, Characters}
+  alias ChannelEndpoint.Endpoint.LobbyViews
+  alias DatabaseService.Players.{Account, Characters}
 
   ## Public API
 
@@ -21,29 +21,22 @@ defmodule ChannelEndpoint.Endpoint.LobbyActions do
     raise "unimplemented resolver"
   end
 
-  @spec select_character(String.t(), map, Socket.t()) :: any
-  def select_character("select", %{slot: _slot}, socket) do
-    # account = socket.assigns.account
+  @spec select_character(String.t(), map, Socket.t()) :: {:cont, Socket.t()}
+  def select_character("select", %{slot: slot}, socket) do
+    account = socket.assigns.account
+    %Account{id: account_id} = account
 
-    # %Account{
-    #   id: account_id,
-    #   authority: account_authority,
-    #   language: account_language
-    # } = account
+    new_socket =
+      case Characters.get_by_account_id_and_slot(account_id, slot) do
+        nil ->
+          Logger.warn("Invalid character slot", socket_id: socket.id)
+          socket
 
-    # new_client =
-    #   case Characters.get_by_account_id_and_slot(account_id, slot) do
-    #     nil -> :ko
-    #     character -> :ok
-    #   end
+        character ->
+          Socket.send(socket, LobbyViews.render(:ok, nil))
+          Socket.assign(socket, character_id: character.id)
+      end
 
-    Socket.send(socket, "OK")
-
-    {:cont, socket}
-  end
-
-  @spec game_start(String.t(), map, Socket.t()) :: any
-  def game_start("game_start", _, socket) do
-    {:cont, socket}
+    {:cont, new_socket}
   end
 end

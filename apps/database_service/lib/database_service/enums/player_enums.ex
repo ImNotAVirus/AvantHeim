@@ -27,7 +27,7 @@ defmodule DatabaseService.PlayerEnums do
     swordman: 1,
     archer: 2,
     magician: 3,
-    wrestler: 4
+    martial_artist: 4
 
   defenum :hair_style,
     hair_style_a: 0,

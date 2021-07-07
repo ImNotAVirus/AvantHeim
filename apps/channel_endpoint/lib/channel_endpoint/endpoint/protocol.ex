@@ -68,14 +68,17 @@ defmodule ChannelEndpoint.Endpoint.Protocol do
 
     Logger.debug("New message from #{id} (len: #{byte_size(message)})")
 
-    with {:ok, packets} <- parse_message(message, socket) do
-      Enum.reduce_while(packets, socket, &resolve_packet/2)
-    else
-      {:error, msg} -> Logger.warn(msg, socket_id: socket.id)
-    end
+    new_socket =
+      with {:ok, packets} <- parse_message(message, socket) do
+        Enum.reduce_while(packets, socket, &resolve_packet/2)
+      else
+        {:error, msg} ->
+          Logger.warn(msg, socket_id: socket.id)
+          socket
+      end
 
     transport.setopts(transport_pid, active: :once)
-    {:noreply, socket, @timeout}
+    {:noreply, new_socket, @timeout}
   end
 
   def handle_info({:tcp_closed, transport_pid}, socket) do
@@ -133,7 +136,7 @@ defmodule ChannelEndpoint.Endpoint.Protocol do
         {:ok, result}
 
       e ->
-        {:error, "Unable to decrypt login packet (#{inspect(e)})"}
+        {:error, "Unable to decrypt packets (#{inspect(e)})"}
     end
   end
 
