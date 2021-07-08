@@ -1,8 +1,8 @@
 # Used by "mix format"
 
 file_ignored = [
-  "lib/channel_endpoint/endpoint/packets/lobby_packets/clist.ex",
-  "lib/channel_endpoint/endpoint/packets/player_packets/c_info.ex"
+  # "lib/channel_endpoint/endpoint/packets/lobby_packets/clist.ex",
+  # "lib/channel_endpoint/endpoint/packets/player_packets/c_info.ex"
 ]
 
 inputs =

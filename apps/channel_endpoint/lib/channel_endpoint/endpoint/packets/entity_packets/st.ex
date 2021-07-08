@@ -17,9 +17,10 @@ defmodule ChannelEndpoint.Endpoint.EntityPackets.St do
     :hp,
     :hp_max,
     :mp,
-    :mp_max
+    :mp_max,
+    :buffs
   ]
-  defstruct @enforce_keys ++ [buffs: []]
+  defstruct @enforce_keys
 
   @type t :: %St{
           entity_type: atom,

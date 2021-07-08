@@ -36,7 +36,7 @@ Characters.create!(%{
   hair_color: :dark_purple,
   class: :martial_artist,
   faction: :demon,
-  map_id: 1,
+  map_vnum: 1,
   map_x: :rand.uniform(3) + 77,
   map_y: :rand.uniform(4) + 113,
   gold: 1_000_000_000,

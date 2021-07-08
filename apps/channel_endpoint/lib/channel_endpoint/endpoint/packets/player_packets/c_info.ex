@@ -86,10 +86,25 @@ defmodule ChannelEndpoint.Endpoint.PlayerPackets.CInfo do
 
     # TODO: Change reputation_icon_id (display reputation_icon_id or dignity_icon_id)
     [
-      "c_info", name, "-", group_id, family_i18n, family_name, character_id,
-      name_color_id, gender(gender), hair_style(hair_style), hair_color(hair_color),
-      character_class(class), reputation_icon_id, compliment, morph, invisible,
-      family_level, morph_upgrade, arena_winner
+      "c_info",
+      name,
+      "-",
+      group_id,
+      family_i18n,
+      family_name,
+      character_id,
+      name_color_id,
+      gender(gender),
+      hair_style(hair_style),
+      hair_color(hair_color),
+      character_class(class),
+      reputation_icon_id,
+      compliment,
+      morph,
+      invisible,
+      family_level,
+      morph_upgrade,
+      arena_winner
     ]
   end
 

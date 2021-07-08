@@ -52,9 +52,23 @@ defmodule ChannelEndpoint.Endpoint.LobbyPackets.Clist do
     class_val = PlayerEnums.character_class(class, :value)
 
     [
-      "clist", slot, name, 0, gender_val, hair_style_val, hair_color_val, 0,
-      class_val, level, hero_level, equipments, job_level, quest_completion,
-      quest_part, pets, design
+      "clist",
+      slot,
+      name,
+      0,
+      gender_val,
+      hair_style_val,
+      hair_color_val,
+      0,
+      class_val,
+      level,
+      hero_level,
+      equipments,
+      job_level,
+      quest_completion,
+      quest_part,
+      pets,
+      design
     ]
   end
 end

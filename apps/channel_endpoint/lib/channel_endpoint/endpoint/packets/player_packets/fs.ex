@@ -4,7 +4,7 @@ defmodule ChannelEndpoint.Endpoint.PlayerPackets.Fs do
   """
 
   use Core.SerializableStruct
-  
+
   import DatabaseService.PlayerEnums, only: [faction: 1]
 
   alias __MODULE__
