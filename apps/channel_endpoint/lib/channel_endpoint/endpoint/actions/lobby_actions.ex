@@ -11,6 +11,8 @@ defmodule ChannelEndpoint.Endpoint.LobbyActions do
 
   ## Public API
 
+  ## TODO: Add security check: lobby packet sent from world
+
   @spec create_character(String.t(), map, Socket.t()) :: any
   def create_character("Char_NEW", _args, _socket) do
     raise "unimplemented resolver"
@@ -33,6 +35,7 @@ defmodule ChannelEndpoint.Endpoint.LobbyActions do
           socket
 
         character ->
+          {:ok, _} = CachingService.init_character(character)
           Socket.send(socket, LobbyViews.render(:ok, nil))
           Socket.assign(socket, character_id: character.id)
       end

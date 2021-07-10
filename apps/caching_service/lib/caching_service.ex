@@ -3,16 +3,8 @@ defmodule CachingService do
   Documentation for `CachingService`.
   """
 
-  @doc """
-  Hello world.
-
-  ## Examples
-
-      iex> CachingService.hello()
-      :world
-
-  """
-  def hello do
-    :world
-  end
+  defdelegate init_character(character), to: CachingService.CharacterRegistry
+  defdelegate write_character(character), to: CachingService.CharacterRegistry
+  defdelegate get_character_by_id(id), to: CachingService.CharacterRegistry
+  defdelegate delete_character_by_id(id), to: CachingService.CharacterRegistry
 end

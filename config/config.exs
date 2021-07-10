@@ -53,3 +53,8 @@ config :database_service, DatabaseService.Repo,
   username: "postgres",
   password: "postgres",
   hostname: "localhost"
+
+## Caching configs
+
+config :mnesia,
+  dir: '.mnesia/#{Mix.env()}/#{node()}'

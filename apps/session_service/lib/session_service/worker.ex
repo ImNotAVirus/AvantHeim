@@ -45,7 +45,7 @@ defmodule SessionService.Worker do
     # Autoclean expired keys
     :timer.send_interval(@clean_every, :clean_expired_keys)
 
-    Logger.info("SessionManager started")
+    Logger.info("SessionService started")
     {:noreply, ets_ctx}
   end
 
@@ -85,6 +85,7 @@ defmodule SessionService.Worker do
   def handle_info({:DOWN, ref, :process, _object, reason}, state) do
     {:ok, session} = Sessions.delete_monitored(ref, state)
 
+    # {:ok, _} = CachingService.delete_character_by_id()
     # TODO: Clean player here (remove from map etc...) and save state to the database
 
     Logger.info("#{inspect(session.username)} is now disconnected (reason: #{inspect(reason)})")

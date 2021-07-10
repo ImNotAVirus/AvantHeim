@@ -18,7 +18,7 @@ defmodule ChannelEndpoint.Endpoint.PlayerActions do
   @spec game_start(String.t(), map, Socket.t()) :: {:cont, Socket.t()}
   def game_start("game_start", _, %Socket{} = socket) do
     %{character_id: character_id} = socket.assigns
-    character = FakeData.character(id: character_id)
+    {:ok, character} = CachingService.get_character_by_id(character_id)
 
     Socket.send(socket, PlayerViews.render(:tit, character))
     Socket.send(socket, PlayerViews.render(:fd, character))

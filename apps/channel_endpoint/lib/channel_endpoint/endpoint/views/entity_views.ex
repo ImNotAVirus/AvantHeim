@@ -3,7 +3,7 @@ defmodule ChannelEndpoint.Endpoint.EntityViews do
   TODO: Documentation
   """
 
-  alias FakeData.Character
+  alias CachingService.Player.Character
 
   alias ChannelEndpoint.Endpoint.EntityPackets.{
     CharSc,

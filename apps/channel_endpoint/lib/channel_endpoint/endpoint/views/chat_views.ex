@@ -3,8 +3,8 @@ defmodule ChannelEndpoint.Endpoint.ChatViews do
   TODO: Documentation
   """
 
+  alias CachingService.Player.Character
   alias ChannelEndpoint.Endpoint.ChatPackets.{Bn, Say}
-  alias FakeData.Character
 
   ## Public API
 

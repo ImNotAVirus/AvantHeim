@@ -8,8 +8,7 @@ defmodule CachingService.Application do
   @impl true
   def start(_type, _args) do
     children = [
-      # Starts a worker by calling: CachingService.Worker.start_link(arg)
-      # {CachingService.Worker, arg}
+      CachingService.CharacterRegistry
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
