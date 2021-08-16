@@ -41,7 +41,7 @@ defmodule ChannelEndpoint.Endpoint.EntityViews do
       entity_id: character.id,
       no_attack: FakeData.no_attack(character_id: character.id),
       no_move: FakeData.no_move(character_id: character.id),
-      speed: FakeData.speed(character_id: character.id)
+      speed: character.speed
     }
   end
 end

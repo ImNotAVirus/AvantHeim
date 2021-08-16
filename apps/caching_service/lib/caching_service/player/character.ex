@@ -3,7 +3,7 @@ defmodule CachingService.Player.Character do
   TODO: Documentation
   """
 
-  @attributes [
+  @db_attributes [
     :id,
     :name,
     :gender,
@@ -22,14 +22,19 @@ defmodule CachingService.Player.Character do
     :hero_level_xp
   ]
 
+  @virtual_attributes [
+    :speed
+  ]
+
   use Memento.Table,
     type: :ordered_set,
     index: [:map_vnum],
-    attributes: @attributes
+    attributes: @db_attributes ++ @virtual_attributes
 
   alias DatabaseService.Players.Character, as: DBCharacter
 
   @type t :: %__MODULE__{
+          # DB attributes
           id: pos_integer,
           name: String.t(),
           gender: atom,
@@ -45,15 +50,23 @@ defmodule CachingService.Player.Character do
           hero_level: non_neg_integer,
           level_xp: non_neg_integer,
           job_level_xp: non_neg_integer,
-          hero_level_xp: non_neg_integer
+          hero_level_xp: non_neg_integer,
+          # Virtual attributes
+          speed: non_neg_integer
         }
 
   ## Public API
 
   @spec new(DBCharacter.t()) :: __MODULE__.t()
   def new(%DBCharacter{} = character) do
-    db_values = Map.take(character, @attributes)
-    struct!(__MODULE__, db_values)
+    default_values = %{
+      speed: 20
+    }
+
+    character
+    |> Map.take(@db_attributes)
+    |> then(&struct!(__MODULE__, &1))
+    |> Map.merge(default_values)
   end
 
   ## TODO: get_position

@@ -42,7 +42,6 @@ defmodule FakeData do
   def size(character_id: _), do: 10
   def item_morph(character_id: _), do: 0
 
-  def speed(character_id: _), do: 20
   def direction(character_id: _), do: :south
   def map_music(character_id: _), do: 1
   def no_attack(character_id: _), do: false
