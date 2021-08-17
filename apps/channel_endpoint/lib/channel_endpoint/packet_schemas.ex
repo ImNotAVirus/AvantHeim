@@ -69,24 +69,8 @@ defmodule ChannelEndpoint.PacketSchemas do
   ## Commands
   ## TODO: Clean
 
-  # > $speed
-  # Usage: $speed <get|set> [value:integer]
-  #
-  # > $speed test
-  # Unknown args 'test' for `$speed`
-  # Usage: $speed <get|set> [value:integer]
-  #
-  # > $speed set test
-  # Invalid value 'test' for `$speed`
-  # Usage: $speed <get|set> [value:integer]
-  #
-  # > $speed get
-  # Current speed: 30
-  # 
-  # > $speed set 50
-  # Your speed is now 50
-
   def parse_packet_args(["$speed" | args], _socket), do: {:ok, {"$speed", args}}
+  def parse_packet_args(["$name" | args], _socket), do: {:ok, {"$name", args}}
 
   def resolve("$speed", args, socket) do
     %{character_id: character_id} = socket.assigns
@@ -101,6 +85,21 @@ defmodule ChannelEndpoint.PacketSchemas do
     |> then(&Core.Socket.send(socket, &1))
 
     ChannelEndpoint.Endpoint.SpeedCommand.handle_command("$speed", args, socket)
+  end
+
+  def resolve("$name", args, socket) do
+    %{character_id: character_id} = socket.assigns
+    {:ok, character} = CachingService.get_character_by_id(character_id)
+
+    :say
+    |> ChannelEndpoint.Endpoint.ChatViews.render(%{
+      entity: character,
+      color: :special_gold,
+      message: cmdline("$name", args)
+    })
+    |> then(&Core.Socket.send(socket, &1))
+
+    ChannelEndpoint.Endpoint.NameCommand.handle_command("$name", args, socket)
   end
 
   @prefix ">"

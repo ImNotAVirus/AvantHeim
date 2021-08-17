@@ -3,11 +3,16 @@ defmodule ChannelEndpoint.Endpoint.UIViews do
   TODO: Documentation
   """
 
-  alias ChannelEndpoint.Endpoint.UIPackets.{Info, Scene}
+  alias CachingService.Player.Character
+  alias ChannelEndpoint.Endpoint.UIPackets.{Cancel, Info, Scene}
 
   ## Public API
 
   @spec render(atom, any) :: any
   def render(:info, %{message: message}), do: %Info{message: message}
   def render(:scene, %{scene_id: scene_id}), do: %Scene{scene_id: scene_id}
+
+  def render(:cancel, %{type: type, entity: %Character{id: id}}) do
+    %Cancel{type: type, entity_id: id}
+  end
 end

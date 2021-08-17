@@ -5,10 +5,10 @@ defmodule ChannelEndpoint.Endpoint.PlayerActions do
 
   alias Core.Socket
 
+  alias ChannelEndpoint.Endpoint.PacketHelpers
+
   alias ChannelEndpoint.Endpoint.{
     ChatViews,
-    EntityViews,
-    MapViews,
     PlayerViews,
     UIViews
   }
@@ -24,17 +24,7 @@ defmodule ChannelEndpoint.Endpoint.PlayerActions do
     Socket.send(socket, PlayerViews.render(:fd, character))
     # TODO: Socket.send(socket, PlayerViews.render(:ski, character))
 
-    # TODO: ChannelMapSerice.change_map(character)
-    Socket.send(socket, PlayerViews.render(:c_info, character))
-    Socket.send(socket, EntityViews.render(:c_mode, character))
-    Socket.send(socket, PlayerViews.render(:lev, character))
-    Socket.send(socket, PlayerViews.render(:stat, character))
-    Socket.send(socket, MapViews.render(:at, character))
-    Socket.send(socket, MapViews.render(:c_map, character))
-    # TODO: Socket.send(socket, PlayerViews.render(:sc, character))
-    Socket.send(socket, EntityViews.render(:char_sc, character))
-    Socket.send(socket, EntityViews.render(:cond, character))
-    # ENDOF Change map
+    PacketHelpers.player_map_enter(character, socket)
 
     Socket.send(socket, PlayerViews.render(:rsfi, character))
     Socket.send(socket, PlayerViews.render(:fs, character))

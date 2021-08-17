@@ -16,7 +16,7 @@ defmodule ChannelEndpoint.Endpoint.ChatViews do
     %Say{
       entity_type: :character,
       entity_id: entity.id,
-      color: Map.get(attrs, :color),
+      color: Map.get(attrs, :color, :default),
       message: message
     }
   end
