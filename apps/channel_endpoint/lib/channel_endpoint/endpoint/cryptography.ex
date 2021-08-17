@@ -23,7 +23,7 @@ defmodule ChannelEndpoint.Endpoint.Cryptography do
   def encrypt(packet) do
     bytes =
       packet
-      |> to_charlist()
+      |> :unicode.characters_to_list(:utf8)
       |> Enum.with_index()
 
     length = length(bytes)
@@ -90,7 +90,13 @@ defmodule ChannelEndpoint.Endpoint.Cryptography do
 
   @spec do_unpack(binary, [<<_::8>>, ...], [binary]) :: packet
   defp do_unpack(binary, chars_to_unpack, result \\ [])
-  defp do_unpack("", _, result), do: result |> Enum.reverse() |> Enum.join()
+
+  defp do_unpack("", _, result) do
+    result
+    |> Enum.reverse()
+    |> Enum.join()
+    |> :unicode.characters_to_binary(:latin1)
+  end
 
   defp do_unpack(<<byte::size(8), rest::binary>>, chars_to_unpack, result) do
     is_packed = (byte &&& 0x80) > 0
