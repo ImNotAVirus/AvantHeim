@@ -21,7 +21,7 @@ defmodule ChannelEndpoint.Endpoint.EntityViews do
       morph: FakeData.morph(character_id: character.id),
       morph_upgrade: FakeData.morph_upgrade(character_id: character.id),
       morph_design: FakeData.morph_design(character_id: character.id),
-      arena_winner: FakeData.arena_winner(character_id: character.id),
+      is_arena_winner: FakeData.is_arena_winner(character_id: character.id),
       size: FakeData.size(character_id: character.id),
       item_morph: FakeData.item_morph(character_id: character.id)
     }

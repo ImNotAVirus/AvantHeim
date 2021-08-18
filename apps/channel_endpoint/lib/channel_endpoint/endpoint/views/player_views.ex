@@ -78,10 +78,10 @@ defmodule ChannelEndpoint.Endpoint.PlayerViews do
       reputation_icon_id: FakeData.reputation_icon_id(character_id: character.id),
       compliment: FakeData.compliment(character_id: character.id),
       morph: FakeData.morph(character_id: character.id),
-      invisible: FakeData.invisible(character_id: character.id),
+      is_invisible: FakeData.is_invisible(character_id: character.id),
       family_level: FakeData.family_level(character_id: character.id),
       morph_upgrade: FakeData.morph_upgrade(character_id: character.id),
-      arena_winner: FakeData.arena_winner(character_id: character.id)
+      is_arena_winner: FakeData.is_arena_winner(character_id: character.id)
     }
   end
 end

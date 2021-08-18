@@ -24,7 +24,7 @@ defmodule ChannelEndpoint.Endpoint.PlayerActions do
     Socket.send(socket, PlayerViews.render(:fd, character))
     # TODO: Socket.send(socket, PlayerViews.render(:ski, character))
 
-    PacketHelpers.map_enter(character, socket)
+    PacketHelpers.map_enter(character)
 
     Socket.send(socket, PlayerViews.render(:rsfi, character))
     Socket.send(socket, PlayerViews.render(:fs, character))

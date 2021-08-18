@@ -63,7 +63,7 @@ defmodule ChannelEndpoint.Endpoint.LobbyPackets.Clist do
       class_val,
       level,
       hero_level,
-      equipments,
+      serialize_term(equipments, joiner: ".", as: :integer),
       job_level,
       quest_completion,
       quest_part,

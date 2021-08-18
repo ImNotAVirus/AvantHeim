@@ -7,6 +7,7 @@ defmodule CachingService.CharacterRegistry do
 
   require Logger
 
+  alias Core.Socket
   alias CachingService.Player.Character
   alias DatabaseService.Players.Character, as: DBCharacter
 
@@ -19,10 +20,10 @@ defmodule CachingService.CharacterRegistry do
 
   ## Interfaces
 
-  @spec init_character(DBCharacter.t()) :: {:ok, Character.t()} | {:error, any}
-  def init_character(%DBCharacter{} = character) do
+  @spec init_character(DBCharacter.t(), Socket.t()) :: {:ok, Character.t()} | {:error, any}
+  def init_character(%DBCharacter{} = character, %Socket{} = socket) do
     Memento.transaction(fn ->
-      character |> Character.new() |> Memento.Query.write()
+      character |> Character.new(socket) |> Memento.Query.write()
     end)
   end
 
@@ -39,6 +40,12 @@ defmodule CachingService.CharacterRegistry do
   @spec delete_character_by_id(pos_integer) :: {:ok, Character.t()} | {:error, any}
   def delete_character_by_id(id) do
     Memento.transaction(fn -> Memento.Query.delete(Character, id) end)
+  end
+
+  @spec get_characters_by_map_id(pos_integer, [tuple]) :: {:ok, [Character.t()]} | {:error, any}
+  def get_characters_by_map_id(map_id, except_guards \\ []) do
+    guards = [{:==, :map_id, map_id} | except_guards]
+    Memento.transaction(fn -> Memento.Query.select(Character, guards) end)
   end
 
   ## GenServer behaviour

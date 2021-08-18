@@ -17,7 +17,7 @@ defmodule ChannelEndpoint.Endpoint.EntityPackets.CMode do
     :morph,
     :morph_upgrade,
     :morph_design,
-    :arena_winner,
+    :is_arena_winner,
     :size,
     :item_morph
   ]
@@ -29,7 +29,7 @@ defmodule ChannelEndpoint.Endpoint.EntityPackets.CMode do
           morph: non_neg_integer,
           morph_upgrade: non_neg_integer,
           morph_design: non_neg_integer,
-          arena_winner: boolean,
+          is_arena_winner: boolean,
           size: pos_integer,
           item_morph: non_neg_integer
         }
@@ -42,7 +42,7 @@ defmodule ChannelEndpoint.Endpoint.EntityPackets.CMode do
       morph: morph,
       morph_upgrade: morph_upgrade,
       morph_design: morph_design,
-      arena_winner: arena_winner,
+      is_arena_winner: is_arena_winner,
       size: size,
       item_morph: item_morph
     } = struct
@@ -54,7 +54,7 @@ defmodule ChannelEndpoint.Endpoint.EntityPackets.CMode do
       morph,
       morph_upgrade,
       morph_design,
-      arena_winner,
+      is_arena_winner,
       size,
       item_morph
     ]

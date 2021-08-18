@@ -35,7 +35,7 @@ defmodule ChannelEndpoint.Endpoint.LobbyActions do
           socket
 
         character ->
-          {:ok, _} = CachingService.init_character(character)
+          {:ok, _} = CachingService.init_character(character, socket)
           Socket.send(socket, LobbyViews.render(:ok, nil))
           Socket.assign(socket, character_id: character.id)
       end

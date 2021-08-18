@@ -3,6 +3,7 @@ defmodule ChannelEndpoint.Endpoint.MapViews do
   TODO: Documentation
   """
 
+  alias CachingService.Position
   alias CachingService.Player.Character
 
   alias ChannelEndpoint.Endpoint.MapPackets.{
@@ -14,11 +15,11 @@ defmodule ChannelEndpoint.Endpoint.MapViews do
 
   @spec render(atom, any) :: any
   def render(:at, %Character{} = character) do
-    %FakeData.Position{
+    %Position{
       map_vnum: map_vnum,
       map_x: map_x,
       map_y: map_y
-    } = FakeData.get_position(character_id: character.id)
+    } = Character.get_position(character)
 
     %At{
       character_id: character.id,
@@ -31,10 +32,10 @@ defmodule ChannelEndpoint.Endpoint.MapViews do
   end
 
   def render(:c_map, %Character{} = character) do
-    %FakeData.Position{
+    %Position{
       map_vnum: map_vnum,
       is_instance: is_instance
-    } = FakeData.get_position(character_id: character.id)
+    } = Character.get_position(character)
 
     %CMap{
       map_vnum: map_vnum,

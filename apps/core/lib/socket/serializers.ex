@@ -21,15 +21,24 @@ defmodule Core.Socket.Serializers do
 
   defimpl Core.Socket.SerializerProtocol, for: Atom do
     def serialize(data, opts) do
-      {as, new_opts} = Keyword.pop(opts, :as)
+      {as, _new_opts} = Keyword.pop(opts, :as)
 
       case {data, as} do
-        {nil, :string} -> "-"
-        {nil, :integer} -> "-1"
-        {nil, _} -> "-1"
-        {true, _} -> "1"
-        {false, _} -> "0"
-        {x, _} -> x |> Atom.to_string() |> serialize_term(new_opts)
+        {nil, :string} ->
+          "-"
+
+        {nil, :integer} ->
+          "-1"
+
+        {true, _} ->
+          "1"
+
+        {false, _} ->
+          "0"
+
+        {x, _} ->
+          raise "can't serialize atom: #{inspect(x)}. " <>
+                  "Try to use :as options or call serialize_term/2"
       end
     end
   end

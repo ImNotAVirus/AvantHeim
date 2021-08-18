@@ -33,7 +33,7 @@ defmodule ChannelEndpoint.Endpoint.NameCommand do
       {:ok, new_char} = CachingService.write_character(%Character{character | name: name})
 
       Socket.send(socket, UIViews.render(:cancel, %{type: 2, entity: new_char}))
-      PacketHelpers.map_enter(new_char, socket)
+      PacketHelpers.map_enter(new_char)
 
       send_message(socket, new_char, "Your character name is now #{name}", :special_green)
     else

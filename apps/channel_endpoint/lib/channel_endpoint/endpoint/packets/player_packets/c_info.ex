@@ -30,10 +30,10 @@ defmodule ChannelEndpoint.Endpoint.PlayerPackets.CInfo do
     :reputation_icon_id,
     :compliment,
     :morph,
-    :invisible,
+    :is_invisible,
     :family_level,
     :morph_upgrade,
-    :arena_winner
+    :is_arena_winner
   ]
   defstruct @enforce_keys
 
@@ -43,7 +43,7 @@ defmodule ChannelEndpoint.Endpoint.PlayerPackets.CInfo do
           group_id: integer,
           family_id: integer,
           family_rank: atom,
-          family_name: String.t(),
+          family_name: String.t() | nil,
           name_color_id: non_neg_integer,
           gender: atom,
           hair_style: atom,
@@ -52,10 +52,10 @@ defmodule ChannelEndpoint.Endpoint.PlayerPackets.CInfo do
           reputation_icon_id: integer,
           compliment: non_neg_integer,
           morph: non_neg_integer,
-          invisible: boolean,
+          is_invisible: boolean,
           family_level: non_neg_integer,
           morph_upgrade: non_neg_integer,
-          arena_winner: boolean
+          is_arena_winner: boolean
         }
 
   @impl true
@@ -75,10 +75,10 @@ defmodule ChannelEndpoint.Endpoint.PlayerPackets.CInfo do
       reputation_icon_id: reputation_icon_id,
       compliment: compliment,
       morph: morph,
-      invisible: invisible,
+      is_invisible: is_invisible,
       family_level: family_level,
       morph_upgrade: morph_upgrade,
-      arena_winner: arena_winner
+      is_arena_winner: is_arena_winner
     } = struct
 
     family_i18n =
@@ -91,7 +91,7 @@ defmodule ChannelEndpoint.Endpoint.PlayerPackets.CInfo do
       "-",
       group_id,
       family_i18n,
-      family_name,
+      serialize_term(family_name, as: :string),
       character_id,
       name_color_id,
       gender(gender),
@@ -101,10 +101,10 @@ defmodule ChannelEndpoint.Endpoint.PlayerPackets.CInfo do
       reputation_icon_id,
       compliment,
       morph,
-      invisible,
+      is_invisible,
       family_level,
       morph_upgrade,
-      arena_winner
+      is_arena_winner
     ]
   end
 
