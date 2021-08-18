@@ -16,7 +16,8 @@ inputs =
       packet: 2,
       field: 2,
       field: 3,
-      resolve: 2
+      resolve: 2,
+      defcommand: 2
     ]
   ]
 ]

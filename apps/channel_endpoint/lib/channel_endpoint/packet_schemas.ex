@@ -3,7 +3,7 @@ defmodule ChannelEndpoint.PacketSchemas do
   TODO: Documentation
   """
 
-  use Core.PacketSchema
+  use Core.{CommandSchema, PacketSchema}
 
   alias ChannelEndpoint.Endpoint.{
     LobbyActions,
@@ -67,43 +67,7 @@ defmodule ChannelEndpoint.PacketSchemas do
   end
 
   ## Commands
-  ## TODO: Clean
 
-  def parse_packet_args(["$speed" | args], _socket), do: {:ok, {"$speed", args}}
-  def parse_packet_args(["$name" | args], _socket), do: {:ok, {"$name", args}}
-
-  def resolve("$speed", args, socket) do
-    %{character_id: character_id} = socket.assigns
-    {:ok, character} = CachingService.get_character_by_id(character_id)
-
-    :say
-    |> ChannelEndpoint.Endpoint.ChatViews.render(%{
-      entity: character,
-      color: :special_gold,
-      message: cmdline("$speed", args)
-    })
-    |> then(&Core.Socket.send(socket, &1))
-
-    ChannelEndpoint.Endpoint.SpeedCommand.handle_command("$speed", args, socket)
-  end
-
-  def resolve("$name", args, socket) do
-    %{character_id: character_id} = socket.assigns
-    {:ok, character} = CachingService.get_character_by_id(character_id)
-
-    :say
-    |> ChannelEndpoint.Endpoint.ChatViews.render(%{
-      entity: character,
-      color: :special_gold,
-      message: cmdline("$name", args)
-    })
-    |> then(&Core.Socket.send(socket, &1))
-
-    ChannelEndpoint.Endpoint.NameCommand.handle_command("$name", args, socket)
-  end
-
-  @prefix ">"
-  defp cmdline(cmd, args) do
-    "#{@prefix} #{cmd} #{Enum.join(args, " ")}"
-  end
+  defcommand "speed", ChannelEndpoint.Endpoint.SpeedCommand
+  defcommand "name", ChannelEndpoint.Endpoint.NameCommand
 end
