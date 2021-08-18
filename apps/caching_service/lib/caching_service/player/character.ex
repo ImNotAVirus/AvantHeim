@@ -22,14 +22,14 @@ defmodule CachingService.Player.Character do
     :hero_level_xp
   ]
 
-  @virtual_attributes [
-    :speed
-  ]
+  @virtual_attributes %{
+    speed: 20
+  }
 
   use Memento.Table,
     type: :ordered_set,
     index: [:map_vnum],
-    attributes: @db_attributes ++ @virtual_attributes
+    attributes: @db_attributes ++ Map.keys(@virtual_attributes)
 
   alias DatabaseService.Players.Character, as: DBCharacter
 
@@ -59,14 +59,10 @@ defmodule CachingService.Player.Character do
 
   @spec new(DBCharacter.t()) :: __MODULE__.t()
   def new(%DBCharacter{} = character) do
-    default_values = %{
-      speed: 20
-    }
-
     character
     |> Map.take(@db_attributes)
+    |> Map.merge(@virtual_attributes)
     |> then(&struct!(__MODULE__, &1))
-    |> Map.merge(default_values)
   end
 
   ## TODO: get_position
