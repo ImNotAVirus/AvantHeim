@@ -57,12 +57,12 @@ defmodule LoginEndpoint.Endpoint.AuthActions do
   end
 
   defp check_credentials(%{token: token}, socket) do
-    decoded_token = Base.decode16!(token)
+    [decoded_token, username] = token |> Base.decode16!() |> String.split(":", parts: 2)
 
     # TODO: Finish the launcher and use caching service
     if decoded_token == "deadbeef" do
-      password = :crypto.hash(:sha512, "admin") |> Base.encode16()
-      check_credentials(%{username: "admin", password: password}, socket)
+      password = :crypto.hash(:sha512, username) |> Base.encode16()
+      check_credentials(%{username: username, password: password}, socket)
     else
       {:error, :bad_credentials}
     end

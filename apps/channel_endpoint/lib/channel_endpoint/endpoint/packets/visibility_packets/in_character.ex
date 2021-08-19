@@ -1,6 +1,8 @@
 defmodule ChannelEndpoint.Endpoint.VisibilityPackets.InCharacter do
   @moduledoc """
   TODO: Documentation.
+
+  FIXME: Some fields are probably wrong
   """
 
   use Core.SerializableStruct
