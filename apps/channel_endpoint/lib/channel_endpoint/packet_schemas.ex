@@ -7,7 +7,8 @@ defmodule ChannelEndpoint.PacketSchemas do
 
   alias ChannelEndpoint.Endpoint.{
     LobbyActions,
-    PlayerActions
+    GameActions,
+    MapActions
   }
 
   ## Ignore some packets
@@ -63,7 +64,18 @@ defmodule ChannelEndpoint.PacketSchemas do
   # Example: "game_start"
   #######
   packet "game_start" do
-    resolve PlayerActions, :game_start
+    resolve GameActions, :game_start
+  end
+
+  ## Area packets
+
+  packet "walk" do
+    field :pos_x, :integer
+    field :pos_y, :integer
+    field :checksum, :integer
+    field :speed, :integer
+
+    resolve MapActions, :walk
   end
 
   ## Commands

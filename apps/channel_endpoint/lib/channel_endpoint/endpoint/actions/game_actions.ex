@@ -1,11 +1,10 @@
-defmodule ChannelEndpoint.Endpoint.PlayerActions do
+defmodule ChannelEndpoint.Endpoint.GameActions do
   @moduledoc """
   TODO: Documentation
   """
 
   alias Core.Socket
-
-  alias ChannelEndpoint.Endpoint.PacketHelpers
+  alias ChannelEndpoint.Endpoint.EntityInteractions
 
   alias ChannelEndpoint.Endpoint.{
     ChatViews,
@@ -24,7 +23,7 @@ defmodule ChannelEndpoint.Endpoint.PlayerActions do
     Socket.send(socket, PlayerViews.render(:fd, character))
     # TODO: Socket.send(socket, PlayerViews.render(:ski, character))
 
-    PacketHelpers.map_enter(character)
+    EntityInteractions.map_enter(character)
 
     Socket.send(socket, PlayerViews.render(:rsfi, character))
     Socket.send(socket, PlayerViews.render(:fs, character))

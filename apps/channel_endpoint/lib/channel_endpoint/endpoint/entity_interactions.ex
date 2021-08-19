@@ -1,4 +1,4 @@
-defmodule ChannelEndpoint.Endpoint.PacketHelpers do
+defmodule ChannelEndpoint.Endpoint.EntityInteractions do
   @moduledoc """
   TODO: Break theses functions into another modules
   """
@@ -14,7 +14,7 @@ defmodule ChannelEndpoint.Endpoint.PacketHelpers do
     VisibilityViews
   }
 
-  @spec map_enter(Character.t()) :: :ok | {:error, atom}
+  @spec map_enter(Character.t()) :: :ok
   def map_enter(%Character{} = character) do
     ## Self packets
     Socket.send(character.socket, PlayerViews.render(:c_info, character))
@@ -34,15 +34,47 @@ defmodule ChannelEndpoint.Endpoint.PacketHelpers do
     Enum.each(players, &send_visibility_packets(character, &1))
   end
 
-  @spec set_speed(Character.t()) :: :ok | {:error, atom}
-  def set_speed(%Character{} = character) do
-    Socket.send(character.socket, EntityViews.render(:cond, character))
+  @spec set_speed(Character.t(), 0..59) :: {:ok, new_char :: Character.t()} | {:error, atom}
+  def set_speed(%Character{} = character, new_speed) do
+    new_char = %Character{character | speed: new_speed}
+
+    case CachingService.write_character(new_char) do
+      {:ok, new_char} ->
+        broadcast_on_map(new_char, EntityViews.render(:cond, new_char))
+        {:ok, new_char}
+
+      {:error, _} = x ->
+        x
+    end
+  end
+
+  @spec move(Character.t(), non_neg_integer, non_neg_integer) ::
+          {:ok, new_char :: Character.t()} | {:error, atom}
+  def move(%Character{} = character, new_x, new_y) do
+    new_char = %Character{character | map_x: new_x, map_y: new_y}
+
+    case CachingService.write_character(new_char) do
+      {:ok, new_char} ->
+        broadcast_on_map(new_char, MapViews.render(:mv, new_char), false)
+        {:ok, new_char}
+
+      {:error, _} = x ->
+        x
+    end
   end
 
   ## Private functions
 
+  @spec broadcast_on_map(Character.t(), any, boolean) :: :ok
+  defp broadcast_on_map(%Character{} = character, packet, including_self \\ true) do
+    guards = if including_self, do: [], else: [{:!==, :id, character.id}]
+    %Position{map_id: map_id} = Character.get_position(character)
+    {:ok, players} = CachingService.get_characters_by_map_id(map_id, guards)
+    Enum.each(players, &Socket.send(&1.socket, packet))
+  end
+
   @spec send_visibility_packets(Character.t(), Character.t()) :: :ok | {:error, atom}
-  def send_visibility_packets(self, character) do
+  defp send_visibility_packets(self, character) do
     Socket.send(self.socket, VisibilityViews.render(:in, character))
     Socket.send(character.socket, VisibilityViews.render(:in, self))
   end

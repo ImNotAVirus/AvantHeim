@@ -4,9 +4,8 @@ defmodule ChannelEndpoint.Endpoint.SpeedCommand do
   """
 
   alias Core.Socket
-  alias CachingService.Player.Character
   alias ChannelEndpoint.Endpoint.ChatViews
-  alias ChannelEndpoint.Endpoint.PacketHelpers
+  alias ChannelEndpoint.Endpoint.EntityInteractions
 
   ## Public API
 
@@ -41,8 +40,7 @@ defmodule ChannelEndpoint.Endpoint.SpeedCommand do
       ["set", str_val] = args ->
         case Integer.parse(str_val) do
           {value, ""} when value in 0..59 ->
-            {:ok, new_char} = CachingService.write_character(%Character{character | speed: value})
-            PacketHelpers.set_speed(new_char)
+            {:ok, new_char} = EntityInteractions.set_speed(character, value)
             send_message(socket, new_char, "Your speed is now #{value}", :special_green)
 
           _ ->

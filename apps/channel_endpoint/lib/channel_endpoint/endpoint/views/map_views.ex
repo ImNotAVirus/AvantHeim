@@ -8,7 +8,8 @@ defmodule ChannelEndpoint.Endpoint.MapViews do
 
   alias ChannelEndpoint.Endpoint.MapPackets.{
     At,
-    CMap
+    CMap,
+    Mv
   }
 
   ## Public API
@@ -40,6 +41,21 @@ defmodule ChannelEndpoint.Endpoint.MapViews do
     %CMap{
       map_vnum: map_vnum,
       is_static_map: not is_instance
+    }
+  end
+
+  def render(:mv, %Character{} = character) do
+    %Position{
+      map_x: map_x,
+      map_y: map_y
+    } = Character.get_position(character)
+
+    %Mv{
+      entity_type: :character,
+      entity_id: character.id,
+      map_x: map_x,
+      map_y: map_y,
+      speed: character.speed
     }
   end
 end
