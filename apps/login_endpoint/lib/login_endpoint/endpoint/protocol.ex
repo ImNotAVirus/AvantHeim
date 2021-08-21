@@ -78,8 +78,15 @@ defmodule LoginEndpoint.Endpoint.Protocol do
   defp parse_message(message, socket) do
     with {:ok, decrypted} <- decrypt_message(message, socket),
          packet <- String.replace_trailing(decrypted, "\n", ""),
-         splitted <- String.split(packet, @separator) do
-      @packet_schemas.parse_packet_args(splitted, socket)
+         split <- split_header(packet) do
+      @packet_schemas.parse(split, socket, separator: @separator)
+    end
+  end
+
+  defp split_header(packet) do
+    case String.split(packet, @separator, parts: 2) do
+      [header, bin_args] -> {header, bin_args}
+      [header] -> {header, ""}
     end
   end
 

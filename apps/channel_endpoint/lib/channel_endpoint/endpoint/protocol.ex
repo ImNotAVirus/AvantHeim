@@ -130,13 +130,20 @@ defmodule ChannelEndpoint.Endpoint.Protocol do
           packets
           |> Stream.map(&String.replace_trailing(&1, "\n", ""))
           |> Stream.map(&String.replace_trailing(&1, " ", ""))
-          |> Stream.map(&String.split(&1, @separator))
-          |> Enum.map(&@packet_schemas.parse_packet_args(&1, socket))
+          |> Stream.map(&split_header/1)
+          |> Enum.map(&@packet_schemas.parse(&1, socket, separator: @separator))
 
         {:ok, result}
 
       e ->
         {:error, "Unable to decrypt packets (#{inspect(e)})"}
+    end
+  end
+
+  defp split_header(packet) do
+    case String.split(packet, @separator, parts: 2) do
+      [header, bin_args] -> {header, bin_args}
+      [header] -> {header, ""}
     end
   end
 
@@ -161,12 +168,14 @@ defmodule ChannelEndpoint.Endpoint.Protocol do
   end
 
   defp resolve_packet({:ignore, {header, args}}, socket) do
-    Logger.debug("Ignored packet '#{header}' with args #{inspect(args)}")
+    split = String.split(args, @separator)
+    Logger.debug("Ignored packet '#{header}' with args #{inspect(split)}")
     {:cont, socket}
   end
 
-  defp resolve_packet({:error, :invalid, [header | args]}, socket) do
-    Logger.warn("Invalid packet '#{header}' with args #{inspect(args)}", socket_id: socket.id)
+  defp resolve_packet({:error, :invalid, {header, args}}, socket) do
+    split = String.split(args, @separator)
+    Logger.warn("Unknown packet '#{header}' with args #{inspect(split)}", socket_id: socket.id)
     {:cont, socket}
   end
 end

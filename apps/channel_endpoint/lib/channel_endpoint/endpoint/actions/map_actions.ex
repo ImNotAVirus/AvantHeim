@@ -28,4 +28,10 @@ defmodule ChannelEndpoint.Endpoint.MapActions do
 
     {:cont, socket}
   end
+
+  @spec sit(String.t(), map, Socket.t()) :: {:cont, Socket.t()}
+  def sit("rest", params, %Socket{} = socket) do
+    IO.inspect(params)
+    {:cont, socket}
+  end
 end

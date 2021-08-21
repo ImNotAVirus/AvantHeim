@@ -3,6 +3,11 @@ defmodule Core.PacketSchema do
   TODO: Documentation
   """
 
+  @aliases %{
+    integer: Core.PacketSchema.Integer,
+    string: Core.PacketSchema.String
+  }
+
   ## Public API
 
   @doc false
@@ -13,6 +18,7 @@ defmodule Core.PacketSchema do
       @before_compile unquote(__MODULE__)
 
       unquote(prelude())
+      unquote(define_helpers())
     end
   end
 
@@ -21,13 +27,11 @@ defmodule Core.PacketSchema do
   """
   defmacro ignore_packet(header) do
     quote do
-      def resolve(unquote(header), args, socket) do
-        {:cont, socket}
+      if Map.has_key?(@packet_defs, unquote(header)) do
+        raise "can't ignore packet #{inspect(unquote(header))} because handler is already defined"
       end
 
-      def parse_packet_args([unquote(header) | args], socket) do
-        {:ignore, {unquote(header), args}}
-      end
+      @packet_defs Map.put(@packet_defs, unquote(header), :ignore)
     end
   end
 
@@ -44,13 +48,22 @@ defmodule Core.PacketSchema do
   end
 
   defmacro field(name, type, opts \\ []) do
+    expanded_type =
+      type
+      |> Macro.expand(__CALLER__)
+      |> then(&Map.get(@aliases, &1, &1))
+      |> Code.ensure_compiled!()
+
     quote do
-      @packet_fields {unquote(name), unquote(type), unquote(Keyword.get(opts, :using))}
+      @packet_fields {unquote(name), unquote(expanded_type), unquote(opts)}
     end
   end
 
   defmacro resolve(module, function) do
-    expanded_module = Macro.expand(module, __CALLER__)
+    expanded_module =
+      module
+      |> Macro.expand(__CALLER__)
+      |> Code.ensure_compiled!()
 
     quote do
       @packet_resolver {unquote(expanded_module), unquote(function)}
@@ -60,27 +73,71 @@ defmodule Core.PacketSchema do
   ## Internal macros
 
   @doc false
-  defmacro __before_compile__(env) do
-    env.module
-    |> Module.get_attribute(:packet_defs)
-    |> Enum.reverse()
-    |> Enum.map(&define_handler/1)
-    |> Kernel.++([default_handlers()])
+  defmacro __before_compile__(_env) do
+    quote do
+      def parse({header, bin_args}, _socket, opts) do
+        case Map.get(@packet_defs, header) do
+          %{fields: fields} -> do_parse(header, bin_args, fields, opts)
+          :ignore -> {:ignore, {header, bin_args}}
+          nil -> {:error, :invalid, {header, bin_args}}
+        end
+      end
+
+      def resolve(header, args, socket) do
+        error = "unkown header #{inspect(header)} with args #{inspect(args)} (from #{socket.id})"
+
+        case Map.get(@packet_defs, header) do
+          %{resolver: {m, f}} -> apply(m, f, [header, args, socket])
+          :ignore -> {:cont, socket}
+          nil -> raise error
+        end
+      end
+    end
   end
 
   ## Internal functions
-
-  @doc false
-  def parse_arg!({value, name, :string}), do: {name, value}
-  def parse_arg!({value, name, :integer}), do: {name, String.to_integer(value)}
-  def parse_arg!({_, name, type}), do: raise("unknown field type: #{type} for #{name}")
 
   ## Private functions
 
   defp prelude() do
     quote do
-      Module.register_attribute(__MODULE__, :packet_defs, accumulate: true)
+      Module.register_attribute(__MODULE__, :packet_defs, persist: true)
+      @packet_defs %{}
+
       unquote(reset_context())
+    end
+  end
+
+  defp define_helpers() do
+    quote do
+      defp do_parse(header, bin_args, fields, opts) do
+        case parse_fields(bin_args, fields, opts) do
+          {:ok, fields} -> {:ok, {header, fields}}
+          :error -> {:error, :invalid, {header, bin_args}}
+        end
+      end
+
+      defp parse_fields(bin_args, field_defs, opts, results \\ %{})
+      defp parse_fields("", [], _, results), do: {:ok, results}
+      defp parse_fields("", _, _, results), do: :error
+      defp parse_fields(_, [], _, results), do: :error
+
+      defp parse_fields(bin_args, [{name, mod, field_opts} | rem_defs], parse_opts, results) do
+        {using, rem_opts} = Keyword.pop(field_opts, :using)
+        type_opts = Keyword.merge(parse_opts, rem_opts)
+        parsed_val = apply(mod, :parse, [bin_args, type_opts])
+
+        case {parsed_val, using} do
+          {{:ok, value, rem_bin}, nil} ->
+            parse_fields(rem_bin, rem_defs, parse_opts, Map.put(results, name, value))
+
+          {{:ok, value, rem_bin}, u} when value == u ->
+            parse_fields(rem_bin, rem_defs, parse_opts, Map.put(results, name, value))
+
+          _ ->
+            :error
+        end
+      end
     end
   end
 
@@ -98,11 +155,16 @@ defmodule Core.PacketSchema do
         raise "packet resolver must be defined for #{inspect(__MODULE__)}:#{@packet_header}"
       end
 
-      @packet_defs %{
-        header: @packet_header,
-        fields: Enum.reverse(@packet_fields),
-        resolver: @packet_resolver
-      }
+      case Map.get(@packet_defs, @packet_header) do
+        nil -> :ok
+        :ignore -> raise "can't define packet #{inspect(@packet_header)} because it's ignored"
+        _ -> raise "duplicate packet #{inspect(@packet_header)} found"
+      end
+
+      @packet_defs Map.put(@packet_defs, @packet_header, %{
+                     fields: Enum.reverse(@packet_fields),
+                     resolver: @packet_resolver
+                   })
     end
   end
 
@@ -111,62 +173,6 @@ defmodule Core.PacketSchema do
       Module.delete_attribute(__MODULE__, :packet_header)
       Module.delete_attribute(__MODULE__, :packet_fields)
       Module.delete_attribute(__MODULE__, :packet_resolver)
-    end
-  end
-
-  defp fields_to_args_ast(header, fields) do
-    fields
-    |> Enum.map(fn
-      {name, _type, nil} -> {name, [], __MODULE__}
-      {name, _type, using} -> {:=, [], [using, {name, [], __MODULE__}]}
-    end)
-    |> List.insert_at(0, header)
-  end
-
-  defp define_handler(def) do
-    %{
-      header: header,
-      fields: fields,
-      resolver: resolver
-    } = def
-
-    field_names = Enum.map(fields, &elem(&1, 0))
-    field_types = Enum.map(fields, &elem(&1, 1))
-    args_ast = fields_to_args_ast(header, fields)
-    {resolver_module, resolver_function} = resolver
-
-    quote do
-      def resolve(unquote(header), args, socket) do
-        apply(
-          unquote(resolver_module),
-          unquote(resolver_function),
-          [unquote(header), args, socket]
-        )
-      end
-
-      def parse_packet_args(unquote(args_ast) = split, socket) do
-        [unquote(header) | str_args] = split
-
-        args =
-          [str_args, unquote(field_names), unquote(field_types)]
-          |> Enum.zip()
-          |> Enum.map(&unquote(__MODULE__).parse_arg!/1)
-          |> Enum.into(%{})
-
-        {:ok, {unquote(header), args}}
-      end
-    end
-  end
-
-  defp default_handlers() do
-    quote do
-      def resolve(header, args, socket) do
-        raise "unkown resolver for '#{header}' with args #{inspect(args)} (from #{socket.id})"
-      end
-
-      def parse_packet_args(packet_args, socket) do
-        {:error, :invalid, packet_args}
-      end
     end
   end
 end

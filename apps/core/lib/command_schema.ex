@@ -22,22 +22,23 @@ defmodule Core.CommandSchema do
   defmacro defcommand(name, module) do
     cmdname = @command_prefix <> name
 
-    quote do
-      def parse_packet_args([unquote(cmdname) | args], _socket) do
-        {:ok, {unquote(cmdname), args}}
+    quote location: :keep do
+      def parse({unquote(cmdname), bin_args}, _socket, _opts) do
+        {:ok, {unquote(cmdname), bin_args}}
       end
 
-      def resolve(unquote(cmdname), args, socket) do
+      def resolve(unquote(cmdname), bin_args, socket) do
         say_attrs = %{
           entity_type: :character,
           entity_id: socket.assigns.character_id,
           color: :special_gold,
-          message: "#{unquote(@console_prefix)} #{unquote(cmdname)} #{Enum.join(args, " ")}"
+          message: "#{unquote(@console_prefix)} #{unquote(cmdname)} #{bin_args}"
         }
 
         render = ChannelEndpoint.Endpoint.ChatViews.render(:say, say_attrs)
         :ok = Core.Socket.send(socket, render)
 
+        args = String.split(bin_args, " ")
         unquote(module).handle_command(unquote(cmdname), args, socket)
       end
     end
