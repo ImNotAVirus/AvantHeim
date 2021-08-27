@@ -12,18 +12,20 @@ defmodule LoginEndpoint.PacketSchemas do
   # ---
   # Example: "NoS0575 4745632 admin [sha512_hash] 0047BA11\v0.9.3.3086 0 [md5_hash]"
   #######
-  packet "NoS0575" do
-    field :session_id, :integer
-    field :username, :string
-    field :password, :string
-    field :installation_guid, :string
-    field :unknown, :string
-    field :region_code, :integer
-    field :client_version, :string
-    field :always_0, :string, using: "0"
-    field :client_checksum, :string
+  if Mix.env() == :dev do
+    packet "NoS0575" do
+      field :session_id, :integer
+      field :username, :string
+      field :password, :string
+      field :installation_guid, :string
+      field :unknown, :string
+      field :region_code, :integer
+      field :client_version, :string
+      field :always_0, :string, using: "0"
+      field :client_checksum, :string
 
-    resolve AuthActions, :login
+      resolve AuthActions, :login
+    end
   end
 
   #######

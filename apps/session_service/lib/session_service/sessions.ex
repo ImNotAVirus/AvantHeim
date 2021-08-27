@@ -30,6 +30,18 @@ defmodule SessionService.Sessions do
     end
   end
 
+  if Mix.env() == :dev do
+    @spec authenticate(pos_integer, String.t(), ets_ctx) :: optional_session
+    def authenticate(0, username, {table_pid, _}) do
+      query = [{{:_, :"$1"}, [{:==, {:map_get, :username, :"$1"}, username}], [:"$1"]}]
+
+      case :ets.select(table_pid, query) do
+        [] -> nil
+        [session] -> session
+      end
+    end
+  end
+
   @spec authenticate(pos_integer, String.t(), ets_ctx) :: optional_session
   def authenticate(session_id, username, {table_pid, _}) do
     # :ets.fun2ms(fn {_, session} when session.id == 123 and session.username == "username" -> session end)

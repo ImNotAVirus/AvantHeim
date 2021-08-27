@@ -117,10 +117,18 @@ defmodule ChannelEndpoint.Endpoint.Protocol do
     String.to_integer(session_key)
   end
 
-  defp recv_username(new_socket) do
-    {:ok, [username, "thisisgfmode"]} = Socket.recv(new_socket, 0, @handshake_timeout)
-    [username, "GF 0"] = String.split(username, " ", parts: 2)
-    username
+  if Mix.env() == :dev do
+    defp recv_username(new_socket) do
+      {:ok, [username, _]} = Socket.recv(new_socket, 0, @handshake_timeout)
+      [username, _] = String.split(username, " ", parts: 2)
+      username
+    end
+  else
+    defp recv_username(new_socket) do
+      {:ok, [username, "thisisgfmode"]} = Socket.recv(new_socket, 0, @handshake_timeout)
+      [username, "GF 0"] = String.split(username, " ", parts: 2)
+      username
+    end
   end
 
   defp parse_message(message, socket) do
