@@ -14,7 +14,7 @@ defmodule ChannelEndpoint.Endpoint.ShopPackets.Buy do
 
   @type t :: %Buy{
     shop_type: atom,
-    entity_id: non_neg_integer,
+    entity_id: pos_integer,
     slot: non_neg_integer,
     amount: pos_integer
   }

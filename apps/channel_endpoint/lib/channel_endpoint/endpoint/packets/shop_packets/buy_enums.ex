@@ -5,8 +5,7 @@ defmodule ChannelEndpoint.Endpoint.ShopPackets.BuyEnums do
 
   import SimpleEnum, only: [defenum: 2]
 
-  defenum(:shop_type,
-    CharacterShop: 1,
-    ItemShop: 2
-  )
+  defenum :shop_type,
+    charactershop: 1,
+    itemshop: 2
 end
