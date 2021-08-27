@@ -14,6 +14,12 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
     VisibilityViews
   }
 
+  # TODO : Improve that to support pnj | mobs | mates
+  @spec show_effect(Character.t(), pos_integer) :: {:error, atom}
+  def show_effect(%Character{} = character, effect_value) do
+    broadcast_on_map(character, EntityViews.render(:eff, %{character: character, value: effect_value}))
+  end
+
   @spec map_enter(Character.t()) :: :ok
   def map_enter(%Character{} = character) do
     ## Self packets
