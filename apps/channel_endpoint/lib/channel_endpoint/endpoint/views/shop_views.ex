@@ -3,7 +3,6 @@ defmodule ChannelEndpoint.Endpoint.ShopViews do
   TODO: Documentation
   """
 
-  alias CachingService.Player.Character
   alias ChannelEndpoint.Endpoint.ShopPackets.Buy
 
   ## Public API
