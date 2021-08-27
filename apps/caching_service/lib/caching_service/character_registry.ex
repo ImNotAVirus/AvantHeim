@@ -1,6 +1,9 @@
 defmodule CachingService.CharacterRegistry do
   @moduledoc """
   TODO: Documentation
+
+  TODO: Clean this code: functions should no return `{:error, any}`
+  Cf. Memento doc
   """
 
   use GenServer
@@ -40,6 +43,16 @@ defmodule CachingService.CharacterRegistry do
   @spec delete_character_by_id(pos_integer) :: {:ok, Character.t()} | {:error, any}
   def delete_character_by_id(id) do
     Memento.transaction(fn -> Memento.Query.delete(Character, id) end)
+  end
+
+  @spec get_character_by_name(String.t()) :: {:ok, Character.t()} | {:error, any}
+  def get_character_by_name(name) do
+    res = Memento.transaction(fn -> Memento.Query.select(Character, {:==, :name, name}) end)
+
+    case res do
+      {:ok, []} -> {:ok, nil}
+      {:ok, [character]} -> {:ok, character}
+    end
   end
 
   @spec get_characters_by_map_id(pos_integer, [tuple]) :: {:ok, [Character.t()]} | {:error, any}
