@@ -47,10 +47,10 @@ defmodule ChannelEndpoint.Endpoint.EntityViews do
   end
 
   # TODO : Improve that to support pnj | mobs | mates
-  def render(:eff, %{character: character, value: value}) do
+  def render(:eff, %{entity: %Character{id: id}, value: value}) do
     %Eff{
       entity_type: :character,
-      entity_id: character.id,
+      entity_id: id,
       value: value
     }
   end
