@@ -29,6 +29,10 @@ defmodule ChannelEndpoint.Endpoint.EffectCommand do
         case Integer.parse(str_val) do
           {value, ""} ->
             EntityInteractions.show_effect(character, value)
+
+          _ ->
+            send_message(socket, character, "Invalid value '#{str_val}'", :special_red)
+            send_message(socket, character, usage(args), :special_red)
         end
 
       args ->
