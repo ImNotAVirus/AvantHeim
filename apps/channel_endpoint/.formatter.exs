@@ -14,5 +14,5 @@
 [
   inputs: ["{mix,.formatter}.exs", "{config,lib,test}/**/*.{ex,exs}"],
   # inputs: inputs,
-  import_deps: [:core]
+  import_deps: [:core, :simple_enum]
 ]

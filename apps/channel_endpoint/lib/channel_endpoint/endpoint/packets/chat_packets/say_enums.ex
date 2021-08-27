@@ -5,7 +5,7 @@ defmodule ChannelEndpoint.Endpoint.ChatPackets.SayEnums do
 
   import SimpleEnum, only: [defenum: 2]
 
-  defenum(:color_type,
+  defenum :color_type,
     white: -1,
     default: 0,
     group: 3,
@@ -19,5 +19,4 @@ defmodule ChannelEndpoint.Endpoint.ChatPackets.SayEnums do
     special_green: 12,
     special_grey: 13,
     effect_bar: 20
-  )
 end

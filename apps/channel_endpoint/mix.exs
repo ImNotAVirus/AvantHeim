@@ -30,7 +30,8 @@ defmodule ChannelEndpoint.MixProject do
       {:database_service, in_umbrella: true},
       {:session_service, in_umbrella: true},
       {:caching_service, in_umbrella: true},
-      {:ranch, "~> 2.0"}
+      {:ranch, "~> 2.0"},
+      {:simple_enum, github: "imnotavirus/simple_enum"}
     ]
   end
 end
