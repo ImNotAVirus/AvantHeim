@@ -17,25 +17,25 @@ defmodule ChannelEndpoint.Endpoint.GoldCommand do
   # Invalid value 'test'
   #
   # > $gold set 2_000_000_001
-  # DarkyZ have now 2_000_000_000 golds
+  # DarkyZ has now 2_000_000_000 golds
   #
   # > $gold set 666
-  # DarkyZ have now 666 golds
+  # DarkyZ has now 666 golds
   #
   # > $gold set -1
-  # DarkyZ have now 0 golds
+  # DarkyZ has now 0 golds
   #
   # > $gold set 0 to UnknowPlayer
   # UnknowPlayer is not logged
   #
   # > $gold set 3 to DarkyZ
-  # DarkyZ have now 3 golds
+  # DarkyZ has now 3 golds
   #
   # > $gold get
-  # Current DarkyZ gold: 0 golds
+  # Current DarkyZ's gold: 3 golds
   #
   # > $gold get from DarkyZ
-  # > Current DarkyZ gold: #{target.gold} golds
+  # > Current DarkyZ's gold: 3 golds
 
   @spec handle_command(String.t(), [String.t()], Socket.t()) :: {:cont, Socket.t()}
   def handle_command("$gold", args, socket) do
@@ -80,7 +80,7 @@ defmodule ChannelEndpoint.Endpoint.GoldCommand do
   end
 
   defp get_gold(socket, character, [_, str_val | _] = args, target) do
-    send_message(socket, character, "Current #{target.name} gold: #{target.gold} golds", :special_green)
+    send_message(socket, character, "Current #{target.name}'s gold: #{target.gold} golds", :special_green)
   end
 
   @spec set_gold(Socket.t(), Character.t(), [String.t()], Character.t()) :: :ok
@@ -88,7 +88,7 @@ defmodule ChannelEndpoint.Endpoint.GoldCommand do
     case Integer.parse(str_val) do
       {value, ""} ->
         {:ok, new_char} = EntityInteractions.set_player_gold(target, value)
-        send_message(socket, new_char, "#{new_char.name} have now #{new_char.gold} golds", :special_green)
+        send_message(socket, new_char, "#{new_char.name} has now #{new_char.gold} golds", :special_green)
 
       _ ->
         send_message(socket, character, "Invalid value '#{str_val}'", :special_red)
