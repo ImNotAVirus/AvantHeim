@@ -84,4 +84,5 @@ defmodule ChannelEndpoint.PacketSchemas do
   defcommand "name", ChannelEndpoint.Endpoint.NameCommand
   defcommand "effect", ChannelEndpoint.Endpoint.EffectCommand
   defcommand "gold", ChannelEndpoint.Endpoint.GoldCommand
+  defcommand "bank", ChannelEndpoint.Endpoint.BankCommand
 end
