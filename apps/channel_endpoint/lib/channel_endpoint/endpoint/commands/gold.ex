@@ -11,7 +11,7 @@ defmodule ChannelEndpoint.Endpoint.GoldCommand do
   ## Public API
 
   # > $gold
-  # Usage: $gold <get|set> [value:integer]
+  # Usage: $gold <get|set|add|sub> [from] [player_name:string] | [value:integer:0-2_000_000_000] [to] [player_name:string]
   #
   # > $gold set test
   # Invalid value 'test'
