@@ -11,9 +11,9 @@ defmodule ChannelEndpoint.Endpoint.UIPackets.Gold do
   defstruct @enforce_keys
 
   @type t :: %Gold{
-    gold: non_neg_integer,
-    bank_gold: non_neg_integer
-  }
+          gold: non_neg_integer,
+          bank_gold: non_neg_integer
+        }
 
   @impl true
   def serialize(%Gold{} = struct, _) do

@@ -44,14 +44,16 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
     )
   end
 
-  @spec set_player_gold(Character.t(), 0..2_000_000_000) :: {:ok, new_char :: Character.t()} | {:error, atom}
+  @spec set_player_gold(Character.t(), 0..2_000_000_000) ::
+          {:ok, new_char :: Character.t()} | {:error, atom}
   def set_player_gold(%Character{} = character, new_player_gold) do
     norms_gold = normalize_golds(new_player_gold, 2_000_000_000)
     new_char = %Character{character | gold: norms_gold}
     send_gold_ui(new_char)
   end
 
-  @spec set_bank_gold(Character.t(), 0..5_000_000_000) :: {:ok, new_char :: Character.t()} | {:error, atom}
+  @spec set_bank_gold(Character.t(), 0..5_000_000_000) ::
+          {:ok, new_char :: Character.t()} | {:error, atom}
   def set_bank_gold(%Character{} = character, new_bank_gold) do
     norms_gold = normalize_golds(new_bank_gold, 5_000_000_000)
     new_char = %Character{character | bank_gold: norms_gold}

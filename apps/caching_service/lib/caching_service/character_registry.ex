@@ -1,7 +1,7 @@
 defmodule CachingService.CharacterRegistry do
   @moduledoc """
   TODO: Documentation
-
+  
   TODO: Clean this code: functions should no return `{:error, any}`
   Cf. Memento doc
   """

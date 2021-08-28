@@ -90,12 +90,22 @@ defmodule ChannelEndpoint.Endpoint.GoldCommand do
   ## Private functions
 
   defp usage(["get" | _]), do: "Usage: $gold <get>"
-  defp usage(["set" | _]), do: "Usage: $gold <set> [value:integer:0-2_000_000_000] [to] [player_name:string]"
-  defp usage(["add" | _]), do: "Usage: $gold <add> [value:integer:0-2_000_000_000] [to] [player_name:string]"
-  defp usage(["sub" | _]), do: "Usage: $gold <sub> [value:integer:0-2_000_000_000] [to] [player_name:string]"
-  defp usage(_), do: "Usage: $gold <get|set|add|sub> [from] [player_name:string] | [value:integer:0-2_000_000_000] [to] [player_name:string]"
 
-  @spec apply_on_character(Socket.t(), Character.t(), [String.t()], String.t(), any) :: {:ok, Character.t()}
+  defp usage(["set" | _]),
+    do: "Usage: $gold <set> [value:integer:0-2_000_000_000] [to] [player_name:string]"
+
+  defp usage(["add" | _]),
+    do: "Usage: $gold <add> [value:integer:0-2_000_000_000] [to] [player_name:string]"
+
+  defp usage(["sub" | _]),
+    do: "Usage: $gold <sub> [value:integer:0-2_000_000_000] [to] [player_name:string]"
+
+  defp usage(_),
+    do:
+      "Usage: $gold <get|set|add|sub> [from] [player_name:string] | [value:integer:0-2_000_000_000] [to] [player_name:string]"
+
+  @spec apply_on_character(Socket.t(), Character.t(), [String.t()], String.t(), any) ::
+          {:ok, Character.t()}
   defp apply_on_character(socket, character, args, name, callback) do
     case CachingService.get_character_by_name(name) do
       {:ok, nil} ->
@@ -107,7 +117,12 @@ defmodule ChannelEndpoint.Endpoint.GoldCommand do
   end
 
   defp get_gold(socket, character, [_, str_val | _] = args, target) do
-    send_message(socket, character, "Current #{target.name}'s gold: #{target.gold} golds", :special_green)
+    send_message(
+      socket,
+      character,
+      "Current #{target.name}'s gold: #{target.gold} golds",
+      :special_green
+    )
   end
 
   @spec set_gold(Socket.t(), Character.t(), [String.t()], Character.t()) :: :ok
@@ -116,7 +131,13 @@ defmodule ChannelEndpoint.Endpoint.GoldCommand do
       {value, ""} ->
         updated_gold = update_golds(op_type, target.gold, value)
         {:ok, new_char} = EntityInteractions.set_player_gold(target, updated_gold)
-        send_message(socket, new_char, "#{new_char.name} has now #{new_char.gold} golds", :special_green)
+
+        send_message(
+          socket,
+          new_char,
+          "#{new_char.name} has now #{new_char.gold} golds",
+          :special_green
+        )
 
       _ ->
         send_message(socket, character, "Invalid value '#{str_val}'", :special_red)
