@@ -11,7 +11,8 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
     EntityViews,
     MapViews,
     PlayerViews,
-    VisibilityViews
+    VisibilityViews,
+    UIViews
   }
 
   @spec map_enter(Character.t()) :: :ok
@@ -41,6 +42,22 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
       character,
       EntityViews.render(:eff, %{entity: character, value: effect_value})
     )
+  end
+
+  @spec set_player_golds(Character.t(), 0..2_000_000_000) ::
+          {:ok, new_char :: Character.t()} | {:error, atom}
+  def set_player_golds(%Character{} = character, new_player_gold) do
+    norms_gold = normalize_golds(new_player_gold, 2_000_000_000)
+    new_char = %Character{character | gold: norms_gold}
+    send_gold_ui(new_char)
+  end
+
+  @spec set_bank_golds(Character.t(), 0..5_000_000_000) ::
+          {:ok, new_char :: Character.t()} | {:error, atom}
+  def set_bank_golds(%Character{} = character, new_bank_gold) do
+    norms_gold = normalize_golds(new_bank_gold, 5_000_000_000)
+    new_char = %Character{character | bank_gold: norms_gold}
+    send_gold_ui(new_char)
   end
 
   @spec set_speed(Character.t(), 0..59) :: {:ok, new_char :: Character.t()} | {:error, atom}
@@ -73,6 +90,27 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
   end
 
   ## Private functions
+
+  @spec normalize_golds(non_neg_integer, non_neg_integer) :: non_neg_integer
+  defp normalize_golds(golds, max_val \\ 2_000_000_000) do
+    case golds do
+      g when g < 0 -> 0
+      g when g > max_val -> max_val
+      g -> g
+    end
+  end
+
+  @spec send_gold_ui(Character.t()) :: {:ok, Character.t()} | {:error, any}
+  defp send_gold_ui(%Character{} = character) do
+    case CachingService.write_character(character) do
+      {:ok, character} ->
+        Socket.send(character.socket, UIViews.render(:gold, character))
+        {:ok, character}
+
+      {:error, _} = x ->
+        x
+    end
+  end
 
   @spec broadcast_on_map(Character.t(), any, boolean) :: :ok
   defp broadcast_on_map(%Character{} = character, packet, including_self \\ true) do

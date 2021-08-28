@@ -45,6 +45,7 @@ defmodule DatabaseService.Players.Character do
     field :additional_hp, :integer
     field :additional_mp, :integer
     field :gold, :integer
+    field :bank_gold, :integer
     field :biography, :string
 
     field :level, :integer
@@ -101,6 +102,7 @@ defmodule DatabaseService.Players.Character do
     :additional_hp,
     :additional_mp,
     :gold,
+    :bank_gold,
     :biography,
     :level,
     :job_level,

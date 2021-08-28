@@ -7,6 +7,6 @@ defmodule CachingService.Position do
           map_vnum: pos_integer,
           map_x: non_neg_integer,
           map_y: non_neg_integer,
-          map_y: boolean
+          is_instance: boolean
         }
 end
