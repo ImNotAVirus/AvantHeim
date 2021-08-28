@@ -4,14 +4,15 @@ defmodule ChannelEndpoint.Endpoint.ShopViews do
   """
 
   alias ChannelEndpoint.Endpoint.ShopPackets.Buy
+  alias CachingService.Player.Character
 
   ## Public API
 
   @spec render(atom, any) :: any
-  def render(:buy, %{shop_type: shop_type, entity_id: entity_id, slot: slot, amount: amount}) do
+  def render(:buy, %{entity: %Character{id: id}, slot: slot, amount: amount}) do
     %Buy{
-      shop_type: shop_type,
-      entity_id: entity_id,
+      shop_type: :character_shop,
+      entity_id: id,
       slot: slot,
       amount: amount
     }

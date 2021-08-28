@@ -45,7 +45,7 @@ defmodule CachingService.CharacterRegistry do
     Memento.transaction(fn -> Memento.Query.delete(Character, id) end)
   end
 
-  @spec get_character_by_name(String.t()) :: {:ok, Character.t()} | {:error, any}
+  @spec get_character_by_name(String.t()) :: {:ok, Character.t()}
   def get_character_by_name(name) do
     res = Memento.transaction(fn -> Memento.Query.select(Character, {:==, :name, name}) end)
 

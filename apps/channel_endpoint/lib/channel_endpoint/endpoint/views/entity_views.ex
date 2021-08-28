@@ -8,7 +8,8 @@ defmodule ChannelEndpoint.Endpoint.EntityViews do
   alias ChannelEndpoint.Endpoint.EntityPackets.{
     CharSc,
     CMode,
-    Cond
+    Cond,
+    Eff
   }
 
   ## Public API
@@ -42,6 +43,15 @@ defmodule ChannelEndpoint.Endpoint.EntityViews do
       no_attack: FakeData.no_attack(character_id: character.id),
       no_move: FakeData.no_move(character_id: character.id),
       speed: character.speed
+    }
+  end
+
+  # TODO : Improve that to support pnj | mobs | mates
+  def render(:eff, %{entity: %Character{id: id}, value: value}) do
+    %Eff{
+      entity_type: :character,
+      entity_id: id,
+      value: value
     }
   end
 end

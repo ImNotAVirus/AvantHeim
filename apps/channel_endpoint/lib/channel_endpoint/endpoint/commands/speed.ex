@@ -12,20 +12,16 @@ defmodule ChannelEndpoint.Endpoint.SpeedCommand do
   # > $speed
   # Usage: $speed <get|set> [value:integer]
   #
-  # > $speed test
-  # Unknown args 'test'
-  # Usage: $speed <get|set> [value:integer]
-  #
   # > $speed set test
   # Invalid value 'test'
   # Usage: $speed <get|set> [value:integer]
-  #
-  # > $speed get
-  # Current speed: 30
   # 
   # > $speed set 50
   # Your speed is now 50
-
+  #
+  # > $speed get
+  # Current speed: 50
+  @spec handle_command(String.t(), [String.t()], Socket.t()) :: {:cont, Socket.t()}
   def handle_command("$speed", args, socket) do
     %{character_id: character_id} = socket.assigns
     {:ok, character} = CachingService.get_character_by_id(character_id)
