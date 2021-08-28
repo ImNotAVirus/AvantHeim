@@ -109,7 +109,8 @@ defmodule ChannelEndpoint.Endpoint.BankCommand do
     end
   end
 
-  @spec get_bank_golds(Socket.t(), Character.t(), [String.t()], Character.t()) :: :ok | {:error, atom}
+  @spec get_bank_golds(Socket.t(), Character.t(), [String.t()], Character.t()) ::
+          :ok | {:error, atom}
   defp get_bank_golds(socket, character, _args, target) do
     send_message(
       socket,

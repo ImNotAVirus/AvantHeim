@@ -4,7 +4,7 @@ defmodule ChannelEndpoint.Endpoint.UIViews do
   """
 
   alias CachingService.Player.Character
-  alias ChannelEndpoint.Endpoint.UIPackets.{Cancel, Info, Scene, Gold}
+  alias ChannelEndpoint.Endpoint.UIPackets.{Cancel, Info, Scene, Gold, Gb}
 
   ## Public API
 
@@ -18,5 +18,16 @@ defmodule ChannelEndpoint.Endpoint.UIViews do
 
   def render(:gold, %Character{} = character) do
     %Gold{gold: character.gold, bank_gold: character.bank_gold}
+  end
+
+  # TODO : Bank rank | tax
+  def render(:gb, %Character{} = character, bank_action_type: bank_action_type) do
+    %Gb{
+      bank_action_type: bank_action_type,
+      gold_bank: character.gold_bank,
+      gold: character.gold,
+      bank_rank: 0,
+      bank_tax: 0
+    }
   end
 end
