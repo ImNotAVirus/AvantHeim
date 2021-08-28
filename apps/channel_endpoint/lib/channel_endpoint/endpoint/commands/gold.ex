@@ -10,10 +10,12 @@ defmodule ChannelEndpoint.Endpoint.GoldCommand do
 
   ## Public API
 
+  # > $gold
+  # Usage: $gold <get|set|add|sub> [from] [player_name:string] | [value:integer:0-2_000_000_000] [to] [player_name:string]
   #
   # > $gold set test
   # Invalid value 'test'
-  # Usage: $gold <get|set|add|sub> [from] [player_name:string] | [value:integer:0-2_000_000_000] [to] [player_name:string]
+  # Usage: $gold <set> [value:integer:0-2_000_000_000] [to] [player_name:string]
   #
   # > $gold set 2_000_000_001
   # DarkyZ has now 2_000_000_000 golds
@@ -61,22 +63,22 @@ defmodule ChannelEndpoint.Endpoint.GoldCommand do
         apply_on_character(socket, character, args, name, &get_gold/4)
 
       ["set", _] = args ->
-        set_gold(socket, character, args, character)
+        update_golds(socket, character, args, character)
 
       ["set", _, "to", name] = args ->
-        apply_on_character(socket, character, args, name, &set_gold/4)
+        apply_on_character(socket, character, args, name, &update_golds/4)
 
       ["add", _] = args ->
-        set_gold(socket, character, args, character)
+        update_golds(socket, character, args, character)
 
       ["add", _, "to", name] = args ->
-        apply_on_character(socket, character, args, name, &set_gold/4)
+        apply_on_character(socket, character, args, name, &update_golds/4)
 
       ["sub", _] = args ->
-        set_gold(socket, character, args, character)
+        update_golds(socket, character, args, character)
 
       ["sub", _, "to", name] = args ->
-        apply_on_character(socket, character, args, name, &set_gold/4)
+        apply_on_character(socket, character, args, name, &update_golds/4)
 
       args ->
         send_message(socket, character, usage(args), :special_red)
@@ -87,20 +89,20 @@ defmodule ChannelEndpoint.Endpoint.GoldCommand do
 
   ## Private functions
 
-  defp usage(["get" | _]), do: "Usage: $gold <get>"
+  defp usage(["get" | _]), do: "Usage: $gold get [from] [player_name:string]"
 
   defp usage(["set" | _]),
-    do: "Usage: $gold <set> [value:integer:0-2_000_000_000] [to] [player_name:string]"
+    do: "Usage: $gold set [value:integer:0-2_000_000_000] [to] [player_name:string]"
 
   defp usage(["add" | _]),
-    do: "Usage: $gold <add> [value:integer:0-2_000_000_000] [to] [player_name:string]"
+    do: "Usage: $gold add [value:integer:0-2_000_000_000] [to] [player_name:string]"
 
   defp usage(["sub" | _]),
-    do: "Usage: $gold <sub> [value:integer:0-2_000_000_000] [to] [player_name:string]"
+    do: "Usage: $gold sub [value:integer:0-2_000_000_000] [to] [player_name:string]"
 
-  defp usage(_),
-    do:
-      "Usage: $gold <get|set|add|sub> [from] [player_name:string] | [value:integer:0-2_000_000_000] [to] [player_name:string]"
+  defp usage(_) do
+    "Usage: $gold <get|set|add|sub> [from] [player_name:string] | [value:integer:0-2_000_000_000] [to] [player_name:string]"
+  end
 
   @spec apply_on_character(Socket.t(), Character.t(), [String.t()], String.t(), any) ::
           {:ok, Character.t()}
@@ -123,11 +125,11 @@ defmodule ChannelEndpoint.Endpoint.GoldCommand do
     )
   end
 
-  @spec set_gold(Socket.t(), Character.t(), [String.t()], Character.t()) :: :ok
-  defp set_gold(socket, character, [op_type, str_val | _] = args, target) do
+  @spec update_golds(Socket.t(), Character.t(), [String.t()], Character.t()) :: :ok
+  defp update_golds(socket, character, [op_type, str_val | _] = args, target) do
     case Integer.parse(str_val) do
       {value, ""} ->
-        updated_gold = update_golds(op_type, target.gold, value)
+        updated_gold = compute_golds(op_type, target.gold, value)
         {:ok, new_char} = EntityInteractions.set_player_gold(target, updated_gold)
 
         send_message(
@@ -143,9 +145,9 @@ defmodule ChannelEndpoint.Endpoint.GoldCommand do
     end
   end
 
-  defp update_golds("set", golds, value), do: value
-  defp update_golds("add", golds, value), do: golds + value
-  defp update_golds("sub", golds, value), do: golds - value
+  defp compute_golds("set", golds, value), do: value
+  defp compute_golds("add", golds, value), do: golds + value
+  defp compute_golds("sub", golds, value), do: golds - value
 
   defp send_message(socket, character, msg, color) do
     render = ChatViews.render(:say, %{entity: character, color: color, message: msg})
