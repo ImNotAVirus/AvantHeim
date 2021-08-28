@@ -38,7 +38,7 @@ defmodule ChannelEndpoint.Endpoint.GoldCommand do
   # Fizo has now 3 golds
   #
   # > $gold get
-  # Current Fizo's gold: 3 golds
+  # Current DarkyZ's gold: 3 golds
   #
   # > $gold get from Fizo
   # > Current Fizo's gold: 3 golds
