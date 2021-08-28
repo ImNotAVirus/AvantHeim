@@ -95,8 +95,10 @@ defmodule ChannelEndpoint.Endpoint.GoldCommand do
       "[value:integer:0-2_000_000_000] [to] [player_name:string]"
   end
 
-  @typep callback :: (Socket.t(), Character.t(), [String.t()], Character.t() -> :ok)
-  @spec apply_on_character(Socket.t(), Character.t(), [String.t()], String.t(), callback) :: :ok
+  @typep callback ::
+           (Socket.t(), Character.t(), [String.t()], Character.t() -> :ok | {:error, atom})
+  @spec apply_on_character(Socket.t(), Character.t(), [String.t()], String.t(), callback) ::
+          :ok | {:error, atom}
   defp apply_on_character(socket, character, args, name, callback) do
     case CachingService.get_character_by_name(name) do
       {:ok, nil} ->
@@ -107,8 +109,8 @@ defmodule ChannelEndpoint.Endpoint.GoldCommand do
     end
   end
 
-  @spec get_golds(Socket.t(), Character.t(), [String.t()], Character.t()) :: :ok
-  defp get_golds(socket, character, [_, str_val | _] = args, target) do
+  @spec get_golds(Socket.t(), Character.t(), [String.t()], Character.t()) :: :ok | {:error, atom}
+  defp get_golds(socket, character, _args, target) do
     send_message(
       socket,
       character,
@@ -117,7 +119,8 @@ defmodule ChannelEndpoint.Endpoint.GoldCommand do
     )
   end
 
-  @spec update_golds(Socket.t(), Character.t(), [String.t()], Character.t()) :: :ok
+  @spec update_golds(Socket.t(), Character.t(), [String.t()], Character.t()) ::
+          :ok | {:error, atom}
   defp update_golds(socket, character, [op_type, str_val | _] = args, target) do
     case Integer.parse(str_val) do
       {value, ""} ->
@@ -137,7 +140,7 @@ defmodule ChannelEndpoint.Endpoint.GoldCommand do
     end
   end
 
-  defp compute_golds("set", golds, value), do: value
+  defp compute_golds("set", _golds, value), do: value
   defp compute_golds("add", golds, value), do: golds + value
   defp compute_golds("sub", golds, value), do: golds - value
 

@@ -1,7 +1,7 @@
 defmodule CachingService.CharacterRegistry do
   @moduledoc """
   TODO: Documentation
-  
+
   TODO: Clean this code: functions should no return `{:error, any}`
   Cf. Memento doc
   """
@@ -45,7 +45,7 @@ defmodule CachingService.CharacterRegistry do
     Memento.transaction(fn -> Memento.Query.delete(Character, id) end)
   end
 
-  @spec get_character_by_name(String.t()) :: {:ok, Character.t()}
+  @spec get_character_by_name(String.t()) :: {:ok, Character.t()} | {:ok, nil}
   def get_character_by_name(name) do
     res = Memento.transaction(fn -> Memento.Query.select(Character, {:==, :name, name}) end)
 
