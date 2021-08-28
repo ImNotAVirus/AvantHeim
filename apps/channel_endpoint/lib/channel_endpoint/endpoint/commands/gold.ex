@@ -50,6 +50,8 @@ defmodule ChannelEndpoint.Endpoint.GoldCommand do
   # > $gold sub 6 to Fizo
   # > Fizo has now 0 golds
 
+  @op_types ["set", "add", "sub"]
+
   @spec handle_command(String.t(), [String.t()], Socket.t()) :: {:cont, Socket.t()}
   def handle_command("$gold", args, socket) do
     %{character_id: character_id} = socket.assigns
@@ -62,22 +64,10 @@ defmodule ChannelEndpoint.Endpoint.GoldCommand do
       ["get", "from", name] ->
         apply_on_character(socket, character, args, name, &get_golds/4)
 
-      ["set", _] = args ->
+      [op_type, _] = args when op_type in @op_types ->
         update_golds(socket, character, args, character)
 
-      ["set", _, "to", name] = args ->
-        apply_on_character(socket, character, args, name, &update_golds/4)
-
-      ["add", _] = args ->
-        update_golds(socket, character, args, character)
-
-      ["add", _, "to", name] = args ->
-        apply_on_character(socket, character, args, name, &update_golds/4)
-
-      ["sub", _] = args ->
-        update_golds(socket, character, args, character)
-
-      ["sub", _, "to", name] = args ->
+      [op_type, _, "to", name] = args when op_type in @op_types ->
         apply_on_character(socket, character, args, name, &update_golds/4)
 
       args ->
