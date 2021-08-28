@@ -10,13 +10,20 @@ defmodule ChannelEndpoint.Endpoint.EffectCommand do
   ## Public API
 
   # > $effect
-  # Usage: $effect show value:integer
+  # Usage: $effect show value:integer [on] [player_name:string]
   #
-  # > $effect test
+  # $effect show test
   # Invalid value 'test'
+  # Usage: $effect show value:integer [on] [player_name:string]
   #
   # $effect show 5098
-  # Show effect in game
+  # [show effect on yourself in game]
+  #
+  # $effect show 5098 on UnknownUser
+  # No logged user found with name: UnknownUser
+  #
+  # $effect show 5098 on DarkyZ
+  # [show effect on DarkyZ in game]
   def handle_command("$effect", args, socket) do
     %{character_id: character_id} = socket.assigns
     {:ok, character} = CachingService.get_character_by_id(character_id)
