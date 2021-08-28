@@ -9,7 +9,7 @@ defmodule ChannelEndpoint.Endpoint.EntityViews do
     CharSc,
     CMode,
     Cond,
-    Eff,
+    Eff
   }
 
   ## Public API

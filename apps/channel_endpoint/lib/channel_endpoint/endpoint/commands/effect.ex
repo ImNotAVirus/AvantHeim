@@ -29,14 +29,11 @@ defmodule ChannelEndpoint.Endpoint.EffectCommand do
     {:ok, character} = CachingService.get_character_by_id(character_id)
 
     case args do
-      [] = args ->
-        send_message(socket, character, usage(args), :special_red)
-
       ["show", str_val] ->
-        case Integer.parse(str_val) do
-          {value, ""} ->
-            EntityInteractions.show_effect(character, value)
-        end
+        handle_effect(socket, args, str_val, character, '')
+
+      ["show", str_val, "on", name] ->
+        handle_effect(socket, args, str_val, character, name)
 
       args ->
         send_message(socket, character, usage(args), :special_red)
@@ -48,6 +45,19 @@ defmodule ChannelEndpoint.Endpoint.EffectCommand do
   ## Private functions
 
   defp usage(_), do: "Usage: $effect show value:integer"
+
+  defp handle_effect(socket, args, str_val, character, name) do
+    {:ok, new_char} = CachingService.get_character_by_name(name)
+
+    case Integer.parse(str_val) do
+      {value, ""} ->
+        EntityInteractions.show_effect(new_char || character, value)
+
+      _ ->
+        send_message(socket, character, "Invalid value '#{str_val}'", :special_red)
+        send_message(socket, character, usage(args), :special_red)
+    end
+  end
 
   defp send_message(socket, character, msg, color) do
     render = ChatViews.render(:say, %{entity: character, color: color, message: msg})

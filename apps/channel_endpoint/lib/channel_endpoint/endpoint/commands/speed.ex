@@ -27,9 +27,6 @@ defmodule ChannelEndpoint.Endpoint.SpeedCommand do
     {:ok, character} = CachingService.get_character_by_id(character_id)
 
     case args do
-      [] = args ->
-        send_message(socket, character, usage(args), :special_red)
-
       ["get"] ->
         send_message(socket, character, "Current speed: #{character.speed}", :special_green)
 

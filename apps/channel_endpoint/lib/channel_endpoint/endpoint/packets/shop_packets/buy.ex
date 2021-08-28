@@ -13,11 +13,11 @@ defmodule ChannelEndpoint.Endpoint.ShopPackets.Buy do
   defstruct @enforce_keys
 
   @type t :: %Buy{
-    shop_type: atom,
-    entity_id: pos_integer,
-    slot: non_neg_integer,
-    amount: pos_integer
-  }
+          shop_type: atom,
+          entity_id: pos_integer,
+          slot: non_neg_integer,
+          amount: pos_integer
+        }
 
   @impl true
   def serialize(%Buy{} = struct, _) do
