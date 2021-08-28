@@ -17,6 +17,12 @@ defmodule ChannelEndpoint.Endpoint.EffectCommand do
   #
   # $effect show 5098
   # Show effect in game
+  #
+  # $effect show 5098 on PlayerName
+  # Show effect on an another player having this name
+  #
+  # $effect show XXXXX on PlayerName
+  # Invalid value 'XXXXX'
   def handle_command("$effect", args, socket) do
     %{character_id: character_id} = socket.assigns
     {:ok, character} = CachingService.get_character_by_id(character_id)
