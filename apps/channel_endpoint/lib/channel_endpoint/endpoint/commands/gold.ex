@@ -57,10 +57,10 @@ defmodule ChannelEndpoint.Endpoint.GoldCommand do
 
     case args do
       ["get"] ->
-        get_gold(socket, character, args, character)
+        get_golds(socket, character, args, character)
 
       ["get", "from", name] ->
-        apply_on_character(socket, character, args, name, &get_gold/4)
+        apply_on_character(socket, character, args, name, &get_golds/4)
 
       ["set", _] = args ->
         update_golds(socket, character, args, character)
@@ -117,7 +117,8 @@ defmodule ChannelEndpoint.Endpoint.GoldCommand do
     end
   end
 
-  defp get_gold(socket, character, [_, str_val | _] = args, target) do
+  @spec get_golds(Socket.t(), Character.t(), [String.t()], Character.t()) :: :ok
+  defp get_golds(socket, character, [_, str_val | _] = args, target) do
     send_message(
       socket,
       character,
@@ -131,7 +132,7 @@ defmodule ChannelEndpoint.Endpoint.GoldCommand do
     case Integer.parse(str_val) do
       {value, ""} ->
         updated_gold = compute_golds(op_type, target.gold, value)
-        {:ok, new_char} = EntityInteractions.set_player_gold(target, updated_gold)
+        {:ok, new_char} = EntityInteractions.set_player_golds(target, updated_gold)
 
         send_message(
           socket,
