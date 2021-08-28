@@ -101,7 +101,8 @@ defmodule ChannelEndpoint.Endpoint.GoldCommand do
     do: "Usage: $gold sub [value:integer:0-2_000_000_000] [to] [player_name:string]"
 
   defp usage(_) do
-    "Usage: $gold <get|set|add|sub> [from] [player_name:string] | [value:integer:0-2_000_000_000] [to] [player_name:string]"
+    "Usage: $gold <get|set|add|sub> [from] [player_name:string] | " <>
+      "[value:integer:0-2_000_000_000] [to] [player_name:string]"
   end
 
   @typep callback :: (Socket.t(), Character.t(), [String.t()], Character.t() -> :ok)
