@@ -44,14 +44,16 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
     )
   end
 
-  @spec set_player_gold(Character.t(), 0..2000000000) :: {:ok, new_char :: Character.t()} | {:error, atom}
+  @spec set_player_gold(Character.t(), 0..2_000_000_000) :: {:ok, new_char :: Character.t()} | {:error, atom}
   def set_player_gold(%Character{} = character, new_player_gold) do
+    normalize_golds(new_player_gold, 2_000_000_000)
     new_char = %Character{character | gold: new_player_gold}
     send_gold_ui(new_char)
   end
 
-  @spec set_bank_gold(Character.t(), 0..5000000000) :: {:ok, new_char :: Character.t()} | {:error, atom}
+  @spec set_bank_gold(Character.t(), 0..5_000_000_000) :: {:ok, new_char :: Character.t()} | {:error, atom}
   def set_bank_gold(%Character{} = character, new_bank_gold) do
+    normalize_golds(new_bank_gold, 5_000_000_000)
     new_char = %Character{character | bank_gold: new_bank_gold}
     send_gold_ui(new_char)
   end
@@ -87,7 +89,16 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
 
   ## Private functions
 
-  @spec send_gold_ui(Character.t()) :: :ok
+  @spec normalize_golds(non_neg_integer, non_neg_integer) :: :ok
+  defp normalize_golds(golds, max_val \\ 2_000_000_000) do
+    case golds do
+      g when g < 0 -> 0
+      g when g > max_val -> max_val
+      g -> g
+    end
+  end
+
+  @spec send_gold_ui(Character.t()) :: {:ok, atom}
   defp send_gold_ui(%Character{} = character) do
     case CachingService.write_character(character) do
       {:ok, character} ->

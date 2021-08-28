@@ -56,6 +56,7 @@ defmodule DatabaseService.Repo.Migrations.CreateCharacters do
       add :additional_hp, :int4, default: 0, null: false
       add :additional_mp, :int4, default: 0, null: false
       add :gold, :int8, default: 0, null: false
+      add :bank_gold, :int8, default: 0, null: false
       add :biography, :string, default: "Hi!", null: false
 
       add :level, :int2, default: 1, null: false

@@ -28,6 +28,8 @@ defmodule ChannelEndpoint.Endpoint.GameActions do
     Socket.send(socket, PlayerViews.render(:rsfi, character))
     Socket.send(socket, PlayerViews.render(:fs, character))
 
+    Socket.send(socket, UIViews.render(:gold, character))
+
     # TODO: Socket.send(socket, InventoryViews.render(:qslot, %{slot_id: 0, character: character}))
     # TODO: Socket.send(socket, InventoryViews.render(:qslot, %{slot_id: 1, character: character}))
 
