@@ -25,23 +25,29 @@ defmodule ChannelEndpoint.Endpoint.GoldCommand do
   # > $gold add 3
   # DarkyZ has now 669 golds
   #
+  # > $gold sub 3
+  # DarkyZ has now 666 golds
+  #
   # > $gold set -1
   # DarkyZ has now 0 golds
   #
   # > $gold set 0 to UnknowPlayer
   # UnknowPlayer is not logged
   #
-  # > $gold set 3 to DarkyZ
-  # DarkyZ has now 3 golds
+  # > $gold set 3 to Fizo
+  # Fizo has now 3 golds
   #
   # > $gold get
-  # Current DarkyZ's gold: 3 golds
+  # Current Fizo's gold: 3 golds
   #
-  # > $gold get from DarkyZ
-  # > Current DarkyZ's gold: 3 golds
+  # > $gold get from Fizo
+  # > Current Fizo's gold: 3 golds
   #
-  # > $gold add 3 DarkyZ
-  # > DarkyZ has now 6 golds
+  # > $gold add 3 to Fizo
+  # > Fizo has now 6 golds
+  #
+  # > $gold sub 6 to Fizo
+  # > Fizo has now 0 golds
 
   @spec handle_command(String.t(), [String.t()], Socket.t()) :: {:cont, Socket.t()}
   def handle_command("$gold", args, socket) do
@@ -62,10 +68,16 @@ defmodule ChannelEndpoint.Endpoint.GoldCommand do
         apply_on_character(socket, character, args, name, &set_gold/4)
 
       ["add", _] = args ->
-        add_gold(socket, character, args, character)
+        set_gold(socket, character, args, character)
 
       ["add", _, "to", name] = args ->
-        apply_on_character(socket, character, args, name, &add_gold/4)
+        apply_on_character(socket, character, args, name, &set_gold/4)
+
+      ["sub", _] = args ->
+        set_gold(socket, character, args, character)
+
+      ["sub", _, "to", name] = args ->
+        apply_on_character(socket, character, args, name, &set_gold/4)
 
       args ->
         send_message(socket, character, usage(args), :special_red)
@@ -78,7 +90,9 @@ defmodule ChannelEndpoint.Endpoint.GoldCommand do
 
   defp usage(["get" | _]), do: "Usage: $gold <get>"
   defp usage(["set" | _]), do: "Usage: $gold <set> [value:integer:0-2_000_000_000] [to] [player_name:string]"
-  defp usage(_), do: "Usage: $gold <get|set> [value:integer:0-2_000_000_000] [to] [player_name:string] [from] [player_name:string]"
+  defp usage(["add" | _]), do: "Usage: $gold <add> [value:integer:0-2_000_000_000] [to] [player_name:string]"
+  defp usage(["sub" | _]), do: "Usage: $gold <sub> [value:integer:0-2_000_000_000] [to] [player_name:string]"
+  defp usage(_), do: "Usage: $gold <get|set|add|sub> [from] [player_name:string] | [value:integer:0-2_000_000_000] [to] [player_name:string]"
 
   @spec apply_on_character(Socket.t(), Character.t(), [String.t()], String.t(), any) :: {:ok, Character.t()}
   defp apply_on_character(socket, character, args, name, callback) do
@@ -91,11 +105,15 @@ defmodule ChannelEndpoint.Endpoint.GoldCommand do
     end
   end
 
-  @spec add_gold(Socket.t(), Character.t(), [String.t()], Character.t()) :: :ok
-  defp add_gold(socket, character, [_, str_val | _] = args, target) do
+  defp get_gold(socket, character, [_, str_val | _] = args, target) do
+    send_message(socket, character, "Current #{target.name}'s gold: #{target.gold} golds", :special_green)
+  end
+
+  @spec set_gold(Socket.t(), Character.t(), [String.t()], Character.t()) :: :ok
+  defp set_gold(socket, character, [op_type, str_val | _] = args, target) do
     case Integer.parse(str_val) do
       {value, ""} ->
-        updated_gold = target.gold + value
+        updated_gold = update_golds(op_type, target.gold, value)
         {:ok, new_char} = EntityInteractions.set_player_gold(target, updated_gold)
         send_message(socket, new_char, "#{new_char.name} has now #{new_char.gold} golds", :special_green)
 
@@ -105,22 +123,9 @@ defmodule ChannelEndpoint.Endpoint.GoldCommand do
     end
   end
 
-  defp get_gold(socket, character, [_, str_val | _] = args, target) do
-    send_message(socket, character, "Current #{target.name}'s gold: #{target.gold} golds", :special_green)
-  end
-
-  @spec set_gold(Socket.t(), Character.t(), [String.t()], Character.t()) :: :ok
-  defp set_gold(socket, character, [_, str_val | _] = args, target) do
-    case Integer.parse(str_val) do
-      {value, ""} ->
-        {:ok, new_char} = EntityInteractions.set_player_gold(target, value)
-        send_message(socket, new_char, "#{new_char.name} has now #{new_char.gold} golds", :special_green)
-
-      _ ->
-        send_message(socket, character, "Invalid value '#{str_val}'", :special_red)
-        send_message(socket, character, usage(args), :special_red)
-    end
-  end
+  defp update_golds("set", golds, value), do: value
+  defp update_golds("add", golds, value), do: golds + value
+  defp update_golds("sub", golds, value), do: golds - value
 
   defp send_message(socket, character, msg, color) do
     render = ChatViews.render(:say, %{entity: character, color: color, message: msg})
