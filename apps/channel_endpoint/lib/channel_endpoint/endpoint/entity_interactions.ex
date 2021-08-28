@@ -89,7 +89,7 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
 
   ## Private functions
 
-  @spec normalize_golds(non_neg_integer, non_neg_integer) :: :ok
+  @spec normalize_golds(non_neg_integer, non_neg_integer) :: non_neg_integer
   defp normalize_golds(golds, max_val \\ 2_000_000_000) do
     case golds do
       g when g < 0 -> 0
@@ -98,7 +98,7 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
     end
   end
 
-  @spec send_gold_ui(Character.t()) :: {:ok, atom}
+  @spec send_gold_ui(Character.t()) :: {:ok, Character.t()} | {:error, any}
   defp send_gold_ui(%Character{} = character) do
     case CachingService.write_character(character) do
       {:ok, character} ->
