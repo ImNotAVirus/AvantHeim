@@ -35,6 +35,19 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
     Enum.each(players, &send_visibility_packets(character, &1))
   end
 
+  @spec open_bank_window(Character.t()) :: :ok
+  def open_bank_window(%Character{} = character) do
+    Socket.send(
+      character.socket,
+      UIViews.render(:gb, %{
+        entity: character,
+        bank_action_type: :open_from_savings_book,
+        bank_rank: 0,
+        bank_tax: 0
+      })
+    )
+  end
+
   # TODO : Improve that to support pnj | mobs | mates
   @spec show_effect(Character.t(), pos_integer) :: :ok
   def show_effect(%Character{} = character, effect_value) do

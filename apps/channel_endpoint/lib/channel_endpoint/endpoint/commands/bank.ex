@@ -70,6 +70,9 @@ defmodule ChannelEndpoint.Endpoint.BankCommand do
       [op_type, _, "to", name] = args when op_type in @op_types ->
         apply_on_character(socket, character, args, name, &update_bank_golds/4)
 
+      ["open"] ->
+        EntityInteractions.open_bank_window(character)
+
       args ->
         send_message(socket, character, usage(args), :special_red)
     end

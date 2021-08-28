@@ -5,7 +5,7 @@ defmodule ChannelEndpoint.Endpoint.UIPackets.Gb do
 
   use Core.SerializableStruct
 
-  import ChannelEndpoint.Endpoint.UIPackets.BankActionTypesEnums, only: [bank_action_type: 1]
+  import ChannelEndpoint.Endpoint.UIPackets.BankActionTypesEnums, only: [bank_action_type: 2]
 
   alias __MODULE__
 
@@ -30,6 +30,6 @@ defmodule ChannelEndpoint.Endpoint.UIPackets.Gb do
       bank_tax: bank_tax
     } = struct
 
-    ["gb", bank_action_type(bank_action_type_atom), gold_bank, gold, bank_rank, bank_tax]
+    ["gb", bank_action_type(bank_action_type_atom, :value), gold_bank, gold, bank_rank, bank_tax]
   end
 end
