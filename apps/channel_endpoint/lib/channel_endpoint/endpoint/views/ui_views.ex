@@ -4,7 +4,7 @@ defmodule ChannelEndpoint.Endpoint.UIViews do
   """
 
   alias CachingService.Player.Character
-  alias ChannelEndpoint.Endpoint.UIPackets.{Cancel, Info, Scene}
+  alias ChannelEndpoint.Endpoint.UIPackets.{Cancel, Info, Scene, Gold}
 
   ## Public API
 
@@ -14,5 +14,9 @@ defmodule ChannelEndpoint.Endpoint.UIViews do
 
   def render(:cancel, %{type: type, entity: %Character{id: id}}) do
     %Cancel{type: type, entity_id: id}
+  end
+
+  def render(:gold, %{character_gold: character_gold, character_bank_gold: character_bank_gold}) do
+    %Gold{character_gold: character_gold, character_bank_gold: character_bank_gold}
   end
 end

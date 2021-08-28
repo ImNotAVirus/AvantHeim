@@ -22,7 +22,9 @@ defmodule CachingService.Player.Character do
     :hero_level,
     :level_xp,
     :job_level_xp,
-    :hero_level_xp
+    :hero_level_xp,
+    :gold,
+    :bank_gold
   ]
 
   @virtual_attributes %{
@@ -56,6 +58,8 @@ defmodule CachingService.Player.Character do
           level_xp: non_neg_integer,
           job_level_xp: non_neg_integer,
           hero_level_xp: non_neg_integer,
+          gold: non_neg_integer,
+          bank_gold: non_neg_integer,
           # Virtual attributes
           socket: Socket.t(),
           map_id: pos_integer,

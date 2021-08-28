@@ -11,7 +11,8 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
     EntityViews,
     MapViews,
     PlayerViews,
-    VisibilityViews
+    VisibilityViews,
+    UIViews
   }
 
   @spec map_enter(Character.t()) :: :ok
@@ -41,6 +42,34 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
       character,
       EntityViews.render(:eff, %{entity: character, value: effect_value})
     )
+  end
+
+  @spec set_player_gold(Character.t(), 0..2000000000) :: {:ok, new_char :: Character.t()} | {:error, atom}
+  def set_player_gold(%Character{} = character, new_player_gold) do
+    new_char = %Character{character | gold: new_player_gold}
+
+    case CachingService.write_character(new_char) do
+      {:ok, new_char} ->
+        Socket.send(new_char.socket, UIViews.render(:gold, %{character_gold: new_player_gold, character_bank_gold: new_char.bank_gold}))
+        {:ok, new_char}
+
+      {:error, _} = x ->
+        x
+    end
+  end
+
+  @spec set_bank_gold(Character.t(), 0..5000000000) :: {:ok, new_char :: Character.t()} | {:error, atom}
+  def set_bank_gold(%Character{} = character, new_bank_gold) do
+    new_char = %Character{character | bank_gold: new_bank_gold}
+
+    case CachingService.write_character(new_char) do
+      {:ok, new_char} ->
+        Socket.send(new_char.socket, UIViews.render(:gold, %{character_gold: character.gold, character_bank_gold: new_bank_gold}))
+        {:ok, new_char}
+
+      {:error, _} = x ->
+        x
+    end
   end
 
   @spec set_speed(Character.t(), 0..59) :: {:ok, new_char :: Character.t()} | {:error, atom}
