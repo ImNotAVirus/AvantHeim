@@ -20,11 +20,11 @@ defmodule ChannelEndpoint.Endpoint.UIViews do
     %Gold{gold: character.gold, bank_gold: character.bank_gold}
   end
 
-  # TODO : Bank rank | tax
-  def render(:gb, %Character{} = character, bank_action_type: bank_action_type) do
+  # TODO : Bank rank | tax | bank_action_type
+  def render(:gb, %Character{} = character) do
     %Gb{
-      bank_action_type: bank_action_type,
-      gold_bank: character.gold_bank,
+      bank_action_type: 0,
+      gold_bank: character.bank_gold,
       gold: character.gold,
       bank_rank: 0,
       bank_tax: 0
