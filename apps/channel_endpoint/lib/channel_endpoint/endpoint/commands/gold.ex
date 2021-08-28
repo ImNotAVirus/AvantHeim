@@ -16,13 +16,16 @@ defmodule ChannelEndpoint.Endpoint.GoldCommand do
   # Invalid value 'test'
   #
   # > $gold set 2_000_000_001
-  # Gold set to 2_000_000_000 (MaxValue)
+  # Gold set to 2_000_000_000
+  #
+  # > $gold set 666
+  # You have now 666 gold
   #
   # > $gold set -1
-  # Gold set to 0 (MinValue)
+  # Gold set to 0bah
   #
   # > $gold get
-  # Current gold: X golds
+  # Current gold: 0 golds
 
   @spec handle_command(String.t(), [String.t()], Socket.t()) :: {:cont, Socket.t()}
   def handle_command("$gold", args, socket) do
