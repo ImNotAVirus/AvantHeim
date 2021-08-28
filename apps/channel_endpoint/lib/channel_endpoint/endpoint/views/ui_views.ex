@@ -16,7 +16,7 @@ defmodule ChannelEndpoint.Endpoint.UIViews do
     %Cancel{type: type, entity_id: id}
   end
 
-  def render(:gold, %{character_gold: character_gold, character_bank_gold: character_bank_gold}) do
-    %Gold{character_gold: character_gold, character_bank_gold: character_bank_gold}
+  def render(:gold, %Character{} = character) do
+    %Gold{character_gold: character.gold, character_bank_gold: character.bank_gold}
   end
 end

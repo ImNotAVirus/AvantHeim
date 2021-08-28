@@ -47,29 +47,13 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
   @spec set_player_gold(Character.t(), 0..2000000000) :: {:ok, new_char :: Character.t()} | {:error, atom}
   def set_player_gold(%Character{} = character, new_player_gold) do
     new_char = %Character{character | gold: new_player_gold}
-
-    case CachingService.write_character(new_char) do
-      {:ok, new_char} ->
-        Socket.send(new_char.socket, UIViews.render(:gold, %{character_gold: new_player_gold, character_bank_gold: new_char.bank_gold}))
-        {:ok, new_char}
-
-      {:error, _} = x ->
-        x
-    end
+    send_gold_ui(new_char)
   end
 
   @spec set_bank_gold(Character.t(), 0..5000000000) :: {:ok, new_char :: Character.t()} | {:error, atom}
   def set_bank_gold(%Character{} = character, new_bank_gold) do
     new_char = %Character{character | bank_gold: new_bank_gold}
-
-    case CachingService.write_character(new_char) do
-      {:ok, new_char} ->
-        Socket.send(new_char.socket, UIViews.render(:gold, %{character_gold: character.gold, character_bank_gold: new_bank_gold}))
-        {:ok, new_char}
-
-      {:error, _} = x ->
-        x
-    end
+    send_gold_ui(new_char)
   end
 
   @spec set_speed(Character.t(), 0..59) :: {:ok, new_char :: Character.t()} | {:error, atom}
@@ -102,6 +86,18 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
   end
 
   ## Private functions
+
+  @spec send_gold_ui(Character.t()) :: :ok
+  defp send_gold_ui(%Character{} = character) do
+    case CachingService.write_character(character) do
+      {:ok, character} ->
+        Socket.send(character.socket, UIViews.render(:gold, character))
+        {:ok, character}
+
+      {:error, _} = x ->
+        x
+    end
+  end
 
   @spec broadcast_on_map(Character.t(), any, boolean) :: :ok
   defp broadcast_on_map(%Character{} = character, packet, including_self \\ true) do
