@@ -7,17 +7,17 @@ defmodule ChannelEndpoint.Endpoint.UIPackets.Gold do
 
   alias __MODULE__
 
-  @enforce_keys [:character_gold, :character_bank_gold]
+  @enforce_keys [:gold, :bank_gold]
   defstruct @enforce_keys
 
   @type t :: %Gold{
-    character_gold: non_neg_integer,
-    character_bank_gold: non_neg_integer
+    gold: non_neg_integer,
+    bank_gold: non_neg_integer
   }
 
   @impl true
   def serialize(%Gold{} = struct, _) do
-    %Gold{character_gold: character_gold, character_bank_gold: character_bank_gold} = struct
-    ["gold", character_gold, character_bank_gold]
+    %Gold{gold: gold, bank_gold: bank_gold} = struct
+    ["gold", gold, bank_gold]
   end
 end

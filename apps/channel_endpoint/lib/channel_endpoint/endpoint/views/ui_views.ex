@@ -17,6 +17,6 @@ defmodule ChannelEndpoint.Endpoint.UIViews do
   end
 
   def render(:gold, %Character{} = character) do
-    %Gold{character_gold: character.gold, character_bank_gold: character.bank_gold}
+    %Gold{gold: character.gold, bank_gold: character.bank_gold}
   end
 end
