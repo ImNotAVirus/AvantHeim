@@ -24,7 +24,7 @@ defmodule ChannelEndpoint.Endpoint.NameCommand do
   #
   # > $name set Test
   # Your character name is now Test
-
+  @spec handle_command(String.t(), [String.t()], Socket.t()) :: {:cont, Socket.t()}
   def handle_command("$name", ["set", name], socket) do
     %{character_id: character_id} = socket.assigns
     {:ok, character} = CachingService.get_character_by_id(character_id)

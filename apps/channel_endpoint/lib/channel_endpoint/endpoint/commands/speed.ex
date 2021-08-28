@@ -21,7 +21,7 @@ defmodule ChannelEndpoint.Endpoint.SpeedCommand do
   #
   # > $speed get
   # Current speed: 50
-
+  @spec handle_command(String.t(), [String.t()], Socket.t()) :: {:cont, Socket.t()}
   def handle_command("$speed", args, socket) do
     %{character_id: character_id} = socket.assigns
     {:ok, character} = CachingService.get_character_by_id(character_id)
