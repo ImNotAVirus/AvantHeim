@@ -30,7 +30,7 @@ defmodule ChannelEndpoint.Endpoint.EffectCommand do
 
     case args do
       ["show", str_val] ->
-        handle_effect(socket, args, str_val, character, '')
+        handle_effect(socket, args, str_val, character)
 
       ["show", str_val, "on", name] ->
         handle_effect(socket, args, str_val, character, name)
@@ -46,7 +46,7 @@ defmodule ChannelEndpoint.Endpoint.EffectCommand do
 
   defp usage(_), do: "Usage: $effect show value:integer"
 
-  defp handle_effect(socket, args, str_val, character, name) do
+  defp handle_effect(socket, args, str_val, character, name \\ '') do
     {:ok, new_char} = CachingService.get_character_by_name(name)
 
     case Integer.parse(str_val) do
