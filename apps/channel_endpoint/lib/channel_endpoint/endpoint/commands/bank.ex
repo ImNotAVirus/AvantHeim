@@ -92,7 +92,7 @@ defmodule ChannelEndpoint.Endpoint.BankCommand do
 
   defp usage(_) do
     "Usage: $bank <get|set|add|sub> [from] [player_name:string] | " <>
-      "[value:integer:0-2_000_000_000] [to] [player_name:string]"
+      "[value:integer:0-5_000_000_000] [to] [player_name:string]"
   end
 
   @typep callback ::
