@@ -22,7 +22,7 @@ defmodule ChannelEndpoint.Endpoint.GoldCommand do
   # You have now 666 gold
   #
   # > $gold set -1
-  # Gold set to 0bah
+  # Gold set to 0
   #
   # > $gold get
   # Current gold: 0 golds
