@@ -104,8 +104,8 @@ defmodule ChannelEndpoint.Endpoint.GoldCommand do
     "Usage: $gold <get|set|add|sub> [from] [player_name:string] | [value:integer:0-2_000_000_000] [to] [player_name:string]"
   end
 
-  @spec apply_on_character(Socket.t(), Character.t(), [String.t()], String.t(), any) ::
-          {:ok, Character.t()}
+  @typep callback :: (Socket.t(), Character.t(), [String.t()], Character.t() -> :ok)
+  @spec apply_on_character(Socket.t(), Character.t(), [String.t()], String.t(), callback) :: :ok
   defp apply_on_character(socket, character, args, name, callback) do
     case CachingService.get_character_by_name(name) do
       {:ok, nil} ->
