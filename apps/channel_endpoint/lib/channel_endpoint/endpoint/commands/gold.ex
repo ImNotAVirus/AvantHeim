@@ -16,13 +16,13 @@ defmodule ChannelEndpoint.Endpoint.GoldCommand do
   # Invalid value 'test'
   #
   # > $gold set 2_000_000_001
-  # Gold set to 2_000_000_000
+  # You have now 2_000_000_000 golds
   #
   # > $gold set 666
-  # You have now 666 gold
+  # You have now 666 golds
   #
   # > $gold set -1
-  # Gold set to 0
+  # You have now 0 golds
   #
   # > $gold get
   # Current gold: 0 golds
