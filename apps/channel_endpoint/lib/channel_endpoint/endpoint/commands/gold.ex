@@ -22,6 +22,9 @@ defmodule ChannelEndpoint.Endpoint.GoldCommand do
   # > $gold set 666
   # DarkyZ has now 666 golds
   #
+  # > $gold add 3
+  # DarkyZ has now 669 golds
+  #
   # > $gold set -1
   # DarkyZ has now 0 golds
   #
@@ -36,6 +39,9 @@ defmodule ChannelEndpoint.Endpoint.GoldCommand do
   #
   # > $gold get from DarkyZ
   # > Current DarkyZ's gold: 3 golds
+  #
+  # > $gold add 3 DarkyZ
+  # > DarkyZ has now 6 golds
 
   @spec handle_command(String.t(), [String.t()], Socket.t()) :: {:cont, Socket.t()}
   def handle_command("$gold", args, socket) do
@@ -54,6 +60,12 @@ defmodule ChannelEndpoint.Endpoint.GoldCommand do
 
       ["set", _, "to", name] = args ->
         apply_on_character(socket, character, args, name, &set_gold/4)
+
+      ["add", _] = args ->
+        add_gold(socket, character, args, character)
+
+      ["add", _, "to", name] = args ->
+        apply_on_character(socket, character, args, name, &add_gold/4)
 
       args ->
         send_message(socket, character, usage(args), :special_red)
@@ -76,6 +88,20 @@ defmodule ChannelEndpoint.Endpoint.GoldCommand do
 
       {:ok, target} ->
         callback.(socket, character, args, target)
+    end
+  end
+
+  @spec add_gold(Socket.t(), Character.t(), [String.t()], Character.t()) :: :ok
+  defp add_gold(socket, character, [_, str_val | _] = args, target) do
+    case Integer.parse(str_val) do
+      {value, ""} ->
+        updated_gold = target.gold + value
+        {:ok, new_char} = EntityInteractions.set_player_gold(target, updated_gold)
+        send_message(socket, new_char, "#{new_char.name} has now #{new_char.gold} golds", :special_green)
+
+      _ ->
+        send_message(socket, character, "Invalid value '#{str_val}'", :special_red)
+        send_message(socket, character, usage(args), :special_red)
     end
   end
 
