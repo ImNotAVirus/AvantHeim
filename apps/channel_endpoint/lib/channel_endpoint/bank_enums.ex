@@ -1,14 +1,19 @@
-defmodule ChannelEndpoint.Endpoint.UIPackets.BankActionTypesEnums do
+defmodule ChannelEndpoint.BankEnums do
   @moduledoc """
-  TODO: Documentation.
+  TODO: Documentation
   """
 
   import SimpleEnum, only: [defenum: 2]
 
-  defenum :bank_action_type, [
+  defenum :action_type, [
     :open_from_savings_book,
     :deposit_gold,
     :withdraw_gold,
     :open_bank
   ]
+
+  defenum :text_color,
+    green: 4,
+    red: 5,
+    white: 6
 end

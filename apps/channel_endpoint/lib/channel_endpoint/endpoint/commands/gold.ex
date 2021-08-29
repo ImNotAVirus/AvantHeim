@@ -11,14 +11,14 @@ defmodule ChannelEndpoint.Endpoint.GoldCommand do
   ## Public API
 
   # > $gold
-  # Usage: $gold <get|set|add|sub> [from] [player_name:string] | [value:integer:0-2_000_000_000] [to] [player_name:string]
+  # Usage: $gold <get|set|add|sub> [options]
   #
   # > $gold set test
   # Invalid value 'test'
   # Usage: $gold <set> [value:integer:0-2_000_000_000] [to] [player_name:string]
   #
   # > $gold set 2_000_000_001
-  # DarkyZ has now 2_000_000_000 golds
+  # DarkyZ has now 2,000,000,000 golds
   #
   # > $gold set 666
   # DarkyZ has now 666 golds
@@ -79,20 +79,18 @@ defmodule ChannelEndpoint.Endpoint.GoldCommand do
 
   ## Private functions
 
-  defp usage(["get" | _]), do: "Usage: $gold get [from] [player_name:string]"
+  @spec usage([String.t()]) :: String.t()
+  defp usage(args) do
+    msg =
+      case args do
+        ["get" | _] -> "get [from] [player_name:string]"
+        ["set" | _] -> "set [value:integer:0-2_000_000_000] [to] [player_name:string]"
+        ["add" | _] -> "add [value:integer:0-2_000_000_000] [to] [player_name:string]"
+        ["sub" | _] -> "sub [value:integer:0-2_000_000_000] [to] [player_name:string]"
+        _ -> "<get|set|add|sub> [options]"
+      end
 
-  defp usage(["set" | _]),
-    do: "Usage: $gold set [value:integer:0-2_000_000_000] [to] [player_name:string]"
-
-  defp usage(["add" | _]),
-    do: "Usage: $gold add [value:integer:0-2_000_000_000] [to] [player_name:string]"
-
-  defp usage(["sub" | _]),
-    do: "Usage: $gold sub [value:integer:0-2_000_000_000] [to] [player_name:string]"
-
-  defp usage(_) do
-    "Usage: $gold <get|set|add|sub> [from] [player_name:string] | " <>
-      "[value:integer:0-2_000_000_000] [to] [player_name:string]"
+    "Usage: $gold " <> msg
   end
 
   @typep callback ::
@@ -114,7 +112,7 @@ defmodule ChannelEndpoint.Endpoint.GoldCommand do
     send_message(
       socket,
       character,
-      "Current #{target.name}'s gold: #{target.gold} golds",
+      "Current #{target.name}'s gold: #{Core.format_number(target.gold)} golds",
       :special_green
     )
   end
@@ -130,7 +128,7 @@ defmodule ChannelEndpoint.Endpoint.GoldCommand do
         send_message(
           socket,
           new_char,
-          "#{new_char.name} has now #{new_char.gold} golds",
+          "#{new_char.name} has now #{Core.format_number(new_char.gold)} golds",
           :special_green
         )
 

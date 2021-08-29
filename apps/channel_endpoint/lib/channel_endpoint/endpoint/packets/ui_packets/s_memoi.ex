@@ -5,25 +5,22 @@ defmodule ChannelEndpoint.Endpoint.UIPackets.SMemoi do
 
   use Core.SerializableStruct
 
-  import ChannelEndpoint.Endpoint.UIPackets.BankTextEnums, only: [text_type: 2]
+  import ChannelEndpoint.BankEnums, only: [text_color: 2]
 
   alias __MODULE__
 
-  @enforce_keys [:text_type, :i18n_string]
+  @enforce_keys [:text_color, :i18n_vnum]
   defstruct @enforce_keys
 
-  @type t :: %SMemoi{
-          text_type: atom,
-          i18n_string: pos_integer
-        }
+  @type t :: %SMemoi{text_color: atom, i18n_vnum: pos_integer}
 
   @impl true
   def serialize(%SMemoi{} = struct, _) do
     %SMemoi{
-      text_type: text_type_atom,
-      i18n_string: i18n_string
+      text_color: text_color_atom,
+      i18n_vnum: i18n_vnum
     } = struct
 
-    ["s_memoi", text_type(text_type_atom, :value), i18n_string, 0]
+    ["s_memoi", text_color(text_color_atom, :value), i18n_vnum, 0]
   end
 end

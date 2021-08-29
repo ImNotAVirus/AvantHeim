@@ -11,44 +11,47 @@ defmodule ChannelEndpoint.Endpoint.BankCommand do
   ## Public API
 
   # > $bank
-  # Usage: $bank <get|set|add|sub> [from] [player_name:string] | [value:integer:0-5_000_000_000] [to] [player_name:string]
+  # Usage: $bank <open|get|set|add|sub> [options]
+  #
+  # > $bank open
+  # > [show bank widget in game]
   #
   # > $bank set test
   # Invalid value 'test'
   # Usage: $bank <set> [value:integer:0-5_000_000_000] [to] [player_name:string]
   #
   # > $bank set 5_000_000_001
-  # DarkyZ has now 5_000_000_000 golds
+  # DarkyZ has now 5_000_000_000 golds in bank
   #
   # > $bank set 666
-  # DarkyZ has now 666 golds
+  # DarkyZ has now 666 golds in bank
   #
   # > $bank add 3
-  # DarkyZ has now 669 golds
+  # DarkyZ has now 669 golds in bank
   #
   # > $bank sub 3
-  # DarkyZ has now 666 golds
+  # DarkyZ has now 666 golds in bank
   #
   # > $bank set -1
-  # DarkyZ has now 0 golds
+  # DarkyZ has now 0 golds in bank
   #
   # > $bank set 0 to UnknowPlayer
   # UnknowPlayer is not logged
   #
   # > $bank set 3 to Fizo
-  # Fizo has now 3 golds
+  # Fizo has now 3 golds in bank
   #
   # > $bank get
-  # Current DarkyZ's gold: 3 golds
+  # Current DarkyZ's bank gold: 3 golds
   #
   # > $bank get from Fizo
-  # > Current Fizo's gold: 3 golds
+  # > Current Fizo's bank gold: 3 golds
   #
   # > $bank add 3 to Fizo
-  # > Fizo has now 6 golds
+  # > Fizo has now 6 golds in bank
   #
   # > $bank sub 6 to Fizo
-  # > Fizo has now 0 golds
+  # > Fizo has now 0 golds in bank
 
   @op_types ["set", "add", "sub"]
 
@@ -58,6 +61,9 @@ defmodule ChannelEndpoint.Endpoint.BankCommand do
     {:ok, character} = CachingService.get_character_by_id(character_id)
 
     case args do
+      ["open"] ->
+        EntityInteractions.open_bank_window(character)
+
       ["get"] ->
         get_bank_golds(socket, character, args, character)
 
@@ -70,9 +76,6 @@ defmodule ChannelEndpoint.Endpoint.BankCommand do
       [op_type, _, "to", name] = args when op_type in @op_types ->
         apply_on_character(socket, character, args, name, &update_bank_golds/4)
 
-      ["open"] ->
-        EntityInteractions.open_bank_window(character)
-
       args ->
         send_message(socket, character, usage(args), :special_red)
     end
@@ -82,20 +85,19 @@ defmodule ChannelEndpoint.Endpoint.BankCommand do
 
   ## Private functions
 
-  defp usage(["get" | _]), do: "Usage: $bank get [from] [player_name:string]"
+  @spec usage([String.t()]) :: String.t()
+  defp usage(args) do
+    msg =
+      case args do
+        ["open" | _] -> "open"
+        ["get" | _] -> "get [from] [player_name:string]"
+        ["set" | _] -> "set [value:integer:0-5_000_000_000] [to] [player_name:string]"
+        ["add" | _] -> "add [value:integer:0-5_000_000_000] [to] [player_name:string]"
+        ["sub" | _] -> "sub [value:integer:0-5_000_000_000] [to] [player_name:string]"
+        _ -> "<open|get|set|add|sub> [options]"
+      end
 
-  defp usage(["set" | _]),
-    do: "Usage: $bank set [value:integer:0-5_000_000_000] [to] [player_name:string]"
-
-  defp usage(["add" | _]),
-    do: "Usage: $bank add [value:integer:0-5_000_000_000] [to] [player_name:string]"
-
-  defp usage(["sub" | _]),
-    do: "Usage: $bank sub [value:integer:0-5_000_000_000] [to] [player_name:string]"
-
-  defp usage(_) do
-    "Usage: $bank <get|set|add|sub> [from] [player_name:string] | " <>
-      "[value:integer:0-5_000_000_000] [to] [player_name:string]"
+    "Usage: $bank " <> msg
   end
 
   @typep callback ::
@@ -118,7 +120,7 @@ defmodule ChannelEndpoint.Endpoint.BankCommand do
     send_message(
       socket,
       character,
-      "Current #{target.name}'s gold: #{target.gold} golds",
+      "Current #{target.name}'s bank gold: #{Core.format_number(target.bank_gold)} golds",
       :special_green
     )
   end
@@ -128,13 +130,13 @@ defmodule ChannelEndpoint.Endpoint.BankCommand do
   defp update_bank_golds(socket, character, [op_type, str_val | _] = args, target) do
     case Integer.parse(str_val) do
       {value, ""} ->
-        updated_gold = compute_golds(op_type, target.gold, value)
+        updated_gold = compute_golds(op_type, target.bank_gold, value)
         {:ok, new_char} = EntityInteractions.set_bank_golds(target, updated_gold)
 
         send_message(
           socket,
           new_char,
-          "#{new_char.name} has now #{new_char.gold} golds",
+          "#{new_char.name} has now #{Core.format_number(new_char.bank_gold)} golds in bank",
           :special_green
         )
 

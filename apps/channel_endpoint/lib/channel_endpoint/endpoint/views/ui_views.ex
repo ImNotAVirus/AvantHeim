@@ -20,39 +20,39 @@ defmodule ChannelEndpoint.Endpoint.UIViews do
     %Gold{gold: character.gold, bank_gold: character.bank_gold}
   end
 
-  # TODO : Bank rank | tax | bank_action_type
+  # TODO : Bank rank | tax | action_type
   def render(:gb, %{
-        entity: %Character{gold: gold, bank_gold: bank_gold},
-        bank_action_type: bank_action_type,
+        entity: %Character{} = entity,
+        action_type: action_type,
         bank_rank: bank_rank,
         bank_tax: bank_tax
       }) do
     %Gb{
-      bank_action_type: bank_action_type,
-      gold_bank: bank_gold,
-      gold: gold,
+      action_type: action_type,
+      bank_gold: entity.bank_gold,
+      gold: entity.gold,
       bank_rank: bank_rank,
       bank_tax: bank_tax
     }
   end
 
-  def render(:smemoi2, %{
-        entity: %Character{gold: gold, bank_gold: bank_gold},
-        text_type: text_type,
-        i18n_string: i18n_string
-      }) do
+  def render(:s_memoi2, %{entity: %Character{} = entity, i18n_vnum: i18n_vnum} = attrs) do
+    text_color = Map.get(attrs, :text_color, :white)
+
     %SMemoi2{
-      text_type: text_type,
-      i18n_string: i18n_string,
-      gold_bank: bank_gold,
-      gold: gold
+      text_color: text_color,
+      i18n_vnum: i18n_vnum,
+      bank_gold: entity.bank_gold,
+      gold: entity.gold
     }
   end
 
-  def render(:smemoi, %{text_type: text_type, i18n_string: i18n_string}) do
+  def render(:s_memoi, %{i18n_vnum: i18n_vnum} = attrs) do
+    text_color = Map.get(attrs, :text_color, :white)
+
     %SMemoi{
-      text_type: text_type,
-      i18n_string: i18n_string
+      text_color: text_color,
+      i18n_vnum: i18n_vnum
     }
   end
 end

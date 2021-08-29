@@ -5,16 +5,16 @@ defmodule ChannelEndpoint.Endpoint.UIPackets.Gb do
 
   use Core.SerializableStruct
 
-  import ChannelEndpoint.Endpoint.UIPackets.BankActionTypesEnums, only: [bank_action_type: 2]
+  import ChannelEndpoint.BankEnums, only: [action_type: 2]
 
   alias __MODULE__
 
-  @enforce_keys [:bank_action_type, :gold_bank, :gold, :bank_rank, :bank_tax]
+  @enforce_keys [:action_type, :bank_gold, :gold, :bank_rank, :bank_tax]
   defstruct @enforce_keys
 
   @type t :: %Gb{
-          bank_action_type: atom,
-          gold_bank: non_neg_integer,
+          action_type: atom,
+          bank_gold: non_neg_integer,
           gold: non_neg_integer,
           bank_rank: pos_integer,
           bank_tax: non_neg_integer
@@ -23,13 +23,13 @@ defmodule ChannelEndpoint.Endpoint.UIPackets.Gb do
   @impl true
   def serialize(%Gb{} = struct, _) do
     %Gb{
-      bank_action_type: bank_action_type_atom,
-      gold_bank: gold_bank,
+      action_type: action_type_atom,
+      bank_gold: bank_gold,
       gold: gold,
       bank_rank: bank_rank,
       bank_tax: bank_tax
     } = struct
 
-    ["gb", bank_action_type(bank_action_type_atom, :value), gold_bank, gold, bank_rank, bank_tax]
+    ["gb", action_type(action_type_atom, :value), bank_gold, gold, bank_rank, bank_tax]
   end
 end
