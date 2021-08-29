@@ -9,10 +9,20 @@ defmodule ChannelEndpoint.Endpoint.GameActions do
   alias ChannelEndpoint.Endpoint.{
     ChatViews,
     PlayerViews,
-    UIViews
+    UIViews,
+    EntityViews
   }
 
   ## Packet handlers
+
+  @spec ncif(String.t(), map, Socket.t()) :: {:cont, Socket.t()}
+  def ncif("ncif", %{entity_id: entity_id}, %Socket{} = socket) do
+    {:ok, character} = CachingService.get_character_by_id(entity_id)
+
+    Socket.send(socket, EntityViews.render(:st, character))
+
+    {:cont, socket}
+  end
 
   @spec game_start(String.t(), map, Socket.t()) :: {:cont, Socket.t()}
   def game_start("game_start", _, %Socket{} = socket) do
