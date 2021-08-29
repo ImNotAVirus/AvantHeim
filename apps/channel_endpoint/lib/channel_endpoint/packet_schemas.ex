@@ -78,6 +78,18 @@ defmodule ChannelEndpoint.PacketSchemas do
     resolve MapActions, :walk
   end
 
+  #######
+  # Request stats info about mobs or mates or character
+  # ---
+  # Example: "ncif 1 123"
+  #######
+  packet "ncif" do
+    field :entity_type, :integer
+    field :entity_id, :integer
+
+    resolve MapActions, :ncif
+  end
+
   ## Commands
 
   defcommand "speed", ChannelEndpoint.Endpoint.SpeedCommand
