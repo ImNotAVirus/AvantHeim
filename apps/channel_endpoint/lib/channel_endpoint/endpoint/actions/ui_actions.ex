@@ -12,25 +12,24 @@ defmodule ChannelEndpoint.Endpoint.UIActions do
 
   ## Packet handlers
 
+  @emoji_offset 4099
+  @rainbow_vomit_vnum 5116
+
   @spec show_emoji(String.t(), map, Socket.t()) :: {:cont, Socket.t()}
   def show_emoji("guri", params, %Socket{} = socket) do
     %{guri_data: guri_data, entity_id: entity_id} = params
 
     {:ok, character} = CachingService.get_character_by_id(entity_id)
 
-    emoji_offset =
-      case guri_data do
-        x when x >= 973 and x <= 999 -> 4099
-        x when x == 1000 -> 4116
-        x -> x
-      end
+    case guri_data do
+      x when x >= 973 and x <= 999 ->
+        EntityInteractions.show_effect(character, guri_data + @emoji_offset)
 
-    value = guri_data + emoji_offset
+      1000 ->
+        EntityInteractions.show_effect(character, @rainbow_vomit_vnum)
 
-    if guri_data >= 973 and guri_data <= 1000 do
-      EntityInteractions.show_effect(character, value)
-    else
-      Socket.send(socket, UIViews.render(:info, %{message: "UNAUTHORIZED_EMOTICON"}))
+      x ->
+        UserInterfaceViews.render(:info, %{message: "UNAUTHORIZED_EMOTICON"})
     end
 
     {:cont, socket}
