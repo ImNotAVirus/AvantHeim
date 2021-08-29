@@ -54,7 +54,7 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
       UIViews.render(:s_memoi2, %{entity: character, i18n_vnum: 2345})
     )
 
-    # Text: We'll do our best. Thank you for using que Cuarry Bank.
+    # Text: We'll do our best. Thank you for using the Cuarry Bank.
     Socket.send(
       character.socket,
       UIViews.render(:s_memoi, %{i18n_vnum: 2353})
