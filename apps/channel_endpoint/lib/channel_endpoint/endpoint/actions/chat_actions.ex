@@ -11,7 +11,7 @@ defmodule ChannelEndpoint.Endpoint.ChatActions do
   @spec player_general_chat(String.t(), map, Socket.t()) :: {:cont, Socket.t()}
   def player_general_chat("say", %{message: message}, %Socket{} = socket) do
     if String.starts_with?(message, "!") do
-      raise "unimplemented timespace chat"
+      raise "TODO: unimplemented timespace chat"
     end
 
     %{character_id: character_id} = socket.assigns
