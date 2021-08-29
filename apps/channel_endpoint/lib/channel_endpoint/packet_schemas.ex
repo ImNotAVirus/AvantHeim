@@ -8,7 +8,8 @@ defmodule ChannelEndpoint.PacketSchemas do
   alias ChannelEndpoint.Endpoint.{
     LobbyActions,
     GameActions,
-    MapActions
+    MapActions,
+    ChatActions
   }
 
   ## Ignore some packets
@@ -79,6 +80,16 @@ defmodule ChannelEndpoint.PacketSchemas do
   end
 
   #######
+  # Handle message coming from the game chat
+  # ---
+  # Example: "say DarkyZ"
+  #######
+  packet "say" do
+    field :message, :string, fill: true
+
+    resolve ChatActions, :player_general_chat
+  end
+
   # Request stats info about mobs or mates or character
   # ---
   # Example: "ncif 1 123"
