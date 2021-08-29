@@ -51,7 +51,7 @@ defmodule ChannelEndpoint.Endpoint.EntityPackets.St do
     entity_type = entity_type(entity_type_atom, :value)
     hp_percent = trunc(hp * 100 / hp_max)
     mp_percent = trunc(mp * 100 / mp_max)
-    serialized_buff = serialize_term(buffs, joiner: "")
+    serialized_buff = serialize_term(buffs, joiner: " ")
 
     [
       "st",
