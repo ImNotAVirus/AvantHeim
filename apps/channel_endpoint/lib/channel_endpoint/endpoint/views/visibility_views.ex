@@ -5,9 +5,22 @@ defmodule ChannelEndpoint.Endpoint.VisibilityViews do
 
   alias CachingService.Position
   alias CachingService.Player.Character
-  alias ChannelEndpoint.Endpoint.VisibilityPackets.InCharacter
+  alias ChannelEndpoint.Endpoint.VisibilityPackets.{
+    InCharacter,
+    Stat
+  }
 
   ## Public API
+
+  @spec render(atom, any) :: any
+  def render(:stat, %Character{} = character) do
+    %Stat{
+      hp: FakeData.hp(character_id: character.id),
+      hp_maximum: FakeData.hp_max(character_id: character.id),
+      mp: FakeData.mp(character_id: character.id),
+      mp_maximum: FakeData.mp_max(character_id: character.id)
+    }
+  end
 
   @spec render(atom, any) :: any
   def render(:in, %Character{} = character) do

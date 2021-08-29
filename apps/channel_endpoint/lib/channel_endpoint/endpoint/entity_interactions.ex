@@ -27,6 +27,7 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
     # TODO: Socket.send(character.socket, PlayerViews.render(:sc, character))
     Socket.send(character.socket, EntityViews.render(:char_sc, character))
     Socket.send(character.socket, EntityViews.render(:cond, character))
+    Socket.send(character.socket, VisibilityViews.render(:stat, character))
 
     ## Other players packets
     %Position{map_id: map_id} = Character.get_position(character)
