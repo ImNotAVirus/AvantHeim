@@ -112,7 +112,7 @@ defmodule ChannelEndpoint.PacketSchemas do
   #######
   packet "guri" do
     field :type, :integer, using: guri_type(:emoji, :value)
-    field :unknown, :integer
+    field :entity_type, :integer
     field :entity_id, :integer
     field :guri_data, :integer
 
