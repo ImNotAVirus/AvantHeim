@@ -9,8 +9,11 @@ defmodule ChannelEndpoint.PacketSchemas do
     LobbyActions,
     GameActions,
     MapActions,
-    ChatActions
+    ChatActions,
+    UIActions
   }
+
+  import ChannelEndpoint.Endpoint.UIPackets.Guri, only: [guri_type: 2]
 
   ## Ignore some packets
 
@@ -90,6 +93,7 @@ defmodule ChannelEndpoint.PacketSchemas do
     resolve ChatActions, :player_general_chat
   end
 
+  #######
   # Request stats info about mobs or mates or character
   # ---
   # Example: "ncif 1 123"
@@ -99,6 +103,20 @@ defmodule ChannelEndpoint.PacketSchemas do
     field :entity_id, :integer
 
     resolve MapActions, :ncif
+  end
+
+  #######
+  # Handle emote effect asked by the client and return the specified effect packet
+  # ---
+  # Example: "guri 10 1 20 5099"
+  #######
+  packet "guri" do
+    field :type, :integer, using: guri_type(:emoji, :value)
+    field :unknown, :integer
+    field :entity_id, :integer
+    field :guri_data, :integer
+
+    resolve UIActions, :show_emoji
   end
 
   ## Commands
