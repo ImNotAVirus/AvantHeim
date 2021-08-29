@@ -8,24 +8,16 @@ defmodule ChannelEndpoint.Endpoint.MapActions do
   alias ChannelEndpoint.Endpoint.EntityInteractions
   alias ChannelEndpoint.Endpoint.EntityViews
 
-  import DatabaseService.EntityEnums, only: [entity_type: 2]
-
   ## Packet handlers
 
   @spec ncif(String.t(), map, Socket.t()) :: {:cont, Socket.t()}
   def ncif("ncif", params, %Socket{} = socket) do
-    %{entity_type: entity_type_val, entity_id: entity_id} = params
+    %{entity_type: entity_type, entity_id: entity_id} = params
 
     %{character_id: character_id} = socket.assigns
     {:ok, %Character{map_id: cur_map}} = CachingService.get_character_by_id(character_id)
 
-    entity =
-      case entity_type(entity_type_val, :key) do
-        :character -> CachingService.get_character_by_id(entity_id)
-        :npc -> raise "TODO: unsupported entity type"
-        :monster -> raise "TODO: unsupported entity type"
-        _ -> {:error, :unknown_entity_type}
-      end
+    entity = CachingService.get_entity_by_id(entity_type, entity_id)
 
     case entity do
       {:ok, %{map_id: ^cur_map} = target} ->

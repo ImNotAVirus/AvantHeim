@@ -26,6 +26,7 @@ defmodule CachingService.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
+      {:database_service, in_umbrella: true},
       {:memento, "~> 0.3.2"}
     ]
   end
