@@ -89,6 +89,17 @@ defmodule ChannelEndpoint.PacketSchemas do
 
     resolve ChatActions, :player_general_chat
   end
+    
+  # Request stats info about mobs or mates or character
+  # ---
+  # Example: "ncif 1 123"
+  #######
+  packet "ncif" do
+    field :entity_type, :integer
+    field :entity_id, :integer
+
+    resolve MapActions, :ncif
+  end
 
   ## Commands
 
@@ -96,4 +107,5 @@ defmodule ChannelEndpoint.PacketSchemas do
   defcommand "name", ChannelEndpoint.Endpoint.NameCommand
   defcommand "effect", ChannelEndpoint.Endpoint.EffectCommand
   defcommand "gold", ChannelEndpoint.Endpoint.GoldCommand
+  defcommand "bank", ChannelEndpoint.Endpoint.BankCommand
 end

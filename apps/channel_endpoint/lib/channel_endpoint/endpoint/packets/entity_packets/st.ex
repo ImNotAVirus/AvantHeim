@@ -5,7 +5,7 @@ defmodule ChannelEndpoint.Endpoint.EntityPackets.St do
 
   use Core.SerializableStruct
 
-  import DatabaseService.EntityEnums, only: [entity_type: 1]
+  import DatabaseService.EntityEnums, only: [entity_type: 2]
 
   alias __MODULE__
 
@@ -48,12 +48,24 @@ defmodule ChannelEndpoint.Endpoint.EntityPackets.St do
       buffs: buffs
     } = struct
 
-    entity_type = entity_type(entity_type_atom)
     hp_percent = trunc(hp * 100 / hp_max)
     mp_percent = trunc(mp * 100 / mp_max)
-    serialized_buff = serialize_term(buffs)
 
-    "st #{entity_type} #{entity_id} #{level} #{hero_level} #{hp_percent} " <>
-      "#{mp_percent} #{hp} #{mp} #{serialized_buff}"
+    packet = [
+      "st",
+      entity_type(entity_type_atom, :value),
+      entity_id,
+      level,
+      hero_level,
+      hp_percent,
+      mp_percent,
+      hp,
+      mp
+    ]
+
+    case buffs do
+      [] -> packet
+      _ -> packet ++ serialize_term(buffs, joiner: " ")
+    end
   end
 end
