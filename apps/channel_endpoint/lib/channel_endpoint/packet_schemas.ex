@@ -79,6 +79,11 @@ defmodule ChannelEndpoint.PacketSchemas do
     resolve MapActions, :walk
   end
 
+  #######
+  # Handle message coming from the game chat
+  # ---
+  # Example: "say DarkyZ"
+  #######
   packet "say" do
     field :message, :string, fill: true
 

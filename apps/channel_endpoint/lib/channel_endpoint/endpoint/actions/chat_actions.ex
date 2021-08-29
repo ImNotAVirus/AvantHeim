@@ -17,7 +17,7 @@ defmodule ChannelEndpoint.Endpoint.ChatActions do
     %{character_id: character_id} = socket.assigns
     {:ok, character} = CachingService.get_character_by_id(character_id)
 
-    EntityInteractions.player_say_ui(character, message)
+    EntityInteractions.say_to_map(character, message)
 
     {:cont, socket}
   end

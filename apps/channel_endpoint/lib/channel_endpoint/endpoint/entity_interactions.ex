@@ -36,8 +36,8 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
     Enum.each(players, &send_visibility_packets(character, &1))
   end
 
-  @spec player_say_ui(Character.t(), String.t()) :: :ok
-  def player_say_ui(%Character{} = character, message) do
+  @spec say_to_map(Character.t(), String.t()) :: :ok
+  def say_to_map(%Character{} = character, message) do
     broadcast_on_map(
       character,
       ChatViews.render(:say, %{entity: character, message: message}),
