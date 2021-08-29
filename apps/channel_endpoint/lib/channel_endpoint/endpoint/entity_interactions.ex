@@ -12,7 +12,8 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
     MapViews,
     PlayerViews,
     VisibilityViews,
-    UIViews
+    UIViews,
+    ChatViews
   }
 
   @spec map_enter(Character.t()) :: :ok
@@ -33,6 +34,15 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
 
     {:ok, players} = CachingService.get_characters_by_map_id(map_id, [{:!==, :id, character.id}])
     Enum.each(players, &send_visibility_packets(character, &1))
+  end
+
+  @spec player_say_ui(Character.t(), String.t()) :: :ok
+  def player_say_ui(%Character{} = character, message) do
+    broadcast_on_map(
+      character,
+      ChatViews.render(:say, %{entity: character, message: message}),
+      false
+    )
   end
 
   # TODO : Improve that to support pnj | mobs | mates

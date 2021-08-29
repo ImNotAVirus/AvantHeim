@@ -78,6 +78,12 @@ defmodule ChannelEndpoint.PacketSchemas do
     resolve MapActions, :walk
   end
 
+  packet "say" do
+    field :message, :string, fill: true
+
+    resolve GameActions, :player_general_chat
+  end
+
   ## Commands
 
   defcommand "speed", ChannelEndpoint.Endpoint.SpeedCommand
