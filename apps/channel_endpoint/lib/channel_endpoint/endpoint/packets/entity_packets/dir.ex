@@ -5,7 +5,7 @@ defmodule ChannelEndpoint.Endpoint.EntityPackets.Dir do
 
   use Core.SerializableStruct
 
-  import DatabaseService.EntityEnums, only: [entity_type: 2]
+  import DatabaseService.EntityEnums, only: [entity_type: 2, direction_type: 2]
 
   alias __MODULE__
 
@@ -13,19 +13,19 @@ defmodule ChannelEndpoint.Endpoint.EntityPackets.Dir do
   defstruct @enforce_keys
 
   @type t :: %Dir{
-    direction: non_neg_integer,
     entity_type: atom,
-    entity_id: pos_integer
+    entity_id: pos_integer,
+    direction: atom
   }
 
   @impl true
   def serialize(%Dir{} = struct, _) do
     %Dir{
-      direction: direction,
       entity_type: entity_type_atom,
-      entity_id: entity_id
+      entity_id: entity_id,
+      direction: direction
     } = struct
 
-    ["dir", direction, entity_type(entity_type_atom, :value), entity_id]
+    ["dir", entity_type(entity_type_atom, :value), entity_id, direction_type(direction, :value)]
   end
 end
