@@ -89,7 +89,7 @@ defmodule ChannelEndpoint.PacketSchemas do
 
     resolve ChatActions, :player_general_chat
   end
-    
+
   # Request stats info about mobs or mates or character
   # ---
   # Example: "ncif 1 123"

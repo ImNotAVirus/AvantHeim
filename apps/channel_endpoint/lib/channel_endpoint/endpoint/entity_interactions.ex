@@ -42,8 +42,9 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
       character,
       ChatViews.render(:say, %{entity: character, message: message}),
       false
+    )
   end
-  
+
   @spec open_bank_window(Character.t()) :: :ok
   def open_bank_window(%Character{} = character) do
     # Open an empty bank widget
