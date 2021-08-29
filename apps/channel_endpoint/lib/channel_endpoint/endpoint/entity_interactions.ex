@@ -35,6 +35,32 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
     Enum.each(players, &send_visibility_packets(character, &1))
   end
 
+  @spec open_bank_window(Character.t()) :: :ok
+  def open_bank_window(%Character{} = character) do
+    # Open an empty bank widget
+    Socket.send(
+      character.socket,
+      UIViews.render(:gb, %{
+        entity: character,
+        action_type: :open_from_savings_book,
+        bank_rank: 1,
+        bank_tax: 0
+      })
+    )
+
+    # Text: Balance: %s Golds; Carrying: %s Gold
+    Socket.send(
+      character.socket,
+      UIViews.render(:s_memoi2, %{entity: character, i18n_vnum: 2345})
+    )
+
+    # Text: We'll do our best. Thank you for using the Cuarry Bank.
+    Socket.send(
+      character.socket,
+      UIViews.render(:s_memoi, %{i18n_vnum: 2353})
+    )
+  end
+
   # TODO : Improve that to support pnj | mobs | mates
   @spec show_effect(Character.t(), pos_integer) :: :ok
   def show_effect(%Character{} = character, effect_value) do
@@ -92,7 +118,7 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
   ## Private functions
 
   @spec normalize_golds(non_neg_integer, non_neg_integer) :: non_neg_integer
-  defp normalize_golds(golds, max_val \\ 2_000_000_000) do
+  defp normalize_golds(golds, max_val) do
     case golds do
       g when g < 0 -> 0
       g when g > max_val -> max_val
