@@ -10,6 +10,23 @@ defmodule ChannelEndpoint.Endpoint.MapActions do
 
   ## Packet handlers
 
+  @spec dir(String.t(), map, Socket.t()) :: {:cont, Socket.t()}
+  def dir("dir", params, %Socket{} = socket) do
+    %{dir: dir, entity_type: entity_type, entity_id: entity_id} = params
+
+    entity = CachingService.get_entity_by_id(entity_type, entity_id)
+
+    case entity do
+      {:ok, character} ->
+        EntityInteractions.set_dir(character, dir)
+
+      _ ->
+        :ok
+    end
+
+    {:cont, socket}
+  end
+
   @spec ncif(String.t(), map, Socket.t()) :: {:cont, Socket.t()}
   def ncif("ncif", params, %Socket{} = socket) do
     %{entity_type: entity_type, entity_id: entity_id} = params

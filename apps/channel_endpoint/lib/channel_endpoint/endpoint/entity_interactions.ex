@@ -36,6 +36,20 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
     Enum.each(players, &send_visibility_packets(character, &1))
   end
 
+  @spec set_dir(Character.t(), 0..7) :: {:ok, new_char :: Character.t()} | {:error, atom}
+  def set_dir(%Character{} = character, new_dir) do
+    new_char = %Character{character | dir: new_dir}
+
+    case CachingService.write_character(new_char) do
+      {:ok, new_char} ->
+        broadcast_on_map(new_char, EntityViews.render(:dir, new_char))
+        {:ok, new_char}
+
+      {:error, _} = x ->
+        x
+    end
+  end
+
   @spec say_to_map(Character.t(), String.t()) :: :ok
   def say_to_map(%Character{} = character, message) do
     broadcast_on_map(

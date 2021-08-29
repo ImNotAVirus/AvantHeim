@@ -10,7 +10,8 @@ defmodule ChannelEndpoint.Endpoint.EntityViews do
     CMode,
     Cond,
     Eff,
-    St
+    St,
+    Dir
   }
 
   ## Public API
@@ -67,6 +68,14 @@ defmodule ChannelEndpoint.Endpoint.EntityViews do
       entity_type: :character,
       entity_id: id,
       value: value
+    }
+  end
+
+  def render(:dir, %Character{} = character) do
+    %Dir{
+      direction: character.dir,
+      entity_type: :character,
+      entity_id: character.id
     }
   end
 end

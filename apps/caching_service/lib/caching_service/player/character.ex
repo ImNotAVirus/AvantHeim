@@ -30,7 +30,8 @@ defmodule CachingService.Player.Character do
   @virtual_attributes %{
     socket: nil,
     map_id: nil,
-    speed: 20
+    speed: 20,
+    dir: 1
   }
 
   use Memento.Table,
@@ -63,7 +64,8 @@ defmodule CachingService.Player.Character do
           # Virtual attributes
           socket: Socket.t(),
           map_id: pos_integer,
-          speed: non_neg_integer
+          speed: non_neg_integer,
+          dir: non_neg_integer
         }
 
   ## Public API
