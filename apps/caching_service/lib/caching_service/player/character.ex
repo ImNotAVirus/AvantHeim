@@ -5,8 +5,7 @@ defmodule CachingService.Player.Character do
 
   alias Core.Socket
   alias CachingService.Position
-
-  import DatabaseService.EntityEnums, only: [direction_type: 2]
+  alias DatabaseService.EntityEnums
 
   @db_attributes [
     :id,

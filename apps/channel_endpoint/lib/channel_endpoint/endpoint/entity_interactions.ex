@@ -6,6 +6,7 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
   alias Core.Socket
   alias CachingService.Position
   alias CachingService.Player.Character
+  alias DatabaseService.EntityEnums
 
   alias ChannelEndpoint.Endpoint.{
     EntityViews,
@@ -15,8 +16,6 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
     UIViews,
     ChatViews
   }
-
-  import DatabaseService.EntityEnums, only: [direction_type: 2]
 
   @spec map_enter(Character.t()) :: :ok
   def map_enter(%Character{} = character) do
