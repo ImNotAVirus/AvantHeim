@@ -42,7 +42,7 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
 
     case CachingService.write_character(new_char) do
       {:ok, new_char} ->
-        broadcast_on_map(new_char, EntityViews.render(:dir, new_char))
+        broadcast_on_map(new_char, EntityViews.render(:dir, new_char), false)
         {:ok, new_char}
 
       {:error, _} = x ->
