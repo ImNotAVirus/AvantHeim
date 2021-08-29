@@ -73,9 +73,9 @@ defmodule ChannelEndpoint.Endpoint.EntityViews do
 
   def render(:dir, %Character{} = character) do
     %Dir{
-      direction: character.dir,
       entity_type: :character,
-      entity_id: character.id
+      entity_id: character.id,
+      direction: character.dir
     }
   end
 end

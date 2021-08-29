@@ -15,7 +15,7 @@ defmodule ChannelEndpoint.Endpoint.EntityPackets.Dir do
   @type t :: %Dir{
     entity_type: atom,
     entity_id: pos_integer,
-    direction: atom
+    direction: EntityEnums.direction_type_keys()
   }
 
   @impl true

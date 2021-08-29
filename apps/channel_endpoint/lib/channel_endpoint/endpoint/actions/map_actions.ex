@@ -14,11 +14,11 @@ defmodule ChannelEndpoint.Endpoint.MapActions do
   def dir("dir", params, %Socket{} = socket) do
     %{dir: dir, entity_type: entity_type, entity_id: entity_id} = params
 
-    entity = CachingService.get_entity_by_id(entity_type, entity_id)
+    maybe_entity = CachingService.get_entity_by_id(entity_type, entity_id)
 
-    case entity do
-      {:ok, character} ->
-        EntityInteractions.set_dir(character, dir)
+    case maybe_entity do
+      {:ok, entity} ->
+        EntityInteractions.set_dir(entity, dir)
 
       _ ->
         :ok

@@ -16,6 +16,8 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
     ChatViews
   }
 
+  import DatabaseService.EntityEnums, only: [direction_type: 2]
+
   @spec map_enter(Character.t()) :: :ok
   def map_enter(%Character{} = character) do
     ## Self packets
@@ -36,7 +38,7 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
     Enum.each(players, &send_visibility_packets(character, &1))
   end
 
-  @spec set_dir(Character.t(), 0..7) :: {:ok, new_char :: Character.t()} | {:error, atom}
+  @spec set_dir(Character.t(), EntityEnums.direction_type_keys()) :: {:ok, new_char :: Character.t()} | {:error, atom}
   def set_dir(%Character{} = character, new_dir) do
     new_char = %Character{character | dir: new_dir}
 
