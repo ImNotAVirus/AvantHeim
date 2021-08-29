@@ -43,7 +43,7 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
       UIViews.render(:gb, %{
         entity: character,
         action_type: :open_from_savings_book,
-        bank_rank: 0,
+        bank_rank: 1,
         bank_tax: 0
       })
     )
