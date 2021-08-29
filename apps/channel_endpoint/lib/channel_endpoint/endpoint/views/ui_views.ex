@@ -4,7 +4,7 @@ defmodule ChannelEndpoint.Endpoint.UIViews do
   """
 
   alias CachingService.Player.Character
-  alias ChannelEndpoint.Endpoint.UIPackets.{Cancel, Info, Scene, Gold, Gb}
+  alias ChannelEndpoint.Endpoint.UIPackets.{Cancel, Info, Scene, Gold, Gb, SMemoi2, SMemoi}
 
   ## Public API
 
@@ -33,6 +33,26 @@ defmodule ChannelEndpoint.Endpoint.UIViews do
       gold: gold,
       bank_rank: bank_rank,
       bank_tax: bank_tax
+    }
+  end
+
+  def render(:smemoi2, %{
+        entity: %Character{gold: gold, bank_gold: bank_gold},
+        text_type: text_type,
+        i18n_string: i18n_string
+      }) do
+    %SMemoi2{
+      text_type: text_type,
+      i18n_string: i18n_string,
+      gold_bank: bank_gold,
+      gold: gold
+    }
+  end
+
+  def render(:smemoi, %{text_type: text_type, i18n_string: i18n_string}) do
+    %SMemoi{
+      text_type: text_type,
+      i18n_string: i18n_string
     }
   end
 end

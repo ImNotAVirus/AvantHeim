@@ -46,6 +46,16 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
         bank_tax: 0
       })
     )
+
+    Socket.send(
+      character.socket,
+      UIViews.render(:smemoi2, %{entity: character, text_type: :white, i18n_string: 2345})
+    )
+
+    Socket.send(
+      character.socket,
+      UIViews.render(:smemoi, %{text_type: :white, i18n_string: 2353})
+    )
   end
 
   # TODO : Improve that to support pnj | mobs | mates
