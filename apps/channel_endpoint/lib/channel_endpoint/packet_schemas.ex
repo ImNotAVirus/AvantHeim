@@ -81,13 +81,13 @@ defmodule ChannelEndpoint.PacketSchemas do
   #######
   # Request stats info about mobs or mates or character
   # ---
-  # Example: "ncif"
+  # Example: "ncif 1 123"
   #######
   packet "ncif" do
     field :entity_type, :integer
     field :entity_id, :integer
 
-    resolve GameActions, :ncif
+    resolve MapActions, :ncif
   end
 
   ## Commands
