@@ -29,7 +29,7 @@ defmodule ChannelEndpoint.Endpoint.UIActions do
         EntityInteractions.show_effect(character, @rainbow_vomit_vnum)
 
       x ->
-        UserInterfaceViews.render(:info, %{message: "UNAUTHORIZED_EMOTICON"})
+        Socket.send(socket, UIViews.render(:info, %{message: "UNAUTHORIZED_EMOTICON"}))
     end
 
     {:cont, socket}
