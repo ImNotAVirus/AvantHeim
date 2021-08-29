@@ -28,6 +28,18 @@ defmodule ChannelEndpoint.Endpoint.EntityViews do
     }
   end
 
+  def render(:st, %Character{} = character) do
+    entity_type: :character,
+    entity_id: character.id,
+    level: character.level,
+    hero_level: character.hero_level,
+    hp: FakeData.hp(character_id: character.id)
+    hp_max: FakeData.hp_max(character_id: character.id)
+    mp: FakeData.mp(character_id: character.id)
+    mp_max: FakeData.mp_max(character_id: character.id)
+    buffs: []
+  end
+
   def render(:char_sc, %Character{} = character) do
     %CharSc{
       entity_type: :character,
