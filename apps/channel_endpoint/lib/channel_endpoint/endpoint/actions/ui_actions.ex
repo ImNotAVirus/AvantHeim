@@ -6,6 +6,7 @@ defmodule ChannelEndpoint.Endpoint.UIActions do
   alias Core.Socket
   alias CachingService.Player.Character
   alias ChannelEndpoint.Endpoint.EntityInteractions
+  alias ChannelEndpoint.Endpoint.UIViews
 
   import DatabaseService.EntityEnums, only: [entity_type: 2]
 
@@ -28,6 +29,8 @@ defmodule ChannelEndpoint.Endpoint.UIActions do
 
     if guri_data >= 973 and guri_data <= 1000 do
       EntityInteractions.show_effect(character, value)
+    else
+      Socket.send(socket, UIViews.render(:info, %{message: "UNAUTHORIZED_EMOTICON"}))
     end
 
     {:cont, socket}
