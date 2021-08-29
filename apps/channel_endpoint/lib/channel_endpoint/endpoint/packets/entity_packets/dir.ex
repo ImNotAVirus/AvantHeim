@@ -5,6 +5,8 @@ defmodule ChannelEndpoint.Endpoint.EntityPackets.Dir do
 
   use Core.SerializableStruct
 
+  alias DatabaseService.EntityEnums
+
   import DatabaseService.EntityEnums, only: [entity_type: 2, direction_type: 2]
 
   alias __MODULE__
