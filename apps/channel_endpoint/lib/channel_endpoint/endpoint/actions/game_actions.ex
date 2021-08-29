@@ -14,20 +14,6 @@ defmodule ChannelEndpoint.Endpoint.GameActions do
 
   ## Packet handlers
 
-  @spec player_general_chat(String.t(), map, Socket.t()) :: {:cont, Socket.t()}
-  def player_general_chat("say", %{message: message}, %Socket{} = socket) do
-    if String.starts_with?(message, "!") do
-      raise "unimplemented timespace chat"
-    end
-
-    %{character_id: character_id} = socket.assigns
-    {:ok, character} = CachingService.get_character_by_id(character_id)
-
-    EntityInteractions.player_say_ui(character, message)
-
-    {:cont, socket}
-  end
-
   @spec game_start(String.t(), map, Socket.t()) :: {:cont, Socket.t()}
   def game_start("game_start", _, %Socket{} = socket) do
     %{character_id: character_id} = socket.assigns

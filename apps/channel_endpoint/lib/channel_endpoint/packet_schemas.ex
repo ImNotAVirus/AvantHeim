@@ -8,7 +8,8 @@ defmodule ChannelEndpoint.PacketSchemas do
   alias ChannelEndpoint.Endpoint.{
     LobbyActions,
     GameActions,
-    MapActions
+    MapActions,
+    ChatActions
   }
 
   ## Ignore some packets
@@ -81,7 +82,7 @@ defmodule ChannelEndpoint.PacketSchemas do
   packet "say" do
     field :message, :string, fill: true
 
-    resolve GameActions, :player_general_chat
+    resolve ChatActions, :player_general_chat
   end
 
   ## Commands
