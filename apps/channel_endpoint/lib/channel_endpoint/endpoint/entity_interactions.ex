@@ -160,5 +160,7 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
   defp send_visibility_packets(self, character) do
     Socket.send(self.socket, VisibilityViews.render(:in, character))
     Socket.send(character.socket, VisibilityViews.render(:in, self))
+    Socket.send(self.socket, EntityViews.render(:c_mode, character))
+    Socket.send(character.socket, EntityViews.render(:c_mode, self))
   end
 end
