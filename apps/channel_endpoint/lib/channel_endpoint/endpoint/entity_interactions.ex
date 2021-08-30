@@ -40,7 +40,7 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
   @spec set_dir(Character.t(), EntityEnums.direction_type_keys()) ::
           {:ok, new_char :: Character.t()} | {:error, atom}
   def set_dir(%Character{} = character, new_dir) do
-    new_char = %Character{character | dir: new_dir}
+    new_char = %Character{character | direction: new_dir}
 
     case CachingService.write_character(new_char) do
       {:ok, new_char} ->
