@@ -13,15 +13,11 @@ defmodule ChannelEndpoint.Endpoint.MapActions do
   @spec dir(String.t(), map, Socket.t()) :: {:cont, Socket.t()}
   def dir("dir", params, %Socket{} = socket) do
     %{dir: dir, entity_type: entity_type, entity_id: entity_id} = params
-
     maybe_entity = CachingService.get_entity_by_id(entity_type, entity_id)
 
     case maybe_entity do
-      {:ok, entity} ->
-        EntityInteractions.set_dir(entity, dir)
-
-      _ ->
-        :ok
+      {:ok, entity} -> EntityInteractions.set_dir(entity, dir)
+      _ -> :ok
     end
 
     {:cont, socket}
@@ -34,9 +30,9 @@ defmodule ChannelEndpoint.Endpoint.MapActions do
     %{character_id: character_id} = socket.assigns
     {:ok, %Character{map_id: cur_map}} = CachingService.get_character_by_id(character_id)
 
-    entity = CachingService.get_entity_by_id(entity_type, entity_id)
+    maybe_entity = CachingService.get_entity_by_id(entity_type, entity_id)
 
-    case entity do
+    case maybe_entity do
       {:ok, %{map_id: ^cur_map} = target} ->
         Socket.send(socket, EntityViews.render(:st, target))
 
