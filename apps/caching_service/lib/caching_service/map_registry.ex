@@ -66,7 +66,8 @@ defmodule CachingService.MapRegistry do
     )
   end
 
-  defp persist_map(map_tuple) do
-    true = :ets.insert_new(@table_name, map_tuple)
+  defp persist_map(record) do
+    id = map_record(record, :id)
+    true = :ets.insert_new(@table_name, {id, record})
   end
 end
