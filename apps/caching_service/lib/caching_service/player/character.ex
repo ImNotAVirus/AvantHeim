@@ -5,6 +5,7 @@ defmodule CachingService.Player.Character do
 
   alias Core.Socket
   alias CachingService.Position
+  alias DatabaseService.EntityEnums
 
   @db_attributes [
     :id,
@@ -30,7 +31,8 @@ defmodule CachingService.Player.Character do
   @virtual_attributes %{
     socket: nil,
     map_id: nil,
-    speed: 20
+    speed: 20,
+    direction: :south
   }
 
   use Memento.Table,
@@ -63,7 +65,8 @@ defmodule CachingService.Player.Character do
           # Virtual attributes
           socket: Socket.t(),
           map_id: pos_integer,
-          speed: non_neg_integer
+          speed: non_neg_integer,
+          direction: EntityEnums.direction_type_keys()
         }
 
   ## Public API

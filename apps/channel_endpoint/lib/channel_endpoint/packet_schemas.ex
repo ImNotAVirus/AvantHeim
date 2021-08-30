@@ -119,6 +119,19 @@ defmodule ChannelEndpoint.PacketSchemas do
     resolve UIActions, :show_emoji
   end
 
+  #######
+  # Handle packet sended by the client when a player is pressing his arrow keyboard
+  # ---
+  # Example: "dir 1 2 3"
+  #######
+  packet "dir" do
+    field :dir, :integer
+    field :entity_type, :integer
+    field :entity_id, :integer
+
+    resolve MapActions, :dir
+  end
+
   ## Commands
 
   defcommand "speed", ChannelEndpoint.Endpoint.SpeedCommand

@@ -4,11 +4,8 @@ defmodule ChannelEndpoint.Endpoint.UIActions do
   """
 
   alias Core.Socket
-  alias CachingService.Player.Character
   alias ChannelEndpoint.Endpoint.EntityInteractions
   alias ChannelEndpoint.Endpoint.UIViews
-
-  import DatabaseService.EntityEnums, only: [entity_type: 2]
 
   ## Packet handlers
 
