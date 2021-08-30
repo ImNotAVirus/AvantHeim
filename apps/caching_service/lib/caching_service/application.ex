@@ -9,7 +9,7 @@ defmodule CachingService.Application do
   def start(_type, _args) do
     children = [
       CachingService.CharacterRegistry,
-      {CachingService.MapRegistry, [map_id: 1]}
+      CachingService.MapRegistry
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

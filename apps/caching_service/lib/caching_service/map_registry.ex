@@ -7,6 +7,9 @@ defmodule CachingService.MapRegistry do
 
   require Logger
 
+  import CachingService.MapRegistry.MapRecord
+
+  @table_name :map_registry
   @maps_path "#{:code.priv_dir(:caching_service)}/client_files/maps"
 
   ## Public API
@@ -19,15 +22,33 @@ defmodule CachingService.MapRegistry do
   ## GenServer behaviour
 
   @impl true
-  def init(opts) do
-    map_id = Keyword.fetch!(opts, :map_id)
-    Logger.info("CharacterMap (id=#{map_id}) starting...")
-    {:ok, %{map_id: map_id}, {:continue, :init_map}}
+  def init(_) do
+    Logger.info("MapRegistry starting...")
+    {:ok, nil, {:continue, :init_map}}
   end
 
   @impl true
-  def handle_continue(:init_map, %{map_id: map_id}) do
-    filename = "#{@maps_path}/#{map_id}"
+  def handle_continue(:init_map, nil) do
+    :ets.new(@table_name, [:set, :protected, :named_table])
+
+    map_files = Path.wildcard("#{@maps_path}/*")
+
+    map_files
+    |> Stream.map(&parse_map_file/1)
+    |> Enum.each(&persist_map/1)
+
+    Logger.info("MapRegistry started")
+
+    {:noreply, map_files}
+  end
+
+  ## Private functions
+
+  defp parse_map_file(filename) do
+    Logger.debug("Parsing map file: #{filename}")
+
+    id = filename |> Path.basename() |> String.to_integer(10)
+
     <<width::16-little, height::16-little, map_bin::binary>> = File.read!(filename)
 
     tensor =
@@ -35,9 +56,17 @@ defmodule CachingService.MapRegistry do
       |> Nx.from_binary({:s, 8})
       |> Nx.reshape({height, width}, names: [:height, :width])
 
-    Logger.info("CharacterMap (id=#{map_id} size=#{width}x#{height}) started")
+    Logger.debug("Map parsed: id=#{id} size=#{width}x#{height}")
 
-    new_state = %{map_id: map_id, width: width, height: height, tensor: tensor}
-    {:noreply, new_state}
+    map_record(
+      id: id,
+      width: width,
+      height: height,
+      tensor: tensor
+    )
+  end
+
+  defp persist_map(map_tuple) do
+    true = :ets.insert_new(@table_name, map_tuple)
   end
 end
