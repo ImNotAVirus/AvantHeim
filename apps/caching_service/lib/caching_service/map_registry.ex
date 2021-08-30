@@ -24,11 +24,11 @@ defmodule CachingService.MapRegistry do
   @impl true
   def init(_) do
     Logger.info("MapRegistry starting...")
-    {:ok, nil, {:continue, :init_map}}
+    {:ok, nil, {:continue, :init_maps}}
   end
 
   @impl true
-  def handle_continue(:init_map, nil) do
+  def handle_continue(:init_maps, nil) do
     :ets.new(@table_name, [:set, :protected, :named_table])
 
     map_files = Path.wildcard("#{@maps_path}/*")
