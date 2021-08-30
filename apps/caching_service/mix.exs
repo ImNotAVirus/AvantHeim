@@ -26,7 +26,9 @@ defmodule CachingService.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:database_service, in_umbrella: true},
+      {:core, in_umbrella: true},
+      {:database_service, in_umbrella: true, runtime: false},
+      {:nx, "~> 0.1.0-dev", github: "elixir-nx/nx", branch: "main", sparse: "nx"},
       {:memento, "~> 0.3.2"}
     ]
   end
