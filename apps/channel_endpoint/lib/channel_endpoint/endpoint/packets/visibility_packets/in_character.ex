@@ -137,7 +137,7 @@ defmodule ChannelEndpoint.Endpoint.VisibilityPackets.InCharacter do
 
     vnum = "-"
     unknown1 = 0
-    unknown2 = 0
+    broadcast_effect = 0
 
     family_i18n =
       if family_id < 0, do: "-1", else: "#{family_id}.#{i18n_family_rank(family_rank)}"
@@ -165,7 +165,7 @@ defmodule ChannelEndpoint.Endpoint.VisibilityPackets.InCharacter do
       EntityEnums.element_type(fairy_element, :value),
       unknown1,
       fairy_morph,
-      unknown2,
+      broadcast_effect,
       morph,
       weapon_upgrade,
       armor_upgrade,
