@@ -37,7 +37,7 @@ defmodule CachingService.MapRegistry do
     |> Stream.map(&parse_map_file/1)
     |> Enum.each(&persist_map/1)
 
-    Logger.info("MapRegistry started")
+    Logger.info("MapRegistry started with #{length(map_files)} maps")
 
     {:noreply, map_files}
   end
