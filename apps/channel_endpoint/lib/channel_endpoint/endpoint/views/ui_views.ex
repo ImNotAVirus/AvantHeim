@@ -4,7 +4,7 @@ defmodule ChannelEndpoint.Endpoint.UIViews do
   """
 
   alias CachingService.Player.Character
-  alias ChannelEndpoint.Endpoint.UIPackets.{Cancel, Info, Scene, Gold, Gb, SMemoi2, SMemoi}
+  alias ChannelEndpoint.Endpoint.UIPackets.{Cancel, Info, Scene, Gold, Gb, SMemoi2, SMemoi, Dlgi2}
 
   ## Public API
 
@@ -53,6 +53,16 @@ defmodule ChannelEndpoint.Endpoint.UIViews do
     %SMemoi{
       text_color: text_color,
       i18n_vnum: i18n_vnum
+    }
+  end
+
+  def render(:dlgi2, %{packet_yes: packet_yes, packet_no: packet_no, i18n_vnum: i18n_vnum, params_count: params_count, name: name}) do
+    %Dlgi2{
+      packet_yes: packet_yes,
+      packet_no: packet_no,
+      i18n_vnum: i18n_vnum,
+      params_count: params_count,
+      name: name
     }
   end
 end

@@ -32,7 +32,8 @@ defmodule CachingService.Player.Character do
     socket: nil,
     map_id: nil,
     speed: 20,
-    direction: :south
+    direction: :south,
+    group_id: nil
   }
 
   use Memento.Table,
@@ -66,7 +67,8 @@ defmodule CachingService.Player.Character do
           socket: Socket.t(),
           map_id: pos_integer,
           speed: non_neg_integer,
-          direction: EntityEnums.direction_type_keys()
+          direction: EntityEnums.direction_type_keys(),
+          group_id: non_neg_integer
         }
 
   ## Public API
