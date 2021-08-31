@@ -4,6 +4,7 @@ defmodule ChannelEndpoint.Endpoint.GroupActions do
   """
 
   alias Core.Socket
+  alias CachingService.Player.Character
   alias ChannelEndpoint.Endpoint.{UIViews, PlayerViews, ChatViews}
 
   import ChannelEndpoint.GroupRequestEnums, only: [group_request_type: 2]
@@ -27,29 +28,7 @@ defmodule ChannelEndpoint.Endpoint.GroupActions do
           x
           when x == group_request_type(:requested, :value) or
                  x == group_request_type(:invited, :value) ->
-            if character.id == target.id do
-              raise "Why #{character.name} is trying to invite himself in a group ?"
-            end
-
-            # i18n string 234 = {PlayerName} has been requested to join
-            Socket.send(
-              character.socket,
-              UIViews.render(:infoi2, %{i18n_vnum: 234, params_count: 1, entity: target})
-            )
-
-            # i18n string 233 = {PlayerName} has invited you to join their party
-            Socket.send(
-              target.socket,
-              UIViews.render(:dlgi2, %{
-                packet_yes:
-                  PlayerViews.render(:pjoin, %{entity: character, request_type: :accepted}),
-                packet_no:
-                  PlayerViews.render(:pjoin, %{entity: character, request_type: :declined}),
-                i18n_vnum: 233,
-                params_count: 1,
-                name: character.name
-              })
-            )
+            send_group_invitation(&send_ui_invitation/2, character, target)
 
           group_request_type(:accepted, :value) ->
             :ok
@@ -76,5 +55,40 @@ defmodule ChannelEndpoint.Endpoint.GroupActions do
     end
 
     {:cont, socket}
+  end
+
+  # Private function
+
+  defp send_ui_invitation(%Character{} = character, %Character{} = target) do
+    # i18n string 234 = {PlayerName} has been requested to join
+    Socket.send(
+      character.socket,
+      UIViews.render(:infoi2, %{i18n_vnum: 234, params_count: 1, entity: target})
+    )
+
+    # i18n string 233 = {PlayerName} has invited you to join their party
+    Socket.send(
+      target.socket,
+      UIViews.render(:dlgi2, %{
+        packet_yes: PlayerViews.render(:pjoin, %{entity: character, request_type: :accepted}),
+        packet_no: PlayerViews.render(:pjoin, %{entity: character, request_type: :declined}),
+        i18n_vnum: 233,
+        params_count: 1,
+        name: character.name
+      })
+    )
+  end
+
+  defp send_group_invitation(callback, %Character{} = character, %Character{} = target) do
+    case {character, target} do
+      {x, y} when x.id == y.id ->
+        Socket.send(
+          character.socket,
+          UIViews.render(:info, %{message: "You can't invite yourself in a party."})
+        )
+
+      _ ->
+        callback.(character, target)
+    end
   end
 end
