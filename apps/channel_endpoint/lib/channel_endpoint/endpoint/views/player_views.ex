@@ -12,7 +12,8 @@ defmodule ChannelEndpoint.Endpoint.PlayerViews do
     Lev,
     Rsfi,
     Stat,
-    Tit
+    Tit,
+    Pjoin
   }
 
   ## Public API
@@ -82,6 +83,13 @@ defmodule ChannelEndpoint.Endpoint.PlayerViews do
       family_level: FakeData.family_level(character_id: character.id),
       morph_upgrade: FakeData.morph_upgrade(character_id: character.id),
       is_arena_winner: FakeData.is_arena_winner(character_id: character.id)
+    }
+  end
+
+  def render(:pjoin, %{entity: %Character{id: id}, request_type: request_type}) do
+    %Pjoin{
+      request_type: request_type,
+      id: id
     }
   end
 end

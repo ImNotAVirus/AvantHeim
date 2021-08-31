@@ -13,8 +13,8 @@ defmodule ChannelEndpoint.Endpoint.UIPackets.Dlgi2 do
   defstruct @enforce_keys
 
   @type t :: %Dlgi2{
-          packet_yes: String.t(),
-          packet_no: String.t(),
+          packet_yes: struct,
+          packet_no: struct,
           i18n_vnum: pos_integer,
           name: String.t()
         }
@@ -29,6 +29,12 @@ defmodule ChannelEndpoint.Endpoint.UIPackets.Dlgi2 do
       name: name
     } = struct
 
-    ["dlgi2", packet_yes, packet_no, i18n_vnum, params_count, name]
+    ["dlgi2", packet_to_field(packet_yes), packet_to_field(packet_no), i18n_vnum, params_count, name]
+  end
+
+  ## Private function
+
+  defp packet_to_field(packet) do
+    String.replace("##{serialize_term(packet)}", " ", "^")
   end
 end

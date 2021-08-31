@@ -10,7 +10,8 @@ defmodule ChannelEndpoint.PacketSchemas do
     GameActions,
     MapActions,
     ChatActions,
-    UIActions
+    UIActions,
+    GroupActions
   }
 
   import ChannelEndpoint.Endpoint.UIPackets.Guri, only: [guri_type: 2]
@@ -130,6 +131,18 @@ defmodule ChannelEndpoint.PacketSchemas do
     field :entity_id, :integer
 
     resolve MapActions, :dir
+  end
+
+  #######
+  # Ask for a player to join his group
+  # ---
+  # Example: "pjoin 1 2"
+  #######
+  packet "pjoin" do
+    field :request_type, :integer
+    field :entity_id, :integer
+
+    resolve GroupActions, :create_group
   end
 
   ## Commands

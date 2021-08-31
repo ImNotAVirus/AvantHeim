@@ -148,6 +148,7 @@ defmodule ChannelEndpoint.Endpoint.Protocol do
     end
   end
 
+  defp split_header("#" <> packet), do: packet |> String.replace("^", " ") |> split_header()
   defp split_header(packet) do
     case String.split(packet, @separator, parts: 2) do
       [header, bin_args] -> {header, bin_args}
