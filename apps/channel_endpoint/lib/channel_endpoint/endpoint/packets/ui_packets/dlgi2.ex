@@ -13,11 +13,11 @@ defmodule ChannelEndpoint.Endpoint.UIPackets.Dlgi2 do
   defstruct @enforce_keys
 
   @type t :: %Dlgi2{
-    packet_yes: String.t(),
-    packet_no: String.t(),
-    i18n_vnum: pos_integer,
-    name: String.t()
-  }
+          packet_yes: String.t(),
+          packet_no: String.t(),
+          i18n_vnum: pos_integer,
+          name: String.t()
+        }
 
   @impl true
   def serialize(%Dlgi2{} = struct, _) do

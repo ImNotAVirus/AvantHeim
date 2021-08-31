@@ -56,7 +56,13 @@ defmodule ChannelEndpoint.Endpoint.UIViews do
     }
   end
 
-  def render(:dlgi2, %{packet_yes: packet_yes, packet_no: packet_no, i18n_vnum: i18n_vnum, params_count: params_count, name: name}) do
+  def render(:dlgi2, %{
+        packet_yes: packet_yes,
+        packet_no: packet_no,
+        i18n_vnum: i18n_vnum,
+        params_count: params_count,
+        name: name
+      }) do
     %Dlgi2{
       packet_yes: packet_yes,
       packet_no: packet_no,
