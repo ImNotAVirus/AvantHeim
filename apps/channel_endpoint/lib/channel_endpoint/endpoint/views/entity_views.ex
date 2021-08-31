@@ -3,6 +3,7 @@ defmodule ChannelEndpoint.Endpoint.EntityViews do
   TODO: Documentation
   """
 
+  alias CachingService.Map.Monster
   alias CachingService.Player.Character
 
   alias ChannelEndpoint.Endpoint.EntityPackets.{
@@ -40,6 +41,19 @@ defmodule ChannelEndpoint.Endpoint.EntityViews do
       hp_max: FakeData.hp_max(character_id: character.id),
       mp: FakeData.mp(character_id: character.id),
       mp_max: FakeData.mp_max(character_id: character.id),
+      buffs: []
+    }
+  end
+
+  def render(:st, %Monster{} = monster) do
+    %St{
+      entity_type: :monster,
+      entity_id: monster.id,
+      level: monster.level,
+      hp: monster.hp,
+      hp_max: monster.hp_max,
+      mp: monster.mp,
+      mp_max: monster.mp_max,
       buffs: []
     }
   end

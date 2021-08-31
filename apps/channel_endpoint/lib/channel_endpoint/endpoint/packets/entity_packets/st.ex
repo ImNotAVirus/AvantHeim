@@ -13,14 +13,16 @@ defmodule ChannelEndpoint.Endpoint.EntityPackets.St do
     :entity_type,
     :entity_id,
     :level,
-    :hero_level,
     :hp,
     :hp_max,
     :mp,
     :mp_max,
     :buffs
   ]
-  defstruct @enforce_keys
+
+  @optional_keys [hero_level: 0]
+
+  defstruct @enforce_keys ++ @optional_keys
 
   @type t :: %St{
           entity_type: atom,

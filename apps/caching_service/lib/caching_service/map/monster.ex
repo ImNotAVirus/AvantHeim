@@ -11,6 +11,7 @@ defmodule CachingService.Map.Monster do
 
   @virtual_attributes %{
     name: nil,
+    level: 1,
     hp: 2_000,
     hp_max: 2_000,
     mp: 1_000,
@@ -49,6 +50,7 @@ defmodule CachingService.Map.Monster do
   @spec from_binary(binary, pos_integer) :: __MODULE__.t()
   def from_binary(bin, id) do
     defaults = %{
+      level: :rand.uniform(99),
       direction: Enum.random(direction_type(:__keys__)),
       is_sitting: Enum.random([true, false]),
       name: "Monster##{id}"
