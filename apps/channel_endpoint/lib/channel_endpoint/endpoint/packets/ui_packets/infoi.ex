@@ -13,7 +13,7 @@ defmodule ChannelEndpoint.Endpoint.UIPackets.Infoi do
   defstruct @enforce_keys ++ [first_argument: 0, second_argument: 0, third_argument: 0]
 
   @type t :: %Infoi{
-        i18n_vnum: pos_integer()
+          i18n_vnum: pos_integer()
         }
 
   @impl true
