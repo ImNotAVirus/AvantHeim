@@ -24,7 +24,9 @@ defmodule ChannelEndpoint.Endpoint.GroupActions do
     case {maybe_target, request_type} do
       {{:ok, target}, r} ->
         case r do
-          group_request_type(:requested, :value) ->
+          x
+          when x == group_request_type(:requested, :value) or
+                 x == group_request_type(:invited, :value) ->
             # i18n string 234 = {PlayerName} has been requested to join
             Socket.send(
               character.socket,
@@ -37,7 +39,8 @@ defmodule ChannelEndpoint.Endpoint.GroupActions do
               UIViews.render(:dlgi2, %{
                 packet_yes:
                   PlayerViews.render(:pjoin, %{entity: character, request_type: :accepted}),
-                packet_no: PlayerViews.render(:pjoin, %{entity: character, request_type: :declined}),
+                packet_no:
+                  PlayerViews.render(:pjoin, %{entity: character, request_type: :declined}),
                 i18n_vnum: 233,
                 params_count: 1,
                 name: character.name
