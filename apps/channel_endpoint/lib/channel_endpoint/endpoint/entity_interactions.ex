@@ -30,11 +30,14 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
     Socket.send(character.socket, EntityViews.render(:char_sc, character))
     Socket.send(character.socket, EntityViews.render(:cond, character))
 
-    ## Other players packets
+    ## Visibility packets
     %Position{map_id: map_id} = Character.get_position(character)
 
     {:ok, players} = CachingService.get_characters_by_map_id(map_id, [{:!==, :id, character.id}])
-    Enum.each(players, &send_visibility_packets(character, &1))
+    Enum.each(players, &send_character_visibility_packets(character, &1))
+
+    {:ok, monster} = CachingService.get_monsters_by_map_id(map_id)
+    Enum.each(monster, &send_entity_visibility_packets(character, &1))
   end
 
   @spec set_dir(Character.t(), EntityEnums.direction_type_keys()) ::
@@ -62,29 +65,21 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
   end
 
   @spec open_bank_window(Character.t()) :: :ok
-  def open_bank_window(%Character{} = character) do
-    # Open an empty bank widget
-    Socket.send(
-      character.socket,
+  def open_bank_window(%Character{socket: socket} = character) do
+    gb_render =
       UIViews.render(:gb, %{
         entity: character,
         action_type: :open_from_savings_book,
         bank_rank: 1,
         bank_tax: 0
       })
-    )
 
+    # Open an empty bank widget
+    Socket.send(socket, gb_render)
     # Text: Balance: %s Golds; Carrying: %s Gold
-    Socket.send(
-      character.socket,
-      UIViews.render(:s_memoi2, %{entity: character, i18n_vnum: 2345})
-    )
-
+    Socket.send(socket, UIViews.render(:s_memoi2, %{entity: character, i18n_vnum: 2345}))
     # Text: We'll do our best. Thank you for using the Cuarry Bank.
-    Socket.send(
-      character.socket,
-      UIViews.render(:s_memoi, %{i18n_vnum: 2353})
-    )
+    Socket.send(socket, UIViews.render(:s_memoi, %{i18n_vnum: 2353}))
   end
 
   # TODO : Improve that to support pnj | mobs | mates
@@ -172,11 +167,16 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
     Enum.each(players, &Socket.send(&1.socket, packet))
   end
 
-  @spec send_visibility_packets(Character.t(), Character.t()) :: :ok | {:error, atom}
-  defp send_visibility_packets(self, character) do
+  @spec send_character_visibility_packets(Character.t(), Character.t()) :: :ok | {:error, atom}
+  defp send_character_visibility_packets(self, character) do
     Socket.send(self.socket, VisibilityViews.render(:in, character))
     Socket.send(character.socket, VisibilityViews.render(:in, self))
     Socket.send(self.socket, EntityViews.render(:c_mode, character))
     Socket.send(character.socket, EntityViews.render(:c_mode, self))
+  end
+
+  @spec send_entity_visibility_packets(Character.t(), any) :: :ok | {:error, atom}
+  defp send_entity_visibility_packets(%Character{socket: socket}, entity) do
+    Socket.send(socket, VisibilityViews.render(:in, entity))
   end
 end

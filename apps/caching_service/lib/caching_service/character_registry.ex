@@ -21,8 +21,6 @@ defmodule CachingService.CharacterRegistry do
     GenServer.start_link(__MODULE__, opts, name: __MODULE__)
   end
 
-  ## Interfaces
-
   @spec init_character(DBCharacter.t(), Socket.t()) :: {:ok, Character.t()} | {:error, any}
   def init_character(%DBCharacter{} = character, %Socket{} = socket) do
     Memento.transaction(fn ->

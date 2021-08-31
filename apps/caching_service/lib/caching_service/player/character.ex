@@ -37,7 +37,7 @@ defmodule CachingService.Player.Character do
 
   use Memento.Table,
     type: :ordered_set,
-    index: [:map_vnum],
+    index: [:map_id],
     attributes: @db_attributes ++ Map.keys(@virtual_attributes)
 
   alias DatabaseService.Players.Character, as: DBCharacter
