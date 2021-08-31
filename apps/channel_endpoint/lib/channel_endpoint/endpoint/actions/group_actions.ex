@@ -91,7 +91,7 @@ defmodule ChannelEndpoint.Endpoint.GroupActions do
         # i18n string 228 : Already in another party
         Socket.send(character.socket, UIViews.render(:infoi, %{i18n_vnum: 228}))
 
-      {x, y, _} when x.group_id == y.group_id ->
+      {x, y, _} when x.group_id != nil and y.group_id != nil and x.group_id == y.group_id ->
         # i18n string 227 : Already in the requested party
         Socket.send(character.socket, UIViews.render(:infoi, %{i18n_vnum: 227}))
 
