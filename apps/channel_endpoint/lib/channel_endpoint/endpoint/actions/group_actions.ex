@@ -87,6 +87,10 @@ defmodule ChannelEndpoint.Endpoint.GroupActions do
           UIViews.render(:info, %{message: "You can't invite yourself in a party."})
         )
 
+      {x, y} when x.group_id != nil and y.group_id != nil ->
+        # i18n string 228 : Already in another party
+        Socket.send(character.socket, UIViews.render(:infoi, %{i18n_vnum: 228}))
+
       _ ->
         callback.(character, target)
     end
