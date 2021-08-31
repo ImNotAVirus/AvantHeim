@@ -80,20 +80,24 @@ defmodule ChannelEndpoint.Endpoint.GroupActions do
   end
 
   defp send_group_invitation(callback, %Character{} = character, %Character{} = target) do
-    case {character, target} do
-      {x, y} when x.id == y.id ->
+    case {character, target, CachingService.get_characters_by_group_id(character.group_id)} do
+      {x, y, _} when x.id == y.id ->
         Socket.send(
           character.socket,
           UIViews.render(:info, %{message: "You can't invite yourself in a party."})
         )
 
-      {x, y} when x.group_id != nil and y.group_id != nil and x.group_id != y.group_id ->
+      {x, y, _} when x.group_id != nil and y.group_id != nil and x.group_id != y.group_id ->
         # i18n string 228 : Already in another party
         Socket.send(character.socket, UIViews.render(:infoi, %{i18n_vnum: 228}))
 
-      {x, y} when x.group_id == y.group_id ->
+      {x, y, _} when x.group_id == y.group_id ->
         # i18n string 227 : Already in the requested party
         Socket.send(character.socket, UIViews.render(:infoi, %{i18n_vnum: 227}))
+
+      {c, _, {:ok, players}} when c.group_id != nil and length(players) >= 3 ->
+        # i18n string 230 : The party is already full
+        Socket.send(character.socket, UIViews.render(:infoi, %{i18n_vnum: 230}))
 
       _ ->
         callback.(character, target)
