@@ -27,6 +27,10 @@ defmodule ChannelEndpoint.Endpoint.GroupActions do
           x
           when x == group_request_type(:requested, :value) or
                  x == group_request_type(:invited, :value) ->
+            if character.id == target.id do
+              raise "Why #{character.name} is trying to invite himself in a group ?"
+            end
+
             # i18n string 234 = {PlayerName} has been requested to join
             Socket.send(
               character.socket,
