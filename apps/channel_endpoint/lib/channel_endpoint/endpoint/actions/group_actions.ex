@@ -31,20 +31,10 @@ defmodule ChannelEndpoint.Endpoint.GroupActions do
             send_group_invitation(&send_ui_invitation/2, character, target)
 
           group_request_type(:accepted, :value) ->
-            :ok
+            send_group_invitation(&join_character_group/2, character, target)
 
           group_request_type(:declined, :value) ->
-            # {PlayerName} rejected your invitation
-            Socket.send(
-              target.socket,
-              ChatViews.render(:sayi2, %{
-                entity: character,
-                color: :special_gold,
-                i18n_vnum: 237,
-                params_count: 1,
-                name: character.name
-              })
-            )
+            reject_invitation(character, target)
 
           _ ->
             :ok
@@ -58,6 +48,20 @@ defmodule ChannelEndpoint.Endpoint.GroupActions do
   end
 
   # Private function
+
+  defp reject_invitation(%Character{} = character, %Character{} = target) do
+    # {PlayerName} rejected your invitation
+    Socket.send(
+      target.socket,
+      ChatViews.render(:sayi2, %{
+        entity: character,
+        color: :special_gold,
+        i18n_vnum: 237,
+        params_count: 1,
+        name: character.name
+      })
+    )
+  end
 
   defp send_ui_invitation(%Character{} = character, %Character{} = target) do
     # i18n string 234 = {PlayerName} has been requested to join
@@ -77,6 +81,39 @@ defmodule ChannelEndpoint.Endpoint.GroupActions do
         name: character.name
       })
     )
+  end
+
+  defp add_group(%Character{} = new_char) do
+    case CachingService.write_character(new_char) do
+      {:ok, new_char} ->
+        # TODO : Send group packet there
+        {:ok, new_char}
+
+      {:error, _} = x ->
+        x
+    end
+  end
+
+  defp join_character_group(%Character{} = character, %Character{} = target) do
+    character_group = CachingService.get_characters_by_group_id(character.id)
+    target_group = CachingService.get_characters_by_group_id(target.id)
+
+    case {character_group, target_group} do
+      {{:ok, c}, _} when length(c) > 1 ->
+        new_char = %Character{target | group_id: character.id}
+        add_group(new_char)
+
+      {_, {:ok, t}} when length(t) > 1 ->
+        new_char = %Character{target | group_id: target.id}
+        add_group(new_char)
+
+      {_, _} ->
+        new_char = %Character{character | group_id: character.id}
+        add_group(new_char)
+
+        new_char = %Character{target | group_id: character.id}
+        add_group(new_char)
+    end
   end
 
   defp send_group_invitation(callback, %Character{} = character, %Character{} = target) do
