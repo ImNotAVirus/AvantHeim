@@ -25,7 +25,13 @@ defmodule ChannelEndpoint.Endpoint.GroupActions do
       {{:ok, c}, r} ->
         case r do
           group_request_type(:requested, :value) ->
-            # i18n string 233 = {PlayerName} invited you in his party
+            # i18n string 234 = {PlayerName} has been requested to join
+            Socket.send(
+              character.socket,
+              UIViews.render(:infoi2, %{i18n_vnum: 234, params_count: 1, entity: c})
+            )
+
+            # i18n string 233 = {PlayerName} has invited you to join their party
             Socket.send(
               c.socket,
               UIViews.render(:dlgi2, %{
@@ -36,6 +42,12 @@ defmodule ChannelEndpoint.Endpoint.GroupActions do
                 name: character.name
               })
             )
+
+          group_request_type(:accepted, :value) ->
+            :ok
+
+          group_request_type(:declined, :value) ->
+            :ok
 
           _ ->
             :ok

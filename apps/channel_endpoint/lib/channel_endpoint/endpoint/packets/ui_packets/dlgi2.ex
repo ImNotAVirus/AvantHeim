@@ -16,6 +16,7 @@ defmodule ChannelEndpoint.Endpoint.UIPackets.Dlgi2 do
           packet_yes: struct,
           packet_no: struct,
           i18n_vnum: pos_integer,
+          params_count: pos_integer,
           name: String.t()
         }
 
@@ -29,7 +30,14 @@ defmodule ChannelEndpoint.Endpoint.UIPackets.Dlgi2 do
       name: name
     } = struct
 
-    ["dlgi2", packet_to_field(packet_yes), packet_to_field(packet_no), i18n_vnum, params_count, name]
+    [
+      "dlgi2",
+      packet_to_field(packet_yes),
+      packet_to_field(packet_no),
+      i18n_vnum,
+      params_count,
+      name
+    ]
   end
 
   ## Private function
