@@ -6,10 +6,11 @@ defmodule ChannelEndpoint.PacketSchemas do
   use Core.{CommandSchema, PacketSchema}
 
   alias ChannelEndpoint.Endpoint.{
-    LobbyActions,
-    GameActions,
-    MapActions,
+    BattleActions,
     ChatActions,
+    GameActions,
+    LobbyActions,
+    MapActions,
     UIActions
   }
 
@@ -130,6 +131,20 @@ defmodule ChannelEndpoint.PacketSchemas do
     field :entity_id, :integer
 
     resolve MapActions, :dir
+  end
+
+  ## Battle packets
+
+  #######
+  # Cast a spell on entity
+  # ---
+  # Example: "u_s -1 3 10"
+  packet "u_s" do
+    field :cast_id, :integer
+    field :target_type, :integer
+    field :target_id, :integer
+
+    resolve BattleActions, :use_skill
   end
 
   ## Commands
