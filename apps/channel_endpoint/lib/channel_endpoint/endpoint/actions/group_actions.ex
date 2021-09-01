@@ -86,7 +86,7 @@ defmodule ChannelEndpoint.Endpoint.GroupActions do
   defp add_group(%Character{} = new_char) do
     case CachingService.write_character(new_char) do
       {:ok, new_char} ->
-        # TODO : Send group packet there
+        # TODO: Send pinit & pst (Why the fuck pst is spammed on official each 1 second ?)
         {:ok, new_char}
 
       {:error, _} = x ->
@@ -139,5 +139,12 @@ defmodule ChannelEndpoint.Endpoint.GroupActions do
       _ ->
         callback.(character, target)
     end
+  end
+
+  @spec broadcast_on_group(Character.t(), any, boolean) :: :ok
+  defp broadcast_on_group(%Character{} = character, packet, including_self \\ true) do
+    guards = if including_self, do: [], else: [{:!==, :group_id, character.group_id}]
+    {:ok, players} = CachingService.get_characters_by_group_id(character.group_id, guards)
+    Enum.each(players, &Socket.send(&1.socket, packet))
   end
 end
