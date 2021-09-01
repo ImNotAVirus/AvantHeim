@@ -21,7 +21,8 @@ static NEIGHBORS_OFFSETS: [Pos; 8] = [
     (-1, 1),
 ];
 
-#[rustler::nif(name = "astar", schedule = "DirtyCpu")]
+// , schedule = "DirtyCpu"
+#[rustler::nif(name = "astar")]
 fn astar_path(
     map: Binary,
     width: i32,

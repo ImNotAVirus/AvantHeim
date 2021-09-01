@@ -58,11 +58,8 @@ defmodule CachingService.MapRegistry do
     id = filename |> Path.basename() |> String.to_integer(10)
 
     <<width::16-little, height::16-little, map_bin::binary>> = File.read!(filename)
-
-    tensor =
-      map_bin
-      |> Nx.from_binary({:s, 8})
-      |> Nx.reshape({height, width}, names: [:height, :width])
+    total_size = width * height
+    <<_::bytes-size(total_size)>> = map_bin
 
     Logger.debug("Map parsed: id=#{id} size=#{width}x#{height}")
 
@@ -70,7 +67,7 @@ defmodule CachingService.MapRegistry do
       id: id,
       width: width,
       height: height,
-      tensor: tensor
+      bin: map_bin
     )
   end
 

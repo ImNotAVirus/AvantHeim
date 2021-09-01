@@ -53,7 +53,7 @@ defmodule CachingService.MonsterRegistry do
     res =
       @monsters_filename
       |> File.read!()
-      |> String.split("\r\n", trim: true)
+      |> String.split(["\r\n", "\n"], trim: true)
       |> Stream.with_index(1)
       |> Stream.map(fn {x, i} -> Monster.from_binary(x, i) end)
       |> Stream.map(&start_monster_process/1)

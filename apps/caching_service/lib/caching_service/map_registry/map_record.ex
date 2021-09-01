@@ -5,13 +5,13 @@ defmodule CachingService.MapRegistry.MapRecord do
 
   import Record, only: [defrecord: 2]
 
-  defrecord :map_record, [:id, :width, :height, :tensor]
+  defrecord :map_record, [:id, :width, :height, :bin]
 
   @type t ::
           record(:map_record,
             id: pos_integer,
             width: pos_integer,
             height: pos_integer,
-            tensor: Nx.Tensor.t()
+            bin: Nx.Tensor.t()
           )
 end

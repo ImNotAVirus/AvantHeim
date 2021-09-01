@@ -27,8 +27,8 @@ defmodule CachingService.MixProject do
   defp deps do
     [
       {:core, in_umbrella: true},
+      {:algorithms, in_umbrella: true},
       {:database_service, in_umbrella: true, runtime: false},
-      {:nx, "~> 0.1.0-dev", github: "elixir-nx/nx", branch: "main", sparse: "nx"},
       {:memento, "~> 0.3.2"}
     ]
   end
