@@ -19,6 +19,14 @@ defmodule CachingService.MapRegistry do
     GenServer.start_link(__MODULE__, opts, name: __MODULE__)
   end
 
+  @spec get_by_id(pos_integer) :: {:ok, any} | {:error, :not_found}
+  def get_by_id(map_id) do
+    case :ets.lookup(@table_name, map_id) do
+      [{^map_id, map}] -> {:ok, map}
+      _ -> {:error, :not_found}
+    end
+  end
+
   ## GenServer behaviour
 
   @impl true
