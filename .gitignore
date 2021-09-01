@@ -31,8 +31,10 @@
 !/apps/**/*.exs
 !/apps/**/.gitkeep
 !/apps/**/README.md
+!/apps/**/native/**/*
 
 # Additionals files
+!/apps/**/.gitignore
 !/.deliver/*
 !/.deploy/*
 !/.vagrant/README.md
