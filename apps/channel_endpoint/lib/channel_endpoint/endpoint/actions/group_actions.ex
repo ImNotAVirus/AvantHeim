@@ -113,6 +113,12 @@ defmodule ChannelEndpoint.Endpoint.GroupActions do
 
         new_char = %Character{target | group_id: character.id}
         add_group(new_char)
+
+        # i18n string 596 : You are the party master
+        Socket.send(target.socket, UIViews.render(:infoi, %{i18n_vnum: 596}))
+
+        # i18 string 477 : Joined a party
+        Socket.send(character.socket, UIViews.render(:infoi, %{i18n_vnum: 477}))
     end
   end
 
