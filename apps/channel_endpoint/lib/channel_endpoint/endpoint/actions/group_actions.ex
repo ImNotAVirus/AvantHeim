@@ -11,6 +11,20 @@ defmodule ChannelEndpoint.Endpoint.GroupActions do
 
   ## Packet handlers
 
+  # TODO: Temporary delete_group method need to do that really
+  @spec delete_group(String.t(), map, Socket.t()) :: {:cont, Socket.t()}
+  def delete_group("pleave", _args, %Socket{} = socket) do
+    %{character_id: character_id} = socket.assigns
+    {:ok, character} = CachingService.get_character_by_id(character_id)
+
+    # msgi 0 478 0 0 0 0 0
+    # broadcast_on_group(character, UIViews.render(), false)
+
+    # TODO: Set each players group_id to nil
+
+    {:cont, socket}
+  end
+
   @spec create_group(String.t(), map, Socket.t()) :: {:cont, Socket.t()}
   def create_group(
         "pjoin",
