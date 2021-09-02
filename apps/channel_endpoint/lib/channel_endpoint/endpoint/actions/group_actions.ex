@@ -20,7 +20,23 @@ defmodule ChannelEndpoint.Endpoint.GroupActions do
     # msgi 0 478 0 0 0 0 0
     # broadcast_on_group(character, UIViews.render(), false)
 
-    # TODO: Set each players group_id to nil
+    case CachingService.get_characters_by_group_id(character.group_id) do
+      {:ok, players} ->
+        Enum.each(players, fn player ->
+          new_char = %Character{player | group_id: nil}
+
+          case CachingService.write_character(new_char) do
+            {:ok, new_char} ->
+              {:ok, new_char}
+
+            {:error, _} = x ->
+              x
+          end
+        end)
+
+      _ ->
+        :ok
+    end
 
     {:cont, socket}
   end
