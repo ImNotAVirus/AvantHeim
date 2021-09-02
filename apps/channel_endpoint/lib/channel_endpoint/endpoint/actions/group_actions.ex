@@ -11,7 +11,6 @@ defmodule ChannelEndpoint.Endpoint.GroupActions do
 
   ## Packet handlers
 
-  # TODO: Temporary delete_group method need to do that really
   @spec delete_group(String.t(), map, Socket.t()) :: {:cont, Socket.t()}
   def delete_group("pleave", _args, %Socket{} = socket) do
     %{character_id: character_id} = socket.assigns
@@ -20,19 +19,23 @@ defmodule ChannelEndpoint.Endpoint.GroupActions do
     # msgi 0 478 0 0 0 0 0
     # broadcast_on_group(character, UIViews.render(), false)
 
+    # TODO : if group master leave the group put someone else (in the group) as group master
     case CachingService.get_characters_by_group_id(character.group_id) do
       {:ok, players} ->
-        Enum.each(players, fn player ->
-          new_char = %Character{player | group_id: nil}
+        case length(players) do
+          2 ->
+            Enum.each(players, fn player ->
+              new_char = %Character{player | group_id: nil}
+              write_character(new_char)
+            end)
 
-          case CachingService.write_character(new_char) do
-            {:ok, new_char} ->
-              {:ok, new_char}
+          3 ->
+            new_char = %Character{character | group_id: nil}
+            write_character(new_char)
 
-            {:error, _} = x ->
-              x
-          end
-        end)
+          _ ->
+            raise "Unsuported group length (Raid group ?)"
+        end
 
       _ ->
         :ok
@@ -113,7 +116,7 @@ defmodule ChannelEndpoint.Endpoint.GroupActions do
     )
   end
 
-  defp add_group(%Character{} = new_char) do
+  defp write_character(%Character{} = new_char) do
     case CachingService.write_character(new_char) do
       {:ok, new_char} ->
         # TODO: Send pinit & pst (Why the fuck pst is spammed on official each 1 second ?)
@@ -131,18 +134,18 @@ defmodule ChannelEndpoint.Endpoint.GroupActions do
     case {character_group, target_group} do
       {{:ok, c}, _} when length(c) > 1 ->
         new_char = %Character{target | group_id: character.id}
-        add_group(new_char)
+        write_character(new_char)
 
       {_, {:ok, t}} when length(t) > 1 ->
         new_char = %Character{target | group_id: target.id}
-        add_group(new_char)
+        write_character(new_char)
 
       {_, _} ->
         new_char = %Character{character | group_id: character.id}
-        add_group(new_char)
+        write_character(new_char)
 
         new_char = %Character{target | group_id: character.id}
-        add_group(new_char)
+        write_character(new_char)
 
         # i18n string 596 : You are the party master
         Socket.send(target.socket, UIViews.render(:infoi, %{i18n_vnum: 596}))
