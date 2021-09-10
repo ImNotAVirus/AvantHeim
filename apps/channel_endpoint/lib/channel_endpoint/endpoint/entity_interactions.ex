@@ -7,6 +7,7 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
   alias CachingService.Position
   alias CachingService.Player.Character
   alias DatabaseService.EntityEnums
+  alias ChannelEndpoint.Endpoint.EntityPacket.Pinit.SubGroupMember
 
   alias ChannelEndpoint.Endpoint.{
     EntityViews,
@@ -35,6 +36,42 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
 
     {:ok, players} = CachingService.get_characters_by_map_id(map_id, [{:!==, :id, character.id}])
     Enum.each(players, &send_visibility_packets(character, &1))
+  end
+
+  @spec refresh_group_ui(Character.t()) :: {:ok, new_char :: Character.t()} | {:error, atom}
+  def refresh_group_ui(%Character{} = character) do
+    members_list = [SubGroupMember]
+
+    case CachingService.get_characters_by_group_id(character.group_id) do
+      {:ok, players} ->
+        Enum.each(players, fn player ->
+          new_member = %SubGroupMember{
+            entity_type: :character,
+            entity_id: player.id,
+            # Idk what's supposed to be
+            group_position: 0,
+            level: player.level,
+            name: player.name,
+            unknow: 0,
+            gender: player.gender,
+            # ???
+            race: 0,
+            # TODO
+            morph: 0,
+            hero_level: player.hero_level
+          }
+
+          [members_list | new_member]
+        end)
+
+        #broadcast_on_group(
+        #  players,
+        #  EntityViews.render(:pinit, %{group_size: length(players), members: [members_list]})
+        #)
+
+      _ ->
+        :ok
+    end
   end
 
   @spec set_dir(Character.t(), EntityEnums.direction_type_keys()) ::
@@ -178,5 +215,12 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
     Socket.send(character.socket, VisibilityViews.render(:in, self))
     Socket.send(self.socket, EntityViews.render(:c_mode, character))
     Socket.send(character.socket, EntityViews.render(:c_mode, self))
+  end
+
+  @spec broadcast_on_group(Character.t(), any, boolean) :: :ok
+  defp broadcast_on_group(%Character{} = character, packet, including_self \\ true) do
+    guards = if including_self, do: [], else: [{:!==, :group_id, character.group_id}]
+    {:ok, players} = CachingService.get_characters_by_group_id(character.group_id, guards)
+    Enum.each(players, &Socket.send(&1.socket, packet))
   end
 end

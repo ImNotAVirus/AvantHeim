@@ -14,7 +14,7 @@ defmodule ChannelEndpoint.Endpoint.EntityPackets.Pinit do
 
   @type t :: %Pinit{
           group_size: pos_integer,
-          members: List.t
+          members: [SubGroupMember]
         }
 
   @impl true

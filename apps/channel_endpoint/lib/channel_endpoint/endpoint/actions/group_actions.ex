@@ -6,6 +6,7 @@ defmodule ChannelEndpoint.Endpoint.GroupActions do
   alias Core.Socket
   alias CachingService.Player.Character
   alias ChannelEndpoint.Endpoint.{UIViews, PlayerViews, ChatViews}
+  alias ChannelEndpoint.Endpoint.EntityInteractions
 
   import ChannelEndpoint.GroupRequestEnums, only: [group_request_type: 2]
 
@@ -119,7 +120,7 @@ defmodule ChannelEndpoint.Endpoint.GroupActions do
   defp write_character(%Character{} = new_char) do
     case CachingService.write_character(new_char) do
       {:ok, new_char} ->
-        # TODO: Send pinit & pst (Why the fuck pst is spammed on official each 1 second ?)
+        EntityInteractions.refresh_group_ui(new_char)
         {:ok, new_char}
 
       {:error, _} = x ->

@@ -11,7 +11,8 @@ defmodule ChannelEndpoint.Endpoint.EntityViews do
     Cond,
     Eff,
     St,
-    Dir
+    Dir,
+    Pinit
   }
 
   ## Public API
@@ -76,6 +77,13 @@ defmodule ChannelEndpoint.Endpoint.EntityViews do
       entity_type: :character,
       entity_id: character.id,
       direction: character.direction
+    }
+  end
+
+  def render(:pinit, %{group_size: group_size, members: members}) do
+    %Pinit{
+      group_size: group_size,
+      members: members
     }
   end
 end
