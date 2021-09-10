@@ -64,10 +64,10 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
           [members_list | new_member]
         end)
 
-        #broadcast_on_group(
-        #  players,
-        #  EntityViews.render(:pinit, %{group_size: length(players), members: [members_list]})
-        #)
+        broadcast_on_group(
+          players,
+          EntityViews.render(:pinit, %{group_size: length(players), members: members_list})
+        )
 
       _ ->
         :ok
