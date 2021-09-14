@@ -40,7 +40,7 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
 
   @spec get_members_list(any) :: list
   def get_members_list(players) do
-    Enum.flat_map(players, fn player ->
+    Enum.map(players, fn player ->
       new_member = %SubGroupMember{
         entity_type: :character,
         entity_id: player.id,
@@ -57,24 +57,23 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
         hero_level: player.hero_level
       }
 
-      [new_member]
+      new_member
     end)
   end
 
   @spec refresh_group_ui(Character.t()) :: {:ok, new_char :: Character.t()} | {:error, atom}
   def refresh_group_ui(%Character{} = character) do
-    members_list = []
-
     case CachingService.get_characters_by_group_id(character.group_id) do
       {:ok, players} ->
-        IO.inspect(get_members_list(players))
+        members_list = get_members_list(players)
+        IO.inspect(members_list)
 
-      # Enum.each(players, fn player ->
-      #   broadcast_on_group(
-      #     player,
-      #     EntityViews.render(:pinit, %{group_size: length(players), members: members_list})
-      #   )
-      # end)
+        Enum.each(players, fn player ->
+          broadcast_on_group(
+            player,
+            EntityViews.render(:pinit, %{group_size: length(players), members: members_list})
+          )
+        end)
 
       _ ->
         :ok
