@@ -38,36 +38,43 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
     Enum.each(players, &send_visibility_packets(character, &1))
   end
 
+  @spec get_members_list(any) :: list
+  def get_members_list(players) do
+    Enum.flat_map(players, fn player ->
+      new_member = %SubGroupMember{
+        entity_type: :character,
+        entity_id: player.id,
+        # Idk what's supposed to be
+        group_position: 0,
+        level: player.level,
+        name: player.name,
+        unknow: 0,
+        gender: player.gender,
+        # ???
+        race: 0,
+        # TODO
+        morph: 1,
+        hero_level: player.hero_level
+      }
+
+      [new_member]
+    end)
+  end
+
   @spec refresh_group_ui(Character.t()) :: {:ok, new_char :: Character.t()} | {:error, atom}
   def refresh_group_ui(%Character{} = character) do
-    members_list = [SubGroupMember]
+    members_list = []
 
     case CachingService.get_characters_by_group_id(character.group_id) do
       {:ok, players} ->
-        Enum.each(players, fn player ->
-          new_member = %SubGroupMember{
-            entity_type: :character,
-            entity_id: player.id,
-            # Idk what's supposed to be
-            group_position: 0,
-            level: player.level,
-            name: player.name,
-            unknow: 0,
-            gender: player.gender,
-            # ???
-            race: 0,
-            # TODO
-            morph: 0,
-            hero_level: player.hero_level
-          }
+        IO.inspect(get_members_list(players))
 
-          [members_list | new_member]
-        end)
-
-        broadcast_on_group(
-          players,
-          EntityViews.render(:pinit, %{group_size: length(players), members: members_list})
-        )
+      # Enum.each(players, fn player ->
+      #   broadcast_on_group(
+      #     player,
+      #     EntityViews.render(:pinit, %{group_size: length(players), members: members_list})
+      #   )
+      # end)
 
       _ ->
         :ok
