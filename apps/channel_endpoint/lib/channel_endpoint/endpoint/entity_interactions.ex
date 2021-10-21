@@ -72,10 +72,10 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
         members_list = get_group_member_list(players)
         IO.inspect(members_list)
 
-        # broadcast_on_group(
-        #   character,
-        #   EntityViews.render(:pinit, %{group_size: length(players), members: members_list})
-        # )
+        broadcast_on_group(
+          character,
+          EntityViews.render(:pinit, %{group_size: length(players), members: members_list})
+        )
 
       _ ->
         :ok

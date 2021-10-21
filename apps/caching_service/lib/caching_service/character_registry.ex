@@ -57,7 +57,8 @@ defmodule CachingService.CharacterRegistry do
 
   @spec get_character_by_group_id(String.t()) :: {:ok, Character.t()} | {:ok, nil}
   def get_character_by_group_id(group_id) do
-    res = Memento.transaction(fn -> Memento.Query.select(Character, {:==, :group_id, group_id}) end)
+    res =
+      Memento.transaction(fn -> Memento.Query.select(Character, {:==, :group_id, group_id}) end)
 
     case res do
       {:ok, []} -> {:ok, nil}
