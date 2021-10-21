@@ -129,19 +129,19 @@ defmodule ChannelEndpoint.Endpoint.GroupActions do
   end
 
   defp join_character_group(%Character{} = character, %Character{} = target) do
-    character_group = CachingService.get_characters_by_group_id(character.id)
-    target_group = CachingService.get_characters_by_group_id(target.id)
+    character_group = CachingService.get_character_by_group_id(character.id)
+    target_group = CachingService.get_character_by_group_id(target.id)
 
     case {character_group, target_group} do
-      {{:ok, c}, _} when length(c) > 1 ->
+      {{:ok, c}, {:ok, _}} when length(c) > 1 ->
         new_char = %Character{target | group_id: character.id}
         write_character(new_char)
 
-      {_, {:ok, t}} when length(t) > 1 ->
+      {{:ok, _}, {:ok, t}} when length(t) > 1 ->
         new_char = %Character{target | group_id: target.id}
         write_character(new_char)
 
-      {_, _} ->
+      {{:ok, _}, {:ok, _}} ->
         new_char = %Character{character | group_id: character.id}
         write_character(new_char)
 
@@ -153,6 +153,9 @@ defmodule ChannelEndpoint.Endpoint.GroupActions do
 
         # i18 string 477 : Joined a party
         Socket.send(character.socket, UIViews.render(:infoi, %{i18n_vnum: 477}))
+
+      {_, _} ->
+        raise("Exception(join_character_group): Character or target is null")
     end
   end
 

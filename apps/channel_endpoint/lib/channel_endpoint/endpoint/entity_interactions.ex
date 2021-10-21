@@ -38,42 +38,43 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
     Enum.each(players, &send_visibility_packets(character, &1))
   end
 
-  @spec get_members_list(any) :: list
-  def get_members_list(players) do
-    Enum.map(players, fn player ->
-      new_member = %SubGroupMember{
-        entity_type: :character,
-        entity_id: player.id,
-        # Idk what's supposed to be
-        group_position: 0,
-        level: player.level,
-        name: player.name,
-        unknow: 0,
-        gender: player.gender,
-        # ???
-        race: 0,
-        # TODO
-        morph: 1,
-        hero_level: player.hero_level
-      }
-
-      new_member
-    end)
+  @spec add_member_to_list(Character.t()) :: SubGroupMember.t()
+  def add_member_to_list(%Character{} = character) do
+    %SubGroupMember{
+      entity_type: :character,
+      entity_id: character.id,
+      # Idk what's supposed to be
+      group_position: 0,
+      level: character.level,
+      name: character.name,
+      unknow: 0,
+      gender: character.gender,
+      # ???
+      race: 0,
+      # TODO
+      morph: 1,
+      hero_level: character.hero_level
+    }
   end
 
   @spec refresh_group_ui(Character.t()) :: {:ok, new_char :: Character.t()} | {:error, atom}
   def refresh_group_ui(%Character{} = character) do
     case CachingService.get_characters_by_group_id(character.group_id) do
       {:ok, players} ->
-        members_list = get_members_list(players)
-        IO.inspect(members_list)
+        members_list = []
 
         Enum.each(players, fn player ->
-          broadcast_on_group(
-            player,
-            EntityViews.render(:pinit, %{group_size: length(players), members: members_list})
-          )
+          new_group_member = add_member_to_list(player)
+          IO.inspect(new_group_member)
+          members_list = [members_list | new_group_member]
         end)
+
+        IO.inspect(members_list)
+
+        broadcast_on_group(
+          character,
+          EntityViews.render(:pinit, %{group_size: length(players), members: members_list})
+        )
 
       _ ->
         :ok
