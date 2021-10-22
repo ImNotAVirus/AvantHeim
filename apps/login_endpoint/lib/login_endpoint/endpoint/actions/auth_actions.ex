@@ -22,7 +22,7 @@ defmodule LoginEndpoint.Endpoint.AuthActions do
            {:ok, _guid} <- check_guid(args, socket),
            {:ok, account} <- check_credentials(args, socket),
            {:ok, session_id} <- create_session(account, socket) do
-        Logger.debug("Authentication succeed for #{socket_id} (username: #{account.username})")
+        Logger.debug("Authentication succeed (username: #{account.username})")
         Views.render(:login_succeed, %{username: account.username, session_id: session_id})
       else
         reason -> render_error(reason, args, socket_id)
@@ -48,11 +48,11 @@ defmodule LoginEndpoint.Endpoint.AuthActions do
     {:ok, client_checksum}
   end
 
-  defp check_guid(%{installation_guid: guid}, socket) do
+  defp check_guid(%{installation_guid: guid}, _socket) do
     # Currently unused
     # TODO: Can be saved later in database to check multiclients/multiaccounts for example
     # Or if user is banned
-    Logger.debug("GUID for #{socket.id}: #{guid}")
+    Logger.debug("GUID: #{guid}")
     {:ok, guid}
   end
 

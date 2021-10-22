@@ -17,6 +17,11 @@ config :logger, :console,
   metadata: [:application, :socket_id],
   colors: [info: :green]
 
+config :logger,
+  compile_time_purge_matching: [
+    [module: CachingService.MapRegistry, function: "parse_map_file/1"]
+  ]
+
 ## Login configs
 
 config :login_endpoint,

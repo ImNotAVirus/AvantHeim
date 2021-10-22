@@ -36,7 +36,8 @@ defmodule ChannelEndpoint.Endpoint.Protocol do
 
     socket = Socket.new(transport, transport_pid, @packet_encoder)
 
-    Logger.info("New connection: #{socket.id} (#{:inet.ntoa(address)}:#{port})")
+    Logger.metadata(socket_id: socket.id)
+    Logger.info("New connection: #{:inet.ntoa(address)}:#{port}")
 
     :gen_server.enter_loop(__MODULE__, [], socket, {:continue, :client_handshake})
   end
@@ -56,7 +57,7 @@ defmodule ChannelEndpoint.Endpoint.Protocol do
       {:noreply, Socket.assign(new_socket, account: account), @timeout}
     else
       e ->
-        Logger.info("Invalid Handshake (reason: #{inspect(e)})", socket_id: socket.id)
+        Logger.info("Invalid Handshake (reason: #{inspect(e)})")
         transport.shutdown(transport_pid, :read_write)
         {:stop, :normal, new_socket}
     end
@@ -64,16 +65,16 @@ defmodule ChannelEndpoint.Endpoint.Protocol do
 
   @impl true
   def handle_info({:tcp, transport_pid, message}, socket) do
-    %Socket{id: id, transport_pid: ^transport_pid, transport: transport} = socket
+    %Socket{transport_pid: ^transport_pid, transport: transport} = socket
 
-    Logger.debug("New message from #{id} (len: #{byte_size(message)})")
+    Logger.debug("New message (len: #{byte_size(message)})")
 
     new_socket =
       with {:ok, packets} <- parse_message(message, socket) do
         Enum.reduce_while(packets, socket, &resolve_packet/2)
       else
         {:error, msg} ->
-          Logger.warn(msg, socket_id: socket.id)
+          Logger.warn(msg)
           socket
       end
 
@@ -82,14 +83,14 @@ defmodule ChannelEndpoint.Endpoint.Protocol do
   end
 
   def handle_info({:tcp_closed, transport_pid}, socket) do
-    %Socket{id: id, transport_pid: ^transport_pid} = socket
-    Logger.info("#{id} is now disconnected")
+    %Socket{transport_pid: ^transport_pid} = socket
+    Logger.info("Player disconnection")
     {:stop, :normal, socket}
   end
 
   def handle_info(:timeout, socket) do
-    %Socket{id: id, transport_pid: transport_pid, transport: transport} = socket
-    Logger.error("An error occured with client #{id}: :timeout")
+    %Socket{transport_pid: transport_pid, transport: transport} = socket
+    Logger.error("An error occured with the client: :timeout")
     transport.shutdown(transport_pid, :read_write)
     {:stop, {:shutdown, :timeout}, socket}
   end
@@ -183,7 +184,7 @@ defmodule ChannelEndpoint.Endpoint.Protocol do
 
   defp resolve_packet({:error, :invalid, {header, args}}, socket) do
     split = String.split(args, @separator)
-    Logger.warn("Unknown packet '#{header}' with args #{inspect(split)}", socket_id: socket.id)
+    Logger.warn("Unknown packet '#{header}' with args #{inspect(split)}")
     {:cont, socket}
   end
 end
