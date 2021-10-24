@@ -57,14 +57,11 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
     }
   end
 
-  @spec get_group_member_list(Character.t(), List.t()) :: List
-  def get_group_member_list(%Character{} = self, players) do
-    IO.inspect(self.id)
+  @spec get_group_member_list(List.t()) :: List
+  def get_group_member_list(players) do
     Enum.flat_map(players, fn player ->
       group_member = add_member_to_list(player)
-      if (self.id != group_member.entity_id) do
-        [group_member]
-      end
+      [group_member]
     end)
   end
 
@@ -72,7 +69,7 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
   def refresh_group_ui(%Character{} = character) do
     case CachingService.get_characters_by_group_id(character.group_id) do
       {:ok, players} ->
-        members_list = get_group_member_list(character, players)
+        members_list = get_group_member_list(players)
 
         broadcast_on_group(
           character,
