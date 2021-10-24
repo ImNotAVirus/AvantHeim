@@ -99,7 +99,7 @@ defmodule ChannelEndpoint.Endpoint.EntityViews do
       mp_load: FakeData.mp_max(character_id: character.id),
       race: 0,
       gender: character.gender,
-      morph: 0,
+      morph: FakeData.morph(character_id: character.id),
       # TODO
       buff_ids: []
     }

@@ -78,11 +78,13 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
           EntityViews.render(:pinit, %{group_size: length(players), members: members_list})
         )
 
-        broadcast_on_group(
-          character,
-          EntityViews.render(:pst, character),
-          false
-        )
+        Enum.each(players, fn player ->
+          broadcast_on_group(
+            player,
+            EntityViews.render(:pst, player),
+            false
+          )
+        end)
 
       _ ->
         :ok
