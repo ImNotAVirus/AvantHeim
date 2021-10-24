@@ -128,8 +128,8 @@ defmodule ChannelEndpoint.Endpoint.GroupActions do
   end
 
   defp join_character_group(%Character{} = character, %Character{} = target) do
-    character_group = CachingService.get_character_by_group_id(character.id)
-    target_group = CachingService.get_character_by_group_id(target.id)
+    character_group = CachingService.get_character_by_group_id(character.group_id)
+    target_group = CachingService.get_character_by_group_id(target.group_id)
 
     case {character_group, target_group} do
       {{:ok, c}, {:ok, _}} when length(c) > 1 ->
