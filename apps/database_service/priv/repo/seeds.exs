@@ -25,6 +25,11 @@ alias DatabaseService.Players.{Account, Accounts, Characters}
   password: "user"
 })
 
+%Account{id: test_id} = Accounts.create!(%{
+  username: "test",
+  password: "test"
+})
+
 ## Characters
 
 Characters.create!(%{
@@ -59,6 +64,26 @@ Characters.create!(%{
   account_id: user_id,
   slot: 0,
   name: "ExampleUser",
+  gender: :female,
+  hair_style: :hair_style_a,
+  hair_color: :dark_purple,
+  class: :archer,
+  faction: :angel,
+  map_vnum: 1,
+  map_x: :rand.uniform(3) + 77,
+  map_y: :rand.uniform(4) + 113,
+  gold: 1_000_000,
+  level: 20,
+  job_level: 20,
+  reputation: 1_000,
+  dignity: 100,
+  compliment: 50
+})
+
+Characters.create!(%{
+  account_id: test_id,
+  slot: 0,
+  name: "TestGroup",
   gender: :female,
   hair_style: :hair_style_a,
   hair_color: :dark_purple,
