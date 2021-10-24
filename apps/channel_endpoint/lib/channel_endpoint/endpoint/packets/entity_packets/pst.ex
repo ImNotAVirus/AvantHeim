@@ -36,7 +36,7 @@ defmodule ChannelEndpoint.Endpoint.EntityPackets.Pst do
           race: non_neg_integer,
           gender: PlayerEnums.gender_keys(),
           morph: pos_integer,
-          buff_ids: list
+          buff_ids: [pos_integer]
         }
 
   @impl true
@@ -55,7 +55,7 @@ defmodule ChannelEndpoint.Endpoint.EntityPackets.Pst do
       buff_ids: buff_ids
     } = struct
 
-    [
+    packet = [
       "pst",
       entity_type(entity_type_atom, :value),
       entity_id,
@@ -66,8 +66,12 @@ defmodule ChannelEndpoint.Endpoint.EntityPackets.Pst do
       mp_load,
       race,
       gender(gender_atom, :value),
-      morph,
-      buff_ids
+      morph
     ]
+
+    case buff_ids do
+      [] -> packet
+      _ -> packet ++ serialize_term(buff_ids, joiner: " ")
+    end
   end
 end
