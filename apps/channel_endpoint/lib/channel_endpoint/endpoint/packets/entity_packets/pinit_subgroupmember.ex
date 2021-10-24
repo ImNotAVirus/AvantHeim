@@ -39,7 +39,7 @@ defmodule ChannelEndpoint.Endpoint.EntityPacket.Pinit.SubGroupMember do
   ## Public API
 
   @impl true
-  def serialize(%SubGroupMember{} = struct, "|") do
+  def serialize(%SubGroupMember{} = struct, _) do
     %SubGroupMember{
       entity_type: entity_type_atom,
       entity_id: entity_id,
@@ -53,6 +53,20 @@ defmodule ChannelEndpoint.Endpoint.EntityPacket.Pinit.SubGroupMember do
       hero_level: hero_level
     } = struct
 
-    [entity_type(entity_type_atom, :value), entity_id, group_position, level, name, unknow, gender(gender, :value), race, morph, hero_level]
+    serialize_term(
+      [
+        entity_type(entity_type_atom, :value),
+        entity_id,
+        group_position,
+        level,
+        name,
+        unknow,
+        gender(gender, :value),
+        race,
+        morph,
+        hero_level
+      ],
+      joiner: "|"
+    )
   end
 end

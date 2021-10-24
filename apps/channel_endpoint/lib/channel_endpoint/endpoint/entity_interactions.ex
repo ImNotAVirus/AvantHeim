@@ -57,11 +57,14 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
     }
   end
 
-  @spec get_group_member_list(any) :: list
-  def get_group_member_list(players) do
+  @spec get_group_member_list(Character.t(), List.t()) :: List
+  def get_group_member_list(%Character{} = self, players) do
+    IO.inspect(self.id)
     Enum.flat_map(players, fn player ->
       group_member = add_member_to_list(player)
-      [group_member]
+      if (self.id != group_member.entity_id) do
+        [group_member]
+      end
     end)
   end
 
@@ -69,8 +72,7 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
   def refresh_group_ui(%Character{} = character) do
     case CachingService.get_characters_by_group_id(character.group_id) do
       {:ok, players} ->
-        members_list = get_group_member_list(players)
-        IO.inspect(members_list)
+        members_list = get_group_member_list(character, players)
 
         broadcast_on_group(
           character,
@@ -217,7 +219,7 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
     Enum.each(players, &Socket.send(&1.socket, packet))
   end
 
-  @spec send_visibility_packets(Character.t(), Character.t()) :: :ok | {:error, atom}
+  @spec send_visibility_packets(Character.t(), Character.t()) :: :ok
   defp send_visibility_packets(self, character) do
     Socket.send(self.socket, VisibilityViews.render(:in, character))
     Socket.send(character.socket, VisibilityViews.render(:in, self))
