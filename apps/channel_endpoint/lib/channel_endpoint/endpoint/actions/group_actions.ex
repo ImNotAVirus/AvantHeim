@@ -131,8 +131,20 @@ defmodule ChannelEndpoint.Endpoint.GroupActions do
     character_group = CachingService.get_characters_by_group_id(character.group_id)
     target_group = CachingService.get_characters_by_group_id(target.group_id)
 
-    case {character, target} do
-      _ when character.group_id == nil and target.group_id == nil ->
+    case {character_group, target_group} do
+      {{:ok, c}, {:ok, _}} when length(c) > 1 ->
+        IO.inspect("OK 1 ?")
+        new_char = %Character{target | group_id: character.id}
+        write_character(new_char)
+        EntityInteractions.refresh_group_ui(new_char)
+
+      {{:ok, _}, {:ok, t}} when length(t) > 1 ->
+        IO.inspect("OK 2 ?")
+        new_char = %Character{character | group_id: target.id}
+        write_character(new_char)
+        EntityInteractions.refresh_group_ui(new_char)
+
+      _ ->
         new_character = %Character{character | group_id: character.id}
         write_character(new_character)
 
@@ -146,22 +158,6 @@ defmodule ChannelEndpoint.Endpoint.GroupActions do
         Socket.send(character.socket, UIViews.render(:infoi, %{i18n_vnum: 477}))
 
         EntityInteractions.refresh_group_ui(new_target)
-
-      _ ->
-        case {character_group, target_group} do
-          {{:ok, c}, {:ok, _}} when length(c) > 1 ->
-            new_char = %Character{target | group_id: character.id}
-            write_character(new_char)
-            EntityInteractions.refresh_group_ui(new_char)
-
-          {{:ok, _}, {:ok, t}} when length(t) > 1 ->
-            new_char = %Character{character | group_id: target.id}
-            write_character(new_char)
-            EntityInteractions.refresh_group_ui(new_char)
-
-          _ ->
-            :ignore
-        end
     end
   end
 
