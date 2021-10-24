@@ -53,7 +53,7 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
       # ???
       race: 0,
       # TODO
-      morph: 1,
+      morph: FakeData.morph(character_id: character.id),
       hero_level: character.hero_level,
       unknow1: 0,
       unknow2: 0
