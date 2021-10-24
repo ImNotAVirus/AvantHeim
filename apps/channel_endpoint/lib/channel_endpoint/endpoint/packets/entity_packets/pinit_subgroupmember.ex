@@ -19,7 +19,9 @@ defmodule ChannelEndpoint.Endpoint.EntityPacket.Pinit.SubGroupMember do
     :gender,
     :race,
     :morph,
-    :hero_level
+    :hero_level,
+    :unknow1,
+    :unknow2
   ]
   defstruct @enforce_keys
 
@@ -33,7 +35,9 @@ defmodule ChannelEndpoint.Endpoint.EntityPacket.Pinit.SubGroupMember do
           gender: PlayerEnums.gender_keys(),
           race: non_neg_integer,
           morph: pos_integer,
-          hero_level: pos_integer
+          hero_level: pos_integer,
+          unknow1: non_neg_integer,
+          unknow2: non_neg_integer
         }
 
   ## Public API
@@ -50,7 +54,9 @@ defmodule ChannelEndpoint.Endpoint.EntityPacket.Pinit.SubGroupMember do
       gender: gender,
       race: race,
       morph: morph,
-      hero_level: hero_level
+      hero_level: hero_level,
+      unknow1: unknow1,
+      unknow2: unknow2
     } = struct
 
     serialize_term(
@@ -64,7 +70,9 @@ defmodule ChannelEndpoint.Endpoint.EntityPacket.Pinit.SubGroupMember do
         gender(gender, :value),
         race,
         morph,
-        hero_level
+        hero_level,
+        unknow1,
+        unknow2
       ],
       joiner: "|"
     )

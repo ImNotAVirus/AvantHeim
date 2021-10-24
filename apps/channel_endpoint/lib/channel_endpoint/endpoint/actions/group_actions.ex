@@ -120,7 +120,6 @@ defmodule ChannelEndpoint.Endpoint.GroupActions do
   defp write_character(%Character{} = new_char) do
     case CachingService.write_character(new_char) do
       {:ok, new_char} ->
-        EntityInteractions.refresh_group_ui(new_char)
         {:ok, new_char}
 
       {:error, _} = x ->
@@ -136,23 +135,27 @@ defmodule ChannelEndpoint.Endpoint.GroupActions do
       {{:ok, c}, {:ok, _}} when length(c) > 1 ->
         new_char = %Character{target | group_id: character.id}
         write_character(new_char)
+        EntityInteractions.refresh_group_ui(new_char)
 
       {{:ok, _}, {:ok, t}} when length(t) > 1 ->
         new_char = %Character{target | group_id: target.id}
         write_character(new_char)
+        EntityInteractions.refresh_group_ui(new_char)
 
       {{:ok, _}, {:ok, _}} ->
-        new_char = %Character{character | group_id: character.id}
-        write_character(new_char)
+        new_character = %Character{character | group_id: character.id}
+        write_character(new_character)
 
-        new_char = %Character{target | group_id: character.id}
-        write_character(new_char)
+        new_target = %Character{target | group_id: character.id}
+        write_character(new_target)
 
         # i18n string 596 : You are the party master
         Socket.send(target.socket, UIViews.render(:infoi, %{i18n_vnum: 596}))
 
         # i18 string 477 : Joined a party
         Socket.send(character.socket, UIViews.render(:infoi, %{i18n_vnum: 477}))
+
+        EntityInteractions.refresh_group_ui(new_target)
 
       {_, _} ->
         raise("Exception(join_character_group): Character or target is null")

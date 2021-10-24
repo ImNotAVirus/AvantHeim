@@ -53,7 +53,9 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
       race: 0,
       # TODO
       morph: 1,
-      hero_level: character.hero_level
+      hero_level: character.hero_level,
+      unknow1: 0,
+      unknow2: 0
     }
   end
 
@@ -74,6 +76,12 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
         broadcast_on_group(
           character,
           EntityViews.render(:pinit, %{group_size: length(players), members: members_list})
+        )
+
+        broadcast_on_group(
+          character,
+          EntityViews.render(:pst, character),
+          false
         )
 
       _ ->

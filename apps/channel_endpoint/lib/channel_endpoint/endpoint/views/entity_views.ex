@@ -12,7 +12,8 @@ defmodule ChannelEndpoint.Endpoint.EntityViews do
     Eff,
     St,
     Dir,
-    Pinit
+    Pinit,
+    Pst
   }
 
   ## Public API
@@ -84,6 +85,22 @@ defmodule ChannelEndpoint.Endpoint.EntityViews do
     %Pinit{
       group_size: group_size,
       members: members
+    }
+  end
+
+  def render(:pst, %Character{} = character) do
+    %Pst{
+      entity_type: :character,
+      entity_id: character.id,
+      group_order: 0,
+      hp_left: FakeData.hp(character_id: character.id),
+      mp_left: FakeData.mp(character_id: character.id),
+      hp_load: FakeData.hp_max(character_id: character.id),
+      mp_load: FakeData.mp_max(character_id: character.id),
+      race: 0,
+      gender: character.gender,
+      morph: 0,
+      buff_ids: []
     }
   end
 end
