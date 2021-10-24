@@ -234,7 +234,7 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
 
   @spec broadcast_on_group(Character.t(), any, boolean) :: :ok
   defp broadcast_on_group(%Character{} = character, packet, including_self \\ true) do
-    guards = if including_self, do: [], else: [{:!==, :group_id, character.group_id}]
+    guards = if including_self, do: [], else: [{:!==, :id, character.id}]
     {:ok, players} = CachingService.get_characters_by_group_id(character.group_id, guards)
     Enum.each(players, &Socket.send(&1.socket, packet))
   end

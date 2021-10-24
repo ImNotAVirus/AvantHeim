@@ -100,6 +100,7 @@ defmodule ChannelEndpoint.Endpoint.EntityViews do
       race: 0,
       gender: character.gender,
       morph: 0,
+      # TODO
       buff_ids: []
     }
   end
