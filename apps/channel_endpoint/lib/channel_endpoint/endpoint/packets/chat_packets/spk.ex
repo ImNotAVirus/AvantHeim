@@ -40,17 +40,9 @@ defmodule ChannelEndpoint.Endpoint.ChatPackets.Spk do
       "spk",
       entity_type(entity_type_atom, :value),
       entity_id,
-      speak_type(speak_type_atom, :value)
+      speak_type(speak_type_atom, :value),
+      entity_name,
+      message
     ]
-
-    case {entity_name, message} do
-      {nil, nil} -> packet
-
-      {nil, _} -> packet ++ message
-
-      {_, nil} -> packet ++ entity_name
-
-      {_, _} -> packet ++ entity_name ++ message
-    end
   end
 end

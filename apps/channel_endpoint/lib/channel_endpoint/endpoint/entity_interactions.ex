@@ -122,10 +122,8 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
       ChatViews.render(:spk, %{
         entity: character,
         speak_type: :group,
-        entity_name: nil,
         message: message
-      }),
-      false
+      })
     )
   end
 

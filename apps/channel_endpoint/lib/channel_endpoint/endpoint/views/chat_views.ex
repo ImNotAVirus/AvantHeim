@@ -48,16 +48,15 @@ defmodule ChannelEndpoint.Endpoint.ChatViews do
   end
 
   def render(:spk, %{
-        entity: %Character{id: id},
+        entity: %Character{id: id, name: name},
         speak_type: speak_type,
-        entity_name: entity_name,
         message: message
       }) do
     %Spk{
       entity_type: :character,
       entity_id: id,
       speak_type: speak_type,
-      entity_name: entity_name,
+      entity_name: name,
       message: message
     }
   end
