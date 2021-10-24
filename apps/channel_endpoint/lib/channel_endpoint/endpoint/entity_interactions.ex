@@ -115,6 +115,20 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
     )
   end
 
+  @spec say_in_group(Character.t(), String.t()) :: :ok
+  def say_in_group(%Character{} = character, message) do
+    broadcast_on_group(
+      character,
+      ChatViews.render(:spk, %{
+        entity: character,
+        speak_type: :group,
+        entity_name: nil,
+        message: message
+      }),
+      false
+    )
+  end
+
   @spec open_bank_window(Character.t()) :: :ok
   def open_bank_window(%Character{} = character) do
     # Open an empty bank widget

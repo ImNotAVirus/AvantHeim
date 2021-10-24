@@ -145,6 +145,17 @@ defmodule ChannelEndpoint.PacketSchemas do
     resolve GroupActions, :create_group
   end
 
+  #######
+  # Send a group message
+  # ---
+  # Example: ";This is a message"
+  #######
+  packet ";" do
+    field :message, :string, fill: true
+
+    resolve GroupActions, :group_say
+  end
+
   ## Commands
 
   defcommand "speed", ChannelEndpoint.Endpoint.SpeedCommand

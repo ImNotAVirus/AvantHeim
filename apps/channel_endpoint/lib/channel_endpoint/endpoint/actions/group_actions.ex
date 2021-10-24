@@ -81,6 +81,16 @@ defmodule ChannelEndpoint.Endpoint.GroupActions do
     {:cont, socket}
   end
 
+  @spec group_say(String.t(), map, Socket.t()) :: {:cont, Socket.t()}
+  def group_say(";", %{message: message}, %Socket{} = socket) do
+    %{character_id: character_id} = socket.assigns
+    {:ok, character} = CachingService.get_character_by_id(character_id)
+
+    EntityInteractions.say_in_group(character, message)
+
+    {:cont, socket}
+  end
+
   # Private function
 
   defp reject_invitation(%Character{} = character, %Character{} = target) do

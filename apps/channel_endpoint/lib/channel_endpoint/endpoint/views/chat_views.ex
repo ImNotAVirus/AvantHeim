@@ -4,7 +4,7 @@ defmodule ChannelEndpoint.Endpoint.ChatViews do
   """
 
   alias CachingService.Player.Character
-  alias ChannelEndpoint.Endpoint.ChatPackets.{Bn, Say, Sayi2}
+  alias ChannelEndpoint.Endpoint.ChatPackets.{Bn, Say, Sayi2, Spk}
 
   ## Public API
 
@@ -44,6 +44,21 @@ defmodule ChannelEndpoint.Endpoint.ChatViews do
       i18n_vnum: i18n_vnum,
       params_count: params_count,
       name: name
+    }
+  end
+
+  def render(:spk, %{
+        entity: %Character{id: id},
+        speak_type: speak_type,
+        entity_name: entity_name,
+        message: message
+      }) do
+    %Spk{
+      entity_type: :character,
+      entity_id: id,
+      speak_type: speak_type,
+      entity_name: entity_name,
+      message: message
     }
   end
 end
