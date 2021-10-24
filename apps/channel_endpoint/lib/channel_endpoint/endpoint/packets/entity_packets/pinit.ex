@@ -24,6 +24,6 @@ defmodule ChannelEndpoint.Endpoint.EntityPackets.Pinit do
       members: members
     } = struct
 
-    ["pinit", group_size, members]
+    ["pinit", group_size, serialize_term(members, joiner: " ")]
   end
 end
