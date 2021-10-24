@@ -5,7 +5,8 @@ defmodule Core.PacketSchema do
 
   @aliases %{
     integer: Core.PacketSchema.Integer,
-    string: Core.PacketSchema.String
+    string: Core.PacketSchema.String,
+    list: Core.PacketSchema.List
   }
 
   ## Public API
@@ -124,7 +125,12 @@ defmodule Core.PacketSchema do
 
       defp parse_fields(bin_args, [{name, mod, field_opts} | rem_defs], parse_opts, results) do
         {using, rem_opts} = Keyword.pop(field_opts, :using)
-        type_opts = Keyword.merge(parse_opts, rem_opts)
+
+        type_opts =
+          parse_opts
+          |> Keyword.merge(rem_opts)
+          |> Keyword.put(:fields, results)
+
         parsed_val = apply(mod, :parse, [bin_args, type_opts])
 
         case {parsed_val, using} do

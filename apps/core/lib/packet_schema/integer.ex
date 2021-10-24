@@ -3,7 +3,7 @@ defmodule Core.PacketSchema.Integer do
   TODO: Documentation
   """
 
-  @spec parse(String.t(), keyword) :: {:ok, value :: integer, rest :: any}
+  @spec parse(String.t(), keyword) :: {:ok, value :: integer, rest :: String.t()}
   def parse(bin, opts) do
     sep = Keyword.fetch!(opts, :separator)
 
