@@ -8,6 +8,7 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
   alias CachingService.Player.Character
   alias DatabaseService.EntityEnums
   alias ChannelEndpoint.Endpoint.EntityPacket.Pinit.SubGroupMember
+  alias ChannelEndpoint.Endpoint.EntityPacket.PidxSubGroupMember
 
   alias ChannelEndpoint.Endpoint.{
     EntityViews,
@@ -59,7 +60,7 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
     }
   end
 
-  @spec get_group_member_list(List.t()) :: List
+  @spec get_group_member_list(List.t()) :: list
   def get_group_member_list(players) do
     Enum.flat_map(players, fn player ->
       group_member = add_member_to_list(player)
@@ -86,8 +87,34 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
           )
         end)
 
+        see_player_in_group(character)
+
       _ ->
         :ok
+    end
+  end
+
+  @spec get_pidx_sub_packet(List.t()) :: list
+  def get_pidx_sub_packet(players) do
+    Enum.flat_map(players, fn player ->
+      subpacket = %PidxSubGroupMember {
+        is_grouped: player.group_id !== nil,
+        entity_id: player.id
+      }
+
+      [subpacket]
+    end)
+  end
+
+  @spec see_player_in_group(Character.t()) :: any
+  def see_player_in_group(%Character{} = character) do
+    case CachingService.get_characters_by_group_id(character.group_id) do
+      {:ok, players} ->
+        sub_packet = get_pidx_sub_packet(players)
+        broadcast_on_map(character, EntityViews.render(:pidx, %{entity: character, sub_packet: sub_packet}))
+
+      _ ->
+        :ignore
     end
   end
 

@@ -5,6 +5,8 @@ defmodule ChannelEndpoint.Endpoint.EntityViews do
 
   alias CachingService.Player.Character
 
+  alias ChannelEndpoint.Endpoint.EntityPacket.PidxSubGroupMember
+
   alias ChannelEndpoint.Endpoint.EntityPackets.{
     CharSc,
     CMode,
@@ -13,7 +15,8 @@ defmodule ChannelEndpoint.Endpoint.EntityViews do
     St,
     Dir,
     Pinit,
-    Pst
+    Pst,
+    Pidx
   }
 
   ## Public API
@@ -102,6 +105,13 @@ defmodule ChannelEndpoint.Endpoint.EntityViews do
       morph: FakeData.morph(character_id: character.id),
       # TODO
       buff_ids: []
+    }
+  end
+
+  def render(:pidx, %{entity: %Character{group_id: group_id}, sub_packet: sub_packet}) do
+    %Pidx{
+      group_id: group_id,
+      sub_packet: sub_packet
     }
   end
 end
