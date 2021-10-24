@@ -133,12 +133,12 @@ defmodule ChannelEndpoint.Endpoint.GroupActions do
 
     case {character_group, target_group} do
       {{:ok, c}, {:ok, _}} when length(c) > 1 ->
-        new_char = %Character{target | group_id: character.id}
+        new_char = %Character{target | group_id: character.group_id}
         write_character(new_char)
         EntityInteractions.refresh_group_ui(new_char)
 
       {{:ok, _}, {:ok, t}} when length(t) > 1 ->
-        new_char = %Character{character | group_id: target.id}
+        new_char = %Character{character | group_id: target.group_id}
         write_character(new_char)
         EntityInteractions.refresh_group_ui(new_char)
 
