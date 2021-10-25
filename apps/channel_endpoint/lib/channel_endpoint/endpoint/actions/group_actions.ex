@@ -22,7 +22,6 @@ defmodule ChannelEndpoint.Endpoint.GroupActions do
     # msgi 0 478 0 0 0 0 0
     # broadcast_on_group(character, UIViews.render(), false)
 
-    # TODO : if group master leave the group put someone else (in the group) as group master
     case CachingService.get_characters_by_group_id(character.group_id) do
       {:ok, players} ->
         case length(players) do
@@ -44,7 +43,21 @@ defmodule ChannelEndpoint.Endpoint.GroupActions do
         :ok
     end
 
+    define_new_group_owner(character)
+
     {:cont, socket}
+  end
+
+  def define_new_group_owner(%Character{} = character) do
+    case character.group_id do
+      x when x == character.id ->
+        # Socket.send(target.socket, UIViews.render(:infoi, %{i18n_vnum: 596}))
+        :ok
+
+      _ ->
+        # There is no need to change the owner, as the person leaving the group is not the current owner.
+        :ignore
+    end
   end
 
   @spec create_group(String.t(), map, Socket.t()) :: {:cont, Socket.t()}
