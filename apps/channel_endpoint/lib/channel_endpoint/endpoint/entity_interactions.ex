@@ -32,6 +32,10 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
     Socket.send(character.socket, EntityViews.render(:char_sc, character))
     Socket.send(character.socket, EntityViews.render(:cond, character))
 
+    if (character.group_id !== nil) do
+      refresh_group_ui(character)
+    end
+
     ## Other players packets
     %Position{map_id: map_id} = Character.get_position(character)
 

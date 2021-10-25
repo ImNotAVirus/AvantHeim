@@ -10,6 +10,8 @@ defmodule ChannelEndpoint.Endpoint.GroupActions do
 
   import ChannelEndpoint.GroupRequestEnums, only: [group_request_type: 2]
 
+  @max_group_players 3
+
   ## Packet handlers
 
   @spec delete_group(String.t(), map, Socket.t()) :: {:cont, Socket.t()}
@@ -30,7 +32,7 @@ defmodule ChannelEndpoint.Endpoint.GroupActions do
               write_character(new_char)
             end)
 
-          3 ->
+          @max_group_players ->
             new_char = %Character{character | group_id: nil}
             write_character(new_char)
 
@@ -185,7 +187,7 @@ defmodule ChannelEndpoint.Endpoint.GroupActions do
         # i18n string 227 : Already in the requested party
         Socket.send(character.socket, UIViews.render(:infoi, %{i18n_vnum: 227}))
 
-      {c, _, {:ok, players}} when c.group_id != nil and length(players) >= 3 ->
+      {c, _, {:ok, players}} when c.group_id != nil and length(players) >= @max_group_players ->
         # i18n string 230 : The party is already full
         Socket.send(character.socket, UIViews.render(:infoi, %{i18n_vnum: 230}))
 
