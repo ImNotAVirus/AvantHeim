@@ -158,20 +158,35 @@ defmodule ChannelEndpoint.Endpoint.GroupActions do
 
     case {character_group, target_group} do
       {{:ok, c}, {:ok, _}} when length(c) > 1 ->
-        new_char = %Character{target | group_id: character.group_id}
+        new_char = %Character{
+          target
+          | group_id: character.group_id,
+            group_place: 3
+        }
+
         write_character(new_char)
         EntityInteractions.refresh_group_ui(new_char)
 
       {{:ok, _}, {:ok, t}} when length(t) > 1 ->
-        new_char = %Character{character | group_id: target.group_id}
+        new_char = %Character{
+          character
+          | group_id: target.group_id,
+            group_place: 3
+        }
+
         write_character(new_char)
         EntityInteractions.refresh_group_ui(new_char)
 
       _ ->
-        new_character = %Character{character | group_id: character.id}
+        new_character = %Character{
+          character
+          | group_id: target.id,
+            group_place: 2
+        }
+
         write_character(new_character)
 
-        new_target = %Character{target | group_id: character.id}
+        new_target = %Character{target | group_id: target.id, group_place: 1}
         write_character(new_target)
 
         # i18n string 596 : You are the party master

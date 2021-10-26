@@ -32,7 +32,7 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
     Socket.send(character.socket, EntityViews.render(:char_sc, character))
     Socket.send(character.socket, EntityViews.render(:cond, character))
 
-    if (character.group_id !== nil) do
+    if character.group_id !== nil do
       refresh_group_ui(character)
     end
 
@@ -101,7 +101,7 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
   @spec get_pidx_sub_packet(List.t()) :: list
   def get_pidx_sub_packet(players) do
     Enum.flat_map(players, fn player ->
-      subpacket = %PidxSubGroupMember {
+      subpacket = %PidxSubGroupMember{
         is_grouped: player.group_id !== nil,
         entity_id: player.id
       }
@@ -115,7 +115,11 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
     case CachingService.get_characters_by_group_id(character.group_id) do
       {:ok, players} ->
         sub_packet = get_pidx_sub_packet(players)
-        broadcast_on_map(character, EntityViews.render(:pidx, %{entity: character, sub_packet: sub_packet}))
+
+        broadcast_on_map(
+          character,
+          EntityViews.render(:pidx, %{entity: character, sub_packet: sub_packet})
+        )
 
       _ ->
         :ignore
