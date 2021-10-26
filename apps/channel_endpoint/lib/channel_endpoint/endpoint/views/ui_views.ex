@@ -19,7 +19,8 @@ defmodule ChannelEndpoint.Endpoint.UIViews do
     Msgi,
     Pinit,
     Pst,
-    Pidx
+    Pidx,
+    PinitEmptyGroup
   }
 
   ## Public API
@@ -109,7 +110,6 @@ defmodule ChannelEndpoint.Endpoint.UIViews do
     }
   end
 
-
   def render(:pinit, %{group_size: group_size, members: members}) do
     %Pinit{
       group_size: group_size,
@@ -134,10 +134,16 @@ defmodule ChannelEndpoint.Endpoint.UIViews do
     }
   end
 
-  def render(:pidx, %{entity: %Character{group_id: group_id}, sub_packet: sub_packet}) do
+  def render(:pidx, %{group_id: group_id, sub_packet: sub_packet}) do
     %Pidx{
       group_id: group_id,
       sub_packet: sub_packet
+    }
+  end
+
+  def render(:pinit_empty_group, %{unknow: unknow}) do
+    %PinitEmptyGroup{
+      unknow: unknow
     }
   end
 end

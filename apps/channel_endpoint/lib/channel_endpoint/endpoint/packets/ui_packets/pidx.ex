@@ -13,7 +13,7 @@ defmodule ChannelEndpoint.Endpoint.UIPackets.Pidx do
   defstruct @enforce_keys
 
   @type t :: %Pidx{
-          group_id: pos_integer,
+          group_id: neg_integer,
           sub_packet: [PidxSubGroupMember]
         }
 

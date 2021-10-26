@@ -31,8 +31,9 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
     # TODO: Socket.send(character.socket, PlayerViews.render(:sc, character))
     Socket.send(character.socket, EntityViews.render(:char_sc, character))
     Socket.send(character.socket, EntityViews.render(:cond, character))
+    Socket.send(character.socket, UIViews.render(:pinit_empty_group, %{unknow: 0}))
 
-    if character.group_id !== nil do
+    if character.group_id !== -1 do
       refresh_group_ui(character)
     end
 
@@ -72,16 +73,21 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
     end)
   end
 
+  @spec refresh_group_list(Character.t(), List.t()) :: :ok
+  def refresh_group_list(%Character{} = character, players) do
+    members_list = get_group_member_list(players)
+
+    broadcast_on_group(
+      character,
+      UIViews.render(:pinit, %{group_size: length(players), members: members_list})
+    )
+  end
+
   @spec refresh_group_ui(Character.t()) :: {:ok, new_char :: Character.t()} | {:error, atom}
   def refresh_group_ui(%Character{} = character) do
     case CachingService.get_characters_by_group_id(character.group_id) do
       {:ok, players} ->
-        members_list = get_group_member_list(players)
-
-        broadcast_on_group(
-          character,
-          UIViews.render(:pinit, %{group_size: length(players), members: members_list})
-        )
+        refresh_group_list(character, players)
 
         Enum.each(players, fn player ->
           broadcast_on_group(
@@ -102,7 +108,7 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
   def get_pidx_sub_packet(players) do
     Enum.flat_map(players, fn player ->
       subpacket = %PidxSubGroupMember{
-        is_grouped: player.group_id !== nil,
+        is_grouped: player.group_id !== -1,
         entity_id: player.id
       }
 
@@ -118,12 +124,25 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
 
         broadcast_on_map(
           character,
-          UIViews.render(:pidx, %{entity: character, sub_packet: sub_packet})
+          UIViews.render(:pidx, %{group_id: character.group_id, sub_packet: sub_packet})
         )
 
       _ ->
         :ignore
     end
+  end
+
+  @spec see_player_not_in_group_anymore(Character.t()) :: :ok
+  def see_player_not_in_group_anymore(%Character{} = character) do
+    subpacket = %PidxSubGroupMember{
+      is_grouped: 1,
+      entity_id: character.id
+    }
+
+    broadcast_on_map(
+      character,
+      UIViews.render(:pidx, %{group_id: character.group_id, sub_packet: subpacket})
+    )
   end
 
   @spec set_dir(Character.t(), EntityEnums.direction_type_keys()) ::

@@ -24,9 +24,10 @@ defmodule ChannelEndpoint.Endpoint.GroupActions do
         case length(players) do
           2 ->
             Enum.each(players, fn player ->
-              new_char = %Character{player | group_id: nil}
+              new_char = %Character{player | group_id: -1}
               write_character(new_char)
-              EntityInteractions.refresh_group_ui(new_char)
+              Socket.send(new_char.socket, UIViews.render(:pinit_empty_group, %{unknow: 0}))
+              EntityInteractions.see_player_not_in_group_anymore(new_char)
               # Party disbanded
               Socket.send(
                 new_char.socket,
@@ -35,9 +36,10 @@ defmodule ChannelEndpoint.Endpoint.GroupActions do
             end)
 
           @max_group_players ->
-            new_char = %Character{character | group_id: nil}
+            new_char = %Character{character | group_id: -1}
             write_character(new_char)
-            define_new_group_owner(character)
+            define_new_group_owner(new_char)
+            EntityInteractions.see_player_not_in_group_anymore(new_char)
 
           _ ->
             raise "Unsuported group length (Raid group ?)"
@@ -57,16 +59,25 @@ defmodule ChannelEndpoint.Endpoint.GroupActions do
         new_owner = Enum.at(players, 0)
 
         Enum.each(players, fn player ->
-          new_char = %Character{player | group_id: new_owner.group_id}
+          new_char = %Character{player | group_id: new_owner.id}
           write_character(new_char)
-          EntityInteractions.refresh_group_ui(player)
+          IO.inspect(new_char.name)
         end)
 
+        EntityInteractions.refresh_group_list(new_owner, players)
+        Socket.send(character.socket, UIViews.render(:pinit_empty_group, %{unknow: 0}))
+        # You are now the party master
         Socket.send(new_owner.socket, UIViews.render(:infoi, %{i18n_vnum: 596}))
 
       _ ->
-        # There is no need to change the owner, as the person leaving the group is not the current owner.
-        :ignore
+        case CachingService.get_characters_by_group_id(character.group_id) do
+          {:ok, players} ->
+            EntityInteractions.refresh_group_list(character, players)
+            Socket.send(character.socket, UIViews.render(:pinit_empty_group, %{unknow: 0}))
+
+          _ ->
+            :ignore
+        end
     end
   end
 
@@ -211,15 +222,15 @@ defmodule ChannelEndpoint.Endpoint.GroupActions do
           UIViews.render(:info, %{message: "You can't invite yourself in a party."})
         )
 
-      {x, y, _} when x.group_id != nil and y.group_id != nil and x.group_id != y.group_id ->
+      {x, y, _} when x.group_id != -1 and y.group_id != -1 and x.group_id != y.group_id ->
         # i18n string 228 : Already in another party
         Socket.send(character.socket, UIViews.render(:infoi, %{i18n_vnum: 228}))
 
-      {x, y, _} when x.group_id != nil and y.group_id != nil and x.group_id == y.group_id ->
+      {x, y, _} when x.group_id != -1 and y.group_id != -1 and x.group_id == y.group_id ->
         # i18n string 227 : Already in the requested party
         Socket.send(character.socket, UIViews.render(:infoi, %{i18n_vnum: 227}))
 
-      {c, _, {:ok, players}} when c.group_id != nil and length(players) >= @max_group_players ->
+      {c, _, {:ok, players}} when c.group_id != -1 and length(players) >= @max_group_players ->
         # i18n string 230 : The party is already full
         Socket.send(character.socket, UIViews.render(:infoi, %{i18n_vnum: 230}))
 
