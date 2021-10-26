@@ -1,4 +1,4 @@
-defmodule ChannelEndpoint.Endpoint.EntityPacket.PidxSubGroupMember do
+defmodule ChannelEndpoint.Endpoint.UIPackets.PidxSubGroupMember do
   alias __MODULE__
 
   use Core.SerializableStruct

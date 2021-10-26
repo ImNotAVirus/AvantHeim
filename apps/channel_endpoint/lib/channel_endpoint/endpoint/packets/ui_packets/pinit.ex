@@ -1,4 +1,4 @@
-defmodule ChannelEndpoint.Endpoint.EntityPackets.Pinit do
+defmodule ChannelEndpoint.Endpoint.UIPackets.Pinit do
   @moduledoc """
   TODO: Documentation.
   """

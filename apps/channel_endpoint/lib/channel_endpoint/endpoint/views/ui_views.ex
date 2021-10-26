@@ -16,7 +16,10 @@ defmodule ChannelEndpoint.Endpoint.UIViews do
     Dlgi2,
     Infoi2,
     Infoi,
-    Msgi
+    Msgi,
+    Pinit,
+    Pst,
+    Pidx
   }
 
   ## Public API
@@ -103,6 +106,38 @@ defmodule ChannelEndpoint.Endpoint.UIViews do
     %Msgi{
       message_type: message_type,
       i18n_vnum: i18n_vnum
+    }
+  end
+
+
+  def render(:pinit, %{group_size: group_size, members: members}) do
+    %Pinit{
+      group_size: group_size,
+      members: members
+    }
+  end
+
+  def render(:pst, %Character{} = character) do
+    %Pst{
+      entity_type: :character,
+      entity_id: character.id,
+      group_order: 0,
+      hp_left: FakeData.hp(character_id: character.id),
+      mp_left: FakeData.mp(character_id: character.id),
+      hp_load: FakeData.hp_max(character_id: character.id),
+      mp_load: FakeData.mp_max(character_id: character.id),
+      race: 0,
+      gender: character.gender,
+      morph: FakeData.morph(character_id: character.id),
+      # TODO
+      buff_ids: []
+    }
+  end
+
+  def render(:pidx, %{entity: %Character{group_id: group_id}, sub_packet: sub_packet}) do
+    %Pidx{
+      group_id: group_id,
+      sub_packet: sub_packet
     }
   end
 end

@@ -7,8 +7,8 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
   alias CachingService.Position
   alias CachingService.Player.Character
   alias DatabaseService.EntityEnums
-  alias ChannelEndpoint.Endpoint.EntityPacket.Pinit.SubGroupMember
-  alias ChannelEndpoint.Endpoint.EntityPacket.PidxSubGroupMember
+  alias ChannelEndpoint.Endpoint.UIPackets.Pinit.SubGroupMember
+  alias ChannelEndpoint.Endpoint.UIPackets.PidxSubGroupMember
 
   alias ChannelEndpoint.Endpoint.{
     EntityViews,
@@ -80,13 +80,13 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
 
         broadcast_on_group(
           character,
-          EntityViews.render(:pinit, %{group_size: length(players), members: members_list})
+          UIViews.render(:pinit, %{group_size: length(players), members: members_list})
         )
 
         Enum.each(players, fn player ->
           broadcast_on_group(
             player,
-            EntityViews.render(:pst, player),
+            UIViews.render(:pst, player),
             false
           )
         end)
@@ -118,7 +118,7 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
 
         broadcast_on_map(
           character,
-          EntityViews.render(:pidx, %{entity: character, sub_packet: sub_packet})
+          UIViews.render(:pidx, %{entity: character, sub_packet: sub_packet})
         )
 
       _ ->

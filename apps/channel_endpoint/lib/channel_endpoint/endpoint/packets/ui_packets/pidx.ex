@@ -1,4 +1,4 @@
-defmodule ChannelEndpoint.Endpoint.EntityPackets.Pidx do
+defmodule ChannelEndpoint.Endpoint.UIPackets.Pidx do
   @moduledoc """
   TODO: Documentation.
   """

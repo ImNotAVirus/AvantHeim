@@ -146,6 +146,15 @@ defmodule ChannelEndpoint.PacketSchemas do
   end
 
   #######
+  # Leave a group
+  # ---
+  # Example: "pbreak"
+  #######
+  packet "pbreak" do
+    resolve GroupActions, :delete_group
+  end
+
+  #######
   # Send a group message
   # ---
   # Example: ";This is a message"

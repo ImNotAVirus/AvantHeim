@@ -1,4 +1,4 @@
-defmodule ChannelEndpoint.Endpoint.EntityPacket.Pinit.SubGroupMember do
+defmodule ChannelEndpoint.Endpoint.UIPackets.Pinit.SubGroupMember do
   alias DatabaseService.EntityEnums
   alias DatabaseService.PlayerEnums
 
