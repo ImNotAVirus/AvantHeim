@@ -15,7 +15,8 @@ defmodule ChannelEndpoint.Endpoint.UIViews do
     SMemoi,
     Dlgi2,
     Infoi2,
-    Infoi
+    Infoi,
+    Msgi
   }
 
   ## Public API
@@ -97,4 +98,11 @@ defmodule ChannelEndpoint.Endpoint.UIViews do
   end
 
   def render(:infoi, %{i18n_vnum: i18n_vnum}), do: %Infoi{i18n_vnum: i18n_vnum}
+
+  def render(:msgi, %{message_type: message_type, i18n_vnum: i18n_vnum}) do
+    %Msgi{
+      message_type: message_type,
+      i18n_vnum: i18n_vnum
+    }
+  end
 end

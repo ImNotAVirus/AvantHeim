@@ -19,9 +19,6 @@ defmodule ChannelEndpoint.Endpoint.GroupActions do
     %{character_id: character_id} = socket.assigns
     {:ok, character} = CachingService.get_character_by_id(character_id)
 
-    # msgi 0 478 0 0 0 0 0
-    # broadcast_on_group(character, UIViews.render(), false)
-
     case CachingService.get_characters_by_group_id(character.group_id) do
       {:ok, players} ->
         case length(players) do
@@ -30,6 +27,11 @@ defmodule ChannelEndpoint.Endpoint.GroupActions do
               new_char = %Character{player | group_id: nil}
               write_character(new_char)
               EntityInteractions.refresh_group_ui(new_char)
+              # Party disbanded
+              Socket.send(
+                new_char.socket,
+                UIViews.render(:msgi, %{message_type: :whisper, i18n_vnum: 478})
+              )
             end)
 
           @max_group_players ->
