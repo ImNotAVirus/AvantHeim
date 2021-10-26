@@ -34,6 +34,7 @@ defmodule ChannelEndpoint.Endpoint.GroupActions do
           @max_group_players ->
             new_char = %Character{character | group_id: nil}
             write_character(new_char)
+            define_new_group_owner(character)
 
           _ ->
             raise "Unsuported group length (Raid group ?)"
@@ -43,16 +44,19 @@ defmodule ChannelEndpoint.Endpoint.GroupActions do
         :ok
     end
 
-    define_new_group_owner(character)
-
     {:cont, socket}
   end
 
+  @spec define_new_group_owner(Character.t()) :: any | :ignore
   def define_new_group_owner(%Character{} = character) do
-    case character.group_id do
-      x when x == character.id ->
-        # Socket.send(target.socket, UIViews.render(:infoi, %{i18n_vnum: 596}))
-        :ok
+    case {character.group_id, CachingService.get_characters_by_group_id(character.group_id)} do
+      {x, {:ok, players}} when x == character.id ->
+        new_owner = Enum.at(players, 0)
+        Enum.each(players, fn player ->
+          new_char = %Character{player | group_id: new_owner.group_id}
+          write_character(new_char)
+        end)
+        Socket.send(new_owner.socket, UIViews.render(:infoi, %{i18n_vnum: 596}))
 
       _ ->
         # There is no need to change the owner, as the person leaving the group is not the current owner.
@@ -160,8 +164,7 @@ defmodule ChannelEndpoint.Endpoint.GroupActions do
       {{:ok, c}, {:ok, _}} when length(c) > 1 ->
         new_char = %Character{
           target
-          | group_id: character.group_id,
-            group_place: 3
+          | group_id: character.group_id
         }
 
         write_character(new_char)
@@ -170,23 +173,18 @@ defmodule ChannelEndpoint.Endpoint.GroupActions do
       {{:ok, _}, {:ok, t}} when length(t) > 1 ->
         new_char = %Character{
           character
-          | group_id: target.group_id,
-            group_place: 3
+          | group_id: target.group_id
         }
 
         write_character(new_char)
         EntityInteractions.refresh_group_ui(new_char)
 
       _ ->
-        new_character = %Character{
-          character
-          | group_id: target.id,
-            group_place: 2
-        }
+        new_character = %Character{character | group_id: target.id}
 
         write_character(new_character)
 
-        new_target = %Character{target | group_id: target.id, group_place: 1}
+        new_target = %Character{target | group_id: target.id}
         write_character(new_target)
 
         # i18n string 596 : You are the party master
