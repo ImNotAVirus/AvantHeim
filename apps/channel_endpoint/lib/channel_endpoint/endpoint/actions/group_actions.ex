@@ -29,6 +29,7 @@ defmodule ChannelEndpoint.Endpoint.GroupActions do
             Enum.each(players, fn player ->
               new_char = %Character{player | group_id: nil}
               write_character(new_char)
+              EntityInteractions.refresh_group_ui(new_char)
             end)
 
           @max_group_players ->
@@ -56,6 +57,7 @@ defmodule ChannelEndpoint.Endpoint.GroupActions do
         Enum.each(players, fn player ->
           new_char = %Character{player | group_id: new_owner.group_id}
           write_character(new_char)
+          EntityInteractions.refresh_group_ui(player)
         end)
 
         Socket.send(new_owner.socket, UIViews.render(:infoi, %{i18n_vnum: 596}))
