@@ -52,10 +52,12 @@ defmodule ChannelEndpoint.Endpoint.GroupActions do
     case {character.group_id, CachingService.get_characters_by_group_id(character.group_id)} do
       {x, {:ok, players}} when x == character.id ->
         new_owner = Enum.at(players, 0)
+
         Enum.each(players, fn player ->
           new_char = %Character{player | group_id: new_owner.group_id}
           write_character(new_char)
         end)
+
         Socket.send(new_owner.socket, UIViews.render(:infoi, %{i18n_vnum: 596}))
 
       _ ->
