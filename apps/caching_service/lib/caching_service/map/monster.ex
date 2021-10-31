@@ -19,7 +19,7 @@ defmodule CachingService.Map.Monster do
     hp_max: 2_000,
     mp: 1_000,
     mp_max: 1_000,
-    speed: 20,
+    speed: 10,
     direction: :south,
     is_alive: true,
     is_sitting: true,

@@ -6,6 +6,7 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
   alias Core.Socket
   alias CachingService.Position
   alias CachingService.Player.Character
+  alias CachingService.Map.Monster
   alias DatabaseService.EntityEnums
 
   alias ChannelEndpoint.Endpoint.{
@@ -16,6 +17,8 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
     UIViews,
     ChatViews
   }
+
+  @type entity :: Character.t() | Monster.t()
 
   @spec map_enter(Character.t()) :: :ok
   def map_enter(%Character{} = character) do
@@ -121,8 +124,8 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
     end
   end
 
-  @spec move(Character.t(), non_neg_integer, non_neg_integer) ::
-          {:ok, new_char :: Character.t()} | {:error, atom}
+  @spec move(entity(), non_neg_integer, non_neg_integer) ::
+          {:ok, new_entity :: entity()} | {:error, atom}
   def move(%Character{} = character, new_x, new_y) do
     new_char = %Character{character | map_x: new_x, map_y: new_y}
 
@@ -130,6 +133,38 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
       {:ok, new_char} ->
         broadcast_on_map(new_char, MapViews.render(:mv, new_char), false)
         {:ok, new_char}
+
+      {:error, _} = x ->
+        x
+    end
+  end
+
+  # TODO: Clean this function
+  def move(%Monster{} = monster, new_x, new_y) do
+    if monster.is_sitting do
+      {:ok, _} = sit(monster, false)
+    end
+
+    new_monster = %Monster{monster | map_x: new_x, map_y: new_y, is_sitting: false}
+
+    case CachingService.write_monster(new_monster) do
+      {:ok, new_monster} ->
+        monster_broadcast_on_map(new_monster, MapViews.render(:mv, new_monster))
+        {:ok, new_monster}
+
+      {:error, _} = x ->
+        x
+    end
+  end
+
+  @spec sit(entity(), boolean) :: {:ok, new_entity :: entity()} | {:error, atom}
+  def sit(%Monster{} = monster, is_sitting) do
+    new_monster = %Monster{monster | is_sitting: is_sitting}
+
+    case CachingService.write_monster(new_monster) do
+      {:ok, new_monster} ->
+        monster_broadcast_on_map(new_monster, MapViews.render(:rest, new_monster))
+        {:ok, new_monster}
 
       {:error, _} = x ->
         x
@@ -164,6 +199,12 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
     guards = if including_self, do: [], else: [{:!==, :id, character.id}]
     %Position{map_id: map_id} = Character.get_position(character)
     {:ok, players} = CachingService.get_characters_by_map_id(map_id, guards)
+    Enum.each(players, &Socket.send(&1.socket, packet))
+  end
+
+  defp monster_broadcast_on_map(%Monster{} = monster, packet) do
+    %Monster{map_id: map_id} = monster
+    {:ok, players} = CachingService.get_characters_by_map_id(map_id)
     Enum.each(players, &Socket.send(&1.socket, packet))
   end
 

@@ -5,11 +5,13 @@ defmodule ChannelEndpoint.Endpoint.MapViews do
 
   alias CachingService.Position
   alias CachingService.Player.Character
+  alias CachingService.Map.Monster
 
   alias ChannelEndpoint.Endpoint.MapPackets.{
     At,
     CMap,
-    Mv
+    Mv,
+    Rest
   }
 
   ## Public API
@@ -56,6 +58,24 @@ defmodule ChannelEndpoint.Endpoint.MapViews do
       map_x: map_x,
       map_y: map_y,
       speed: character.speed
+    }
+  end
+
+  def render(:mv, %Monster{} = monster) do
+    %Mv{
+      entity_type: :monster,
+      entity_id: monster.id,
+      map_x: monster.map_x,
+      map_y: monster.map_y,
+      speed: monster.speed
+    }
+  end
+
+  def render(:rest, %Monster{} = monster) do
+    %Rest{
+      entity_type: :monster,
+      entity_id: monster.id,
+      is_sitting: monster.is_sitting
     }
   end
 end

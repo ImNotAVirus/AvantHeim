@@ -56,8 +56,8 @@ defmodule CachingService.MonsterRegistry do
       |> String.split(["\r\n", "\n"], trim: true)
       |> Stream.with_index(1)
       |> Stream.map(fn {x, i} -> Monster.from_binary(x, i) end)
-      |> Stream.map(&start_monster_process/1)
-      |> Enum.map(&persist_monster/1)
+      |> Stream.map(&persist_monster/1)
+      |> Enum.map(&start_monster_process/1)
 
     Logger.info("MonsterRegistry started with #{length(res)} monsters")
 
@@ -66,14 +66,14 @@ defmodule CachingService.MonsterRegistry do
 
   ## Private function
 
-  defp start_monster_process(%Monster{id: monster_id} = monster) do
-    spec = {MonsterProcess, monster_id}
-    {:ok, _} = DynamicSupervisor.start_child(@supervisor_name, spec)
+  defp persist_monster(monster) do
+    {:ok, _} = write_monster(monster)
     monster
   end
 
-  defp persist_monster(monster) do
-    {:ok, _} = write_monster(monster)
+  defp start_monster_process(%Monster{id: monster_id}) do
+    spec = {MonsterProcess, monster_id}
+    {:ok, _} = DynamicSupervisor.start_child(@supervisor_name, spec)
     :ok
   end
 end
