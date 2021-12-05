@@ -10,7 +10,8 @@ defmodule ChannelEndpoint.MixProject do
       deps_path: "../../deps",
       lockfile: "../../mix.lock",
       elixir: "~> 1.11",
-      start_permanent: Mix.env() == :prod,
+      start_permanent: Mix.env() != :test,
+      consolidate_protocols: Mix.env() != :test,
       deps: deps()
     ]
   end

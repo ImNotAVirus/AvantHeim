@@ -19,7 +19,7 @@ config :logger, :console,
 
 config :logger,
   compile_time_purge_matching: [
-    [module: CachingService.MapRegistry, function: "parse_map_file/1"]
+    [module: ChannelEndpoint.MapManager, function: "parse_map_file/1"]
   ]
 
 ## Login configs

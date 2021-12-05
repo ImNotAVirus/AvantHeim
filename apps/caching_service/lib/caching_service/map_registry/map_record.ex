@@ -12,6 +12,6 @@ defmodule CachingService.MapRegistry.MapRecord do
             id: pos_integer,
             width: pos_integer,
             height: pos_integer,
-            bin: Nx.Tensor.t()
+            bin: binary
           )
 end

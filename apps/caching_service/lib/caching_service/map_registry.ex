@@ -9,17 +9,24 @@ defmodule CachingService.MapRegistry do
 
   import CachingService.MapRegistry.MapRecord
 
-  @table_name :map_registry
-  @maps_path "#{:code.priv_dir(:caching_service)}/client_files/maps"
+  alias CachingService.MapRegistry.MapRecord
+
+  @map_registry __MODULE__
+  @table_name :maps
 
   ## Public API
 
   @spec start_link(any) :: :ignore | {:error, any} | {:ok, pid}
-  def start_link(opts) do
-    GenServer.start_link(__MODULE__, opts, name: __MODULE__)
+  def start_link(_opts) do
+    GenServer.start_link(__MODULE__, nil, name: @map_registry)
   end
 
-  @spec get_by_id(pos_integer) :: {:ok, any} | {:error, :not_found}
+  @spec insert_new(MapRecord.t()) :: {:ok, MapRecord.t()} | {:error, :cant_insert}
+  def insert_new(record) do
+    GenServer.call(@map_registry, {:insert_new, record})
+  end
+
+  @spec get_by_id(pos_integer) :: {:ok, MapRecord.t()} | {:error, :not_found}
   def get_by_id(map_id) do
     case :ets.lookup(@table_name, map_id) do
       [{^map_id, map}] -> {:ok, map}
@@ -31,48 +38,21 @@ defmodule CachingService.MapRegistry do
 
   @impl true
   def init(_) do
-    Logger.info("MapRegistry starting...")
-    {:ok, nil, {:continue, :init_maps}}
+    :ets.new(@table_name, [:set, :protected, :named_table])
+    Logger.info("MapRegistry started...")
+    {:ok, nil}
   end
 
   @impl true
-  def handle_continue(:init_maps, nil) do
-    :ets.new(@table_name, [:set, :protected, :named_table])
-
-    map_files = Path.wildcard("#{@maps_path}/*")
-
-    map_files
-    |> Stream.map(&parse_map_file/1)
-    |> Enum.each(&persist_map/1)
-
-    Logger.info("MapRegistry started with #{length(map_files)} maps")
-
-    {:noreply, map_files}
-  end
-
-  ## Private functions
-
-  defp parse_map_file(filename) do
-    Logger.debug("Parsing map file: #{filename}")
-
-    id = filename |> Path.basename() |> String.to_integer(10)
-
-    <<width::16-little, height::16-little, map_bin::binary>> = File.read!(filename)
-    total_size = width * height
-    <<_::bytes-size(total_size)>> = map_bin
-
-    Logger.debug("Map parsed: id=#{id} size=#{width}x#{height}")
-
-    map_record(
-      id: id,
-      width: width,
-      height: height,
-      bin: map_bin
-    )
-  end
-
-  defp persist_map(record) do
+  def handle_call({:insert_new, record}, _from, state) do
     id = map_record(record, :id)
-    true = :ets.insert_new(@table_name, {id, record})
+
+    result =
+      case :ets.insert_new(@table_name, {id, record}) do
+        true -> {:ok, record}
+        false -> {:error, :cant_insert}
+      end
+
+    {:reply, result, state}
   end
 end

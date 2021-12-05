@@ -141,11 +141,7 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
 
   # TODO: Clean this function
   def move(%Monster{} = monster, new_x, new_y) do
-    if monster.is_sitting do
-      {:ok, _} = sit(monster, false)
-    end
-
-    new_monster = %Monster{monster | map_x: new_x, map_y: new_y, is_sitting: false}
+    new_monster = %Monster{monster | map_x: new_x, map_y: new_y}
 
     case CachingService.write_monster(new_monster) do
       {:ok, new_monster} ->

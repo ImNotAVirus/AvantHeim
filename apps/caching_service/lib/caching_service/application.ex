@@ -10,8 +10,8 @@ defmodule CachingService.Application do
     children = [
       {DynamicSupervisor, strategy: :one_for_one, name: CachingService.MonstersSupervisor},
       CachingService.CharacterRegistry,
-      CachingService.MapRegistry,
-      CachingService.MonsterRegistry
+      CachingService.MapRegistry
+      # CachingService.MonsterRegistry
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
