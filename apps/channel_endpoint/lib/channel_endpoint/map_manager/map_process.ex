@@ -32,7 +32,7 @@ defmodule ChannelEndpoint.MapManager.MapProcess do
   @impl true
   @spec init(pos_integer) :: {:ok, state(), :hibernate}
   def init(map_id) do
-    Logger.info("MapProcess##{map_id} started")
+    Logger.debug("MapProcess##{map_id} started")
     state = %{id: map_id, character_ids: MapSet.new()}
     {:ok, state, :hibernate}
   end

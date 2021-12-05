@@ -80,7 +80,7 @@ defmodule ChannelEndpoint.MapManager do
   @impl true
   @spec handle_continue(:init_maps, nil) :: {:noreply, state :: map}
   def handle_continue(:init_maps, nil) do
-    map_files = Path.wildcard("#{@maps_path}/?")
+    map_files = Path.wildcard("#{@maps_path}/*")
 
     state =
       map_files

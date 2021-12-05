@@ -19,7 +19,8 @@ config :logger, :console,
 
 config :logger,
   compile_time_purge_matching: [
-    [module: ChannelEndpoint.MapManager, function: "parse_map_file/1"]
+    [module: ChannelEndpoint.MapManager, function: "parse_map_file/1"],
+    [module: ChannelEndpoint.MapManager.MapProcess, function: "init/1"]
   ]
 
 ## Login configs
@@ -57,7 +58,8 @@ config :database_service, DatabaseService.Repo,
   database: "elvengard_dev",
   username: "postgres",
   password: "postgres",
-  hostname: "localhost"
+  hostname: "localhost",
+  log: false
 
 ## Caching configs
 
