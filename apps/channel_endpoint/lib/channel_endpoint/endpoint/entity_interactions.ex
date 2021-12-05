@@ -12,36 +12,9 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
   alias ChannelEndpoint.Endpoint.{
     EntityViews,
     MapViews,
-    PlayerViews,
-    VisibilityViews,
     UIViews,
     ChatViews
   }
-
-  @type entity :: Character.t() | Monster.t()
-
-  @spec map_enter(Character.t()) :: :ok
-  def map_enter(%Character{} = character) do
-    ## Self packets
-    Socket.send(character.socket, PlayerViews.render(:c_info, character))
-    Socket.send(character.socket, EntityViews.render(:c_mode, character))
-    Socket.send(character.socket, PlayerViews.render(:lev, character))
-    Socket.send(character.socket, PlayerViews.render(:stat, character))
-    Socket.send(character.socket, MapViews.render(:at, character))
-    Socket.send(character.socket, MapViews.render(:c_map, character))
-    # TODO: Socket.send(character.socket, PlayerViews.render(:sc, character))
-    Socket.send(character.socket, EntityViews.render(:char_sc, character))
-    Socket.send(character.socket, EntityViews.render(:cond, character))
-
-    ## Visibility packets
-    %Position{map_id: map_id} = Character.get_position(character)
-
-    {:ok, players} = CachingService.get_characters_by_map_id(map_id, [{:!==, :id, character.id}])
-    Enum.each(players, &send_character_visibility_packets(character, &1))
-
-    {:ok, monster} = CachingService.get_monsters_by_map_id(map_id)
-    Enum.each(monster, &send_entity_visibility_packets(character, &1))
-  end
 
   @spec set_dir(Character.t(), EntityEnums.direction_type_keys()) ::
           {:ok, new_char :: Character.t()} | {:error, atom}
@@ -124,8 +97,8 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
     end
   end
 
-  @spec move(entity(), non_neg_integer, non_neg_integer) ::
-          {:ok, new_entity :: entity()} | {:error, atom}
+  @spec move(CachingService.entity(), non_neg_integer, non_neg_integer) ::
+          {:ok, new_entity :: CachingService.entity()} | {:error, atom}
   def move(%Character{} = character, new_x, new_y) do
     new_char = %Character{character | map_x: new_x, map_y: new_y}
 
@@ -153,7 +126,8 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
     end
   end
 
-  @spec sit(entity(), boolean) :: {:ok, new_entity :: entity()} | {:error, atom}
+  @spec sit(CachingService.entity(), boolean) ::
+          {:ok, new_entity :: CachingService.entity()} | {:error, atom}
   def sit(%Monster{} = monster, is_sitting) do
     new_monster = %Monster{monster | is_sitting: is_sitting}
 
@@ -202,18 +176,5 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
     %Monster{map_id: map_id} = monster
     {:ok, players} = CachingService.get_characters_by_map_id(map_id)
     Enum.each(players, &Socket.send(&1.socket, packet))
-  end
-
-  @spec send_character_visibility_packets(Character.t(), Character.t()) :: :ok | {:error, atom}
-  defp send_character_visibility_packets(self, character) do
-    Socket.send(self.socket, VisibilityViews.render(:in, character))
-    Socket.send(character.socket, VisibilityViews.render(:in, self))
-    Socket.send(self.socket, EntityViews.render(:c_mode, character))
-    Socket.send(character.socket, EntityViews.render(:c_mode, self))
-  end
-
-  @spec send_entity_visibility_packets(Character.t(), any) :: :ok | {:error, atom}
-  defp send_entity_visibility_packets(%Character{socket: socket}, entity) do
-    Socket.send(socket, VisibilityViews.render(:in, entity))
   end
 end

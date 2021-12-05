@@ -4,7 +4,7 @@ defmodule ChannelEndpoint.Endpoint.GameActions do
   """
 
   alias Core.Socket
-  alias ChannelEndpoint.Endpoint.EntityInteractions
+  alias ChannelEndpoint.MapManager
 
   alias ChannelEndpoint.Endpoint.{
     ChatViews,
@@ -23,12 +23,17 @@ defmodule ChannelEndpoint.Endpoint.GameActions do
     Socket.send(socket, PlayerViews.render(:fd, character))
     # TODO: Socket.send(socket, PlayerViews.render(:ski, character))
 
-    EntityInteractions.map_enter(character)
+    MapManager.send_map_enter(character)
 
     Socket.send(socket, PlayerViews.render(:rsfi, character))
     Socket.send(socket, PlayerViews.render(:fs, character))
 
     Socket.send(socket, UIViews.render(:gold, character))
+
+    Socket.send(socket, "exts 0 84 84 84")
+    # inv = "inv 0 " <> for i <- 0..83, into: "", do: "#{i}.#{60+rem(i, 5)}.0.0.0 "
+    inv = "inv 0 " <> for i <- 0..83, into: "", do: "#{i}.#{i + 1}.0.0.0 "
+    Socket.send(socket, inv)
 
     # TODO: Socket.send(socket, InventoryViews.render(:qslot, %{slot_id: 0, character: character}))
     # TODO: Socket.send(socket, InventoryViews.render(:qslot, %{slot_id: 1, character: character}))

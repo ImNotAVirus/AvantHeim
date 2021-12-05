@@ -6,6 +6,10 @@ defmodule CachingService do
   import DatabaseService.EntityEnums, only: [entity_type: 2]
 
   alias DatabaseService.EntityEnums
+  alias CachingService.Player.Character
+  alias CachingService.Map.Monster
+
+  @type entity :: Character.t() | Monster.t()
 
   ## Delegates
 

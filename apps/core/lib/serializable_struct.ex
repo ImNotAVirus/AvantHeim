@@ -53,7 +53,7 @@ defmodule Core.SerializableStruct do
 
   @doc false
   defp impl(mod) do
-    quote do
+    quote generated: true do
       defimpl Core.Socket.SerializerProtocol do
         def serialize(data, opts) do
           case unquote(mod).serialize(data, opts) do

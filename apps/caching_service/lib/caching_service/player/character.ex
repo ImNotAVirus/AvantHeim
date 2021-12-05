@@ -3,10 +3,6 @@ defmodule CachingService.Player.Character do
   TODO: Documentation
   """
 
-  alias Core.Socket
-  alias CachingService.Position
-  alias DatabaseService.EntityEnums
-
   @db_attributes [
     :id,
     :name,
@@ -40,9 +36,13 @@ defmodule CachingService.Player.Character do
     index: [:map_id],
     attributes: @db_attributes ++ Map.keys(@virtual_attributes)
 
+  alias __MODULE__
+  alias Core.Socket
+  alias CachingService.Position
+  alias DatabaseService.EntityEnums
   alias DatabaseService.Players.Character, as: DBCharacter
 
-  @type t :: %__MODULE__{
+  @type t :: %Character{
           # DB attributes
           id: pos_integer,
           name: String.t(),
@@ -71,7 +71,7 @@ defmodule CachingService.Player.Character do
 
   ## Public API
 
-  @spec new(DBCharacter.t(), Socket.t()) :: __MODULE__.t()
+  @spec new(DBCharacter.t(), Socket.t()) :: t()
   def new(%DBCharacter{} = character, %Socket{} = socket) do
     default = %{
       socket: socket,
@@ -82,18 +82,28 @@ defmodule CachingService.Player.Character do
     |> Map.take(@db_attributes)
     |> Map.merge(@virtual_attributes)
     |> Map.merge(default)
-    |> then(&struct!(__MODULE__, &1))
+    |> then(&struct!(Character, &1))
   end
 
-  @spec get_position(__MODULE__.t()) :: Position.t()
-  def get_position(%__MODULE__{} = character) do
+  @spec get_position(t()) :: Position.t()
+  def get_position(%Character{} = character) do
     # TODO: Implement instances
-    %Position{
-      map_id: character.map_id,
-      map_vnum: character.map_vnum,
-      map_x: character.map_x,
-      map_y: character.map_y,
-      is_instance: character.map_id != character.map_vnum
+    Position.new(
+      character.map_id,
+      character.map_vnum,
+      character.map_x,
+      character.map_y
+    )
+  end
+
+  @spec set_position(t(), Position.t()) :: t()
+  def set_position(%Character{} = character, %Position{} = pos) do
+    %Character{
+      character
+      | map_id: pos.map_id,
+        map_vnum: pos.map_vnum,
+        map_x: pos.map_x,
+        map_y: pos.map_y
     }
   end
 end

@@ -6,7 +6,7 @@ defmodule ChannelEndpoint.Endpoint.NameCommand do
   alias Core.Socket
   alias CachingService.Player.Character
   alias ChannelEndpoint.Endpoint.{ChatViews, UIViews}
-  alias ChannelEndpoint.Endpoint.EntityInteractions
+  alias ChannelEndpoint.MapManager
 
   @name_regex ~r/^[\x21-\x7E\xA1-\xAC\xAE-\xFF\x{4e00}-\x{9fa5}\x{0E01}-\x{0E3A}\x{0E3F}-\x{0E5B}\x2E]{4,14}$/u
 
@@ -33,7 +33,7 @@ defmodule ChannelEndpoint.Endpoint.NameCommand do
       {:ok, new_char} = CachingService.write_character(%Character{character | name: name})
 
       Socket.send(socket, UIViews.render(:cancel, %{type: 2, entity: new_char}))
-      EntityInteractions.map_enter(new_char)
+      MapManager.send_map_enter(new_char)
 
       send_message(socket, new_char, "Your character name is now #{name}", :special_green)
     else

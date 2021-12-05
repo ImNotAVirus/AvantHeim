@@ -11,6 +11,8 @@ defmodule ChannelEndpoint.MapManager do
 
   alias CachingService.MapRegistry
   alias CachingService.MapRegistry.MapRecord
+  alias CachingService.Player.Character
+  alias CachingService.Position
   alias ChannelEndpoint.MapManager.MapProcess
 
   @map_supervisor ChannelEndpoint.MapProcesses
@@ -23,6 +25,40 @@ defmodule ChannelEndpoint.MapManager do
   @spec start_link(any) :: :ignore | {:error, any} | {:ok, pid}
   def start_link(_opts) do
     GenServer.start_link(__MODULE__, nil, name: @map_manager)
+  end
+
+  @spec change_map(Character.t(), Position.t()) :: :ok
+  def change_map(%Character{} = character, %Position{} = pos) do
+    send_map_leave(character)
+
+    {:ok, updated_character} =
+      character
+      |> Character.set_position(pos)
+      |> CachingService.write_character()
+
+    send_map_enter(updated_character)
+  end
+
+  @doc """
+  Send packets for a player enter on a map.
+
+  DOESN'T modify the cache
+  """
+  @spec send_map_enter(CachingService.entity()) :: :ok
+  def send_map_enter(%Character{} = character) do
+    %Position{map_id: map_id} = Character.get_position(character)
+    GenServer.cast(map_process(map_id), {:map_enter, character})
+  end
+
+  @doc """
+  Send packets for a player leaving a map.
+
+  DOESN'T modify the cache
+  """
+  @spec send_map_leave(CachingService.entity()) :: :ok
+  def send_map_leave(%Character{} = character) do
+    %Position{map_id: map_id} = Character.get_position(character)
+    GenServer.cast(map_process(map_id), {:map_leave, character})
   end
 
   ### change_character_map
@@ -111,7 +147,7 @@ defmodule ChannelEndpoint.MapManager do
   end
 
   @spec map_process(pos_integer) :: {:via, Registry, {module, pos_integer}}
-  defp map_process(map_pid) do
-    {:via, Registry, {@map_registry, map_pid}}
+  defp map_process(map_id) do
+    {:via, Registry, {@map_registry, map_id}}
   end
 end
