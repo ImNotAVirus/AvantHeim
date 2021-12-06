@@ -94,28 +94,38 @@ defmodule ChannelEndpoint.MapManager.MapProcess do
 
     ## Visibility packets
     {:ok, players} = CachingService.get_characters_by_map_id(map_id, [{:!==, :id, character.id}])
-    Enum.each(players, &send_entity_visibility_packets(character, &1))
+    Enum.each(players, &send_entity_enter_packets(character, &1))
 
     # {:ok, monster} = CachingService.get_monsters_by_map_id(map_id)
-    # Enum.each(monster, &send_entity_visibility_packets(character, &1))
+    # Enum.each(monster, &send_entity_enter_packets(character, &1))
   end
 
-  @spec map_leave(Character.t(), pos_integer) :: any
-  defp map_leave(%Character{} = character, map_id) do
-    {:ok, _players} = CachingService.get_characters_by_map_id(map_id, [{:!==, :id, character.id}])
-    raise "unimplemented map_leave"
-  end
-
-  @spec send_entity_visibility_packets(Character.t(), CachingService.entity()) ::
+  @spec send_entity_enter_packets(Character.t(), CachingService.entity()) ::
           :ok | {:error, atom}
-  defp send_entity_visibility_packets(%Character{} = self, %Character{} = character) do
+  defp send_entity_enter_packets(%Character{} = self, %Character{} = character) do
     Socket.send(self.socket, VisibilityViews.render(:in, character))
     Socket.send(character.socket, VisibilityViews.render(:in, self))
     Socket.send(self.socket, EntityViews.render(:c_mode, character))
     Socket.send(character.socket, EntityViews.render(:c_mode, self))
   end
 
-  defp send_entity_visibility_packets(%Character{socket: socket}, entity) do
+  defp send_entity_enter_packets(%Character{socket: socket}, entity) do
     Socket.send(socket, VisibilityViews.render(:in, entity))
+  end
+
+  @spec map_leave(Character.t(), pos_integer) :: any
+  defp map_leave(%Character{} = character, map_id) do
+    ## Self packets
+    Socket.send(character.socket, MapViews.render(:mapout, character))
+
+    ## Visibility packets
+    {:ok, players} = CachingService.get_characters_by_map_id(map_id, [{:!==, :id, character.id}])
+    Enum.each(players, &send_entity_leave_packets(&1, character))
+  end
+
+  @spec send_entity_leave_packets(Character.t(), CachingService.entity()) ::
+          :ok | {:error, atom}
+  defp send_entity_leave_packets(%Character{} = character, entity) do
+    Socket.send(character.socket, VisibilityViews.render(:out, entity))
   end
 end

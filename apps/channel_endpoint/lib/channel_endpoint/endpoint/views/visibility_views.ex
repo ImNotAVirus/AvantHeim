@@ -6,7 +6,12 @@ defmodule ChannelEndpoint.Endpoint.VisibilityViews do
   alias CachingService.Position
   alias CachingService.Player.Character
   alias CachingService.Map.Monster
-  alias ChannelEndpoint.Endpoint.VisibilityPackets.{InCharacter, InNpcOrMonster}
+
+  alias ChannelEndpoint.Endpoint.VisibilityPackets.{
+    InCharacter,
+    InNpcOrMonster,
+    Out
+  }
 
   ## Public API
 
@@ -79,6 +84,13 @@ defmodule ChannelEndpoint.Endpoint.VisibilityViews do
       is_invisible: monster.is_invisible,
       name: monster.name,
       spawn_effect: :falling
+    }
+  end
+
+  def render(:out, %Character{} = character) do
+    %Out{
+      entity_type: :character,
+      entity_id: character.id
     }
   end
 end
