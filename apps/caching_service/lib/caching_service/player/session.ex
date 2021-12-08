@@ -16,6 +16,7 @@ defmodule CachingService.Player.Session do
     type: :ordered_set
 
   @type state :: :authenticated | :in_lobby | :in_game | :disconnected
+  @typep maybe_session_key :: pos_integer | nil
 
   @type t :: %Session{
           username: String.t(),
@@ -27,7 +28,8 @@ defmodule CachingService.Player.Session do
 
   ## Public API
 
-  @typep maybe_session_key :: pos_integer | nil
+  defguard is_logged(s) when is_struct(s, Session) and s.state in [:in_lobby, :in_game]
+
   @spec new(String.t(), String.t(), maybe_session_key(), timeout) :: t()
   def new(username, password, encryption_key \\ nil, ttl \\ @default_ttl) do
     %Session{
@@ -39,10 +41,15 @@ defmodule CachingService.Player.Session do
     }
   end
 
-  @spec valid_states() :: [atom, ...]
-  def valid_states(), do: @states
+  @spec set_ttl(t(), timeout) :: t()
+  def set_ttl(%Session{} = session, ttl) do
+    %Session{session | expire: ttl_to_expire(ttl)}
+  end
 
-  defguard is_logged(s) when is_struct(s, Session) and s.state in [:in_lobby, :in_game]
+  @spec set_state(t(), atom) :: t()
+  def set_state(%Session{} = session, state) when state in @states do
+    %Session{session | state: state}
+  end
 
   ## Internal helpers
 

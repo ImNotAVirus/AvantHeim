@@ -21,7 +21,7 @@ defmodule CachingService do
     as: :create
 
   defdelegate delete_session(username), to: CachingService.SessionRegistry, as: :delete
-  defdelegate update_session(username), to: CachingService.SessionRegistry, as: :update
+  defdelegate update_session(session), to: CachingService.SessionRegistry, as: :update
   defdelegate get_session_by_username(username), to: CachingService.SessionRegistry, as: :get
 
   ### Character delegates

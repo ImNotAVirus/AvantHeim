@@ -53,6 +53,7 @@ defmodule ChannelEndpoint.Endpoint.Protocol do
 
     with {:ok, session} <- CachingService.get_session_by_username(username),
          :ok <- validate_session(session, session_key),
+         {:ok, %Session{}} <- cache_session_as_logged(session),
          {:ok, account} <- get_account(session),
          :ok <- send_character_list(account, new_socket) do
       transport.setopts(transport_pid, active: :once)
@@ -99,12 +100,18 @@ defmodule ChannelEndpoint.Endpoint.Protocol do
 
   ## Private functions
 
-  @spec validate_session(Session.t(), pos_integer) :: :ok | :error
   defp validate_session(session, session_key) do
     case session do
       %Session{encryption_key: ^session_key} = s when not Session.is_logged(s) -> :ok
-      _ -> :error
+      _ -> {:error, session}
     end
+  end
+
+  defp cache_session_as_logged(session) do
+    session
+    |> Session.set_ttl(:infinity)
+    |> Session.set_state(:in_lobby)
+    |> CachingService.update_session()
   end
 
   defp get_account(%Session{} = session) do
