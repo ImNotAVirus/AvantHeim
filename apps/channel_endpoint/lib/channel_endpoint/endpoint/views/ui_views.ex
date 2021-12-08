@@ -134,10 +134,10 @@ defmodule ChannelEndpoint.Endpoint.UIViews do
     }
   end
 
-  def render(:pidx, %{group_id: group_id, sub_packet: sub_packet}) do
+  def render(:pidx, %{group_id: group_id, characters: characters}) do
     %Pidx{
       group_id: group_id,
-      sub_packet: sub_packet
+      characters: characters
     }
   end
 

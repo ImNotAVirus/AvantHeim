@@ -52,7 +52,8 @@ defmodule ChannelEndpoint.Endpoint.GroupActions do
 
   @spec define_new_group_owner(Character.t()) :: any | :ignore
   def define_new_group_owner(%Character{} = character) do
-    case {character.group_id, CachingService.get_characters_by_group_id(character.group_id)} do
+    case {character.group_id,
+          CachingService.get_characters_by_group_id(character.group_id, [{:!==, :id, character.id}])} do
       {x, {:ok, players}} when x == character.id ->
         new_owner = Enum.at(players, 0)
 
@@ -62,23 +63,15 @@ defmodule ChannelEndpoint.Endpoint.GroupActions do
           IO.inspect(new_char.name)
         end)
 
-        new_char = %Character{character | group_id: -1}
-        write_character(new_char)
+        remove_group(character)
         EntityInteractions.refresh_group_list(new_owner, players)
         # You are now the party master
         Socket.send(new_owner.socket, UIViews.render(:infoi, %{i18n_vnum: 596}))
 
-      _ ->
-        case CachingService.get_characters_by_group_id(character.group_id) do
-          {:ok, players} ->
-            new_char = %Character{character | group_id: -1}
-            write_character(new_char)
-            EntityInteractions.refresh_group_list(character, players)
-            Socket.send(character.socket, UIViews.render(:pinit_empty_group, %{unknow: 0}))
-
-          _ ->
-            :ignore
-        end
+      {_, {:ok, players}} ->
+        remove_group(character)
+        EntityInteractions.refresh_group_list(character, players)
+        Socket.send(character.socket, UIViews.render(:pinit_empty_group, %{unknow: 0}))
     end
   end
 
@@ -129,6 +122,11 @@ defmodule ChannelEndpoint.Endpoint.GroupActions do
   end
 
   # Private function
+
+  defp remove_group(%Character{} = character) do
+    new_char = %Character{character | group_id: -1}
+    write_character(new_char)
+  end
 
   defp reject_invitation(%Character{} = character, %Character{} = target) do
     # {PlayerName} rejected your invitation

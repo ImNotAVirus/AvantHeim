@@ -61,6 +61,7 @@ defmodule ChannelEndpoint.Endpoint.Cryptography do
     |> unpack(@table)
     # |> split_keepalive(keepalive?)
     |> remove_keepalive()
+    |> normalize_special_headers()
   end
 
   @spec world_xor(raw :: binary, session_key :: integer, is_key_packet :: boolean) :: binary
@@ -141,6 +142,14 @@ defmodule ChannelEndpoint.Endpoint.Cryptography do
     packet
     |> Stream.map(&String.split(&1, " ", parts: 2))
     |> Enum.map(fn [_, packet] -> packet end)
+  end
+
+  @spec normalize_special_headers([packet]) :: [packet]
+  defp normalize_special_headers(packets) do
+    Enum.map(packets, fn
+      ";" <> rest -> "; " <> rest
+      packet -> packet
+    end)
   end
 
   @spec do_encrypt(char, integer, integer) :: binary

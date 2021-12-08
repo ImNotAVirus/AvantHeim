@@ -9,19 +9,19 @@ defmodule ChannelEndpoint.Endpoint.UIPackets.Pidx do
 
   alias __MODULE__
 
-  @enforce_keys [:group_id, :sub_packet]
+  @enforce_keys [:group_id, :characters]
   defstruct @enforce_keys
 
   @type t :: %Pidx{
           group_id: neg_integer,
-          sub_packet: [PidxSubGroupMember]
+          characters: [PidxSubGroupMember]
         }
 
   @impl true
   def serialize(%Pidx{} = struct, _) do
     %Pidx{
       group_id: group_id,
-      sub_packet: sub_packet
+      characters: sub_packet
     } = struct
 
     ["pidx", group_id, serialize_term(sub_packet, joiner: " ")]
