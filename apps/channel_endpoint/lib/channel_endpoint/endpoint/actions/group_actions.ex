@@ -93,33 +93,34 @@ defmodule ChannelEndpoint.Endpoint.GroupActions do
           character.socket,
           UIViews.render(:info, %{message: "You send out the invitations too fast !"})
         )
-    end
 
-    new_char = %Character{character | last_group_req_timestamp: :os.system_time(:seconds)}
-    write_character(new_char)
+      true ->
+        new_char = %Character{character | last_group_req_timestamp: :os.system_time(:seconds)}
+        write_character(new_char)
 
-    maybe_target = CachingService.get_character_by_id(entity_id)
+        maybe_target = CachingService.get_character_by_id(entity_id)
 
-    case {maybe_target, request_type} do
-      {{:ok, target}, r} ->
-        case r do
-          x
-          when x == group_request_type(:requested, :value) or
-                 x == group_request_type(:invited, :value) ->
-            send_group_invitation(&send_ui_invitation/2, character, target)
+        case {maybe_target, request_type} do
+          {{:ok, target}, r} ->
+            case r do
+              x
+              when x == group_request_type(:requested, :value) or
+                     x == group_request_type(:invited, :value) ->
+                send_group_invitation(&send_ui_invitation/2, character, target)
 
-          group_request_type(:accepted, :value) ->
-            send_group_invitation(&join_character_group/2, character, target)
+              group_request_type(:accepted, :value) ->
+                send_group_invitation(&join_character_group/2, character, target)
 
-          group_request_type(:declined, :value) ->
-            reject_invitation(character, target)
+              group_request_type(:declined, :value) ->
+                reject_invitation(character, target)
 
-          _ ->
+              _ ->
+                :ok
+            end
+
+          {_, _} ->
             :ok
         end
-
-      {_, _} ->
-        :ok
     end
 
     {:cont, socket}
