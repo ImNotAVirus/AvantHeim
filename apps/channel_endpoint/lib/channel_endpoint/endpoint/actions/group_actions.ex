@@ -36,10 +36,8 @@ defmodule ChannelEndpoint.Endpoint.GroupActions do
             end)
 
           @max_group_players ->
-            new_char = %Character{character | group_id: -1}
-            write_character(new_char)
-            define_new_group_owner(new_char)
-            EntityInteractions.see_player_not_in_group_anymore(new_char)
+            define_new_group_owner(character)
+            EntityInteractions.see_player_not_in_group_anymore(character)
 
           _ ->
             raise "Unsuported group length (Raid group ?)"
@@ -65,7 +63,6 @@ defmodule ChannelEndpoint.Endpoint.GroupActions do
         end)
 
         EntityInteractions.refresh_group_list(new_owner, players)
-        Socket.send(character.socket, UIViews.render(:pinit_empty_group, %{unknow: 0}))
         # You are now the party master
         Socket.send(new_owner.socket, UIViews.render(:infoi, %{i18n_vnum: 596}))
 
@@ -79,6 +76,9 @@ defmodule ChannelEndpoint.Endpoint.GroupActions do
             :ignore
         end
     end
+
+    new_char = %Character{character | group_id: -1}
+    write_character(new_char)
   end
 
   @spec create_group(String.t(), map, Socket.t()) :: {:cont, Socket.t()}
