@@ -68,11 +68,8 @@ defmodule ChannelEndpoint.EndpointManager do
   defp cleanup_session(%Session{state: :in_lobby}), do: :ok
 
   defp cleanup_session(%Session{state: :in_game, account_id: account_id} = session) do
-    # Set the saving state to prevent player connection
-    {:ok, %Session{}} =
-      session
-      |> Session.set_state(:saving)
-      |> CachingService.update_session()
+    # Set session state to "saving" to prevent player connection
+    {:ok, %Session{}} = session |> Session.set_state(:saving) |> CachingService.update_session()
 
     # Clean Character cache
     {:ok, character} = CachingService.delete_character_by_account_id(account_id)
