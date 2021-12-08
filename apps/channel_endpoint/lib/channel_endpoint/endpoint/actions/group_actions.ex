@@ -11,6 +11,7 @@ defmodule ChannelEndpoint.Endpoint.GroupActions do
   import ChannelEndpoint.GroupRequestEnums, only: [group_request_type: 2]
 
   @max_group_players 3
+  @deleyed_group_request 5000
 
   ## Packet handlers
 
@@ -24,10 +25,10 @@ defmodule ChannelEndpoint.Endpoint.GroupActions do
         case length(players) do
           2 ->
             Enum.each(players, fn player ->
+              EntityInteractions.see_player_not_in_group_anymore(player)
               new_char = %Character{player | group_id: -1}
               write_character(new_char)
               Socket.send(new_char.socket, UIViews.render(:pinit_empty_group, %{unknow: 0}))
-              EntityInteractions.see_player_not_in_group_anymore(new_char)
               # Party disbanded
               Socket.send(
                 new_char.socket,
@@ -36,8 +37,8 @@ defmodule ChannelEndpoint.Endpoint.GroupActions do
             end)
 
           @max_group_players ->
-            define_new_group_owner(character)
             EntityInteractions.see_player_not_in_group_anymore(character)
+            define_new_group_owner(character)
 
           _ ->
             raise "Unsuported group length (Raid group ?)"
@@ -86,7 +87,7 @@ defmodule ChannelEndpoint.Endpoint.GroupActions do
     {:ok, character} = CachingService.get_character_by_id(character_id)
 
     cond do
-      character.last_group_req_timestamp + 5000 < :os.system_time(:millisecond) ->
+      character.last_group_req_timestamp + @deleyed_group_request < :os.system_time(:millisecond) ->
         Socket.send(
           character.socket,
           UIViews.render(:info, %{message: "You send out the invitations too fast !"})
