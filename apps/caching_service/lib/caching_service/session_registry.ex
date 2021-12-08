@@ -15,6 +15,7 @@ defmodule CachingService.SessionRegistry do
   @typep session_result :: {:ok, maybe_session()} | {:error, any}
 
   @session_registry __MODULE__
+  @clean_every 30_000
 
   ## Public API
 
@@ -24,10 +25,10 @@ defmodule CachingService.SessionRegistry do
   end
 
   @typep maybe_encryption_key :: pos_integer | nil
-  @spec create_session(String.t(), String.t(), maybe_encryption_key()) ::
+  @spec create(String.t(), String.t(), maybe_encryption_key()) ::
           {:ok, Session.t()} | {:error, any}
-  def create_session(username, password, key \\ nil) do
-    case get_session_by_username(username) do
+  def create(username, password, key \\ nil) do
+    case get(username) do
       {:ok, nil} -> do_create_session(username, password, key)
       {:ok, session} when not is_logged(session) -> do_create_session(username, password, key)
       {:ok, _} -> {:error, :already_exists}
@@ -35,8 +36,18 @@ defmodule CachingService.SessionRegistry do
     end
   end
 
-  @spec get_session_by_username(String.t()) :: session_result()
-  def get_session_by_username(username) do
+  @spec delete(String.t()) :: :ok
+  def delete(username) do
+    Memento.transaction(fn -> Memento.Query.delete(Session, username) end)
+  end
+
+  @spec update(Session.t()) :: session_result()
+  def update(%Session{} = session) do
+    Memento.transaction(fn -> Memento.Query.write(session) end)
+  end
+
+  @spec get(String.t()) :: session_result()
+  def get(username) do
     Memento.transaction(fn -> Memento.Query.read(Session, username) end)
   end
 
@@ -47,8 +58,27 @@ defmodule CachingService.SessionRegistry do
   def init(nil) do
     Memento.Table.create!(CachingService.Player.Session)
     :ok = Memento.wait([CachingService.Player.Session])
+
+    # Autoclean expired keys
+    :timer.send_interval(@clean_every, :clean_expired_keys)
+
     Logger.debug("SessionRegistry started")
     {:ok, nil}
+  end
+
+  @impl true
+  def handle_info(:clean_expired_keys, state) do
+    now = Session.ttl_to_expire(0)
+
+    :ok =
+      Memento.transaction(fn ->
+        Session
+        |> Memento.Query.select({:<, :expire, now})
+        |> Enum.map(&Memento.Query.delete_record/1)
+        |> then(&Logger.debug("Auto purge sessions: cleared #{length(&1)} record(s)"))
+      end)
+
+    {:noreply, state}
   end
 
   ## Private functions
