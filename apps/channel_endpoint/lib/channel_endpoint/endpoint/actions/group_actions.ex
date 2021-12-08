@@ -62,6 +62,8 @@ defmodule ChannelEndpoint.Endpoint.GroupActions do
           IO.inspect(new_char.name)
         end)
 
+        new_char = %Character{character | group_id: -1}
+        write_character(new_char)
         EntityInteractions.refresh_group_list(new_owner, players)
         # You are now the party master
         Socket.send(new_owner.socket, UIViews.render(:infoi, %{i18n_vnum: 596}))
@@ -69,6 +71,8 @@ defmodule ChannelEndpoint.Endpoint.GroupActions do
       _ ->
         case CachingService.get_characters_by_group_id(character.group_id) do
           {:ok, players} ->
+            new_char = %Character{character | group_id: -1}
+            write_character(new_char)
             EntityInteractions.refresh_group_list(character, players)
             Socket.send(character.socket, UIViews.render(:pinit_empty_group, %{unknow: 0}))
 
@@ -76,9 +80,6 @@ defmodule ChannelEndpoint.Endpoint.GroupActions do
             :ignore
         end
     end
-
-    new_char = %Character{character | group_id: -1}
-    write_character(new_char)
   end
 
   @spec create_group(String.t(), map, Socket.t()) :: {:cont, Socket.t()}
