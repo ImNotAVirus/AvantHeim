@@ -25,8 +25,7 @@ defmodule CachingService.Player.Character do
     :job_level_xp,
     :hero_level_xp,
     :gold,
-    :bank_gold,
-    :last_group_req_timestamp
+    :bank_gold
   ]
 
   @virtual_attributes %{
