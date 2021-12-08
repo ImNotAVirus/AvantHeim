@@ -60,7 +60,6 @@ defmodule ChannelEndpoint.Endpoint.GroupActions do
         Enum.each(players, fn player ->
           new_char = %Character{player | group_id: new_owner.id}
           write_character(new_char)
-          IO.inspect(new_char.name)
         end)
 
         remove_group(character)
@@ -83,6 +82,17 @@ defmodule ChannelEndpoint.Endpoint.GroupActions do
       ) do
     %{character_id: character_id} = socket.assigns
     {:ok, character} = CachingService.get_character_by_id(character_id)
+
+    cond do
+      character.last_group_req_timestamp !== -1 and character.last_group_req_timestamp > :os.system_time(:seconds) and character.last_group_req_timestamp + 5 < :os.system_time(:seconds) == true ->
+        Socket.send(
+          character.socket,
+          UIViews.render(:info, %{message: "You send out the invitations too fast !"})
+        )
+    end
+
+    new_char = %Character{character | last_group_req_timestamp: :os.system_time(:seconds)}
+    write_character(new_char)
 
     maybe_target = CachingService.get_character_by_id(entity_id)
 

@@ -25,7 +25,8 @@ defmodule CachingService.Player.Character do
     :job_level_xp,
     :hero_level_xp,
     :gold,
-    :bank_gold
+    :bank_gold,
+    :last_group_req_timestamp
   ]
 
   @virtual_attributes %{
@@ -33,7 +34,8 @@ defmodule CachingService.Player.Character do
     map_id: nil,
     speed: 20,
     direction: :south,
-    group_id: -1
+    group_id: -1,
+    last_group_req_timestamp: -1
   }
 
   use Memento.Table,
@@ -68,7 +70,8 @@ defmodule CachingService.Player.Character do
           map_id: pos_integer,
           speed: non_neg_integer,
           direction: EntityEnums.direction_type_keys(),
-          group_id: neg_integer
+          group_id: neg_integer,
+          last_group_req_timestamp: neg_integer
         }
 
   ## Public API
