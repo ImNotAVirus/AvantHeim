@@ -4,10 +4,11 @@ defmodule ChannelEndpoint.Endpoint.Protocol do
   use GenServer
 
   require Logger
+  require CachingService.Player.Session
 
-  alias Core.Socket
-  alias SessionService.Session
+  alias CachingService.Player.Session
   alias ChannelEndpoint.Endpoint.LobbyViews
+  alias Core.Socket
   alias DatabaseService.Players.{Account, Accounts, Characters}
 
   @behaviour :ranch_protocol
@@ -50,7 +51,8 @@ defmodule ChannelEndpoint.Endpoint.Protocol do
 
     %Socket{transport_pid: transport_pid, transport: transport} = new_socket
 
-    with {:ok, session} <- SessionService.authenticate(session_key, username),
+    with {:ok, session} <- CachingService.get_session_by_username(username),
+         :ok <- validate_session(session, session_key),
          {:ok, account} <- get_account(session),
          :ok <- send_character_list(account, new_socket) do
       transport.setopts(transport_pid, active: :once)
@@ -96,6 +98,14 @@ defmodule ChannelEndpoint.Endpoint.Protocol do
   end
 
   ## Private functions
+
+  @spec validate_session(Session.t(), pos_integer) :: :ok | :error
+  defp validate_session(session, session_key) do
+    case session do
+      %Session{encryption_key: ^session_key} = s when not Session.is_logged(s) -> :ok
+      _ -> :error
+    end
+  end
 
   defp get_account(%Session{} = session) do
     %Session{username: username, password: password} = session

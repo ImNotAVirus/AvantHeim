@@ -9,6 +9,7 @@ defmodule CachingService.Application do
   def start(_type, _args) do
     children = [
       {DynamicSupervisor, strategy: :one_for_one, name: CachingService.MonstersSupervisor},
+      CachingService.SessionRegistry,
       CachingService.CharacterRegistry,
       CachingService.MapRegistry
       # CachingService.MonsterRegistry

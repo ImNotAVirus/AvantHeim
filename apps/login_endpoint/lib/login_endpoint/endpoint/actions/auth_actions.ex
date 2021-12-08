@@ -5,17 +5,37 @@ defmodule LoginEndpoint.Endpoint.AuthActions do
 
   require Logger
 
+  alias CachingService.Player.Session
   alias Core.Socket
   alias DatabaseService.Players.{Account, Accounts}
   alias LoginEndpoint.Endpoint.Views
+
+  @typep packet_args_75 :: %{
+           username: String.t(),
+           password: String.t(),
+           installation_guid: String.t(),
+           region_code: non_neg_integer,
+           client_version: String.t(),
+           client_checksum: String.t()
+         }
+
+  @typep packet_args_77 :: %{
+           token: String.t(),
+           installation_guid: String.t(),
+           region_code: non_neg_integer,
+           client_version: String.t(),
+           client_checksum: String.t()
+         }
+
+  @typep packet_args :: packet_args_75() | packet_args_77()
 
   ## Public API
 
   @doc """
   Header can be "NoS0575" or "NoS0577"
   """
-  @spec login(String.t(), map, Socket.t()) :: any
-  def login(_header, args, %Socket{id: socket_id} = socket) do
+  @spec login(String.t(), packet_args(), Socket.t()) :: any
+  def login(_header, args, socket) do
     render =
       with {:ok, _client_version} <- check_client_version(args, socket),
            {:ok, _client_checksum} <- check_client_checksum(args, socket),
@@ -25,7 +45,7 @@ defmodule LoginEndpoint.Endpoint.AuthActions do
         Logger.debug("Authentication succeed (username: #{account.username})")
         Views.render(:login_succeed, %{username: account.username, session_id: session_id})
       else
-        reason -> render_error(reason, args, socket_id)
+        reason -> render_error(reason, args)
       end
 
     Socket.send(socket, render)
@@ -75,35 +95,44 @@ defmodule LoginEndpoint.Endpoint.AuthActions do
     end
   end
 
-  defp create_session(%Account{username: username, hashed_password: password}, _socket) do
-    case SessionService.create_session(username, password) do
-      {:ok, session} -> {:ok, session.id}
-      {:error, _} = e -> e
+  if Mix.env() == :dev do
+    # If env == dev: use encryption_key = 0
+    defp create_session(%Account{username: username, hashed_password: password}, _socket) do
+      case CachingService.create_session(username, password, 0) do
+        {:ok, %Session{encryption_key: key}} -> {:ok, key}
+        {:error, :already_exists} -> {:error, :already_connected}
+      end
+    end
+  else
+    defp create_session(%Account{username: username, hashed_password: password}, _socket) do
+      case CachingService.create_session(username, password) do
+        {:ok, %Session{encryption_key: key}} -> {:ok, key}
+        {:error, :already_exists} -> {:error, :already_connected}
+      end
     end
   end
 
-  defp render_error(reason, args, socket_id) do
+  defp render_error(reason, args) do
     case reason do
       {:error, :client_version} ->
-        Logger.warn("Invalid client version (got: #{args.client_version})", socket_id: socket_id)
+        Logger.warn("Invalid client version (got: #{args.client_version})")
         Views.render(:login_error, %{error: :old_client})
 
       {:error, :client_checksum} ->
-        Logger.warn("Invalid client checksum (got: #{args.client_checksum})", socket_id: socket_id)
-
+        Logger.warn("Invalid client checksum (got: #{args.client_checksum})")
         Views.render(:login_error, %{error: :old_client})
 
       {:error, :bad_credentials} ->
-        Logger.warn("Invalid credentials", socket_id: socket_id)
+        Logger.warn("Invalid credentials")
         Views.render(:login_error, %{error: :bad_credentials})
 
       {:error, :already_connected} ->
         user = Map.get(args, :username) || Map.get(args, :token)
-        Logger.warn("Already connected (username: #{user})", socket_id: socket_id)
+        Logger.warn("Already connected (username: #{user})")
         Views.render(:login_error, %{error: :already_connected})
 
       e ->
-        Logger.warn("Got unknown login error: #{inspect(e)}", socket_id: socket_id)
+        Logger.warn("Got unknown login error: #{inspect(e)}")
         Views.render(:login_error, %{})
     end
   end

@@ -28,7 +28,7 @@ defmodule LoginEndpoint.MixProject do
     [
       {:core, in_umbrella: true},
       {:database_service, in_umbrella: true},
-      {:session_service, in_umbrella: true},
+      {:caching_service, in_umbrella: true},
       {:ranch, "~> 2.0"}
     ]
   end
