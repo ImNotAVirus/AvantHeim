@@ -9,11 +9,12 @@ defmodule ChannelEndpoint.Application do
   def start(_type, _args) do
     children = [
       {Registry, keys: :unique, name: ChannelEndpoint.MapRegistry},
-      {ChannelEndpoint.Endpoint, name: ChannelEndpoint.Endpoint},
-      {MapSupervisor, name: ChannelEndpoint.MapSupervisor}
+      {MapSupervisor, name: ChannelEndpoint.MapSupervisor},
+      {ChannelEndpoint.EndpointManager, []},
+      {ChannelEndpoint.Endpoint, []}
     ]
 
-    opts = [strategy: :one_for_one, name: ChannelEndpoint.Supervisor]
+    opts = [strategy: :one_for_all, name: ChannelEndpoint.Supervisor]
     Supervisor.start_link(children, opts)
   end
 end

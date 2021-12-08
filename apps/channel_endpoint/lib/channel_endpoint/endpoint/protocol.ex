@@ -8,6 +8,7 @@ defmodule ChannelEndpoint.Endpoint.Protocol do
 
   alias CachingService.Player.Session
   alias ChannelEndpoint.Endpoint.LobbyViews
+  alias ChannelEndpoint.EndpointManager
   alias Core.Socket
   alias DatabaseService.Players.{Account, Accounts, Characters}
 
@@ -53,6 +54,7 @@ defmodule ChannelEndpoint.Endpoint.Protocol do
 
     with {:ok, session} <- CachingService.get_session_by_username(username),
          :ok <- validate_session(session, session_key),
+         :ok <- EndpointManager.register_username(username),
          {:ok, %Session{}} <- cache_session_as_logged(session),
          {:ok, account} <- get_account(session),
          :ok <- send_character_list(account, new_socket) do

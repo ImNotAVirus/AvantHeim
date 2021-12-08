@@ -6,7 +6,7 @@ defmodule CachingService.Player.Session do
   alias __MODULE__
 
   @required_attributes [:username, :password, :encryption_key, :state, :expire]
-  @states [:authenticated, :in_lobby, :in_game, :disconnected]
+  @states [:authenticated, :in_lobby, :in_game, :saving]
   @default_ttl 120
   @max_key_value 65535
 
@@ -15,7 +15,7 @@ defmodule CachingService.Player.Session do
     index: [:encryption_key],
     type: :ordered_set
 
-  @type state :: :authenticated | :in_lobby | :in_game | :disconnected
+  @type state :: :authenticated | :in_lobby | :in_game | :saving
   @typep maybe_session_key :: pos_integer | nil
 
   @type t :: %Session{
@@ -28,7 +28,7 @@ defmodule CachingService.Player.Session do
 
   ## Public API
 
-  defguard is_logged(s) when is_struct(s, Session) and s.state in [:in_lobby, :in_game]
+  defguard is_logged(s) when is_struct(s, Session) and s.state in [:in_lobby, :in_game, :saving]
 
   @spec new(String.t(), String.t(), maybe_session_key(), timeout) :: t()
   def new(username, password, encryption_key \\ nil, ttl \\ @default_ttl) do
