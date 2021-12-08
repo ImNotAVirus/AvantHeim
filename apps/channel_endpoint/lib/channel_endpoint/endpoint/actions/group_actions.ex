@@ -53,7 +53,9 @@ defmodule ChannelEndpoint.Endpoint.GroupActions do
   @spec define_new_group_owner(Character.t()) :: any | :ignore
   def define_new_group_owner(%Character{} = character) do
     case {character.group_id,
-          CachingService.get_characters_by_group_id(character.group_id, [{:!==, :id, character.id}])} do
+          CachingService.get_characters_by_group_id(character.group_id, [
+            {:!==, :id, character.id}
+          ])} do
       {x, {:ok, players}} when x == character.id ->
         new_owner = Enum.at(players, 0)
 
@@ -84,7 +86,9 @@ defmodule ChannelEndpoint.Endpoint.GroupActions do
     {:ok, character} = CachingService.get_character_by_id(character_id)
 
     cond do
-      character.last_group_req_timestamp !== -1 and character.last_group_req_timestamp > :os.system_time(:seconds) and character.last_group_req_timestamp + 5 < :os.system_time(:seconds) == true ->
+      character.last_group_req_timestamp !== -1 and
+        character.last_group_req_timestamp > :os.system_time(:seconds) and
+          character.last_group_req_timestamp + 5 < :os.system_time(:seconds) == true ->
         Socket.send(
           character.socket,
           UIViews.render(:info, %{message: "You send out the invitations too fast !"})
