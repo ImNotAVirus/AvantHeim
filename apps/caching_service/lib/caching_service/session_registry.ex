@@ -25,14 +25,21 @@ defmodule CachingService.SessionRegistry do
   end
 
   @typep maybe_encryption_key :: pos_integer | nil
-  @spec create(String.t(), String.t(), maybe_encryption_key()) ::
+  @spec create(String.t(), String.t(), pos_integer, maybe_encryption_key()) ::
           {:ok, Session.t()} | {:error, any}
-  def create(username, password, key \\ nil) do
+  def create(username, password, account_id, key \\ nil) do
     case get(username) do
-      {:ok, nil} -> do_create_session(username, password, key)
-      {:ok, session} when not is_logged(session) -> do_create_session(username, password, key)
-      {:ok, _} -> {:error, :already_exists}
-      {:error, _} = e -> e
+      {:ok, nil} ->
+        do_create_session(username, password, account_id, key)
+
+      {:ok, session} when not is_logged(session) ->
+        do_create_session(username, password, account_id, key)
+
+      {:ok, _} ->
+        {:error, :already_exists}
+
+      {:error, _} = e ->
+        e
     end
   end
 
@@ -83,11 +90,11 @@ defmodule CachingService.SessionRegistry do
 
   ## Private functions
 
-  @spec do_create_session(String.t(), String.t(), maybe_encryption_key()) ::
+  @spec do_create_session(String.t(), String.t(), pos_integer, maybe_encryption_key()) ::
           {:ok, Session.t()} | {:error, any}
-  defp do_create_session(username, password, key) do
+  defp do_create_session(username, password, account_id, key) do
     Memento.transaction(fn ->
-      Session.new(username, password, key) |> Memento.Query.write()
+      Session.new(username, password, account_id, key) |> Memento.Query.write()
     end)
   end
 end

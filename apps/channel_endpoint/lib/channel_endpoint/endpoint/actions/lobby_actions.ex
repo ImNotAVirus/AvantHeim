@@ -37,7 +37,7 @@ defmodule ChannelEndpoint.Endpoint.LobbyActions do
 
         character ->
           {:ok, _} = update_session_state(username)
-          {:ok, _} = CachingService.init_character(character, socket)
+          {:ok, _} = CachingService.init_character(character, account_id, socket)
           Socket.send(socket, LobbyViews.render(:ok, nil))
           Socket.assign(socket, character_id: character.id)
       end

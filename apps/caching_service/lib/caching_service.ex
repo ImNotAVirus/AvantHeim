@@ -14,9 +14,11 @@ defmodule CachingService do
   ## Delegates
 
   ### Session delegates
-  defdelegate create_session(username, password), to: CachingService.SessionRegistry, as: :create
+  defdelegate create_session(username, password, account_id),
+    to: CachingService.SessionRegistry,
+    as: :create
 
-  defdelegate create_session(username, password, key),
+  defdelegate create_session(username, password, account_id, key),
     to: CachingService.SessionRegistry,
     as: :create
 
@@ -25,10 +27,10 @@ defmodule CachingService do
   defdelegate get_session_by_username(username), to: CachingService.SessionRegistry, as: :get
 
   ### Character delegates
-  defdelegate init_character(character, socket), to: CachingService.CharacterRegistry
+  defdelegate init_character(character, account_id, socket), to: CachingService.CharacterRegistry
   defdelegate write_character(character), to: CachingService.CharacterRegistry
   defdelegate get_character_by_id(id), to: CachingService.CharacterRegistry
-  defdelegate delete_character_by_id(id), to: CachingService.CharacterRegistry
+  defdelegate delete_character_by_account_id(account_id), to: CachingService.CharacterRegistry
   defdelegate get_character_by_name(name), to: CachingService.CharacterRegistry
 
   defdelegate get_characters_by_map_id(map_id, except_guards \\ []),

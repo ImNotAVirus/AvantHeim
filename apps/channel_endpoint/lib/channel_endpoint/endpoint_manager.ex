@@ -7,9 +7,8 @@ defmodule ChannelEndpoint.EndpointManager do
 
   require Logger
 
-  import CachingService.Player.Session, only: [is_logged: 1]
-
   alias CachingService.Player.Session
+  alias ChannelEndpoint.MapManager
 
   @manager_name __MODULE__
 
@@ -66,14 +65,22 @@ defmodule ChannelEndpoint.EndpointManager do
     Enum.find_value(map, fn {key, val} -> if val == value, do: key end)
   end
 
-  defp cleanup_session(%Session{} = session) when not is_logged(session), do: :ok
+  defp cleanup_session(%Session{state: :in_lobby}), do: :ok
 
-  defp cleanup_session(%Session{} = session) do
-    # TODO: If state == in_game, do: set state = saving
-    # TODO: If state == in_game, do: clean character cache
-    # TODO: If state == in_game, do: clean map (out packet)
-    # TODO: If state == in_game, do: clean map (out packet)
-    # TODO: If state == in_game, do: save character in db
+  defp cleanup_session(%Session{state: :in_game, account_id: account_id} = session) do
+    # Set the saving state to prevent player connection
+    {:ok, %Session{}} =
+      session
+      |> Session.set_state(:saving)
+      |> CachingService.update_session()
+
+    # Clean Character cache
+    {:ok, character} = CachingService.delete_character_by_account_id(account_id)
+
+    # Clean map (out packet)
+    MapManager.send_map_leave(character)
+
+    # TODO: Save character in db
     # ...
   end
 end

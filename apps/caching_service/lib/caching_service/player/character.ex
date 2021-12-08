@@ -25,6 +25,7 @@ defmodule CachingService.Player.Character do
   ]
 
   @virtual_attributes %{
+    account_id: nil,
     socket: nil,
     map_id: nil,
     speed: 20,
@@ -33,7 +34,7 @@ defmodule CachingService.Player.Character do
 
   use Memento.Table,
     type: :ordered_set,
-    index: [:map_id],
+    index: [:name, :account_id, :map_id],
     attributes: @db_attributes ++ Map.keys(@virtual_attributes)
 
   alias __MODULE__
@@ -63,6 +64,7 @@ defmodule CachingService.Player.Character do
           gold: non_neg_integer,
           bank_gold: non_neg_integer,
           # Virtual attributes
+          account_id: pos_integer,
           socket: Socket.t(),
           map_id: pos_integer,
           speed: non_neg_integer,
@@ -71,9 +73,10 @@ defmodule CachingService.Player.Character do
 
   ## Public API
 
-  @spec new(DBCharacter.t(), Socket.t()) :: t()
-  def new(%DBCharacter{} = character, %Socket{} = socket) do
+  @spec new(DBCharacter.t(), pos_integer, Socket.t()) :: t()
+  def new(%DBCharacter{} = character, account_id, %Socket{} = socket) do
     default = %{
+      account_id: account_id,
       socket: socket,
       map_id: character.map_vnum
     }

@@ -97,15 +97,15 @@ defmodule LoginEndpoint.Endpoint.AuthActions do
 
   if Mix.env() == :dev do
     # If env == dev: use encryption_key = 0
-    defp create_session(%Account{username: username, hashed_password: password}, _socket) do
-      case CachingService.create_session(username, password, 0) do
+    defp create_session(%Account{id: id, username: username, hashed_password: password}, _socket) do
+      case CachingService.create_session(username, password, id, 0) do
         {:ok, %Session{encryption_key: key}} -> {:ok, key}
         {:error, :already_exists} -> {:error, :already_connected}
       end
     end
   else
     defp create_session(%Account{username: username, hashed_password: password}, _socket) do
-      case CachingService.create_session(username, password) do
+      case CachingService.create_session(username, password, id) do
         {:ok, %Session{encryption_key: key}} -> {:ok, key}
         {:error, :already_exists} -> {:error, :already_connected}
       end

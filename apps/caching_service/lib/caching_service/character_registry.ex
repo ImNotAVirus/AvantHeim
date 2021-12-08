@@ -21,10 +21,11 @@ defmodule CachingService.CharacterRegistry do
     GenServer.start_link(__MODULE__, opts, name: __MODULE__)
   end
 
-  @spec init_character(DBCharacter.t(), Socket.t()) :: {:ok, Character.t()} | {:error, any}
-  def init_character(%DBCharacter{} = character, %Socket{} = socket) do
+  @spec init_character(DBCharacter.t(), pos_integer, Socket.t()) ::
+          {:ok, Character.t()} | {:error, any}
+  def init_character(%DBCharacter{} = character, account_id, %Socket{} = socket) do
     Memento.transaction(fn ->
-      character |> Character.new(socket) |> Memento.Query.write()
+      character |> Character.new(account_id, socket) |> Memento.Query.write()
     end)
   end
 
@@ -38,9 +39,19 @@ defmodule CachingService.CharacterRegistry do
     Memento.transaction(fn -> Memento.Query.read(Character, id) end)
   end
 
-  @spec delete_character_by_id(pos_integer) :: {:ok, Character.t()} | {:error, any}
-  def delete_character_by_id(id) do
-    Memento.transaction(fn -> Memento.Query.delete(Character, id) end)
+  @spec delete_character_by_account_id(pos_integer) :: {:ok, Character.t()} | {:error, any}
+  def delete_character_by_account_id(account_id) do
+    Memento.transaction(fn ->
+      case Memento.Query.select(Character, {:==, :account_id, account_id}) do
+        [character] ->
+          Memento.Query.delete_record(character)
+          character
+
+        [] ->
+          Logger.warn("No character found with account id #{account_id}")
+          Memento.Transaction.abort(:not_found)
+      end
+    end)
   end
 
   @spec get_character_by_name(String.t()) :: {:ok, Character.t()} | {:ok, nil}
