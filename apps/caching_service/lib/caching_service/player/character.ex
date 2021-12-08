@@ -34,7 +34,7 @@ defmodule CachingService.Player.Character do
     speed: 20,
     direction: :south,
     group_id: -1,
-    last_group_req_timestamp: -1
+    last_group_req_timestamp: 0
   }
 
   use Memento.Table,
@@ -70,7 +70,7 @@ defmodule CachingService.Player.Character do
           speed: non_neg_integer,
           direction: EntityEnums.direction_type_keys(),
           group_id: neg_integer,
-          last_group_req_timestamp: neg_integer
+          last_group_req_timestamp: non_neg_integer
         }
 
   ## Public API

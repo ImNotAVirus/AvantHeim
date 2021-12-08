@@ -86,16 +86,14 @@ defmodule ChannelEndpoint.Endpoint.GroupActions do
     {:ok, character} = CachingService.get_character_by_id(character_id)
 
     cond do
-      character.last_group_req_timestamp !== -1 and
-        character.last_group_req_timestamp > :os.system_time(:seconds) and
-          character.last_group_req_timestamp + 5 < :os.system_time(:seconds) == true ->
+      character.last_group_req_timestamp + 5000 < :os.system_time(:millisecond) ->
         Socket.send(
           character.socket,
           UIViews.render(:info, %{message: "You send out the invitations too fast !"})
         )
 
       true ->
-        new_char = %Character{character | last_group_req_timestamp: :os.system_time(:seconds)}
+        new_char = %Character{character | last_group_req_timestamp: :os.system_time(:millisecond)}
         write_character(new_char)
 
         maybe_target = CachingService.get_character_by_id(entity_id)
