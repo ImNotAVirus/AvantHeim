@@ -42,15 +42,10 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
     Enum.each(players, &send_visibility_packets(character, &1))
   end
 
-  @spec add_member_to_list(Character.t()) :: SubGroupMember.t()
-  def add_member_to_list(%Character{} = character) do
-    UIViews.render(:pinit_sub_member, character)
-  end
-
   @spec get_group_member_list(List.t()) :: list
   def get_group_member_list(players) do
     Enum.flat_map(players, fn player ->
-      group_member = add_member_to_list(player)
+      group_member = UIViews.render(:pinit_sub_member, player)
       [group_member]
     end)
   end
