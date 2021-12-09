@@ -25,13 +25,12 @@ defmodule ChannelEndpoint.Endpoint.GroupActions do
         case length(players) do
           2 ->
             Enum.each(players, fn player ->
-              new_char = %Character{player | group_id: -1}
-              write_character(new_char)
-              Socket.send(new_char.socket, UIViews.render(:pinit_empty_group, %{unknow: 0}))
+              remove_group(player)
+              Socket.send(player.socket, UIViews.render(:pinit_empty_group, %{unknow: 0}))
               EntityInteractions.see_player_not_in_group_anymore(player)
               # Party disbanded
               Socket.send(
-                new_char.socket,
+                player.socket,
                 UIViews.render(:msgi, %{message_type: :whisper, i18n_vnum: 478})
               )
             end)
