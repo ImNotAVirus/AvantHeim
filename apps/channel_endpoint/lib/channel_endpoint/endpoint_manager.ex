@@ -27,7 +27,6 @@ defmodule ChannelEndpoint.EndpointManager do
   ## GenServer behaviour
 
   @impl true
-  @spec init(any) :: {:ok, nil}
   def init(_) do
     Logger.info("EndpointManager started")
     # Map %{reference => username}
