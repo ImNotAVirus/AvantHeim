@@ -67,6 +67,7 @@ defmodule ChannelEndpoint.Endpoint.GroupActions do
 
         remove_group(character)
         EntityInteractions.refresh_group_list(new_owner, players)
+        Socket.send(character.socket, UIViews.render(:pinit_empty_group, %{unknow: 0}))
         # You are now the party master
         Socket.send(new_owner.socket, UIViews.render(:infoi, %{i18n_vnum: 596}))
 

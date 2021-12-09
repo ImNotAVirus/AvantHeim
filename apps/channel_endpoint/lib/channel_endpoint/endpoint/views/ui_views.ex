@@ -20,7 +20,9 @@ defmodule ChannelEndpoint.Endpoint.UIViews do
     Pinit,
     Pst,
     Pidx,
-    PinitEmptyGroup
+    PinitEmptyGroup,
+    Pinit.SubGroupMember,
+    PidxSubGroupMember
   }
 
   ## Public API
@@ -144,6 +146,33 @@ defmodule ChannelEndpoint.Endpoint.UIViews do
   def render(:pinit_empty_group, %{unknow: unknow}) do
     %PinitEmptyGroup{
       unknow: unknow
+    }
+  end
+
+  def render(:pinit_sub_member, %Character{} = character) do
+    %SubGroupMember{
+      entity_type: :character,
+      entity_id: character.id,
+      # Idk what's supposed to be
+      group_position: 0,
+      level: character.level,
+      name: character.name,
+      unknow: 0,
+      gender: character.gender,
+      # ???
+      race: 0,
+      # TODO
+      morph: FakeData.morph(character_id: character.id),
+      hero_level: character.hero_level,
+      unknow1: 0,
+      unknow2: 0
+    }
+  end
+
+  def render(:pidx_sub_member, %{is_grouped: is_grouped, entity: %Character{id: id}}) do
+    %PidxSubGroupMember{
+      is_grouped: is_grouped,
+      entity_id: id
     }
   end
 end

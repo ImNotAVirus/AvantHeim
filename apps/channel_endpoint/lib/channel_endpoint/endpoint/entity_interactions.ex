@@ -7,8 +7,6 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
   alias CachingService.Position
   alias CachingService.Player.Character
   alias DatabaseService.EntityEnums
-  alias ChannelEndpoint.Endpoint.UIPackets.Pinit.SubGroupMember
-  alias ChannelEndpoint.Endpoint.UIPackets.PidxSubGroupMember
 
   alias ChannelEndpoint.Endpoint.{
     EntityViews,
@@ -46,23 +44,7 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
 
   @spec add_member_to_list(Character.t()) :: SubGroupMember.t()
   def add_member_to_list(%Character{} = character) do
-    %SubGroupMember{
-      entity_type: :character,
-      entity_id: character.id,
-      # Idk what's supposed to be
-      group_position: 0,
-      level: character.level,
-      name: character.name,
-      unknow: 0,
-      gender: character.gender,
-      # ???
-      race: 0,
-      # TODO
-      morph: FakeData.morph(character_id: character.id),
-      hero_level: character.hero_level,
-      unknow1: 0,
-      unknow2: 0
-    }
+    UIViews.render(:pinit_sub_member, character)
   end
 
   @spec get_group_member_list(List.t()) :: list
@@ -107,10 +89,8 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
   @spec get_pidx_sub_packet(List.t()) :: list
   def get_pidx_sub_packet(players) do
     Enum.flat_map(players, fn player ->
-      subpacket = %PidxSubGroupMember{
-        is_grouped: player.group_id !== -1,
-        entity_id: player.id
-      }
+      subpacket =
+        UIViews.render(:pidx_sub_member, %{is_grouped: player.group_id !== -1, entity: player})
 
       [subpacket]
     end)
@@ -134,10 +114,7 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
 
   @spec see_player_not_in_group_anymore(Character.t()) :: :ok
   def see_player_not_in_group_anymore(%Character{} = character) do
-    subpacket = %PidxSubGroupMember{
-      is_grouped: true,
-      entity_id: character.id
-    }
+    subpacket = UIViews.render(:pidx_sub_member, %{is_grouped: true, entity: character})
 
     broadcast_on_map(
       character,
