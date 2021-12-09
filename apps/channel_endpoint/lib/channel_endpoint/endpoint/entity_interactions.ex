@@ -135,13 +135,13 @@ defmodule ChannelEndpoint.Endpoint.EntityInteractions do
   @spec see_player_not_in_group_anymore(Character.t()) :: :ok
   def see_player_not_in_group_anymore(%Character{} = character) do
     subpacket = %PidxSubGroupMember{
-      is_grouped: false,
+      is_grouped: true,
       entity_id: character.id
     }
 
     broadcast_on_map(
       character,
-      UIViews.render(:pidx, %{group_id: character.group_id, characters: subpacket})
+      UIViews.render(:pidx, %{group_id: -1, characters: subpacket})
     )
   end
 
