@@ -22,6 +22,9 @@ erl_crash.dump
 # Temporary files, for example, from tests.
 **/tmp/
 
+# Backup files
+*.bak
+
 # Dialyzer caching artefacts
 **/_dialyzer
 

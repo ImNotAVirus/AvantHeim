@@ -2,7 +2,7 @@
 set -e
 
 # Ignored dirs
-IGNORE_DIRS=(.vscode,old_project,tmp)
+IGNORE_APPS=(old_project)
 
 # Is command empty, print help
 [ -z "$1" ] && mix help && exit
@@ -22,7 +22,8 @@ then
 else
     for APP in $(ls -d */ | sed 's/.$//')
     do
-        [[ ${IGNORE_DIRS[*]} =~ $APP ]] && continue;
+        [[ ${IGNORE_APPS[*]} =~ $APP ]] && continue;
+        [ ! -f "$APP/mix.exs" ] && continue;
 
         echo "===== Running '$@' into '$APP' ====="
         cd "$APP"
