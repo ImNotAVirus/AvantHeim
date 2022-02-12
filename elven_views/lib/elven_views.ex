@@ -1,7 +1,7 @@
 defmodule ElvenViews do
   @moduledoc """
   Documentation for `ElvenViews`.
-  
+
   TODO: Views behaviour
   """
 

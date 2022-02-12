@@ -1,9 +1,9 @@
 defmodule Core.Socket do
   @moduledoc ~S"""
   Manage a socket
-  
+
   ## Socket fields
-  
+
     * `:id` - The string id of the socket
     * `:transport` - A [Ranch transport](https://ninenines.eu/docs/en/ranch/2.0/guide/transports/)
     * `:transport_pid` - The pid of the socket's transport process
@@ -45,9 +45,9 @@ defmodule Core.Socket do
 
   @doc """
   Receive a packet from the client.
-  
+
   ## Examples
-  
+
       iex> recv(socket, 12)
       iex> recv(socket, 0, 2000)
   """
@@ -64,9 +64,9 @@ defmodule Core.Socket do
 
   @doc """
   Send a packet to the client.
-  
+
   ## Examples
-  
+
       iex> send(socket, "data")
   """
   @spec send(Socket.t(), any) :: :ok | {:error, atom}
@@ -90,13 +90,13 @@ defmodule Core.Socket do
 
   @doc """
   Adds key value pairs to socket assigns.
-  
+
   A single key value pair may be passed, a keyword list or map
   of assigns may be provided to be merged into existing socket
   assigns.
-  
+
   ## Examples
-  
+
       iex> assign(socket, :name, "ElvenGard")
       iex> assign(socket, name: "ElvenGard", logo: "🌸")
   """
