@@ -5,49 +5,49 @@ defmodule Core do
 
   @doc """
   ## Examples
-  
+
       iex> Core.format_number(1)
       "1"
-  
+
       iex> Core.format_number(123)
       "123"
-  
+
       iex> Core.format_number(1234)
       "1,234"
-  
+
       iex> Core.format_number(123456789)
       "123,456,789"
-  
+
       iex> Core.format_number(-123456789)
       "-123,456,789"
-  
+
       iex> Core.format_number(12345.6789)
       "12,345.6789"
-  
+
       iex> Core.format_number(-12345.6789)
       "-12,345.6789"
-  
+
       iex> Core.format_number(123456789, thousands_separator: "")
       "123456789"
-  
+
       iex> Core.format_number(-123456789, thousands_separator: "")
       "-123456789"
-  
+
       iex> Core.format_number(12345.6789, thousands_separator: "")
       "12345.6789"
-  
+
       iex> Core.format_number(-12345.6789, thousands_separator: "")
       "-12345.6789"
-  
+
       iex> Core.format_number(123456789, decimal_separator: ",", thousands_separator: ".")
       "123.456.789"
-  
+
       iex> Core.format_number(-123456789, decimal_separator: ",", thousands_separator: ".")
       "-123.456.789"
-  
+
       iex> Core.format_number(12345.6789, decimal_separator: ",", thousands_separator: ".")
       "12.345,6789"
-  
+
       iex> Core.format_number(-12345.6789, decimal_separator: ",", thousands_separator: ".")
       "-12.345,6789"
   """
