@@ -23,7 +23,7 @@ defmodule DatabaseService.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:simple_enum, github: "imnotavirus/simple_enum"},
+      {:simple_enum, "~> 0.1"},
       {:ecto_sql, "~> 3.6"},
       {:postgrex, "~> 0.15"}
     ]
