@@ -28,8 +28,5 @@ erl_crash.dump
 # Dialyzer caching artefacts
 **/_dialyzer
 
-# VS Code config
-**/.vscode/
-
 # Temp projects
 /old_project
