@@ -35,7 +35,7 @@ defmodule LoginEndpoint.PacketSchemasTest do
       assert {:ok, ^expected} = parsed
     end
   end
-  
+
   describe "packet NoS0577" do
     test "can be parsed" do
       md5_hash = :crypto.hash(:md5, "data") |> Base.encode16()
@@ -49,14 +49,14 @@ defmodule LoginEndpoint.PacketSchemasTest do
       expected =
         {"NoS0577",
          %{
-          token: "6465616462656566",
-          empty: "",
-          installation_guid: guid,
-          unknown: "006C993A",
-          region_code: 2,
-          client_version: "0.9.3.3147",
-          always_0: "0",
-          client_checksum: md5_hash,
+           token: "6465616462656566",
+           empty: "",
+           installation_guid: guid,
+           unknown: "006C993A",
+           region_code: 2,
+           client_version: "0.9.3.3147",
+           always_0: "0",
+           client_checksum: md5_hash
          }}
 
       assert {:ok, ^expected} = parsed
