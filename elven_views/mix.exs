@@ -22,6 +22,7 @@ defmodule ElvenViews.MixProject do
   defp deps do
     [
       {:core, path: "../core"},
+      {:database_service, path: "../database_service"},
       {:simple_enum, "~> 0.1"}
     ]
   end
