@@ -5,6 +5,8 @@ defmodule ElvenViews do
   TODO: Views behaviour
   """
 
+  @callback render(atom, map) :: struct
+
   @spec optional_param(map, atom) :: any
   def optional_param(args, key) do
     args[key]
