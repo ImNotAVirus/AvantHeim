@@ -1,7 +1,0 @@
----
-# handlers file for ./provision/roles/create_user
-
-- name: restart ssh
-  service:
-    name: sshd
-    state: restarted

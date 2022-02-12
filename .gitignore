@@ -1,47 +1,32 @@
-# Ignore everything except some directories
-*
-!/.deliver/
-!/.deliver/**/
-!/.vagrant/
-!/.vagrant/**/
-!/.deploy/
-!/.deploy/**/
-!/apps/
-!/apps/**/
-!/config/
-!/config/**/
-!/rel/
-!/rel/**/
+# The directory Mix will write compiled artifacts to.
+**/_build/
 
-# Github files
-!/.gitignore
-!/.travis.yml
-!/.editorconfig
-!/CODE_OF_CONDUCT.md
-!/LICENSE
-!/README.md
-!/TODOLIST.md
+# If you run "mix test --cover", coverage assets end up here.
+**/cover/
 
-# Code
-!/mix.exs
-!/mix.lock
-!/.formatter.exs
-!/config/**/*.exs
-!/apps/**/*.ex
-!/apps/**/*.exs
-!/apps/**/.gitkeep
-!/apps/**/README.md
+# The directory Mix downloads your dependencies sources to.
+**/deps/
 
-# Additionals files
-!/.deliver/*
-!/.deploy/*
-!/.vagrant/README.md
-!/.vagrant/Vagrantfile
-!/.vagrant/ansible.cfg
-!/.vagrant/digitalocean_inventory
-!/.vagrant/provision/**/*
-!/rel/**/*.eex
-!/rel/**/*.exs
-!/rel/vm.args
+# Where third-party dependencies like ExDoc output generated docs.
+**/doc/
 
-/.vagrant/provision/**/*.pub
+# Ignore .fetch files in case you like to edit your project deps locally.
+**/.fetch
+
+# If the VM crashes, it generates a dump, let's ignore it too.
+erl_crash.dump
+
+# Also ignore archive artifacts (built via "mix archive.build").
+*.ez
+
+# Temporary files, for example, from tests.
+**/tmp/
+
+# Dialyzer caching artefacts
+**/_dialyzer
+
+# VS Code config
+**/.vscode/
+
+# Temp projects
+/old_project

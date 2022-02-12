@@ -1,4 +1,0 @@
-deployer1 ansible_host=XXX.XXX.XXX.XXX ansible_user='root' ansible_python_interpreter='/usr/bin/python3'
-
-[deployers]
-deployer1
