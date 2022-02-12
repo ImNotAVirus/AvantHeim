@@ -10,9 +10,9 @@ defmodule LoginEndpoint.PacketSchemas do
   #######
   # The login packet (GameForge old client)
   # ---
-  # Example: "NoS0575 4745632 admin [sha512_hash] 0047BA11\v0.9.3.3086 0 [md5_hash]"
+  # Example: "NoS0575 4745632 admin [sha512_hash] [guid] 0047BA11 0\v0.9.3.3086 0 [md5_hash]"
   #######
-  if Mix.env() == :dev do
+  if Mix.env() != :prod do
     packet "NoS0575" do
       field :session_id, :integer
       field :username, :string
