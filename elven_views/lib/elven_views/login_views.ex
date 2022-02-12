@@ -8,9 +8,11 @@ defmodule ElvenViews.LoginViews do
   alias ElvenViews.LoginPackets.NsTeST.Channel
   alias ElvenViews.LoginPackets.{FailcPacket, NsTeSTPacket}
 
+  @behaviour ElvenViews
+
   ## Public API
 
-  @spec render(atom, map) :: any
+  @impl true
   def render(:login_error, args) do
     %FailcPacket{error: optional_param(args, :error)}
   end

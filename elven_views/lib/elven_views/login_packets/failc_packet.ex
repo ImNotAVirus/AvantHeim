@@ -5,21 +5,17 @@ defmodule ElvenViews.LoginPackets.FailcPacket do
 
   use Core.SerializableStruct
 
+  require ElvenViews.LoginPackets.FailcEnums
+
   alias __MODULE__
+  alias ElvenViews.LoginPackets.FailcEnums
 
   defstruct error: nil
 
   @type t :: %FailcPacket{error: atom}
 
-  @default_error 2
-  @error_map %{
-    old_client: 1,
-    already_connected: 4,
-    bad_credentials: 5
-  }
-
   @impl true
   def serialize(%FailcPacket{error: error}, _) do
-    ["failc", Map.get(@error_map, error, @default_error)]
+    ["failc", FailcEnums.error(error || :generic, :value)]
   end
 end
