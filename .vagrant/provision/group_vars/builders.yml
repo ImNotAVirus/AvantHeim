@@ -1,7 +1,0 @@
----
-# Variables listed here are applicable to the builders group
-
-elixir_user: elixir_builder
-elixir_shell: /bin/bash
-# elixir_version: 1.11.4-otp-24
-# erlang_version: 23.2.3
