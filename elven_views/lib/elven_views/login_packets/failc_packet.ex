@@ -10,7 +10,8 @@ defmodule ElvenViews.LoginPackets.FailcPacket do
   alias __MODULE__
   alias ElvenViews.LoginPackets.FailcEnums
 
-  defstruct error: nil
+  @enforce_keys [:error]
+  defstruct @enforce_keys
 
   @type t :: %FailcPacket{error: atom}
 
