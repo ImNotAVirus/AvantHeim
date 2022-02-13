@@ -17,17 +17,17 @@ config :logger, :console,
 
 ## Login configs
 
-config :login_endpoint,
-  packet_schemas: LoginEndpoint.PacketSchemas,
+config :login_service,
+  packet_schemas: LoginService.PacketSchemas,
   client_version: System.get_env("CLIENT_VERSION", "0.9.3.3152"),
   world_ip: "127.0.0.1",
   world_port: 5000
 
-config :login_endpoint, LoginEndpoint.Endpoint,
-  listener_name: :login_endpoint,
+config :login_service, LoginService.Endpoint,
+  listener_name: :login_service,
   transport: :ranch_tcp,
   transport_opts: [ip: {127, 0, 0, 1}, port: 4002],
-  protocol: LoginEndpoint.Endpoint.Protocol,
+  protocol: LoginService.Endpoint.Protocol,
   protocol_opts: []
 
 ## Database configs

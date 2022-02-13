@@ -1,4 +1,4 @@
-defmodule LoginEndpoint.Endpoint.AuthActions do
+defmodule LoginService.Endpoint.AuthActions do
   @moduledoc """
   TODO: Documentation
   """
@@ -9,8 +9,8 @@ defmodule LoginEndpoint.Endpoint.AuthActions do
   alias ElvenDatabase.Players.{Account, Accounts}
   alias ElvenViews.LoginViews
 
-  @ip Application.fetch_env!(:login_endpoint, :world_ip)
-  @port Application.fetch_env!(:login_endpoint, :world_port)
+  @ip Application.fetch_env!(:login_service, :world_ip)
+  @port Application.fetch_env!(:login_service, :world_port)
 
   ## Public API
 
@@ -43,7 +43,7 @@ defmodule LoginEndpoint.Endpoint.AuthActions do
   ## Private functions
 
   defp check_client_version(%{client_version: version}, _socket) do
-    requirement = Application.fetch_env!(:login_endpoint, :client_version)
+    requirement = Application.fetch_env!(:login_service, :client_version)
 
     case version do
       ^requirement -> {:ok, version}

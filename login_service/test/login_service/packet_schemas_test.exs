@@ -1,7 +1,7 @@
-defmodule LoginEndpoint.PacketSchemasTest do
+defmodule LoginService.PacketSchemasTest do
   use ExUnit.Case, async: true
 
-  alias LoginEndpoint.PacketSchemas
+  alias LoginService.PacketSchemas
 
   @separator [" ", "\v"]
 

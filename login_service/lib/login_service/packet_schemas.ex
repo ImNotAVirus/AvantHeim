@@ -1,11 +1,11 @@
-defmodule LoginEndpoint.PacketSchemas do
+defmodule LoginService.PacketSchemas do
   @moduledoc """
   TODO: Documentation
   """
 
   use ElvenCore.PacketSchema
 
-  alias LoginEndpoint.Endpoint.AuthActions
+  alias LoginService.Endpoint.AuthActions
 
   #######
   # The login packet (GameForge old client)

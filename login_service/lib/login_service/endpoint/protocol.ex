@@ -1,4 +1,4 @@
-defmodule LoginEndpoint.Endpoint.Protocol do
+defmodule LoginService.Endpoint.Protocol do
   @moduledoc false
 
   use GenServer
@@ -13,8 +13,8 @@ defmodule LoginEndpoint.Endpoint.Protocol do
   @timeout 5_000
   @separator [" ", "\v"]
 
-  @packet_encoder LoginEndpoint.Endpoint.Cryptography
-  @packet_schemas Application.fetch_env!(:login_endpoint, :packet_schemas)
+  @packet_encoder LoginService.Endpoint.Cryptography
+  @packet_schemas Application.fetch_env!(:login_service, :packet_schemas)
 
   ## Ranch Protocol behaviour
 

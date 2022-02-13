@@ -1,9 +1,9 @@
-defmodule LoginEndpoint.MixProject do
+defmodule LoginService.MixProject do
   use Mix.Project
 
   def project do
     [
-      app: :login_endpoint,
+      app: :login_service,
       version: "0.1.0",
       elixir: "~> 1.13",
       start_permanent: Mix.env() == :prod,
@@ -15,7 +15,7 @@ defmodule LoginEndpoint.MixProject do
   def application do
     [
       extra_applications: [:logger],
-      mod: {LoginEndpoint.Application, []}
+      mod: {LoginService.Application, []}
     ]
   end
 

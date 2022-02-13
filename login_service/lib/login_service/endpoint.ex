@@ -1,4 +1,4 @@
-defmodule LoginEndpoint.Endpoint do
+defmodule LoginService.Endpoint do
   @moduledoc """
   TODO: Documentation
   """
@@ -28,12 +28,12 @@ defmodule LoginEndpoint.Endpoint do
   ## Private functions
 
   defp fetch_config!() do
-    Application.fetch_env!(:login_endpoint, __MODULE__)
+    Application.fetch_env!(:login_service, __MODULE__)
   end
 
   defp log_starting(config) do
     host = get_in(config, [:transport_opts, :ip])
     port = get_in(config, [:transport_opts, :port])
-    Logger.info("LoginEndpoint started on #{:inet.ntoa(host)}:#{port}")
+    Logger.info("LoginService started on #{:inet.ntoa(host)}:#{port}")
   end
 end
