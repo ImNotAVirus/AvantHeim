@@ -29,4 +29,5 @@ erl_crash.dump
 **/_dialyzer
 
 # Temp projects
+/.scripts
 /old_project
