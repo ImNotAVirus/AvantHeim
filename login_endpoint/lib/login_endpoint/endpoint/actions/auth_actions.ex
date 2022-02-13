@@ -7,7 +7,10 @@ defmodule LoginEndpoint.Endpoint.AuthActions do
 
   alias ElvenCore.Socket
   alias ElvenDatabase.Players.{Account, Accounts}
-  alias LoginEndpoint.Endpoint.Views
+  alias ElvenViews.LoginViews
+
+  @ip Application.fetch_env!(:login_endpoint, :world_ip)
+  @port Application.fetch_env!(:login_endpoint, :world_port)
 
   ## Public API
 
@@ -23,7 +26,13 @@ defmodule LoginEndpoint.Endpoint.AuthActions do
            {:ok, account} <- check_credentials(args, socket),
            {:ok, session_id} <- create_session(account, socket) do
         Logger.debug("Authentication succeed for #{socket_id} (username: #{account.username})")
-        Views.render(:login_succeed, %{username: account.username, session_id: session_id})
+
+        LoginViews.render(:login_succeed, %{
+          username: account.username,
+          session_id: session_id,
+          ip: @ip,
+          port: @port
+        })
       else
         reason -> render_error(reason, args, socket_id)
       end
@@ -86,25 +95,25 @@ defmodule LoginEndpoint.Endpoint.AuthActions do
     case reason do
       {:error, :client_version} ->
         Logger.warn("Invalid client version (got: #{args.client_version})", socket_id: socket_id)
-        Views.render(:login_error, %{error: :old_client})
+        LoginViews.render(:login_error, %{error: :old_client})
 
       {:error, :client_checksum} ->
         Logger.warn("Invalid client checksum (got: #{args.client_checksum})", socket_id: socket_id)
 
-        Views.render(:login_error, %{error: :old_client})
+        LoginViews.render(:login_error, %{error: :old_client})
 
       {:error, :bad_credentials} ->
         Logger.warn("Invalid credentials", socket_id: socket_id)
-        Views.render(:login_error, %{error: :bad_credentials})
+        LoginViews.render(:login_error, %{error: :bad_credentials})
 
       {:error, :already_connected} ->
         user = Map.get(args, :username) || Map.get(args, :token)
         Logger.warn("Already connected (username: #{user})", socket_id: socket_id)
-        Views.render(:login_error, %{error: :already_connected})
+        LoginViews.render(:login_error, %{error: :already_connected})
 
       e ->
         Logger.warn("Got unknown login error: #{inspect(e)}", socket_id: socket_id)
-        Views.render(:login_error, %{})
+        LoginViews.render(:login_error, %{})
     end
   end
 end
