@@ -6,9 +6,9 @@ defmodule DatabaseService.Players.Character do
   import Ecto.Changeset
   # import EctoBitfield
 
-  require DatabaseService.PlayerEnums
+  require ElvenEnums.PlayerEnums
 
-  alias DatabaseService.PlayerEnums
+  alias ElvenEnums.PlayerEnums
 
   # defbitfield GameOptions,
   #   exchange_blocked: round(:math.pow(2, 1)),
