@@ -2,10 +2,9 @@
 
 # Ignore `lib/uuid.ex` file
 inputs =
-  ["{mix,.formatter}.exs", "#{__DIR__}/{config,lib,test}/**/*.{ex,exs}"]
+  ["{mix,.formatter}.exs", "{config,lib,test}/**/*.{ex,exs}"]
   |> Enum.flat_map(&Path.wildcard(&1, match_dot: true))
-  |> Enum.map(&String.replace_leading(&1, "#{__DIR__}/", ""))
-  |> Kernel.--(["lib/uuid.ex"])
+  |> Kernel.--(["lib/elven_core/uuid.ex"])
 
 [
   # inputs: ["{mix,.formatter}.exs", "{config,lib,test}/**/*.{ex,exs}"]
