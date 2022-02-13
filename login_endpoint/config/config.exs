@@ -32,9 +32,9 @@ config :login_endpoint, LoginEndpoint.Endpoint,
 
 ## Database configs
 
-config :database_service, ecto_repos: [DatabaseService.Repo]
+config :elven_database, ecto_repos: [ElvenDatabase.Repo]
 
-config :database_service, DatabaseService.Repo,
+config :elven_database, ElvenDatabase.Repo,
   database: "elvengard_dev",
   username: "postgres",
   password: "postgres",
