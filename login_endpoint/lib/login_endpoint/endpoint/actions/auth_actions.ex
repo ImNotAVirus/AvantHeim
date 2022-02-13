@@ -6,7 +6,7 @@ defmodule LoginEndpoint.Endpoint.AuthActions do
   require Logger
 
   alias Core.Socket
-  alias DatabaseService.Players.{Account, Accounts}
+  alias ElvenDatabase.Players.{Account, Accounts}
   alias LoginEndpoint.Endpoint.Views
 
   ## Public API

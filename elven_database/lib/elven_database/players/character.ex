@@ -1,4 +1,4 @@
-defmodule DatabaseService.Players.Character do
+defmodule ElvenDatabase.Players.Character do
   @moduledoc false
 
   use Ecto.Schema
@@ -27,7 +27,7 @@ defmodule DatabaseService.Players.Character do
   #   ui_locked: round(:math.pow(2, 17))
 
   schema "characters" do
-    belongs_to :account, DatabaseService.Players.Account
+    belongs_to :account, ElvenDatabase.Players.Account
     field :name, :string
     field :slot, :integer
     field :disabled, :boolean

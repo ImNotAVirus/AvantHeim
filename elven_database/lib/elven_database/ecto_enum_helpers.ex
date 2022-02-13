@@ -1,4 +1,4 @@
-defmodule DatabaseService.EctoEnumHelpers do
+defmodule ElvenDatabase.EctoEnumHelpers do
   @moduledoc """
   TODO: Documentation
   """

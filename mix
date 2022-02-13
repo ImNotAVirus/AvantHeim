@@ -2,7 +2,7 @@
 set -e
 
 # Ignored dirs
-IGNORE_APPS=(old_project,database_service)
+IGNORE_APPS=(old_project,elven_database)
 
 # Is command empty, print help
 [ -z "$1" ] && mix help && exit
