@@ -1,10 +1,10 @@
-defmodule DatabaseService.Players.Accounts do
+defmodule ElvenDatabase.Players.Accounts do
   @moduledoc """
   TODO: Documentation
   """
 
-  alias DatabaseService.Players.Account
-  alias DatabaseService.Repo
+  alias ElvenDatabase.Players.Account
+  alias ElvenDatabase.Repo
 
   @spec log_in(String.t(), String.t()) :: Ecto.Schema.t() | nil
   def log_in(username, hashed_password) do

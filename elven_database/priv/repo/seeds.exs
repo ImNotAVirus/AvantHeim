@@ -5,12 +5,12 @@
 # Inside the script, you can read and write to any of your
 # repositories directly:
 #
-#     DatabaseService.Repo.insert!(%DatabaseService.SomeSchema{})
+#     ElvenDatabase.Repo.insert!(%ElvenDatabase.SomeSchema{})
 #
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.
 
-alias DatabaseService.Players.{Account, Accounts, Characters}
+alias ElvenDatabase.Players.{Account, Accounts, Characters}
 
 ## Accounts
 

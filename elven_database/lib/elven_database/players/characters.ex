@@ -1,12 +1,12 @@
-defmodule DatabaseService.Players.Characters do
+defmodule ElvenDatabase.Players.Characters do
   @moduledoc """
   TODO: Documentation
   """
 
   import Ecto.Query, only: [from: 2]
 
-  alias DatabaseService.Players.Character
-  alias DatabaseService.Repo
+  alias ElvenDatabase.Players.Character
+  alias ElvenDatabase.Repo
 
   @spec all_by_account_id(pos_integer, boolean) :: [Character.t()]
   def all_by_account_id(account_id, include_disabled \\ false)

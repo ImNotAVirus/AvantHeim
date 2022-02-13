@@ -1,4 +1,4 @@
-defmodule DatabaseService.Players.Account do
+defmodule ElvenDatabase.Players.Account do
   @moduledoc """
   TODO: Documentation
   """

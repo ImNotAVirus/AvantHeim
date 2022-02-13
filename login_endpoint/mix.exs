@@ -23,7 +23,7 @@ defmodule LoginEndpoint.MixProject do
   defp deps do
     [
       {:core, path: "../core"},
-      {:database_service, path: "../database_service"},
+      {:elven_database, path: "../elven_database"},
       # {:session_service, path: "../session_service"},
       {:ranch, "~> 2.0"}
     ]
