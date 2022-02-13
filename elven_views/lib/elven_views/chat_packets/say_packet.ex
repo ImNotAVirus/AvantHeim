@@ -3,7 +3,7 @@ defmodule ElvenViews.ChatPackets.SayPacket do
   TODO: Documentation.
   """
 
-  use Core.SerializableStruct
+  use ElvenCore.SerializableStruct
 
   import ElvenEnums.EntityEnums, only: [entity_type: 2]
   import ElvenViews.ChatPackets.SayEnums, only: [color_type: 2]

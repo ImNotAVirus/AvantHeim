@@ -1,4 +1,4 @@
-defmodule Core.SerializableStruct do
+defmodule ElvenCore.SerializableStruct do
   @moduledoc ~S"""
   TODO: Documentation
   """
@@ -15,7 +15,7 @@ defmodule Core.SerializableStruct do
       @behaviour unquote(__MODULE__)
       @before_compile unquote(__MODULE__)
 
-      import Core.Socket.Serializer, only: [serialize_term: 1, serialize_term: 2]
+      import ElvenCore.Socket.Serializer, only: [serialize_term: 1, serialize_term: 2]
 
       unquote(impl(__CALLER__.module))
     end
@@ -54,7 +54,7 @@ defmodule Core.SerializableStruct do
   @doc false
   defp impl(mod) do
     quote do
-      defimpl Core.Socket.SerializerProtocol do
+      defimpl ElvenCore.Socket.SerializerProtocol do
         def serialize(data, opts) do
           case unquote(mod).serialize(data, opts) do
             x when is_binary(x) -> x

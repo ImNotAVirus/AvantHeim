@@ -1,9 +1,9 @@
-defmodule Core.MixProject do
+defmodule ElvenCore.MixProject do
   use Mix.Project
 
   def project do
     [
-      app: :core,
+      app: :elven_core,
       version: "0.1.0",
       elixir: "~> 1.13",
       start_permanent: Mix.env() == :prod,

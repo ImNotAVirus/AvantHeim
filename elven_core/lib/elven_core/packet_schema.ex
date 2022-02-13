@@ -1,12 +1,12 @@
-defmodule Core.PacketSchema do
+defmodule ElvenCore.PacketSchema do
   @moduledoc """
   TODO: Documentation
   """
 
   @aliases %{
-    integer: Core.PacketSchema.Integer,
-    string: Core.PacketSchema.String,
-    list: Core.PacketSchema.List
+    integer: ElvenCore.PacketSchema.Integer,
+    string: ElvenCore.PacketSchema.String,
+    list: ElvenCore.PacketSchema.List
   }
 
   ## Public API

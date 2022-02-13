@@ -3,7 +3,7 @@ defmodule ElvenViews.LoginPackets.NsTeST.Channel do
   TODO: Documentation
   """
 
-  use Core.SerializableStruct
+  use ElvenCore.SerializableStruct
 
   alias __MODULE__
 

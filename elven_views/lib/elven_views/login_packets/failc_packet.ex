@@ -3,7 +3,7 @@ defmodule ElvenViews.LoginPackets.FailcPacket do
   TODO: Documentation.
   """
 
-  use Core.SerializableStruct
+  use ElvenCore.SerializableStruct
 
   require ElvenViews.LoginPackets.FailcEnums
 
