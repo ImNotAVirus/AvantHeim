@@ -1,0 +1,88 @@
+---
+name: tests
+
+on: [push, pull_request]
+
+jobs:
+  # Job that list subdirectories (apps)
+  directories:
+    runs-on: ubuntu-latest
+    outputs:
+      apps: ${{ steps.set-dirs.outputs.dir }}
+    steps:
+      - uses: actions/checkout@v2
+      - id: set-dirs
+        run: echo "::set-output name=dir::$(ls -d */ | sed 's/.$//' | jq -R -s -c 'split("\n")[:-1]')"
+
+  # Run CI on each app
+  tests:
+    name: Run Tests for ${{ matrix.app }}
+    runs-on: ubuntu-latest
+    needs: [directories]
+    strategy:
+      matrix:
+        app: ${{fromJson(needs.directories.outputs.apps)}}
+    env:
+      MIX_ENV: test
+    services:
+      db:
+        image: postgres:11
+        ports: ['5432:5432']
+        env:
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Elixir
+        uses: erlef/setup-beam@v1
+        id: setup_beam
+        with:
+          otp-version: '24'
+          elixir-version: 'v1.13'
+
+      - name: Create caching key
+        id: caching_vars
+        run: |
+          elixir="${{ steps.setup_beam.outputs.elixir-version }}"
+          otp="${{ steps.setup_beam.outputs.otp-version }}"
+          caching_key="${{ runner.os }}-$elixir-$otp-${{ matrix.app }}"
+          echo "::set-output name=caching_key::$caching_key"
+
+      - name: Get current date
+        id: date
+        run: echo "::set-output name=date::$(date +'%Y-%m-%dT%H:%M:%S')"
+
+      # Force Action to always save the cache by always using a different key
+      - name: Restore deps
+        uses: actions/cache@v2
+        id: mix_cache
+        with:
+          path: |
+            ${{ matrix.app }}/_build
+            ${{ matrix.app }}/deps
+          key: ${{ steps.caching_vars.outputs.caching_key }}-mix-${{ hashFiles(format('{0}{1}', matrix.app, '/mix.lock')) }}-${{ steps.date.outputs.date }}
+          restore-keys: |
+            ${{ steps.caching_vars.outputs.caching_key }}-mix-${{ hashFiles(format('{0}{1}', matrix.app, '/mix.lock')) }}-
+            ${{ steps.caching_vars.outputs.caching_key }}-mix-
+      - if: steps.mix_cache.outputs.cache-hit != 'true'
+        run: ./mix --app ${{ matrix.app }} deps.get
+      - run: ./mix --app ${{ matrix.app }} format --dry-run --check-formatted
+      - run: ./mix --app ${{ matrix.app }} test --trace
+
+  # Send a Discord Notification
+  notify:
+    name: Discord Notification
+    runs-on: ubuntu-latest
+    needs: [tests]
+    if: ${{ always() }} # You always want to be notified: success, failure, or cancelled
+
+    steps:
+      - name: Notify
+        uses: nobrayner/discord-webhook@v1
+        with:
+          github-token: ${{ secrets.github_token }}
+          discord-webhook: ${{ secrets.DISCORD_WEBHOOK }}
