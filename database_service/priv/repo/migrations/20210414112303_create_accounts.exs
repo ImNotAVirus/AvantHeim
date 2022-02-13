@@ -2,9 +2,10 @@ defmodule DatabaseService.Repo.Migrations.CreateAccounts do
   use Ecto.Migration
   
   require DatabaseService.EctoEnumHelpers
-  require DatabaseService.PlayerEnums
+  require ElvenEnums.PlayerEnums
   
-  alias DatabaseService.{EctoEnumHelpers, PlayerEnums}
+  alias DatabaseService.EctoEnumHelpers
+  alias ElvenEnums.PlayerEnums
 
   def change do
     execute(

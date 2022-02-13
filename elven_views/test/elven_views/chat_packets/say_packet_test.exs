@@ -1,12 +1,12 @@
 defmodule ElvenViews.ChatPackets.SayPacketTest do
   use ExUnit.Case, async: true
 
+  require ElvenEnums.EntityEnums
   require ElvenViews.ChatPackets.SayEnums
-  require DatabaseService.EntityEnums
 
+  alias ElvenEnums.EntityEnums
   alias ElvenViews.ChatPackets.SayPacket
   alias ElvenViews.ChatPackets.SayEnums
-  alias DatabaseService.EntityEnums
 
   @entity_id 1
   @message "This is a message for the SayPacket"

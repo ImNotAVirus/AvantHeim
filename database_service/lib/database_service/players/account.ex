@@ -7,9 +7,9 @@ defmodule DatabaseService.Players.Account do
 
   import Ecto.Changeset
 
-  require DatabaseService.PlayerEnums
+  require ElvenEnums.PlayerEnums
 
-  alias DatabaseService.PlayerEnums
+  alias ElvenEnums.PlayerEnums
 
   ## Schema
 

@@ -5,8 +5,8 @@ defmodule ElvenViews.ChatPackets.SayPacket do
 
   use Core.SerializableStruct
 
+  import ElvenEnums.EntityEnums, only: [entity_type: 2]
   import ElvenViews.ChatPackets.SayEnums, only: [color_type: 2]
-  import DatabaseService.EntityEnums, only: [entity_type: 2]
 
   alias __MODULE__
 
