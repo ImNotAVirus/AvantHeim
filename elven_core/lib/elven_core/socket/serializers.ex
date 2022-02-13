@@ -1,13 +1,13 @@
-defmodule Core.Socket.Serializers do
+defmodule ElvenCore.Socket.Serializers do
   @moduledoc false
 
-  import Core.Socket.Serializer, only: [serialize_term: 2]
+  import ElvenCore.Socket.Serializer, only: [serialize_term: 2]
 
-  defimpl Core.Socket.SerializerProtocol, for: Integer do
+  defimpl ElvenCore.Socket.SerializerProtocol, for: Integer do
     def serialize(data, _opts), do: Integer.to_string(data)
   end
 
-  defimpl Core.Socket.SerializerProtocol, for: BitString do
+  defimpl ElvenCore.Socket.SerializerProtocol, for: BitString do
     def serialize(data, opts) do
       escape = Keyword.get(opts, :escape, false)
 
@@ -19,7 +19,7 @@ defmodule Core.Socket.Serializers do
     end
   end
 
-  defimpl Core.Socket.SerializerProtocol, for: Atom do
+  defimpl ElvenCore.Socket.SerializerProtocol, for: Atom do
     def serialize(data, opts) do
       {as, _new_opts} = Keyword.pop(opts, :as)
 
@@ -43,7 +43,7 @@ defmodule Core.Socket.Serializers do
     end
   end
 
-  defimpl Core.Socket.SerializerProtocol, for: List do
+  defimpl ElvenCore.Socket.SerializerProtocol, for: List do
     def serialize([], _), do: "-1"
 
     def serialize(data, opts) do

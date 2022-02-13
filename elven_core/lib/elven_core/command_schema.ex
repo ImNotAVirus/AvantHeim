@@ -1,4 +1,4 @@
-defmodule Core.CommandSchema do
+defmodule ElvenCore.CommandSchema do
   @moduledoc """
   TODO: Documentation
   TODO: Clean this module
@@ -36,7 +36,7 @@ defmodule Core.CommandSchema do
         }
 
         render = ChannelEndpoint.Endpoint.ChatViews.render(:say, say_attrs)
-        :ok = Core.Socket.send(socket, render)
+        :ok = ElvenCore.Socket.send(socket, render)
 
         args = String.split(bin_args, " ")
         unquote(module).handle_command(unquote(cmdname), args, socket)

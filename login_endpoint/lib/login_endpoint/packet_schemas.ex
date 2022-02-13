@@ -3,7 +3,7 @@ defmodule LoginEndpoint.PacketSchemas do
   TODO: Documentation
   """
 
-  use Core.PacketSchema
+  use ElvenCore.PacketSchema
 
   alias LoginEndpoint.Endpoint.AuthActions
 

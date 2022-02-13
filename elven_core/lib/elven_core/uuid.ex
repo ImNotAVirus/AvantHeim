@@ -1,4 +1,4 @@
-defmodule Core.UUID do
+defmodule ElvenCore.UUID do
   @moduledoc ~S"""
   UUID helpers inspired by `zyro/elixir-uuid`
   """

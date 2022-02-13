@@ -3,7 +3,7 @@ defmodule ElvenViews.ChatPackets.BnPacket do
   TODO: Documentation.
   """
 
-  use Core.SerializableStruct
+  use ElvenCore.SerializableStruct
 
   alias __MODULE__
 

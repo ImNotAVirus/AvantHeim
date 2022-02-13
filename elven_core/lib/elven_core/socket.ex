@@ -1,4 +1,4 @@
-defmodule Core.Socket do
+defmodule ElvenCore.Socket do
   @moduledoc ~S"""
   Manage a socket
 
@@ -10,9 +10,9 @@ defmodule Core.Socket do
     * `:assigns` - The map of socket assigns, default: `%{}`
   """
 
-  import Core.Socket.Serializer, only: [serialize_term: 1]
+  import ElvenCore.Socket.Serializer, only: [serialize_term: 1]
 
-  alias Core.{Socket, UUID}
+  alias ElvenCore.{Socket, UUID}
 
   @enforce_keys [:id, :transport, :transport_pid, :encoder]
 

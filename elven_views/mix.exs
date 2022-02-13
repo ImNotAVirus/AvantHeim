@@ -21,7 +21,7 @@ defmodule ElvenViews.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:core, path: "../core"},
+      {:elven_core, path: "../elven_core"},
       {:elven_enums, path: "../elven_enums"},
       {:simple_enum, "~> 0.1"}
     ]

@@ -22,7 +22,7 @@ defmodule LoginEndpoint.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:core, path: "../core"},
+      {:elven_core, path: "../elven_core"},
       {:elven_database, path: "../elven_database"},
       # {:session_service, path: "../session_service"},
       {:ranch, "~> 2.0"}

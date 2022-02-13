@@ -1,4 +1,4 @@
-defmodule Core.PacketSchema.Integer do
+defmodule ElvenCore.PacketSchema.Integer do
   @moduledoc """
   TODO: Documentation
   """

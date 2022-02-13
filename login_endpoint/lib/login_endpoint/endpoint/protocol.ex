@@ -5,7 +5,7 @@ defmodule LoginEndpoint.Endpoint.Protocol do
 
   require Logger
 
-  alias Core.Socket
+  alias ElvenCore.Socket
 
   @behaviour :ranch_protocol
 
