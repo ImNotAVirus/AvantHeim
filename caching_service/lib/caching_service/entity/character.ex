@@ -1,11 +1,7 @@
-defmodule CachingService.Player.Character do
+defmodule CachingService.Entity.Character do
   @moduledoc """
   TODO: Documentation
   """
-
-  alias ElvenCore.Socket
-  alias CachingService.Position
-  alias ElvenEnums.EntityEnums
 
   @db_attributes [
     :id,
@@ -40,15 +36,20 @@ defmodule CachingService.Player.Character do
     index: [:map_vnum],
     attributes: @db_attributes ++ Map.keys(@virtual_attributes)
 
-  @type t :: %__MODULE__{
+  alias __MODULE__
+  alias ElvenCore.Socket
+  alias CachingService.Entity.EntityPosition
+  alias ElvenEnums.{EntityEnums, PlayerEnums}
+
+  @type t :: %Character{
           # DB attributes
           id: pos_integer,
           name: String.t(),
-          gender: atom,
-          class: atom,
-          hair_color: atom,
-          hair_style: atom,
-          faction: atom,
+          gender: PlayerEnums.gender_keys(),
+          class: PlayerEnums.character_class_keys(),
+          hair_color: PlayerEnums.hair_color_keys(),
+          hair_style: PlayerEnums.hair_style_keys(),
+          faction: PlayerEnums.faction_keys(),
           map_vnum: pos_integer,
           map_x: non_neg_integer,
           map_y: non_neg_integer,
@@ -62,14 +63,14 @@ defmodule CachingService.Player.Character do
           bank_gold: non_neg_integer,
           # Virtual attributes
           socket: Socket.t(),
-          map_id: pos_integer,
+          map_id: EntityPosition.map_id(),
           speed: non_neg_integer,
           direction: EntityEnums.direction_type_keys()
         }
 
   ## Public API
 
-  @spec new(map, Socket.t()) :: __MODULE__.t()
+  @spec new(map, Socket.t()) :: t()
   def new(attrs, %Socket{} = socket) do
     default = %{
       socket: socket,
@@ -80,18 +81,27 @@ defmodule CachingService.Player.Character do
     |> Map.take(@db_attributes)
     |> Map.merge(@virtual_attributes)
     |> Map.merge(default)
-    |> then(&struct!(__MODULE__, &1))
+    |> then(&struct!(Character, &1))
   end
 
-  @spec get_position(__MODULE__.t()) :: Position.t()
-  def get_position(%__MODULE__{} = character) do
-    # TODO: Implement instances
-    %Position{
-      map_id: character.map_id,
-      map_vnum: character.map_vnum,
-      map_x: character.map_x,
-      map_y: character.map_y,
-      is_instance: character.map_id != character.map_vnum
-    }
+  defimpl CachingService.Entity do
+    def get_position(%Character{} = character) do
+      EntityPosition.new(
+        character.map_id,
+        character.map_vnum,
+        character.map_x,
+        character.map_y
+      )
+    end
+
+    def set_position(%Character{} = character, %EntityPosition{} = pos) do
+      %Character{
+        character
+        | map_id: pos.map_id,
+          map_vnum: pos.map_vnum,
+          map_x: pos.map_x,
+          map_y: pos.map_y
+      }
+    end
   end
 end

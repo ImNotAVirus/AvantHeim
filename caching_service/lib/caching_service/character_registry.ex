@@ -11,7 +11,7 @@ defmodule CachingService.CharacterRegistry do
   require Logger
 
   alias ElvenCore.Socket
-  alias CachingService.Player.Character
+  alias CachingService.Entity.Character
 
   ## Public API
 
@@ -70,8 +70,8 @@ defmodule CachingService.CharacterRegistry do
 
   @impl true
   def handle_continue(:init_mnesia, nil) do
-    Memento.Table.create!(CachingService.Player.Character)
-    :ok = Memento.wait([CachingService.Player.Character])
+    Memento.Table.create!(CachingService.Entity.Character)
+    :ok = Memento.wait([CachingService.Entity.Character])
 
     Logger.info("CharacterRegistry started")
     {:noreply, nil}
