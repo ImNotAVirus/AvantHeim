@@ -10,7 +10,6 @@ defmodule CachingService.CharacterRegistry do
 
   require Logger
 
-  alias ElvenCore.Socket
   alias CachingService.Entity.Character
 
   ## Public API
@@ -22,10 +21,10 @@ defmodule CachingService.CharacterRegistry do
 
   ## Interfaces
 
-  @spec init_character(map, Socket.t()) :: {:ok, Character.t()} | {:error, any}
-  def init_character(attrs, %Socket{} = socket) do
+  @spec init_character(map) :: {:ok, Character.t()} | {:error, any}
+  def init_character(attrs) do
     Memento.transaction(fn ->
-      attrs |> Character.new(socket) |> Memento.Query.write()
+      attrs |> Character.new() |> Memento.Query.write()
     end)
   end
 

@@ -3,7 +3,7 @@ defmodule CachingService.Entity.Character do
   TODO: Documentation
   """
 
-  @db_attributes [
+  @required_attributes [
     :id,
     :name,
     :gender,
@@ -21,11 +21,11 @@ defmodule CachingService.Entity.Character do
     :job_level_xp,
     :hero_level_xp,
     :gold,
-    :bank_gold
+    :bank_gold,
+    :socket
   ]
 
   @virtual_attributes %{
-    socket: nil,
     map_id: nil,
     speed: 20,
     direction: :south
@@ -34,7 +34,7 @@ defmodule CachingService.Entity.Character do
   use Memento.Table,
     type: :ordered_set,
     index: [:map_vnum],
-    attributes: @db_attributes ++ Map.keys(@virtual_attributes)
+    attributes: @required_attributes ++ Map.keys(@virtual_attributes)
 
   alias __MODULE__
   alias ElvenCore.Socket
@@ -42,7 +42,7 @@ defmodule CachingService.Entity.Character do
   alias ElvenEnums.{EntityEnums, PlayerEnums}
 
   @type t :: %Character{
-          # DB attributes
+          # Required attributes
           id: pos_integer,
           name: String.t(),
           gender: PlayerEnums.gender_keys(),
@@ -61,8 +61,8 @@ defmodule CachingService.Entity.Character do
           hero_level_xp: non_neg_integer,
           gold: non_neg_integer,
           bank_gold: non_neg_integer,
-          # Virtual attributes
           socket: Socket.t(),
+          # Virtual attributes
           map_id: EntityPosition.map_id(),
           speed: non_neg_integer,
           direction: EntityEnums.direction_type_keys()
@@ -70,19 +70,25 @@ defmodule CachingService.Entity.Character do
 
   ## Public API
 
-  @spec new(map, Socket.t()) :: t()
-  def new(attrs, %Socket{} = socket) do
-    default = %{
-      socket: socket,
-      map_id: attrs.map_vnum
-    }
+  @spec new(map) :: t()
+  def new(attrs) do
+    default = %{map_id: attrs.map_vnum}
 
     attrs
-    |> Map.take(@db_attributes)
+    |> extract_attributes!(@required_attributes)
     |> Map.merge(@virtual_attributes)
     |> Map.merge(default)
     |> then(&struct!(Character, &1))
   end
+
+  defp extract_attributes!(attrs, required_attributes) do
+    case required_attributes -- Map.keys(attrs) do
+      [] -> Map.take(attrs, required_attributes)
+      missing -> raise ArgumentError, "missing attributes: #{inspect(missing)}"
+    end
+  end
+
+  ## Implement protocols
 
   defimpl CachingService.Entity do
     def get_position(%Character{} = character) do
