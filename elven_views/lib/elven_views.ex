@@ -1,8 +1,6 @@
 defmodule ElvenViews do
   @moduledoc """
   Documentation for `ElvenViews`.
-
-  TODO: Views behaviour
   """
 
   @callback render(atom, map) :: struct

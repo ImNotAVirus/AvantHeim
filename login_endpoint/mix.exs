@@ -24,6 +24,7 @@ defmodule LoginEndpoint.MixProject do
     [
       {:elven_core, path: "../elven_core"},
       {:elven_database, path: "../elven_database"},
+      {:elven_views, path: "../elven_views"},
       # {:session_service, path: "../session_service"},
       {:ranch, "~> 2.0"}
     ]
