@@ -31,9 +31,9 @@ defmodule ElvenViews.LoginViewsTest do
       end
     end
 
-    test "require session_id in args" do
+    test "require encryption_key in args" do
       assert_raise ArgumentError, fn ->
-        args = Map.delete(default_args(), :session_id)
+        args = Map.delete(default_args(), :encryption_key)
         LoginViews.render(:login_succeed, args)
       end
     end
@@ -55,7 +55,7 @@ defmodule ElvenViews.LoginViewsTest do
     test "returns a packet structure" do
       assert render = LoginViews.render(:login_succeed, default_args())
       assert %NsTeSTPacket{} = render
-      assert render.session_id == 123
+      assert render.encryption_key == 123
       assert render.username == "admin"
       assert [%Channel{ip: ip, port: port}] = render.server_list
       assert ip == "127.0.0.1"
@@ -66,6 +66,6 @@ defmodule ElvenViews.LoginViewsTest do
   ## Helpers
 
   defp default_args() do
-    %{username: "admin", session_id: 123, ip: "127.0.0.1", port: 4000}
+    %{username: "admin", encryption_key: 123, ip: "127.0.0.1", port: 4000}
   end
 end

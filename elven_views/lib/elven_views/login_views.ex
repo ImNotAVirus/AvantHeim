@@ -18,15 +18,15 @@ defmodule ElvenViews.LoginViews do
   end
 
   def render(:login_succeed, args) do
+    encryption_key = required_param(args, :encryption_key)
     username = required_param(args, :username)
-    session_id = required_param(args, :session_id)
 
     # TODO: Support multiple channels
     ip = required_param(args, :ip)
     port = required_param(args, :port)
 
     %NsTeSTPacket{
-      session_id: session_id,
+      encryption_key: encryption_key,
       username: username,
       server_list: [
         %Channel{
