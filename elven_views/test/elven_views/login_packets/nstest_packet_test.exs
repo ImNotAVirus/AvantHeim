@@ -4,7 +4,7 @@ defmodule ElvenViews.LoginPackets.NsTeSTPacketTest do
   alias ElvenViews.LoginPackets.NsTeSTPacket
   alias ElvenViews.LoginPackets.NsTeST.Channel
 
-  @session_id 123
+  @encryption_key 123
   @username "admin"
 
   ## Tests
@@ -26,7 +26,7 @@ defmodule ElvenViews.LoginPackets.NsTeSTPacketTest do
                _server6,
                _unused,
                0,
-               session_id,
+               encryption_key,
                serialized_servers,
                terminator
              ] = serialize_NsTeST([channel])
@@ -34,7 +34,7 @@ defmodule ElvenViews.LoginPackets.NsTeSTPacketTest do
       assert is_integer(region)
       assert username == @username
       assert is_integer(auth_type)
-      assert session_id == @session_id
+      assert encryption_key == @encryption_key
       assert serialized_servers == Channel.serialize(channel, [])
       assert terminator == "-1:-1:-1:10000.10000.1"
     end
@@ -51,7 +51,7 @@ defmodule ElvenViews.LoginPackets.NsTeSTPacketTest do
 
   defp serialize_NsTeST(server_list) do
     %NsTeSTPacket{
-      session_id: @session_id,
+      encryption_key: @encryption_key,
       username: @username,
       server_list: server_list
     }

@@ -8,11 +8,11 @@ defmodule ElvenViews.LoginPackets.NsTeSTPacket do
   alias __MODULE__
   alias ElvenViews.LoginPackets.NsTeST.Channel
 
-  @enforce_keys [:session_id, :username, :server_list]
+  @enforce_keys [:encryption_key, :username, :server_list]
   defstruct @enforce_keys
 
   @type t :: %NsTeSTPacket{
-          session_id: non_neg_integer,
+          encryption_key: non_neg_integer,
           username: String.t(),
           server_list: [Channel.t()]
         }
@@ -20,7 +20,7 @@ defmodule ElvenViews.LoginPackets.NsTeSTPacket do
   @impl true
   def serialize(%NsTeSTPacket{} = struct, _) do
     %NsTeSTPacket{
-      session_id: session_id,
+      encryption_key: encryption_key,
       username: username,
       server_list: server_list
     } = struct
@@ -50,7 +50,7 @@ defmodule ElvenViews.LoginPackets.NsTeSTPacket do
       ["-99 0 -99 0 -99 0 -99 0"],
       ["-99 0 -99 0 -99 0 -99 0"],
       [unused_servers],
-      [0, session_id, serialized_servers],
+      [0, encryption_key, serialized_servers],
       terminator
     ])
   end

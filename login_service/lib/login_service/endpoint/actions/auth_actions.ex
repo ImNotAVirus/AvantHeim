@@ -5,12 +5,18 @@ defmodule LoginService.Endpoint.AuthActions do
 
   require Logger
 
+  alias CachingService.Account.Session
+  alias CachingService.SessionRegistry
   alias ElvenCore.Socket
   alias ElvenDatabase.Players.{Account, Accounts}
   alias ElvenViews.LoginViews
 
   @ip Application.fetch_env!(:login_service, :world_ip)
   @port Application.fetch_env!(:login_service, :world_port)
+
+  # If env != prod: use encryption_key = 0
+  @default_encryption_key if Mix.env() == :prod, do: nil, else: 0
+  @max_encryption_key 65535
 
   ## Public API
 
@@ -24,12 +30,12 @@ defmodule LoginService.Endpoint.AuthActions do
            {:ok, _client_checksum} <- check_client_checksum(args, socket),
            {:ok, _guid} <- check_guid(args, socket),
            {:ok, account} <- check_credentials(args, socket),
-           {:ok, session_id} <- create_session(account, socket) do
+           {:ok, encryption_key} <- create_session(account, socket) do
         Logger.debug("Authentication succeed for #{socket_id} (username: #{account.username})")
 
         LoginViews.render(:login_succeed, %{
           username: account.username,
-          session_id: session_id,
+          encryption_key: encryption_key,
           ip: @ip,
           port: @port
         })
@@ -84,10 +90,17 @@ defmodule LoginService.Endpoint.AuthActions do
     end
   end
 
-  defp create_session(%Account{username: username, hashed_password: password}, _socket) do
-    case SessionService.create_session(username, password) do
-      {:ok, session} -> {:ok, session.id}
-      {:error, _} = e -> e
+  defp create_session(%Account{} = account, _socket) do
+    attrs = %{
+      account_id: account.id,
+      username: account.username,
+      password: account.password,
+      encryption_key: @default_encryption_key || :rand.uniform(@max_encryption_key)
+    }
+
+    case SessionRegistry.create(attrs) do
+      {:ok, %Session{encryption_key: key}} -> {:ok, key}
+      {:error, :already_exists} -> {:error, :already_connected}
     end
   end
 
