@@ -11,11 +11,9 @@
 **Windows not supported yet**
 
     # If you want to start the whole project
-    ./mix --app caching_service run --no-halt
-    ./mix --app login_service run --no-halt
-    ./mix --app channel_endpoint run --no-halt
+    ./mix --app login_service --name login@127.0.0.1 run --no-halt
+    ./mix --app channel_service --name channel@127.0.0.1 run --no-halt
 
-    # If you want to have an iex shell on an app (not norking currently)
-    ./mix --app caching_service run --no-halt
-    ./mix --app channel_endpoint run --no-halt
-    ./iex --app login_service -S mix
+    # If you want to have an iex shell on an app
+    ./mix --app login_service --name login@127.0.0.1 run --no-halt
+    ./iex --app channel_service --name channel@127.0.0.1 -S mix
