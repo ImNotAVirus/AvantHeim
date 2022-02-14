@@ -1,4 +1,4 @@
-defmodule CachingService.Entity.EntityPosition do
+defmodule ElvenCaching.Entity.EntityPosition do
   @moduledoc false
 
   @enforce_keys [:map_id, :map_vnum, :map_x, :map_y, :is_instance]

@@ -1,9 +1,9 @@
-defprotocol CachingService.Entity do
+defprotocol ElvenCaching.Entity do
   @moduledoc """
   TODO: Documentation
   """
 
-  alias CachingService.Entity.EntityPosition
+  alias ElvenCaching.Entity.EntityPosition
 
   @spec get_position(t()) :: EntityPosition.t()
   def get_position(entity)

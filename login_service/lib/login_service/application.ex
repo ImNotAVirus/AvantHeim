@@ -6,6 +6,7 @@ defmodule LoginService.Application do
   @impl true
   def start(_type, _args) do
     children = [
+      {ElvenCaching.SessionRegistry, []},
       {LoginService.Endpoint, name: LoginService.Endpoint}
     ]
 

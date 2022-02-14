@@ -1,4 +1,4 @@
-defmodule CachingService.Entity.Character do
+defmodule ElvenCaching.Entity.Character do
   @moduledoc """
   TODO: Documentation
   """
@@ -39,7 +39,7 @@ defmodule CachingService.Entity.Character do
 
   alias __MODULE__
   alias ElvenCore.Socket
-  alias CachingService.Entity.EntityPosition
+  alias ElvenCaching.Entity.EntityPosition
   alias ElvenEnums.{EntityEnums, PlayerEnums}
 
   @type t :: %Character{
@@ -92,7 +92,7 @@ defmodule CachingService.Entity.Character do
 
   ## Implement protocols
 
-  defimpl CachingService.Entity do
+  defimpl ElvenCaching.Entity do
     def get_position(%Character{} = character) do
       EntityPosition.new(
         character.map_id,

@@ -1,12 +1,12 @@
-defmodule CachingService do
+defmodule ElvenCaching do
   @moduledoc """
-  Documentation for `CachingService`.
+  Documentation for `ElvenCaching`.
   """
 
   require ElvenEnums.EntityEnums
 
   alias ElvenEnums.EntityEnums
-  alias CachingService.CharacterRegistry
+  alias ElvenCaching.CharacterRegistry
 
   @type entity :: Character.t()
 
