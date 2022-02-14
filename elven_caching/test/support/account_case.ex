@@ -1,7 +1,7 @@
 defmodule AccountCase do
   use ExUnit.CaseTemplate
 
-  alias CachingService.Account.Session
+  alias ElvenCaching.Account.Session
 
   setup do
     # This will run before each test that uses this case

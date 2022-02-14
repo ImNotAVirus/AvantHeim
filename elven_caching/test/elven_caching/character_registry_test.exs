@@ -1,10 +1,15 @@
-defmodule CachingService.CharacterRegistryTest do
+defmodule ElvenCaching.CharacterRegistryTest do
   use EntityCase, async: true
 
-  alias CachingService.CharacterRegistry
-  alias CachingService.Entity.Character
+  alias ElvenCaching.CharacterRegistry
+  alias ElvenCaching.Entity.Character
 
   ## Setup
+
+  setup_all do
+    registry = start_supervised!(CharacterRegistry)
+    {:ok, registry: registry}
+  end
 
   setup do
     {:ok, id: random_integer()}

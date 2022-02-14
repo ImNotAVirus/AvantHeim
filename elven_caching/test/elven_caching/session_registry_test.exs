@@ -1,10 +1,15 @@
-defmodule CachingService.SessionRegistryTest do
+defmodule ElvenCaching.SessionRegistryTest do
   use AccountCase, async: true
 
-  alias CachingService.SessionRegistry
-  alias CachingService.Account.Session
+  alias ElvenCaching.SessionRegistry
+  alias ElvenCaching.Account.Session
 
   ## Setup
+
+  setup_all do
+    registry = start_supervised!(SessionRegistry)
+    {:ok, registry: registry}
+  end
 
   setup do
     {:ok, id: random_string()}

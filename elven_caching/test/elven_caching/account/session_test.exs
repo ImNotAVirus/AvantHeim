@@ -1,7 +1,7 @@
-defmodule CachingService.Account.SessionTest do
+defmodule ElvenCaching.Account.SessionTest do
   use AccountCase, async: true
 
-  alias CachingService.Account.Session
+  alias ElvenCaching.Account.Session
 
   ## Tests
 

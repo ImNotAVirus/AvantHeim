@@ -1,9 +1,9 @@
-defmodule CachingService.MixProject do
+defmodule ElvenCaching.MixProject do
   use Mix.Project
 
   def project do
     [
-      app: :caching_service,
+      app: :elven_caching,
       version: "0.1.0",
       elixir: "~> 1.13",
       elixirc_paths: elixirc_paths(Mix.env()),
@@ -19,8 +19,7 @@ defmodule CachingService.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      extra_applications: [:logger],
-      mod: {CachingService.Application, []}
+      extra_applications: [:logger]
     ]
   end
 

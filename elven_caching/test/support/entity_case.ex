@@ -1,7 +1,7 @@
 defmodule EntityCase do
   use ExUnit.CaseTemplate
 
-  alias CachingService.Entity.Character
+  alias ElvenCaching.Entity.Character
 
   setup do
     # This will run before each test that uses this case

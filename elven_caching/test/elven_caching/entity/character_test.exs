@@ -1,9 +1,9 @@
-defmodule CachingService.Entity.CharacterTest do
+defmodule ElvenCaching.Entity.CharacterTest do
   use EntityCase, async: true
 
-  alias CachingService.Entity
-  alias CachingService.Entity.Character
-  alias CachingService.Entity.EntityPosition
+  alias ElvenCaching.Entity
+  alias ElvenCaching.Entity.Character
+  alias ElvenCaching.Entity.EntityPosition
 
   ## Tests
 
