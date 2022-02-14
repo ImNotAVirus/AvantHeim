@@ -34,7 +34,7 @@ defmodule CachingService.Entity.Character do
 
   use Memento.Table,
     type: :ordered_set,
-    index: [:map_vnum],
+    index: [:account_id, :name, :map_id],
     attributes: @required_attributes ++ Map.keys(@virtual_attributes)
 
   alias __MODULE__

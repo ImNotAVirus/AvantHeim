@@ -14,28 +14,28 @@ defmodule CachingService.CharacterRegistry do
 
   ## Interfaces
 
-  @spec init_character(map) :: {:ok, Character.t()} | {:error, any}
-  def init_character(attrs) do
-    attrs |> Character.new() |> write_character()
+  @spec create(map) :: {:ok, Character.t()}
+  def create(attrs) do
+    attrs |> Character.new() |> write()
   end
 
-  @spec write_character(Character.t()) :: {:ok, Character.t()} | {:error, any}
-  def write_character(character) do
-    Memento.transaction(fn -> Memento.Query.write(character) end)
+  @spec write(Character.t()) :: {:ok, Character.t()}
+  def write(character) do
+    one(fn -> Memento.Query.write(character) end)
   end
 
-  @spec get_character_by_id(pos_integer) :: {:ok, Character.t()} | {:error, :not_found}
-  def get_character_by_id(id) do
+  @spec get(pos_integer) :: {:ok, Character.t()} | {:error, :not_found}
+  def get(id) do
     one(fn -> Memento.Query.read(Character, id) end)
   end
 
-  @spec get_character_by_name(String.t()) :: {:ok, Character.t()} | {:error, :not_found}
-  def get_character_by_name(name) do
+  @spec get_by_name(String.t()) :: {:ok, Character.t()} | {:error, :not_found}
+  def get_by_name(name) do
     one(fn -> Memento.Query.select(Character, {:==, :name, name}) end)
   end
 
-  @spec delete_character_by_account_id(pos_integer) :: {:ok, Character.t()} | {:error, :not_found}
-  def delete_character_by_account_id(account_id) do
+  @spec delete_by_account_id(pos_integer) :: {:ok, Character.t()} | {:error, :not_found}
+  def delete_by_account_id(account_id) do
     one(fn ->
       case Memento.Query.select(Character, {:==, :account_id, account_id}) do
         [character] ->
@@ -49,8 +49,8 @@ defmodule CachingService.CharacterRegistry do
     end)
   end
 
-  @spec get_characters_by_map_id(pos_integer, [tuple]) :: {:ok, [Character.t()]} | {:error, any}
-  def get_characters_by_map_id(map_id, except_guards \\ []) do
+  @spec get_by_map_id(pos_integer, [tuple]) :: {:ok, [Character.t()]} | {:error, any}
+  def get_by_map_id(map_id, except_guards \\ []) do
     guards = [{:==, :map_id, map_id} | List.wrap(except_guards)]
     Memento.transaction(fn -> Memento.Query.select(Character, guards) end)
   end
@@ -68,7 +68,7 @@ defmodule CachingService.CharacterRegistry do
 
   ## Public API
 
-  @spec start_link(any) :: :ignore | {:error, any} | {:ok, pid}
+  @spec start_link(any) :: GenServer.on_start()
   def start_link(opts) do
     GenServer.start_link(__MODULE__, opts, name: __MODULE__)
   end

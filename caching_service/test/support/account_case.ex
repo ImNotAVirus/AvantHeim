@@ -12,12 +12,24 @@ defmodule AccountCase do
     quote do
       import AccountCase,
         only: [
+          random_integer: 0,
+          random_string: 0,
           session_mock: 0,
           session_mock: 1,
           session_attrs_mock: 0,
           session_attrs_mock: 1
         ]
     end
+  end
+
+  ## Helpers
+
+  def random_integer() do
+    System.unique_integer([:positive])
+  end
+
+  def random_string() do
+    for _ <- 1..10, into: "", do: <<Enum.random('0123456789abcdef')>>
   end
 
   ## Mocks
@@ -36,15 +48,5 @@ defmodule AccountCase do
       },
       attrs
     )
-  end
-
-  ## Helpers
-
-  defp random_integer() do
-    System.unique_integer([:positive])
-  end
-
-  defp random_string() do
-    for _ <- 1..10, into: "", do: <<Enum.random('0123456789abcdef')>>
   end
 end
