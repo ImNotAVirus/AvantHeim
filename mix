@@ -9,16 +9,40 @@ IGNORE_APPS=(old_project,elven_database)
 
 if [[ $1 =~ "--app" ]]
 then
-    [ -z $2 ] && echo "usage: ./mix [--app app_name] args" && exit
+    [ -z $2 ] && echo "usage: ./mix [--app app_name] [--(s)name name] args" && exit
     [ ! -d $2 ] && echo "app $2 doesn't exists" && exit
-    [ -z $3 ] && echo "usage: ./mix [--app app_name] args" && exit
+    [ -z $3 ] && echo "usage: ./mix [--app app_name] [--(s)name name] args" && exit
 
     APP="$2"
     shift 2
 
-    echo "===== Running '$@' into '$APP' ====="
-    cd "$APP"
-    mix $@
+    if [[ $1 =~ "--sname" ]]
+    then
+        [ -z $2 ] && echo "usage: ./mix [--app app_name] [--(s)name name] args" && exit
+        [ -z $3 ] && echo "usage: ./mix [--app app_name] [--(s)name name] args" && exit
+
+        SNAME="$2"
+        shift 2
+
+        echo "===== Running '$@' into '$APP' with sname '$SNAME' ====="
+        cd "$APP"
+        elixir --sname $SNAME -S mix $@
+    elif [[ $1 =~ "--name" ]]
+    then
+        [ -z $2 ] && echo "usage: ./mix [--app app_name] [--(s)name name] args" && exit
+        [ -z $3 ] && echo "usage: ./mix [--app app_name] [--(s)name name] args" && exit
+
+        SNAME="$2"
+        shift 2
+
+        echo "===== Running '$@' into '$APP' with name '$SNAME' ====="
+        cd "$APP"
+        elixir --name $SNAME -S mix $@
+    else
+        echo "===== Running '$@' into '$APP' ====="
+        cd "$APP"
+        mix $@
+    fi
 else
     for APP in $(ls -d */ | sed 's/.$//')
     do
