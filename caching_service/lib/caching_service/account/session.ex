@@ -12,7 +12,6 @@ defmodule CachingService.Account.Session do
 
   use Memento.Table,
     attributes: @required_attributes ++ Map.keys(@virtual_attributes),
-    index: [:encryption_key],
     type: :ordered_set
 
   @type state :: :authenticated | :in_lobby | :in_game | :saving

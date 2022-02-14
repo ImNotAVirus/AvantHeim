@@ -12,12 +12,24 @@ defmodule EntityCase do
     quote do
       import EntityCase,
         only: [
+          random_integer: 0,
+          random_string: 0,
           character_mock: 0,
           character_mock: 1,
           character_attrs_mock: 0,
           character_attrs_mock: 1
         ]
     end
+  end
+
+  ## Helpers
+
+  def random_integer() do
+    System.unique_integer([:positive])
+  end
+
+  def random_string() do
+    for _ <- 1..10, into: "", do: <<Enum.random('0123456789abcdef')>>
   end
 
   ## Mocks
@@ -52,15 +64,5 @@ defmodule EntityCase do
       },
       attrs
     )
-  end
-
-  ## Helpers
-
-  defp random_integer() do
-    System.unique_integer([:positive])
-  end
-
-  defp random_string() do
-    for _ <- 1..10, into: "", do: <<Enum.random('0123456789abcdef')>>
   end
 end
