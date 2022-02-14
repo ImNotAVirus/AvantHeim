@@ -5,6 +5,7 @@ defmodule CachingService.Entity.Character do
 
   @required_attributes [
     :id,
+    :account_id,
     :name,
     :gender,
     :class,
@@ -44,6 +45,7 @@ defmodule CachingService.Entity.Character do
   @type t :: %Character{
           # Required attributes
           id: pos_integer,
+          account_id: pos_integer,
           name: String.t(),
           gender: PlayerEnums.gender_keys(),
           class: PlayerEnums.character_class_keys(),
