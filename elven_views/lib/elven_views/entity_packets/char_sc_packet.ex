@@ -1,7 +1,6 @@
 defmodule ElvenViews.EntityPackets.CharScPacket do
   @moduledoc """
   TODO: Documentation.
-  Character model
   """
 
   use ElvenCore.SerializableStruct
@@ -11,11 +10,7 @@ defmodule ElvenViews.EntityPackets.CharScPacket do
   alias __MODULE__
   alias ElvenEnums.EntityEnums
 
-  @enforce_keys [
-    :entity_type,
-    :entity_id,
-    :size
-  ]
+  @enforce_keys [:entity_type, :entity_id, :size]
   defstruct @enforce_keys
 
   @type t :: %CharScPacket{
@@ -32,8 +27,6 @@ defmodule ElvenViews.EntityPackets.CharScPacket do
       size: size
     } = struct
 
-    List.flatten([
-      ["char_sc", entity_type(entity_type_atom, :value), entity_id, size]
-    ])
+    ["char_sc", entity_type(entity_type_atom, :value), entity_id, size]
   end
 end
