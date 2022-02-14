@@ -8,7 +8,8 @@ defmodule ElvenCaching.SessionRegistryTest do
 
   setup_all do
     registry = start_supervised!(SessionRegistry)
-    {:ok, registry: registry}
+    RegistryTestHelpers.sync(registry)
+    :ok
   end
 
   setup do
@@ -74,18 +75,17 @@ defmodule ElvenCaching.SessionRegistryTest do
     end
   end
 
-  describe "delete/1" do
-    test "deletes an existing session", %{id: id} do
-      {:ok, session} = create_session(id)
+  test "clean_expired_keys cron is working", %{id: id} do
+    {:ok, session} = create_session(id)
 
-      assert [_] = get_session(id)
-      assert {:ok, ^session} = SessionRegistry.delete(id)
-      assert [] = get_session(id)
-    end
+    assert [_] = get_session(id)
 
-    test "returns :not_found if not existing", %{id: id} do
-      assert {:error, :not_found} = SessionRegistry.delete(id)
-    end
+    force_clean()
+    assert [_] = get_session(id)
+
+    expire_session(session)
+    force_clean()
+    assert [] = get_session(id)
   end
 
   ## Helpers
@@ -105,8 +105,17 @@ defmodule ElvenCaching.SessionRegistryTest do
     :mnesia.dirty_read({Session, id})
   end
 
+  defp expire_session(session) do
+    session |> Session.set_ttl(-1) |> SessionRegistry.write()
+  end
+
   defp attribute_index(tuple, index) do
     # +1 because the first elem is the record name
     elem(tuple, index + 1)
+  end
+
+  defp force_clean() do
+    send(SessionRegistry, :clean_expired_keys)
+    RegistryTestHelpers.sync(SessionRegistry)
   end
 end

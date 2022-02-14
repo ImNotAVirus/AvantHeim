@@ -8,7 +8,8 @@ defmodule ElvenCaching.CharacterRegistryTest do
 
   setup_all do
     registry = start_supervised!(CharacterRegistry)
-    {:ok, registry: registry}
+    RegistryTestHelpers.sync(registry)
+    :ok
   end
 
   setup do
