@@ -23,7 +23,7 @@ defmodule EntityCase do
   ## Mocks
 
   def character_mock(attrs \\ %{}) do
-    attrs |> character_attrs_mock |> Character.new()
+    attrs |> character_attrs_mock() |> Character.new()
   end
 
   def character_attrs_mock(attrs \\ %{}) do
