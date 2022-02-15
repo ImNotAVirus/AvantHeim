@@ -1,26 +1,26 @@
 defmodule ElvenViews.ChatPackets.BnPacketTest do
-  use ExUnit.Case, async: true
+  use PacketCase, async: true
 
   alias ElvenViews.ChatPackets.BnPacket
-
-  @id 123
-  @message "Hello welcome to AvantHeim"
 
   ## Tests
 
   describe "serialize/2" do
     test "can serialize a packet structure" do
-      assert ["bn", id, message] = serialize_bn()
-      assert id == @id
-      assert message == escape(@message)
+      mock = bn_mock()
+      packet = serialize(mock)
+
+      assert is_list(packet)
+      assert packet_index(packet, 0) == "bn"
+      assert packet_index(packet, 1) == mock.id
+      assert packet_index(packet, 2) == escape(mock.message)
     end
   end
 
   ## Helpers
 
-  defp serialize_bn() do
-    %BnPacket{id: @id, message: @message}
-    |> BnPacket.serialize([])
+  defp bn_mock() do
+    %BnPacket{id: 123, message: "Hello welcome to AvantHeim"}
   end
 
   defp escape(message) do

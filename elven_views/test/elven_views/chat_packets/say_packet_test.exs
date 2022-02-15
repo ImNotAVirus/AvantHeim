@@ -1,5 +1,5 @@
 defmodule ElvenViews.ChatPackets.SayPacketTest do
-  use ExUnit.Case, async: true
+  use PacketCase, async: true
 
   require ElvenEnums.EntityEnums
   require ElvenViews.ChatPackets.SayEnums
@@ -8,40 +8,30 @@ defmodule ElvenViews.ChatPackets.SayPacketTest do
   alias ElvenViews.ChatPackets.SayPacket
   alias ElvenViews.ChatPackets.SayEnums
 
-  @entity_id 1
-  @message "This is a message for the SayPacket"
-  @entity_type :character
-  @color :default
-
   ## Tests
 
   describe "serialize/2" do
     test "can serialize entity types" do
-      Enum.each(EntityEnums.entity_type(:__enumerators__), fn {key, value} ->
-        color_value = SayEnums.color_type(@color)
-        assert ["say", ^value, @entity_id, ^color_value, @message] = serialize_say(key, @color)
-      end)
-    end
+      mock = say_mock()
+      packet = serialize(mock)
 
-    test "can serialize colors" do
-      Enum.each(SayEnums.color_type(:__enumerators__), fn {key, value} ->
-        entity_type_value = EntityEnums.entity_type(@entity_type)
-
-        assert ["say", ^entity_type_value, @entity_id, ^value, @message] =
-                 serialize_say(@entity_type, key)
-      end)
+      assert is_list(packet)
+      assert packet_index(packet, 0) == "say"
+      assert packet_index(packet, 1) == EntityEnums.entity_type(mock.entity_type, :value)
+      assert packet_index(packet, 2) == mock.entity_id
+      assert packet_index(packet, 3) == SayEnums.color_type(mock.color, :value)
+      assert packet_index(packet, 4) == mock.message
     end
   end
 
   ## Helpers
 
-  defp serialize_say(entity_type, color) do
+  defp say_mock() do
     %SayPacket{
-      entity_type: entity_type,
-      entity_id: @entity_id,
-      color: color,
-      message: @message
+      entity_type: :character,
+      entity_id: 1,
+      color: :default,
+      message: "This is a message for the SayPacket"
     }
-    |> SayPacket.serialize([])
   end
 end
