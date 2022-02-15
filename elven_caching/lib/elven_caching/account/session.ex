@@ -56,7 +56,7 @@ defmodule ElvenCaching.Account.Session do
   def ttl_to_expire(ttl) do
     case ttl do
       :infinity -> :infinity
-      _ -> System.monotonic_time(:millisecond) + ttl
+      _ -> System.monotonic_time(:second) + ttl
     end
   end
 
