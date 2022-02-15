@@ -26,6 +26,7 @@ defmodule LoginService.MixProject do
       {:elven_database, path: "../elven_database"},
       {:elven_views, path: "../elven_views"},
       {:elven_caching, path: "../elven_caching"},
+      {:libcluster, "~> 3.3"},
       {:ranch, "~> 2.0"}
     ]
   end

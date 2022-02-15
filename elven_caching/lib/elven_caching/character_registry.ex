@@ -8,6 +8,7 @@ defmodule ElvenCaching.CharacterRegistry do
   require Logger
 
   alias ElvenCaching.Entity.Character
+  alias ElvenCaching.MnesiaClusterManager
 
   ## Interfaces
 
@@ -48,7 +49,9 @@ defmodule ElvenCaching.CharacterRegistry do
 
   @impl true
   def handle_continue(:init_mnesia, nil) do
-    Memento.Table.create!(ElvenCaching.Entity.Character)
+    MnesiaClusterManager.connect_node()
+    MnesiaClusterManager.create_table!(ElvenCaching.Entity.Character)
+
     :ok = Memento.wait([ElvenCaching.Entity.Character])
 
     Logger.info("CharacterRegistry started")
