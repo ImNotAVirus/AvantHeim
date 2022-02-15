@@ -41,6 +41,15 @@ config :elven_database, ElvenDatabase.Repo,
   hostname: "localhost",
   port: 5432
 
+## Clustering strategy
+
+config :libcluster,
+  topologies: [
+    local_epmd: [
+      strategy: Elixir.Cluster.Strategy.LocalEpmd
+    ]
+  ]
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 if File.exists?("config/#{config_env()}.exs") do

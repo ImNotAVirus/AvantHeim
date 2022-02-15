@@ -5,7 +5,11 @@ defmodule LoginService.Application do
 
   @impl true
   def start(_type, _args) do
+    topologies = Application.fetch_env!(:libcluster, :topologies)
+
     children = [
+      {Cluster.Supervisor, [topologies, [name: LoginService.ClusterSupervisor]]},
+      {ElvenCaching.MnesiaClusterManager, []},
       {ElvenCaching.SessionRegistry, []},
       {LoginService.Endpoint, name: LoginService.Endpoint}
     ]

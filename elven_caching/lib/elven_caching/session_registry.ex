@@ -10,6 +10,7 @@ defmodule ElvenCaching.SessionRegistry do
   import ElvenCaching.Account.Session, only: [is_logged: 1]
 
   alias ElvenCaching.Account.Session
+  alias ElvenCaching.MnesiaClusterManager
 
   @clean_every Application.get_env(:elven_caching, :session_clean_every, 30_000)
 
@@ -38,14 +39,22 @@ defmodule ElvenCaching.SessionRegistry do
 
   @impl true
   def init(nil) do
-    Memento.Table.create!(ElvenCaching.Account.Session)
+    Logger.info("SessionRegistry starting...")
+    {:ok, nil, {:continue, :init_mnesia}}
+  end
+
+  @impl true
+  def handle_continue(:init_mnesia, nil) do
+    MnesiaClusterManager.connect_node()
+    MnesiaClusterManager.create_table!(ElvenCaching.Account.Session)
+
     :ok = Memento.wait([ElvenCaching.Account.Session])
 
     # Autoclean expired keys
     :timer.send_interval(@clean_every, :clean_expired_keys)
 
     Logger.info("SessionRegistry started")
-    {:ok, nil}
+    {:noreply, nil}
   end
 
   @impl true
