@@ -1,4 +1,5 @@
 %{
+  "ex_unit_clustered_case": {:hex, :ex_unit_clustered_case, "0.4.0", "8ab43bee163f929cee471d7198d561d32eab2dc2185e822b9d76c812ad1089d6", [:mix], [], "hexpm", "d7df6421a28fc8c4312d6ffda920d3d6ee06685916bb487573e05443b295f5d0"},
   "memento": {:hex, :memento, "0.3.2", "38cfc8ff9bcb1adff7cbd0f3b78a762636b86dff764729d1c82d0464c539bdd0", [:mix], [], "hexpm", "25cf691a98a0cb70262f4a7543c04bab24648cb2041d937eb64154a8d6f8012b"},
   "simple_enum": {:hex, :simple_enum, "0.1.0", "51d20e3687481d83f1bde467c4dac67be1bc411d4ade3d1fcac4a25c4e8f4343", [:mix], [], "hexpm", "888029af35eb17abea0e23cd0355a2afef2c2bc6cbc75126a917d25e7aa710a7"},
 }

@@ -28,7 +28,8 @@ defmodule ElvenCaching.MixProject do
     [
       {:elven_core, path: "../elven_core"},
       {:elven_enums, path: "../elven_enums"},
-      {:memento, "~> 0.3"}
+      {:memento, "~> 0.3"},
+      {:ex_unit_clustered_case, "~> 0.4", only: :test}
     ]
   end
 end
