@@ -1,0 +1,8 @@
+#!/bin/bash
+set -e
+
+# Fetch Elixir deps
+./mix deps.get
+
+# Setup the database
+./mix --app elven_database ecto.setup
