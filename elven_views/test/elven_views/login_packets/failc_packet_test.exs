@@ -1,5 +1,5 @@
 defmodule ElvenViews.LoginPackets.FailcPacketTest do
-  use ExUnit.Case, async: true
+  use PacketCase, async: true
 
   require ElvenViews.LoginPackets.FailcEnums
 
@@ -10,27 +10,29 @@ defmodule ElvenViews.LoginPackets.FailcPacketTest do
 
   describe "serialize/2" do
     test "can serialize the structure" do
-      Enum.each(FailcEnums.error(:__enumerators__), fn {error, value} ->
-        assert ["failc", ^value] = serialize_failc(error)
-      end)
+      mock = failc_mock()
+      packet = serialize(mock)
+
+      assert is_list(packet)
+      assert packet_index(packet, 0) == "failc"
+      assert packet_index(packet, 1) == FailcEnums.error(mock.error, :value)
     end
 
     test "fallback to a generic error" do
-      generic_error = FailcEnums.error(:generic)
-      assert ["failc", ^generic_error] = serialize_failc(nil)
+      packet = nil |> failc_mock() |> serialize()
+      assert packet_index(packet, 1) == FailcEnums.error(:generic)
     end
 
     test "raises when error is invalid" do
       assert_raise ArgumentError, ~r/invalid value :foo/, fn ->
-        serialize_failc(:foo)
+        :foo |> failc_mock() |> serialize()
       end
     end
   end
 
   ## Helpers
 
-  defp serialize_failc(error) do
+  defp failc_mock(error \\ :bad_credentials) do
     %FailcPacket{error: error}
-    |> FailcPacket.serialize([])
   end
 end

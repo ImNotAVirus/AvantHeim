@@ -8,8 +8,12 @@ defmodule ElvenViews.LoginPackets.NsTeSTPacket do
   alias __MODULE__
   alias ElvenViews.LoginPackets.NsTeST.Channel
 
+  # TODO: region & auth_type must be enums!!!!
+  # region = 0 - International (cf. NoS0577)
+  # 0 = ORG, 1 = STEAM, 2 = GF
   @enforce_keys [:encryption_key, :username, :server_list]
-  defstruct @enforce_keys
+  @additional_keys [region: 0, auth_type: 2]
+  defstruct @enforce_keys ++ @additional_keys
 
   @type t :: %NsTeSTPacket{
           encryption_key: non_neg_integer,
@@ -20,17 +24,13 @@ defmodule ElvenViews.LoginPackets.NsTeSTPacket do
   @impl true
   def serialize(%NsTeSTPacket{} = struct, _) do
     %NsTeSTPacket{
-      encryption_key: encryption_key,
+      region: region,
       username: username,
+      auth_type: auth_type,
+      encryption_key: encryption_key,
       server_list: server_list
     } = struct
 
-    # International (cf. NoS0577)
-    region = 0
-    # 0 = ORG, 1 = STEAM, 2 = GF
-    auth_type = 2
-
-    serialized_servers = serialize_term(server_list, joiner: " ")
     terminator = "-1:-1:-1:10000.10000.1"
 
     unused_servers =
@@ -49,8 +49,8 @@ defmodule ElvenViews.LoginPackets.NsTeSTPacket do
       ["-99 0 -99 0 -99 0 -99 0"],
       ["-99 0 -99 0 -99 0 -99 0"],
       ["-99 0 -99 0 -99 0 -99 0"],
-      [unused_servers],
-      [0, encryption_key, serialized_servers],
+      [unused_servers, 0, encryption_key],
+      serialize_term(server_list, joiner: " "),
       terminator
     ])
   end

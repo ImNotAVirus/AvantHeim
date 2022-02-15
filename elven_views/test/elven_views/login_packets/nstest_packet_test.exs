@@ -1,64 +1,53 @@
 defmodule ElvenViews.LoginPackets.NsTeSTPacketTest do
-  use ExUnit.Case, async: true
+  use PacketCase, async: true
 
   alias ElvenViews.LoginPackets.NsTeSTPacket
   alias ElvenViews.LoginPackets.NsTeST.Channel
 
-  @encryption_key 123
-  @username "admin"
-
   ## Tests
 
   describe "serialize/2" do
-    test "can serialize non empty channel list" do
-      channel = mock_channel()
+    test "with empty channel list" do
+      mock = nstest_mock([])
+      packet = serialize(mock)
 
-      assert [
-               "NsTeST",
-               region,
-               username,
-               auth_type,
-               _server1,
-               _server2,
-               _server3,
-               _server4,
-               _server5,
-               _server6,
-               _unused,
-               0,
-               encryption_key,
-               serialized_servers,
-               terminator
-             ] = serialize_NsTeST([channel])
-
-      assert is_integer(region)
-      assert username == @username
-      assert is_integer(auth_type)
-      assert encryption_key == @encryption_key
-      assert serialized_servers == Channel.serialize(channel, [])
-      assert terminator == "-1:-1:-1:10000.10000.1"
+      assert is_list(packet)
+      assert packet_index(packet, 0) == "NsTeST"
+      assert packet_index(packet, 1) == mock.region
+      assert packet_index(packet, 2) == mock.username
+      assert packet_index(packet, 3) == mock.auth_type
+      # assert packet_index(packet, 4) == mock.server1
+      # assert packet_index(packet, 5) == mock.server2
+      # assert packet_index(packet, 6) == mock.server3
+      # assert packet_index(packet, 7) == mock.server4
+      # assert packet_index(packet, 8) == mock.server5
+      # assert packet_index(packet, 9) == mock.server6
+      # assert packet_index(packet, 10) == mock.unused_servers
+      assert packet_index(packet, 11) == 0
+      assert packet_index(packet, 12) == mock.encryption_key
+      assert packet_index(packet, 13) == "-1"
+      assert packet_index(packet, 14) == "-1:-1:-1:10000.10000.1"
     end
 
-    test "can serialize empty channel list" do
-      packet = serialize_NsTeST([])
-      assert packet_index(packet, 13) == "-1"
+    test "with non empty channel list" do
+      channel = channel_mock()
+      packet = [channel] |> nstest_mock() |> serialize()
+
+      assert packet_index(packet, 13) == Channel.serialize(channel, [])
     end
   end
 
   ## Helpers
 
-  defp packet_index(packet, index), do: Enum.at(packet, index)
-
-  defp serialize_NsTeST(server_list) do
+  defp nstest_mock(server_list) do
     %NsTeSTPacket{
-      encryption_key: @encryption_key,
-      username: @username,
+      encryption_key: 132,
+      username: "admin",
       server_list: server_list
     }
-    |> NsTeSTPacket.serialize([])
   end
 
-  defp mock_channel() do
+  defp channel_mock() do
     %Channel{
       id: 1,
       world_id: 1,
