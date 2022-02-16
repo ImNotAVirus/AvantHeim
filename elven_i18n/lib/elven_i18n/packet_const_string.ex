@@ -32,7 +32,7 @@ defmodule ElvenI18n.PacketConstString do
   end
 
   @path
-  |> YamlElixir.read_all_from_file!(atoms: true)
+  |> YamlElixir.read_all_from_file!()
   |> Enum.map(def_getter)
   |> Code.eval_quoted([], __ENV__)
 
