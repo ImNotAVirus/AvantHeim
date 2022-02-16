@@ -3,9 +3,10 @@ defmodule ElvenViews.SerializablePacket do
   TODO: Documentation.
   """
 
+  @native_types [:integer, :pos_integer, :non_neg_integer, :string]
   @type_aliases [enum: ElvenViews.SerializableEnum]
   @aliased_types Keyword.keys(@type_aliases)
-  @supported_types [:integer, :pos_integer, :non_neg_integer, :string] ++ @aliased_types
+  @supported_types @native_types ++ @aliased_types
 
   ## Public API
 
@@ -24,7 +25,8 @@ defmodule ElvenViews.SerializablePacket do
   defmacro __before_compile__(env) do
     quote do
       unquote(define_type(env))
-      unquote(def_interface(env))
+      unquote(def_interface())
+      unquote(def_serialize())
     end
   end
 
@@ -116,12 +118,31 @@ defmodule ElvenViews.SerializablePacket do
     {{:., [], [mod, :t]}, [], []}
   end
 
-  defp def_interface(_env) do
+  defp def_interface() do
     quote do
       def new!(attrs) do
         attrs
         |> unquote(__MODULE__).prepare_attrs(@fields)
         |> then(&struct!(__MODULE__, &1))
+      end
+    end
+  end
+
+  defp def_serialize() do
+    quote do
+      @impl true
+      def serialize(struct, _) do
+        attrs =
+          Enum.map(@fields, fn %{name: name, type: type, opts: opts} ->
+            attr = Map.get(struct, name)
+
+            case type do
+              :enum -> Keyword.fetch!(opts[:values], attr)
+              _ -> attr
+            end
+          end)
+
+        [@name | attrs]
       end
     end
   end

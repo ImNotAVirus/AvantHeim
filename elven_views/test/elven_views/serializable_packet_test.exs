@@ -1,14 +1,12 @@
 Code.require_file("../fixtures/test_packet.exs", __DIR__)
 
 defmodule ElvenViews.SerializablePacketTest do
-  use ExUnit.Case, async: true
+  use PacketCase, async: true
 
   import ExUnit.CaptureIO
-  # import ElvenCore.Socket.Serializer, only: [serialize_term: 2]
+  import ElvenCore.Socket.Serializer, only: [serialize_term: 2]
 
-  # alias ElvenViews.SerializablePacket
-
-  alias MyApp.TestPacket
+  alias MyApp.{SerializableTestStruct, TestPacket}
 
   ## Tests
 
@@ -86,6 +84,10 @@ defmodule ElvenViews.SerializablePacketTest do
       assert packet.type == mock.type
       assert packet.message == mock.message
       assert packet.my_struct == mock.my_struct
+
+      mock = test_packet_mock_attrs(%{id3: 999})
+      packet = TestPacket.new!(mock)
+      assert packet.id3 == 999
     end
 
     test "raises when required attr is missing" do
@@ -123,18 +125,34 @@ defmodule ElvenViews.SerializablePacketTest do
 
   describe "__using__/1" do
     test "define behaviour ElvenCore.SerializableStruct" do
-      # serialize_term()
+      mock = test_packet_mock_attrs()
+      packet = TestPacket.new!(mock)
+
+      iodata = TestPacket.serialize(packet, [])
+      assert packet_index(iodata, 0) == "test"
+      assert packet_index(iodata, 1) == mock.id
+      assert packet_index(iodata, 2) == 0
+      assert packet_index(iodata, 3) == -123
+      assert packet_index(iodata, 4) == 1
+      assert packet_index(iodata, 5) == mock.message
+      assert %SerializableTestStruct{} = packet_index(iodata, 6)
+
+      expected = "test 123 0 -123 1 This is a message 123-789"
+      assert ^expected = serialize_term(packet, [])
     end
   end
 
   ## Private helpers
 
-  defp test_packet_mock_attrs() do
-    %{
-      id: 123,
-      type: :admin,
-      message: "This is a message",
-      my_struct: %MyApp.SerializableTestStruct{key2: 789}
-    }
+  defp test_packet_mock_attrs(attrs \\ %{}) do
+    Map.merge(
+      %{
+        id: 123,
+        type: :admin,
+        message: "This is a message",
+        my_struct: %MyApp.SerializableTestStruct{key2: 789}
+      },
+      attrs
+    )
   end
 end
