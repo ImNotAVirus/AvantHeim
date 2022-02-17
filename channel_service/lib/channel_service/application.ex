@@ -10,7 +10,7 @@ defmodule ChannelService.Application do
     children = [
       {Cluster.Supervisor, [topologies, [name: LoginService.ClusterSupervisor]]},
       {ElvenCaching.MnesiaClusterManager, []},
-      {ElvenCaching.SessionRegistry, []},
+      {ElvenCaching.SessionRegistry, [disable_clean: true]},
       {ElvenCaching.CharacterRegistry, []},
       {ChannelService.Endpoint, name: ChannelService.Endpoint}
     ]

@@ -31,27 +31,29 @@ defmodule ElvenCaching.SessionRegistry do
   ## Public API
 
   @spec start_link(any) :: GenServer.on_start()
-  def start_link(_opts) do
-    GenServer.start_link(__MODULE__, nil, name: __MODULE__)
+  def start_link(opts) do
+    GenServer.start_link(__MODULE__, opts, name: __MODULE__)
   end
 
   ## GenServer behaviour
 
   @impl true
-  def init(nil) do
+  def init(opts) do
     Logger.info("SessionRegistry starting...")
-    {:ok, nil, {:continue, :init_mnesia}}
+    {:ok, opts, {:continue, :init_mnesia}}
   end
 
   @impl true
-  def handle_continue(:init_mnesia, nil) do
+  def handle_continue(:init_mnesia, opts) do
     MnesiaClusterManager.connect_node()
     MnesiaClusterManager.create_table!(ElvenCaching.Account.Session)
 
     :ok = Memento.wait([ElvenCaching.Account.Session])
 
-    # Autoclean expired keys
-    :timer.send_interval(@clean_every, :clean_expired_keys)
+    if opts[:disable_clean] != true do
+      # Autoclean expired keys
+      :timer.send_interval(@clean_every, :clean_expired_keys)
+    end
 
     Logger.info("SessionRegistry started")
     {:noreply, nil}
