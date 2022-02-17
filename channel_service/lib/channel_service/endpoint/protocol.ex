@@ -8,7 +8,7 @@ defmodule ChannelService.Endpoint.Protocol do
   alias ElvenCore.Socket
   alias SessionService.Session
   alias ChannelService.Endpoint.LobbyViews
-  alias DatabaseService.Players.{Account, Accounts, Characters}
+  alias ElvenDatabase.Players.{Account, Accounts, Characters}
 
   @behaviour :ranch_protocol
 

@@ -7,10 +7,10 @@ defmodule ChannelService.Endpoint.VisibilityPackets.InCharacter do
 
   use ElvenCore.SerializableStruct
 
-  require DatabaseService.{EntityEnums, PlayerEnums}
+  require ElvenEnums.{EntityEnums, PlayerEnums}
 
   alias __MODULE__
-  alias DatabaseService.{EntityEnums, PlayerEnums}
+  alias ElvenEnums.{EntityEnums, PlayerEnums}
 
   @enforce_keys [
     :name,

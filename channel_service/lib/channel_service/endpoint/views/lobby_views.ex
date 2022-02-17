@@ -3,7 +3,7 @@ defmodule ChannelService.Endpoint.LobbyViews do
   TODO: Documentation
   """
 
-  alias DatabaseService.Players.Character
+  alias ElvenDatabase.Players.Character
 
   alias ChannelService.Endpoint.LobbyPackets.{
     ClistStart,

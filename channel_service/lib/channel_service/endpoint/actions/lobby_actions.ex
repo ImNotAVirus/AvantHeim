@@ -7,7 +7,7 @@ defmodule ChannelService.Endpoint.LobbyActions do
 
   alias ElvenCore.Socket
   alias ChannelService.Endpoint.LobbyViews
-  alias DatabaseService.Players.{Account, Characters}
+  alias ElvenDatabase.Players.{Account, Characters}
 
   ## Public API
 
