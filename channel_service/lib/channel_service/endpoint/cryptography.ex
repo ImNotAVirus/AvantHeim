@@ -35,8 +35,8 @@ defmodule ChannelService.Endpoint.Cryptography do
   Decrypt a channel packet.
   """
   @spec decrypt(binary, map) :: [String.t()]
-  def decrypt(binary, %{session_key: session_key}) when not is_nil(session_key),
-    do: decrypt_channel(binary, session_key)
+  def decrypt(binary, %{encryption_key: encryption_key}) when not is_nil(encryption_key),
+    do: decrypt_channel(binary, encryption_key)
 
   def decrypt(binary, _), do: decrypt_session(binary)
 
@@ -55,22 +55,22 @@ defmodule ChannelService.Endpoint.Cryptography do
   end
 
   @spec decrypt_channel(binary, integer, boolean) :: [binary | {integer, binary}]
-  defp decrypt_channel(binary, session_key, _remove_keepalive? \\ true) do
+  defp decrypt_channel(binary, encryption_key, _remove_keepalive? \\ true) do
     binary
-    |> world_xor(session_key, false)
+    |> world_xor(encryption_key, false)
     |> unpack(@table)
     # |> split_keepalive(keepalive?)
     |> remove_keepalive()
   end
 
-  @spec world_xor(raw :: binary, session_key :: integer, is_key_packet :: boolean) :: binary
+  @spec world_xor(raw :: binary, encryption_key :: integer, is_key_packet :: boolean) :: binary
   defp world_xor(binary, _, true) do
     for <<c <- binary>>, into: "", do: do_world_xor(c, -1, -1)
   end
 
-  defp world_xor(binary, session_key, false) do
-    decryption_type = session_key >>> 6 &&& 3
-    offset = session_key &&& 0xFF
+  defp world_xor(binary, encryption_key, false) do
+    decryption_type = encryption_key >>> 6 &&& 3
+    offset = encryption_key &&& 0xFF
     for <<c <- binary>>, into: "", do: do_world_xor(c, offset, decryption_type)
   end
 
