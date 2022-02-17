@@ -47,14 +47,14 @@ defmodule ChannelService.Endpoint.Protocol do
 
   @impl true
   def handle_continue(:client_handshake, socket) do
-    session_key = recv_session_key(socket)
-    new_socket = Socket.assign(socket, session_key: session_key)
+    encryption_key = recv_encryption_key(socket)
+    new_socket = Socket.assign(socket, encryption_key: encryption_key)
     username = recv_username(new_socket)
 
     %Socket{transport_pid: transport_pid, transport: transport} = new_socket
 
     with {:ok, session} <- SessionRegistry.get(username),
-         :ok <- validate_session(session, session_key),
+         :ok <- validate_session(session, encryption_key),
          # TODO: PresenceManager
          # :ok <- EndpointManager.register_username(username),
          {:ok, _} <- cache_session_as_logged(session),
@@ -104,9 +104,9 @@ defmodule ChannelService.Endpoint.Protocol do
 
   ## Private functions
 
-  defp validate_session(session, session_key) do
+  defp validate_session(session, encryption_key) do
     case session do
-      %Session{encryption_key: ^session_key} = s when not Session.is_logged(s) -> :ok
+      %Session{encryption_key: ^encryption_key} = s when not Session.is_logged(s) -> :ok
       _ -> {:error, session}
     end
   end
@@ -134,9 +134,9 @@ defmodule ChannelService.Endpoint.Protocol do
     Socket.send(socket, LobbyViews.render(:clist_end, nil))
   end
 
-  defp recv_session_key(socket) do
-    {:ok, session_key} = Socket.recv(socket, 0, @handshake_timeout)
-    String.to_integer(session_key)
+  defp recv_encryption_key(socket) do
+    {:ok, encryption_key} = Socket.recv(socket, 0, @handshake_timeout)
+    String.to_integer(encryption_key)
   end
 
   if Mix.env() != :prod do
