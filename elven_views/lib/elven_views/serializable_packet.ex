@@ -24,8 +24,8 @@ defmodule ElvenViews.SerializablePacket do
   @doc false
   defmacro __before_compile__(env) do
     quote do
+      unquote(def_introspection())
       unquote(define_type(env))
-      unquote(def_interface())
       unquote(def_serialize(env))
     end
   end
@@ -106,6 +106,13 @@ defmodule ElvenViews.SerializablePacket do
     end
   end
 
+  defp def_introspection() do
+    quote do
+      def __header__(), do: @name
+      def __fields__(), do: @fields
+    end
+  end
+
   defp define_type(env) do
     quote do
       @type t :: unquote(ast_type(env))
@@ -131,16 +138,6 @@ defmodule ElvenViews.SerializablePacket do
   defp ast_t(mod) do
     # mod.t()
     {{:., [], [mod, :t]}, [], []}
-  end
-
-  defp def_interface() do
-    quote do
-      def new!(attrs) do
-        attrs
-        |> unquote(__MODULE__).prepare_attrs(@fields)
-        |> then(&struct!(__MODULE__, &1))
-      end
-    end
   end
 
   defp def_serialize(env) do
@@ -199,15 +196,6 @@ defmodule ElvenViews.SerializablePacket do
     end
   end
 
-  ## Internal functions
-
-  @doc false
-  def prepare_attrs(attrs, fields) do
-    attrs
-    |> extract_args!(fields)
-    |> Enum.into(%{})
-  end
-
   ## Private helpers
 
   defp resolve_type!(type) when type in @supported_types, do: type
@@ -225,17 +213,5 @@ defmodule ElvenViews.SerializablePacket do
 
     # Ok :)
     type
-  end
-
-  defp extract_args!(attrs, fields) do
-    Enum.map(fields, fn field ->
-      error = "no value provided for required field #{inspect(field.name)}"
-
-      case {attrs[field.name], field.default} do
-        {nil, nil} -> raise ArgumentError, error
-        {nil, default} -> {field.name, default}
-        {value, _} -> {field.name, value}
-      end
-    end)
   end
 end
