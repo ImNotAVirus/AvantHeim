@@ -3,8 +3,9 @@ defmodule ChannelService.Endpoint.MapViews do
   TODO: Documentation
   """
 
-  alias CachingService.Position
-  alias CachingService.Player.Character
+  alias ElvenCaching.Entity
+  alias ElvenCaching.Entity.EntityPosition
+  alias ElvenCaching.Entity.Character
 
   alias ChannelService.Endpoint.MapPackets.{
     At,
@@ -16,11 +17,11 @@ defmodule ChannelService.Endpoint.MapViews do
 
   @spec render(atom, any) :: any
   def render(:at, %Character{} = character) do
-    %Position{
+    %EntityPosition{
       map_vnum: map_vnum,
       map_x: map_x,
       map_y: map_y
-    } = Character.get_position(character)
+    } = Entity.get_position(character)
 
     %At{
       character_id: character.id,
@@ -33,10 +34,10 @@ defmodule ChannelService.Endpoint.MapViews do
   end
 
   def render(:c_map, %Character{} = character) do
-    %Position{
+    %EntityPosition{
       map_vnum: map_vnum,
       is_instance: is_instance
-    } = Character.get_position(character)
+    } = Entity.get_position(character)
 
     %CMap{
       map_vnum: map_vnum,
@@ -45,10 +46,10 @@ defmodule ChannelService.Endpoint.MapViews do
   end
 
   def render(:mv, %Character{} = character) do
-    %Position{
+    %EntityPosition{
       map_x: map_x,
       map_y: map_y
-    } = Character.get_position(character)
+    } = Entity.get_position(character)
 
     %Mv{
       entity_type: :character,

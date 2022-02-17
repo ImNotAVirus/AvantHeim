@@ -3,18 +3,19 @@ defmodule ChannelService.Endpoint.VisibilityViews do
   TODO: Documentation
   """
 
-  alias CachingService.Position
-  alias CachingService.Player.Character
+  alias ElvenCaching.Entity
+  alias ElvenCaching.Entity.EntityPosition
+  alias ElvenCaching.Entity.Character
   alias ChannelService.Endpoint.VisibilityPackets.InCharacter
 
   ## Public API
 
   @spec render(atom, any) :: any
   def render(:in, %Character{} = character) do
-    %Position{
+    %EntityPosition{
       map_x: map_x,
       map_y: map_y
-    } = Character.get_position(character)
+    } = Entity.get_position(character)
 
     hp = FakeData.hp(character_id: character.id)
     hp_max = FakeData.hp_max(character_id: character.id)

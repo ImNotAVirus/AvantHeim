@@ -4,7 +4,7 @@ defmodule ChannelService.Endpoint.ShopViews do
   """
 
   alias ChannelService.Endpoint.ShopPackets.Buy
-  alias CachingService.Player.Character
+  alias ElvenCaching.Entity.Character
 
   ## Public API
 

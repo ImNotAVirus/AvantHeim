@@ -3,7 +3,7 @@ defmodule ChannelService.Endpoint.UIViews do
   TODO: Documentation
   """
 
-  alias CachingService.Player.Character
+  alias ElvenCaching.Entity.Character
   alias ChannelService.Endpoint.UIPackets.{Cancel, Info, Scene, Gold, Gb, SMemoi2, SMemoi}
 
   ## Public API

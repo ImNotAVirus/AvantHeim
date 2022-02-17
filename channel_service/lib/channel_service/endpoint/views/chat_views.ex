@@ -3,7 +3,7 @@ defmodule ChannelService.Endpoint.ChatViews do
   TODO: Documentation
   """
 
-  alias CachingService.Player.Character
+  alias ElvenCaching.Entity.Character
   alias ChannelService.Endpoint.ChatPackets.{Bn, Say}
 
   ## Public API

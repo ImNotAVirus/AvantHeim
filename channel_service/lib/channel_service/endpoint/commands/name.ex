@@ -4,7 +4,7 @@ defmodule ChannelService.Endpoint.NameCommand do
   """
 
   alias ElvenCore.Socket
-  alias CachingService.Player.Character
+  alias ElvenCaching.Entity.Character
   alias ChannelService.Endpoint.{ChatViews, UIViews}
   alias ChannelService.Endpoint.EntityInteractions
 
