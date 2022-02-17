@@ -72,9 +72,9 @@ defmodule ChannelService.Endpoint.Protocol do
 
   @impl true
   def handle_info({:tcp, transport_pid, message}, socket) do
-    %Socket{id: id, transport_pid: ^transport_pid, transport: transport} = socket
+    %Socket{transport_pid: ^transport_pid, transport: transport} = socket
 
-    Logger.debug("New message from #{id} (len: #{byte_size(message)})")
+    Logger.debug("New message (len: #{byte_size(message)})")
 
     new_socket =
       with {:ok, packets} <- parse_message(message, socket) do
@@ -90,14 +90,14 @@ defmodule ChannelService.Endpoint.Protocol do
   end
 
   def handle_info({:tcp_closed, transport_pid}, socket) do
-    %Socket{id: id, transport_pid: ^transport_pid} = socket
-    Logger.info("#{id} is now disconnected")
+    %Socket{transport_pid: ^transport_pid} = socket
+    Logger.info("Player disconnected")
     {:stop, :normal, socket}
   end
 
   def handle_info(:timeout, socket) do
-    %Socket{id: id, transport_pid: transport_pid, transport: transport} = socket
-    Logger.error("An error occured with client #{id}: :timeout")
+    %Socket{transport_pid: transport_pid, transport: transport} = socket
+    Logger.error("An error occured with the client: :timeout")
     transport.shutdown(transport_pid, :read_write)
     {:stop, {:shutdown, :timeout}, socket}
   end

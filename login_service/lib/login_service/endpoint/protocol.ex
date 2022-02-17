@@ -33,7 +33,8 @@ defmodule LoginService.Endpoint.Protocol do
 
     socket = Socket.new(transport, transport_pid, @packet_encoder)
 
-    Logger.info("New connection: #{socket.id} (#{:inet.ntoa(address)}:#{port})")
+    Logger.metadata(socket_id: socket.id)
+    Logger.info("New connection: #{:inet.ntoa(address)}:#{port}")
 
     transport.setopts(transport_pid, active: :once)
     :gen_server.enter_loop(__MODULE__, [], socket, @startup_timeout)
@@ -41,14 +42,14 @@ defmodule LoginService.Endpoint.Protocol do
 
   @impl true
   def handle_info({:tcp, transport_pid, message}, socket) do
-    %Socket{id: id, transport_pid: ^transport_pid, transport: transport} = socket
+    %Socket{transport_pid: ^transport_pid, transport: transport} = socket
 
-    Logger.debug("New message from #{id} (len: #{byte_size(message)})")
+    Logger.debug("New message (len: #{byte_size(message)})")
 
     with {:ok, {header, args}} <- parse_message(message, socket) do
       @packet_schemas.resolve(header, args, socket)
     else
-      {:error, msg} -> Logger.warn(msg, socket_id: socket.id)
+      {:error, msg} -> Logger.warn(msg)
     end
 
     transport.setopts(transport_pid, active: :once)
@@ -58,14 +59,14 @@ defmodule LoginService.Endpoint.Protocol do
   end
 
   def handle_info({:tcp_closed, transport_pid}, socket) do
-    %Socket{id: id, transport_pid: ^transport_pid} = socket
-    Logger.info("#{id} is now disconnected")
+    %Socket{transport_pid: ^transport_pid} = socket
+    Logger.info("Client disconnected")
     {:stop, :normal, socket}
   end
 
   def handle_info(:timeout, socket) do
-    %Socket{id: id, transport_pid: transport_pid, transport: transport} = socket
-    Logger.error("An error occured with client #{id}: :timeout")
+    %Socket{transport_pid: transport_pid, transport: transport} = socket
+    Logger.error("An error occured with the client: :timeout")
     transport.shutdown(transport_pid, :read_write)
     {:stop, {:shutdown, :timeout}, socket}
   end
