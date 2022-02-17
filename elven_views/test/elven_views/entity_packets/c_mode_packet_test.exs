@@ -11,7 +11,7 @@ defmodule ElvenViews.EntityPackets.CModePacketTest do
   describe "serialize/2" do
     test "can serialize a packet structure" do
       mock = c_mode_mock()
-      packet = serialize(mock)
+      packet = serialize_structure(mock)
 
       assert is_list(packet)
       assert packet_index(packet, 0) == "c_mode"

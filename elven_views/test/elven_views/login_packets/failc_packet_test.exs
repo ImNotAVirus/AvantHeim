@@ -11,7 +11,7 @@ defmodule ElvenViews.LoginPackets.FailcPacketTest do
   describe "serialize/2" do
     test "can serialize the structure" do
       mock = failc_mock()
-      packet = serialize(mock)
+      packet = serialize_structure(mock)
 
       assert is_list(packet)
       assert packet_index(packet, 0) == "failc"
@@ -19,13 +19,15 @@ defmodule ElvenViews.LoginPackets.FailcPacketTest do
     end
 
     test "fallback to a generic error" do
-      packet = nil |> failc_mock() |> serialize()
-      assert packet_index(packet, 1) == FailcEnums.error(:generic)
+      mock = failc_mock(nil)
+      packet = serialize_structure(mock)
+
+      assert packet_index(packet, 1) == structure_enum_default(mock, :error)
     end
 
     test "raises when error is invalid" do
       assert_raise ArgumentError, ~r/invalid key :foo in enum/, fn ->
-        :foo |> failc_mock() |> serialize()
+        :foo |> failc_mock() |> serialize_structure()
       end
     end
   end

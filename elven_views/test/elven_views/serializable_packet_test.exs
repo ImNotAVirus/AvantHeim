@@ -64,10 +64,10 @@ defmodule ElvenViews.SerializablePacketTest do
       iodata = TestPacket.serialize(mock, [])
       assert packet_index(iodata, 0) == TestPacket.__header__()
       assert packet_index(iodata, 1) == mock.id
-      assert packet_index(iodata, 2) == mock.id2
-      assert packet_index(iodata, 3) == mock.id3
+      assert packet_index(iodata, 2) == structure_default(mock, :id2)
+      assert packet_index(iodata, 3) == structure_default(mock, :id3)
       assert packet_index(iodata, 4) == mock.enabled
-      assert packet_index(iodata, 5) |> is_integer()
+      assert packet_index(iodata, 5) == structure_enum_value(mock, :type)
       assert packet_index(iodata, 6) == mock.message
       assert %SerializableTestStruct{} = packet_index(iodata, 7)
 

@@ -13,7 +13,7 @@ defmodule ElvenViews.ChatPackets.SayPacketTest do
   describe "serialize/2" do
     test "can serialize entity types" do
       mock = say_mock()
-      packet = serialize(mock)
+      packet = serialize_structure(mock)
 
       assert is_list(packet)
       assert packet_index(packet, 0) == "say"
