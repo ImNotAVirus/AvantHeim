@@ -1,7 +1,7 @@
 defmodule ElvenEnums.BankEnums do
   @moduledoc """
   TODO: Documentation
-  
+
   TODO: Maybe move this file later in ElvenViews
   """
 

@@ -103,14 +103,14 @@ defmodule ChannelService.Endpoint.Protocol do
   end
 
   ## Private functions
-  
+
   defp validate_session(session, session_key) do
     case session do
       %Session{encryption_key: ^session_key} = s when not Session.is_logged(s) -> :ok
       _ -> {:error, session}
     end
   end
-  
+
   defp cache_session_as_logged(session) do
     session
     |> Session.set_ttl(:infinity)
