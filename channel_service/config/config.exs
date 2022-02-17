@@ -36,7 +36,7 @@ config :elven_database, ElvenDatabase.Repo,
   username: "postgres",
   password: "postgres",
   hostname: "localhost",
-  port: 5433
+  port: 5432
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
