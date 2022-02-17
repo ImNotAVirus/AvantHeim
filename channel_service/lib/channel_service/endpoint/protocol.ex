@@ -57,13 +57,14 @@ defmodule ChannelService.Endpoint.Protocol do
          :ok <- validate_session(session, session_key),
          # TODO: PresenceManager
          # :ok <- EndpointManager.register_username(username),
+         {:ok, _} <- cache_session_as_logged(session),
          {:ok, account} <- get_account(session),
          :ok <- send_character_list(account, new_socket) do
       transport.setopts(transport_pid, active: :once)
       {:noreply, Socket.assign(new_socket, account: account), @timeout}
     else
       e ->
-        Logger.info("Invalid Handshake (reason: #{inspect(e)})")
+        Logger.warn("Invalid Handshake (reason: #{inspect(e)})")
         transport.shutdown(transport_pid, :read_write)
         {:stop, :normal, new_socket}
     end
