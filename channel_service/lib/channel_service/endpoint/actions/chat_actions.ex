@@ -1,0 +1,24 @@
+defmodule ChannelService.Endpoint.ChatActions do
+  @moduledoc """
+  TODO: Documentation
+  """
+
+  alias ElvenCore.Socket
+  alias ChannelService.Endpoint.EntityInteractions
+
+  ## Packet handlers
+
+  @spec player_general_chat(String.t(), map, Socket.t()) :: {:cont, Socket.t()}
+  def player_general_chat("say", %{message: message}, %Socket{} = socket) do
+    if String.starts_with?(message, "!") do
+      raise "TODO: unimplemented timespace chat"
+    end
+
+    %{character_id: character_id} = socket.assigns
+    {:ok, character} = CachingService.get_character_by_id(character_id)
+
+    EntityInteractions.say_to_map(character, message)
+
+    {:cont, socket}
+  end
+end
