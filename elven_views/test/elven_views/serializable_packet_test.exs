@@ -34,6 +34,7 @@ defmodule ElvenViews.SerializablePacketTest do
           field :id, :pos_integer
           field :id2, :non_neg_integer, default: 0
           field :id3, :integer, default: -123
+          field :enabled, :boolean
           field :message, :string
           field :type, :enum, values: TestPacketEnums.type(:__enumerators__)
           field :my_struct, SerializableTestStruct
@@ -66,8 +67,9 @@ defmodule ElvenViews.SerializablePacketTest do
       assert log =~ "id := pos_integer"
       assert log =~ "id2 := non_neg_integer"
       assert log =~ "id3 := integer"
-      assert log =~ "message := string"
-      assert log =~ "type := 'Elixir.ElvenViews.SerializableEnum':t()}"
+      assert log =~ "enabled := boolean"
+      assert log =~ "message := 'Elixir.String':t()"
+      assert log =~ "type := 'Elixir.ElvenViews.SerializableEnum':t()"
       assert log =~ "my_struct := 'Elixir.MyApp.SerializableTestStruct':t()"
     end
   end
@@ -81,6 +83,7 @@ defmodule ElvenViews.SerializablePacketTest do
       assert packet.id == mock.id
       assert packet.id2 == 0
       assert packet.id3 == -123
+      assert packet.enabled == true
       assert packet.type == mock.type
       assert packet.message == mock.message
       assert packet.my_struct == mock.my_struct
@@ -96,28 +99,33 @@ defmodule ElvenViews.SerializablePacketTest do
       end
     end
 
+    @tag :disabled
     test "raises when invalid attr type" do
-      assert_raise ArgumentError, "invalid types for [:id]", fn ->
+      assert_raise ArgumentError, "invalid attributs [id: 0]", fn ->
         test_packet_mock_attrs() |> Map.put(:id, 0) |> TestPacket.new!()
       end
 
-      assert_raise ArgumentError, "invalid types for [:id2]", fn ->
+      assert_raise ArgumentError, "invalid attributs [id2: -1]", fn ->
         test_packet_mock_attrs() |> Map.put(:id2, -1) |> TestPacket.new!()
       end
 
-      assert_raise ArgumentError, "invalid types for [:id3]", fn ->
+      assert_raise ArgumentError, "invalid attributs [id3: \"test\"]", fn ->
         test_packet_mock_attrs() |> Map.put(:id3, "test") |> TestPacket.new!()
       end
 
-      assert_raise ArgumentError, "invalid types for [:type]", fn ->
+      assert_raise ArgumentError, "invalid attributs [enabled: \"test\"]", fn ->
+        test_packet_mock_attrs() |> Map.put(:enabled, "test") |> TestPacket.new!()
+      end
+
+      assert_raise ArgumentError, "invalid attributs [type: :test]", fn ->
         test_packet_mock_attrs() |> Map.put(:type, :test) |> TestPacket.new!()
       end
 
-      assert_raise ArgumentError, "invalid types for [:message]", fn ->
+      assert_raise ArgumentError, "invalid attributs [message: :foo]", fn ->
         test_packet_mock_attrs() |> Map.put(:message, :foo) |> TestPacket.new!()
       end
 
-      assert_raise ArgumentError, "invalid types for [:my_struct]", fn ->
+      assert_raise ArgumentError, "invalid attributs [my_struct: #MapSet<[]>]", fn ->
         test_packet_mock_attrs() |> Map.put(:my_struct, MapSet.new()) |> TestPacket.new!()
       end
     end
@@ -133,11 +141,12 @@ defmodule ElvenViews.SerializablePacketTest do
       assert packet_index(iodata, 1) == mock.id
       assert packet_index(iodata, 2) == 0
       assert packet_index(iodata, 3) == -123
-      assert packet_index(iodata, 4) == 1
-      assert packet_index(iodata, 5) == mock.message
-      assert %SerializableTestStruct{} = packet_index(iodata, 6)
+      assert packet_index(iodata, 4) == true
+      assert packet_index(iodata, 5) == 1
+      assert packet_index(iodata, 6) == mock.message
+      assert %SerializableTestStruct{} = packet_index(iodata, 7)
 
-      expected = "test 123 0 -123 1 This is a message 123-789"
+      expected = "test 123 0 -123 1 1 This is a message 123-789"
       assert ^expected = serialize_term(packet, [])
     end
   end
@@ -148,6 +157,7 @@ defmodule ElvenViews.SerializablePacketTest do
     Map.merge(
       %{
         id: 123,
+        enabled: true,
         type: :admin,
         message: "This is a message",
         my_struct: %MyApp.SerializableTestStruct{key2: 789}

@@ -3,8 +3,8 @@ defmodule ElvenViews.SerializablePacket do
   TODO: Documentation.
   """
 
-  @native_types [:integer, :pos_integer, :non_neg_integer, :string]
-  @type_aliases [enum: ElvenViews.SerializableEnum]
+  @native_types [:integer, :pos_integer, :non_neg_integer, :boolean, :list]
+  @type_aliases [string: String, enum: ElvenViews.SerializableEnum]
   @aliased_types Keyword.keys(@type_aliases)
   @supported_types @native_types ++ @aliased_types
 
@@ -26,7 +26,7 @@ defmodule ElvenViews.SerializablePacket do
     quote do
       unquote(define_type(env))
       unquote(def_interface())
-      unquote(def_serialize())
+      unquote(def_serialize(env))
     end
   end
 
@@ -64,9 +64,22 @@ defmodule ElvenViews.SerializablePacket do
   """
   defmacro field(name, type, opts \\ []) do
     expanded_type = type |> Macro.expand(__CALLER__) |> resolve_type!()
+    updated_opts = Keyword.delete(opts, :default)
+
+    escaped_default =
+      case opts[:default] do
+        {:-, _, _} = value -> value
+        {_, _, _} = value -> Macro.escape(value)
+        value -> value
+      end
 
     quote do
-      @fields %{name: unquote(name), type: unquote(expanded_type), opts: unquote(opts)}
+      @fields %{
+        name: unquote(name),
+        type: unquote(expanded_type),
+        opts: unquote(updated_opts),
+        default: unquote(escaped_default)
+      }
     end
   end
 
@@ -82,14 +95,14 @@ defmodule ElvenViews.SerializablePacket do
   defp enforce_keys() do
     quote do
       @fields
-      |> Enum.filter(&(not Keyword.has_key?(&1.opts, :default)))
+      |> Enum.reject(& &1.default)
       |> Enum.map(& &1.name)
     end
   end
 
   defp struct_keys() do
     quote do
-      Enum.map(@fields, &{&1.name, &1.opts[:default]})
+      Enum.map(@fields, &{&1.name, &1.default})
     end
   end
 
@@ -111,10 +124,12 @@ defmodule ElvenViews.SerializablePacket do
       |> Module.get_attribute(:fields)
       |> Enum.map(ast_type_fun)
 
+    # %__MODULE__{fields_ast}
     {:%, [], [env.module, {:%{}, [], fields_ast}]}
   end
 
   defp ast_t(mod) do
+    # mod.t()
     {{:., [], [mod, :t]}, [], []}
   end
 
@@ -128,22 +143,59 @@ defmodule ElvenViews.SerializablePacket do
     end
   end
 
-  defp def_serialize() do
+  defp def_serialize(env) do
     quote do
       @impl true
       def serialize(struct, _) do
-        attrs =
-          Enum.map(@fields, fn %{name: name, type: type, opts: opts} ->
-            attr = Map.get(struct, name)
-
-            case type do
-              :enum -> Keyword.fetch!(opts[:values], attr)
-              _ -> attr
-            end
-          end)
-
-        [@name | attrs]
+        [@name | unquote(serialize_ast(env))]
       end
+    end
+  end
+
+  defp serialize_ast(env) do
+    fields = Module.get_attribute(env.module, :fields)
+    Enum.map(fields, &serialize_field_ast/1)
+  end
+
+  defp serialize_field_ast(%{type: :enum, name: name, opts: opts, default: default}) do
+    values = opts[:values]
+    value_ast = maybe_default_ast(name, default)
+
+    error =
+      quote do
+        "invalid key #{inspect(unquote(value_ast))} in enum #{inspect(__MODULE__)}.#{unquote(name)}"
+      end
+
+    quote do
+      unquote(values)[unquote(value_ast)] || raise ArgumentError, unquote(error)
+    end
+  end
+
+  defp serialize_field_ast(%{type: _, name: name, opts: opts, default: default}) do
+    value_ast = maybe_default_ast(name, default)
+
+    case opts do
+      [] ->
+        value_ast
+
+      _ ->
+        quote do
+          serialize_term(unquote(value_ast), unquote(opts))
+        end
+    end
+  end
+
+  defp maybe_default_ast(name, default) do
+    case default do
+      nil ->
+        quote do
+          struct.unquote(name)
+        end
+
+      _ ->
+        quote do
+          struct.unquote(name) || unquote(default)
+        end
     end
   end
 
@@ -153,7 +205,6 @@ defmodule ElvenViews.SerializablePacket do
   def prepare_attrs(attrs, fields) do
     attrs
     |> extract_args!(fields)
-    |> validate_args_type!(fields)
     |> Enum.into(%{})
   end
 
@@ -180,33 +231,11 @@ defmodule ElvenViews.SerializablePacket do
     Enum.map(fields, fn field ->
       error = "no value provided for required field #{inspect(field.name)}"
 
-      case {attrs[field.name], field.opts[:default]} do
+      case {attrs[field.name], field.default} do
         {nil, nil} -> raise ArgumentError, error
         {nil, default} -> {field.name, default}
         {value, _} -> {field.name, value}
       end
     end)
   end
-
-  defp validate_args_type!(attrs, fields) do
-    invalid_types =
-      attrs
-      |> Enum.zip(fields)
-      |> Enum.map(fn {{name, attr}, field} -> {name, check_type(field, attr)} end)
-      |> Enum.reject(&elem(&1, 1))
-
-    if length(invalid_types) > 0 do
-      types = Enum.map(invalid_types, &elem(&1, 0))
-      raise ArgumentError, "invalid types for #{inspect(types)}"
-    end
-
-    attrs
-  end
-
-  defp check_type(%{type: :integer}, attr), do: is_integer(attr)
-  defp check_type(%{type: :pos_integer}, attr), do: is_integer(attr) and attr > 0
-  defp check_type(%{type: :non_neg_integer}, attr), do: is_integer(attr) and attr >= 0
-  defp check_type(%{type: :string}, attr), do: is_binary(attr)
-  defp check_type(%{type: :enum, opts: opts}, attr), do: opts[:values][attr]
-  defp check_type(%{type: mod}, attr), do: is_struct(attr, mod)
 end

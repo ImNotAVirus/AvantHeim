@@ -30,6 +30,7 @@ defmodule MyApp.TestPacket do
     field :id, :pos_integer
     field :id2, :non_neg_integer, default: 0
     field :id3, :integer, default: -123
+    field :enabled, :boolean
     field :type, :enum, values: TestPacketEnums.type(:__enumerators__)
     field :message, :string
     field :my_struct, SerializableTestStruct
