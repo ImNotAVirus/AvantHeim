@@ -104,14 +104,18 @@ defmodule ElvenViews.SerializablePacket do
 
   defp struct_keys() do
     quote do
-      Enum.map(@fields, &{&1.name, &1.default})
+      Enum.map(@fields, & &1.name)
     end
   end
 
   defp def_introspection() do
-    quote do
+    quote unquote: false do
       def __header__(), do: @name
       def __fields__(), do: @fields
+
+      Enum.each(@fields, fn field ->
+        def __fields__(unquote(field.name)), do: unquote(Macro.escape(field))
+      end)
     end
   end
 
@@ -173,28 +177,20 @@ defmodule ElvenViews.SerializablePacket do
   defp serialize_field_ast(%{type: _, name: name, opts: opts, default: default}) do
     value_ast = maybe_default_ast(name, default)
 
+    # if opts: serialize_term(value_ast, opts)
     case opts do
-      [] ->
-        value_ast
-
-      _ ->
-        quote do
-          serialize_term(unquote(value_ast), unquote(opts))
-        end
+      [] -> value_ast
+      _ -> quote(do: serialize_term(unquote(value_ast), unquote(opts)))
     end
   end
 
-  defp maybe_default_ast(name, default) do
-    case default do
-      nil ->
-        quote do
-          struct.unquote(name)
-        end
+  defp maybe_default_ast(name, default_ast) do
+    value = quote(do: struct.unquote(name))
 
-      _ ->
-        quote do
-          struct.unquote(name) || unquote(default)
-        end
+    # if default_ast: struct.name || default
+    case default_ast do
+      nil -> value
+      _ -> {:||, [context: Elixir, import: Kernel], [value, default_ast]}
     end
   end
 

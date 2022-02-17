@@ -31,11 +31,11 @@ defmodule ElvenViews.LoginPackets.NsTeSTPacket do
 
   ## Private functions
 
-  defp empty_server() do
+  def empty_server() do
     "-99 0 -99 0 -99 0 -99 0"
   end
 
-  defp unused_servers() do
+  def unused_servers() do
     [empty_server()]
     |> Stream.cycle()
     |> Enum.take(3)
