@@ -94,7 +94,7 @@ defmodule LoginService.Endpoint.AuthActions do
     attrs = %{
       account_id: account.id,
       username: account.username,
-      password: account.password,
+      password: account.hashed_password,
       # Little trick for avoid Elixir warning 
       encryption_key:
         (:erlang.phash2(0, 1) == 0 and @default_encryption_key) ||
