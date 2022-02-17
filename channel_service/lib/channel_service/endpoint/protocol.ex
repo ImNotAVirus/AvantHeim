@@ -4,11 +4,14 @@ defmodule ChannelService.Endpoint.Protocol do
   use GenServer
 
   require Logger
+  require ElvenCaching.Account.Session
 
   alias ElvenCore.Socket
-  alias SessionService.Session
-  alias ChannelService.Endpoint.LobbyViews
+  alias ElvenCaching.Account.Session
+  alias ElvenCaching.SessionRegistry
   alias ElvenDatabase.Players.{Account, Accounts, Characters}
+
+  alias ChannelService.Endpoint.LobbyViews
 
   @behaviour :ranch_protocol
 
@@ -36,7 +39,8 @@ defmodule ChannelService.Endpoint.Protocol do
 
     socket = Socket.new(transport, transport_pid, @packet_encoder)
 
-    Logger.info("New connection: #{socket.id} (#{:inet.ntoa(address)}:#{port})")
+    Logger.metadata(socket_id: socket.id)
+    Logger.info("New connection: #{:inet.ntoa(address)}:#{port}")
 
     :gen_server.enter_loop(__MODULE__, [], socket, {:continue, :client_handshake})
   end
@@ -49,14 +53,17 @@ defmodule ChannelService.Endpoint.Protocol do
 
     %Socket{transport_pid: transport_pid, transport: transport} = new_socket
 
-    with {:ok, session} <- SessionService.authenticate(session_key, username),
+    with {:ok, session} <- SessionRegistry.get(username),
+         :ok <- validate_session(session, session_key),
+         # TODO: PresenceManager
+         # :ok <- EndpointManager.register_username(username),
          {:ok, account} <- get_account(session),
          :ok <- send_character_list(account, new_socket) do
       transport.setopts(transport_pid, active: :once)
       {:noreply, Socket.assign(new_socket, account: account), @timeout}
     else
       e ->
-        Logger.info("Invalid Handshake (reason: #{inspect(e)})", socket_id: socket.id)
+        Logger.info("Invalid Handshake (reason: #{inspect(e)})")
         transport.shutdown(transport_pid, :read_write)
         {:stop, :normal, new_socket}
     end
@@ -73,7 +80,7 @@ defmodule ChannelService.Endpoint.Protocol do
         Enum.reduce_while(packets, socket, &resolve_packet/2)
       else
         {:error, msg} ->
-          Logger.warn(msg, socket_id: socket.id)
+          Logger.warn(msg)
           socket
       end
 
@@ -95,6 +102,20 @@ defmodule ChannelService.Endpoint.Protocol do
   end
 
   ## Private functions
+  
+  defp validate_session(session, session_key) do
+    case session do
+      %Session{encryption_key: ^session_key} = s when not Session.is_logged(s) -> :ok
+      _ -> {:error, session}
+    end
+  end
+  
+  defp cache_session_as_logged(session) do
+    session
+    |> Session.set_ttl(:infinity)
+    |> Session.set_state(:in_lobby)
+    |> SessionRegistry.write()
+  end
 
   defp get_account(%Session{} = session) do
     %Session{username: username, password: password} = session
@@ -117,7 +138,7 @@ defmodule ChannelService.Endpoint.Protocol do
     String.to_integer(session_key)
   end
 
-  if Mix.env() == :dev do
+  if Mix.env() != :prod do
     defp recv_username(new_socket) do
       {:ok, [username, _]} = Socket.recv(new_socket, 0, @handshake_timeout)
       [username, _] = String.split(username, " ", parts: 2)
@@ -183,7 +204,7 @@ defmodule ChannelService.Endpoint.Protocol do
 
   defp resolve_packet({:error, :invalid, {header, args}}, socket) do
     split = String.split(args, @separator)
-    Logger.warn("Unknown packet '#{header}' with args #{inspect(split)}", socket_id: socket.id)
+    Logger.warn("Unknown packet '#{header}' with args #{inspect(split)}")
     {:cont, socket}
   end
 end
