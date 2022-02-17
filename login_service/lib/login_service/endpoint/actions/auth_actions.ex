@@ -95,7 +95,10 @@ defmodule LoginService.Endpoint.AuthActions do
       account_id: account.id,
       username: account.username,
       password: account.password,
-      encryption_key: @default_encryption_key || :rand.uniform(@max_encryption_key)
+      # Little trick for avoid Elixir warning 
+      encryption_key:
+        (:erlang.phash2(0, 1) == 0 and @default_encryption_key) ||
+          :rand.uniform(@max_encryption_key)
     }
 
     case SessionRegistry.create(attrs) do
