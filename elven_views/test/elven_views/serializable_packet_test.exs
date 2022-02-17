@@ -74,88 +74,30 @@ defmodule ElvenViews.SerializablePacketTest do
     end
   end
 
-  describe "new!/2" do
-    test "returns a structure" do
-      mock = test_packet_mock_attrs()
-      packet = TestPacket.new!(mock)
-
-      assert %TestPacket{} = packet
-      assert packet.id == mock.id
-      assert packet.id2 == 0
-      assert packet.id3 == -123
-      assert packet.enabled == true
-      assert packet.type == mock.type
-      assert packet.message == mock.message
-      assert packet.my_struct == mock.my_struct
-
-      mock = test_packet_mock_attrs(%{id3: 999})
-      packet = TestPacket.new!(mock)
-      assert packet.id3 == 999
-    end
-
-    test "raises when required attr is missing" do
-      assert_raise ArgumentError, ~r/no value provided for required field/, fn ->
-        test_packet_mock_attrs() |> Map.delete(:id) |> TestPacket.new!()
-      end
-    end
-
-    @tag :disabled
-    test "raises when invalid attr type" do
-      assert_raise ArgumentError, "invalid attributs [id: 0]", fn ->
-        test_packet_mock_attrs() |> Map.put(:id, 0) |> TestPacket.new!()
-      end
-
-      assert_raise ArgumentError, "invalid attributs [id2: -1]", fn ->
-        test_packet_mock_attrs() |> Map.put(:id2, -1) |> TestPacket.new!()
-      end
-
-      assert_raise ArgumentError, "invalid attributs [id3: \"test\"]", fn ->
-        test_packet_mock_attrs() |> Map.put(:id3, "test") |> TestPacket.new!()
-      end
-
-      assert_raise ArgumentError, "invalid attributs [enabled: \"test\"]", fn ->
-        test_packet_mock_attrs() |> Map.put(:enabled, "test") |> TestPacket.new!()
-      end
-
-      assert_raise ArgumentError, "invalid attributs [type: :test]", fn ->
-        test_packet_mock_attrs() |> Map.put(:type, :test) |> TestPacket.new!()
-      end
-
-      assert_raise ArgumentError, "invalid attributs [message: :foo]", fn ->
-        test_packet_mock_attrs() |> Map.put(:message, :foo) |> TestPacket.new!()
-      end
-
-      assert_raise ArgumentError, "invalid attributs [my_struct: #MapSet<[]>]", fn ->
-        test_packet_mock_attrs() |> Map.put(:my_struct, MapSet.new()) |> TestPacket.new!()
-      end
-    end
-  end
-
   describe "__using__/1" do
     test "define behaviour ElvenCore.SerializableStruct" do
-      mock = test_packet_mock_attrs()
-      packet = TestPacket.new!(mock)
+      mock = test_packet_mock()
 
-      iodata = TestPacket.serialize(packet, [])
-      assert packet_index(iodata, 0) == "test"
+      iodata = TestPacket.serialize(mock, [])
+      assert packet_index(iodata, 0) == TestPacket.__header__()
       assert packet_index(iodata, 1) == mock.id
-      assert packet_index(iodata, 2) == 0
-      assert packet_index(iodata, 3) == -123
-      assert packet_index(iodata, 4) == true
-      assert packet_index(iodata, 5) == 1
+      assert packet_index(iodata, 2) == mock.id2
+      assert packet_index(iodata, 3) == mock.id3
+      assert packet_index(iodata, 4) == mock.enabled
+      assert packet_index(iodata, 5) |> is_integer()
       assert packet_index(iodata, 6) == mock.message
       assert %SerializableTestStruct{} = packet_index(iodata, 7)
 
       expected = "test 123 0 -123 1 1 This is a message 123-789"
-      assert ^expected = serialize_term(packet, [])
+      assert ^expected = serialize_term(mock, [])
     end
   end
 
   ## Private helpers
 
-  defp test_packet_mock_attrs(attrs \\ %{}) do
+  defp test_packet_mock(attrs \\ %{}) do
     Map.merge(
-      %{
+      %TestPacket{
         id: 123,
         enabled: true,
         type: :admin,
