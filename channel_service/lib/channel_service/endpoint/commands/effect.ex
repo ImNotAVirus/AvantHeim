@@ -6,6 +6,7 @@ defmodule ChannelService.Endpoint.EffectCommand do
   alias ElvenCore.Socket
   alias ChannelService.Endpoint.ChatViews
   alias ChannelService.Endpoint.EntityInteractions
+  alias ElvenCaching.CharacterRegistry
 
   ## Public API
 
@@ -27,19 +28,19 @@ defmodule ChannelService.Endpoint.EffectCommand do
   @spec handle_command(String.t(), [String.t()], Socket.t()) :: {:cont, Socket.t()}
   def handle_command("$effect", args, socket) do
     %{character_id: character_id} = socket.assigns
-    {:ok, character} = CachingService.get_character_by_id(character_id)
+    {:ok, character} = CharacterRegistry.get(character_id)
 
     case args do
       ["show", _] = args ->
         handle_effect(socket, character, args, character)
 
       ["show", _, "on", name] = args ->
-        case CachingService.get_character_by_name(name) do
-          {:ok, nil} ->
-            send_message(socket, character, "#{name} is not logged", :special_red)
-
+        case CharacterRegistry.get_by_name(name) do
           {:ok, target} ->
             handle_effect(socket, character, args, target)
+
+          {:error, :not_found} ->
+            send_message(socket, character, "#{name} is not logged", :special_red)
         end
 
       args ->

@@ -5,6 +5,7 @@ defmodule ChannelService.Endpoint.ChatActions do
 
   alias ElvenCore.Socket
   alias ChannelService.Endpoint.EntityInteractions
+  alias ElvenCaching.CharacterRegistry
 
   ## Packet handlers
 
@@ -15,7 +16,7 @@ defmodule ChannelService.Endpoint.ChatActions do
     end
 
     %{character_id: character_id} = socket.assigns
-    {:ok, character} = CachingService.get_character_by_id(character_id)
+    {:ok, character} = CharacterRegistry.get(character_id)
 
     EntityInteractions.say_to_map(character, message)
 

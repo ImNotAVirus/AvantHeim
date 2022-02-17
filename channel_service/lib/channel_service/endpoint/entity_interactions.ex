@@ -4,6 +4,7 @@ defmodule ChannelService.Endpoint.EntityInteractions do
   """
 
   alias ElvenCore.Socket
+  alias ElvenCaching.CharacterRegistry
   alias ElvenCaching.Entity
   alias ElvenCaching.Entity.EntityPosition
   alias ElvenCaching.Entity.Character
@@ -34,7 +35,7 @@ defmodule ChannelService.Endpoint.EntityInteractions do
     ## Other players packets
     %EntityPosition{map_id: map_id} = Entity.get_position(character)
 
-    {:ok, players} = CachingService.get_characters_by_map_id(map_id, [{:!==, :id, character.id}])
+    {:ok, players} = CharacterRegistry.get_by_map_id(map_id, [{:!==, :id, character.id}])
     Enum.each(players, &send_visibility_packets(character, &1))
   end
 
@@ -43,7 +44,7 @@ defmodule ChannelService.Endpoint.EntityInteractions do
   def set_dir(%Character{} = character, new_dir) do
     new_char = %Character{character | direction: new_dir}
 
-    case CachingService.write_character(new_char) do
+    case CharacterRegistry.write(new_char) do
       {:ok, new_char} ->
         broadcast_on_map(new_char, EntityViews.render(:dir, new_char), false)
         {:ok, new_char}
@@ -117,7 +118,7 @@ defmodule ChannelService.Endpoint.EntityInteractions do
   def set_speed(%Character{} = character, new_speed) do
     new_char = %Character{character | speed: new_speed}
 
-    case CachingService.write_character(new_char) do
+    case CharacterRegistry.write(new_char) do
       {:ok, new_char} ->
         broadcast_on_map(new_char, EntityViews.render(:cond, new_char))
         {:ok, new_char}
@@ -132,7 +133,7 @@ defmodule ChannelService.Endpoint.EntityInteractions do
   def move(%Character{} = character, new_x, new_y) do
     new_char = %Character{character | map_x: new_x, map_y: new_y}
 
-    case CachingService.write_character(new_char) do
+    case CharacterRegistry.write(new_char) do
       {:ok, new_char} ->
         broadcast_on_map(new_char, MapViews.render(:mv, new_char), false)
         {:ok, new_char}
@@ -155,7 +156,7 @@ defmodule ChannelService.Endpoint.EntityInteractions do
 
   @spec send_gold_ui(Character.t()) :: {:ok, Character.t()} | {:error, any}
   defp send_gold_ui(%Character{} = character) do
-    case CachingService.write_character(character) do
+    case CharacterRegistry.write(character) do
       {:ok, character} ->
         Socket.send(character.socket, UIViews.render(:gold, character))
         {:ok, character}
@@ -169,7 +170,7 @@ defmodule ChannelService.Endpoint.EntityInteractions do
   defp broadcast_on_map(%Character{} = character, packet, including_self \\ true) do
     guards = if including_self, do: [], else: [{:!==, :id, character.id}]
     %EntityPosition{map_id: map_id} = Entity.get_position(character)
-    {:ok, players} = CachingService.get_characters_by_map_id(map_id, guards)
+    {:ok, players} = CharacterRegistry.get_by_map_id(map_id, guards)
     Enum.each(players, &Socket.send(&1.socket, packet))
   end
 

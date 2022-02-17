@@ -5,6 +5,7 @@ defmodule ChannelService.Endpoint.MapActions do
 
   alias ElvenCore.Socket
   alias ElvenCaching.Entity.Character
+  alias ElvenCaching.CharacterRegistry
   alias ChannelService.Endpoint.EntityInteractions
   alias ChannelService.Endpoint.EntityViews
 
@@ -13,7 +14,7 @@ defmodule ChannelService.Endpoint.MapActions do
   @spec dir(String.t(), map, Socket.t()) :: {:cont, Socket.t()}
   def dir("dir", params, %Socket{} = socket) do
     %{dir: dir, entity_type: entity_type, entity_id: entity_id} = params
-    maybe_entity = CachingService.get_entity_by_id(entity_type, entity_id)
+    maybe_entity = ElvenCaching.get_entity_by_id(entity_type, entity_id)
 
     case maybe_entity do
       {:ok, entity} -> EntityInteractions.set_dir(entity, dir)
@@ -28,9 +29,10 @@ defmodule ChannelService.Endpoint.MapActions do
     %{entity_type: entity_type, entity_id: entity_id} = params
 
     %{character_id: character_id} = socket.assigns
-    {:ok, %Character{map_id: cur_map}} = CachingService.get_character_by_id(character_id)
+    # FIXME: Use Entity.get_position/1 instead
+    {:ok, %Character{map_id: cur_map}} = CharacterRegistry.get(character_id)
 
-    maybe_entity = CachingService.get_entity_by_id(entity_type, entity_id)
+    maybe_entity = ElvenCaching.get_entity_by_id(entity_type, entity_id)
 
     case maybe_entity do
       {:ok, %{map_id: ^cur_map} = target} ->
@@ -52,7 +54,7 @@ defmodule ChannelService.Endpoint.MapActions do
     } = params
 
     %{character_id: character_id} = socket.assigns
-    {:ok, character} = CachingService.get_character_by_id(character_id)
+    {:ok, character} = CharacterRegistry.get(character_id)
 
     # TODO: Later do some security checks (distance, checksum, dest cell, etc...)
     if speed != character.speed do

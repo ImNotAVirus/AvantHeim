@@ -4,6 +4,7 @@ defmodule ChannelService.Endpoint.SpeedCommand do
   """
 
   alias ElvenCore.Socket
+  alias ElvenCaching.CharacterRegistry
   alias ChannelService.Endpoint.ChatViews
   alias ChannelService.Endpoint.EntityInteractions
 
@@ -24,7 +25,7 @@ defmodule ChannelService.Endpoint.SpeedCommand do
   @spec handle_command(String.t(), [String.t()], Socket.t()) :: {:cont, Socket.t()}
   def handle_command("$speed", args, socket) do
     %{character_id: character_id} = socket.assigns
-    {:ok, character} = CachingService.get_character_by_id(character_id)
+    {:ok, character} = CharacterRegistry.get(character_id)
 
     case args do
       ["get"] ->
