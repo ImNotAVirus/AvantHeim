@@ -3,30 +3,15 @@ defmodule ElvenViews.EntityPackets.CharScPacket do
   TODO: Documentation.
   """
 
-  use ElvenCore.SerializableStruct
+  use ElvenViews.SerializablePacket
 
-  import ElvenEnums.EntityEnums, only: [entity_type: 2]
+  import ElvenEnums.EntityEnums, only: [entity_type: 1]
 
-  alias __MODULE__
-  alias ElvenEnums.EntityEnums
+  ## Packet definition
 
-  @enforce_keys [:entity_type, :entity_id, :size]
-  defstruct @enforce_keys
-
-  @type t :: %CharScPacket{
-          entity_type: EntityEnums.entity_type_keys(),
-          entity_id: pos_integer,
-          size: pos_integer
-        }
-
-  @impl true
-  def serialize(%CharScPacket{} = struct, _) do
-    %CharScPacket{
-      entity_type: entity_type_atom,
-      entity_id: entity_id,
-      size: size
-    } = struct
-
-    ["char_sc", entity_type(entity_type_atom, :value), entity_id, size]
+  defpacket "char_sc" do
+    field :entity_type, :enum, values: entity_type(:__enumerators__)
+    field :entity_id, :pos_integer
+    field :size, :pos_integer
   end
 end

@@ -24,7 +24,7 @@ defmodule ElvenViews.LoginPackets.FailcPacketTest do
     end
 
     test "raises when error is invalid" do
-      assert_raise ArgumentError, ~r/invalid value :foo/, fn ->
+      assert_raise ArgumentError, ~r/invalid key :foo in enum/, fn ->
         :foo |> failc_mock() |> serialize()
       end
     end

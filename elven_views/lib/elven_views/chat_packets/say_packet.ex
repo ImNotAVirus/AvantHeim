@@ -3,32 +3,17 @@ defmodule ElvenViews.ChatPackets.SayPacket do
   TODO: Documentation.
   """
 
-  use ElvenCore.SerializableStruct
+  use ElvenViews.SerializablePacket
 
-  import ElvenEnums.EntityEnums, only: [entity_type: 2]
-  import ElvenViews.ChatPackets.SayEnums, only: [color_type: 2]
+  import ElvenEnums.EntityEnums, only: [entity_type: 1]
+  import ElvenViews.ChatPackets.SayEnums, only: [color_type: 1]
 
-  alias __MODULE__
+  ## Packet definition
 
-  @enforce_keys [:entity_type, :entity_id, :color, :message]
-  defstruct @enforce_keys
-
-  @type t :: %SayPacket{
-          entity_type: atom,
-          entity_id: pos_integer,
-          color: atom,
-          message: String.t()
-        }
-
-  @impl true
-  def serialize(%SayPacket{} = struct, _) do
-    %SayPacket{
-      entity_type: entity_type_atom,
-      entity_id: entity_id,
-      color: color,
-      message: message
-    } = struct
-
-    ["say", entity_type(entity_type_atom, :value), entity_id, color_type(color, :value), message]
+  defpacket "say" do
+    field :entity_type, :enum, values: entity_type(:__enumerators__)
+    field :entity_id, :pos_integer
+    field :color, :enum, values: color_type(:__enumerators__)
+    field :message, :string
   end
 end

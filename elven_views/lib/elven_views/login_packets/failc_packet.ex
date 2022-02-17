@@ -3,20 +3,13 @@ defmodule ElvenViews.LoginPackets.FailcPacket do
   TODO: Documentation.
   """
 
-  use ElvenCore.SerializableStruct
+  use ElvenViews.SerializablePacket
 
-  require ElvenViews.LoginPackets.FailcEnums
+  import ElvenViews.LoginPackets.FailcEnums, only: [error: 1]
 
-  alias __MODULE__
-  alias ElvenViews.LoginPackets.FailcEnums
+  ## Packet definition
 
-  @enforce_keys [:error]
-  defstruct @enforce_keys
-
-  @type t :: %FailcPacket{error: atom}
-
-  @impl true
-  def serialize(%FailcPacket{error: error}, _) do
-    ["failc", FailcEnums.error(error || :generic, :value)]
+  defpacket "failc" do
+    field :error, :enum, default: :generic, values: error(:__enumerators__)
   end
 end

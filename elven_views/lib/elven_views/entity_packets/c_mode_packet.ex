@@ -4,53 +4,20 @@ defmodule ElvenViews.EntityPackets.CModePacket do
   Character model
   """
 
-  use ElvenCore.SerializableStruct
+  use ElvenViews.SerializablePacket
 
-  import ElvenEnums.EntityEnums, only: [entity_type: 2]
+  import ElvenEnums.EntityEnums, only: [entity_type: 1]
 
-  alias __MODULE__
-  alias ElvenEnums.EntityEnums
+  ## Packet definition
 
-  @enforce_keys [
-    :entity_type,
-    :entity_id,
-    :morph,
-    :morph_upgrade,
-    :morph_design,
-    :is_arena_winner,
-    :size,
-    :item_morph
-  ]
-  defstruct @enforce_keys
-
-  @type t :: %CModePacket{
-          entity_type: EntityEnums.entity_type_keys(),
-          entity_id: pos_integer,
-          morph: non_neg_integer,
-          morph_upgrade: non_neg_integer,
-          morph_design: non_neg_integer,
-          is_arena_winner: boolean,
-          size: pos_integer,
-          item_morph: non_neg_integer
-        }
-
-  @impl true
-  def serialize(%CModePacket{} = struct, _) do
-    %CModePacket{
-      entity_type: entity_type_atom,
-      entity_id: entity_id,
-      morph: morph,
-      morph_upgrade: morph_upgrade,
-      morph_design: morph_design,
-      is_arena_winner: is_arena_winner,
-      size: size,
-      item_morph: item_morph
-    } = struct
-
-    List.flatten([
-      ["c_mode", entity_type(entity_type_atom, :value)],
-      [entity_id, morph, morph_upgrade, morph_design],
-      [is_arena_winner, size, item_morph]
-    ])
+  defpacket "c_mode" do
+    field :entity_type, :enum, values: entity_type(:__enumerators__)
+    field :entity_id, :pos_integer
+    field :morph, :non_neg_integer
+    field :morph_upgrade, :non_neg_integer
+    field :morph_design, :non_neg_integer
+    field :is_arena_winner, :boolean
+    field :size, :pos_integer
+    field :item_morph, :non_neg_integer
   end
 end

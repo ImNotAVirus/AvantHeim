@@ -1,6 +1,8 @@
 defmodule ElvenViews.LoginPackets.NsTeST.Channel do
   @moduledoc """
   TODO: Documentation
+
+  SubPacket for `ElvenViews.LoginPackets.NsTeST`
   """
 
   use ElvenCore.SerializableStruct
