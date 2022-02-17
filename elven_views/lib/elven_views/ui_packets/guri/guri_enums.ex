@@ -1,4 +1,4 @@
-defmodule ChannelService.Endpoint.UIPackets.Guri do
+defmodule ElvenViews.UIPackets.GuriEnums do
   @moduledoc """
   TODO: Documentation.
   """

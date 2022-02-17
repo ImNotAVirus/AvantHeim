@@ -5,7 +5,7 @@ defmodule ChannelService.Endpoint.ShopPackets.Buy do
 
   use ElvenCore.SerializableStruct
 
-  import ChannelService.Endpoint.ShopPackets.BuyEnums, only: [shop_type: 1]
+  import ElvenViews.ShopPackets.BuyEnums, only: [shop_type: 1]
 
   alias __MODULE__
 
