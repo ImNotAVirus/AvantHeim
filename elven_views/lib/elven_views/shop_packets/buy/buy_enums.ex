@@ -1,4 +1,4 @@
-defmodule ChannelService.Endpoint.ShopPackets.BuyEnums do
+defmodule ElvenViews.ShopPackets.BuyEnums do
   @moduledoc """
   TODO: Documentation.
   """

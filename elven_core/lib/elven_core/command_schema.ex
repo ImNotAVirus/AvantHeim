@@ -35,7 +35,8 @@ defmodule ElvenCore.CommandSchema do
           message: "#{unquote(@console_prefix)} #{unquote(cmdname)} #{bin_args}"
         }
 
-        render = ChannelEndpoint.Endpoint.ChatViews.render(:say, say_attrs)
+        # FIXME: Why the fck Core depend on ChannelService
+        render = ChannelService.Endpoint.ChatViews.render(:say, say_attrs)
         :ok = ElvenCore.Socket.send(socket, render)
 
         args = String.split(bin_args, " ")

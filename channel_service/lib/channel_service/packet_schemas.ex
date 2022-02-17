@@ -13,7 +13,7 @@ defmodule ChannelService.PacketSchemas do
     UIActions
   }
 
-  import ChannelService.Endpoint.UIPackets.Guri, only: [guri_type: 2]
+  import ElvenViews.UIPackets.GuriEnums, only: [guri_type: 2]
 
   ## Ignore some packets
 
