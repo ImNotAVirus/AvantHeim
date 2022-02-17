@@ -8,6 +8,8 @@ defmodule ElvenViews.SerializablePacket do
   @aliased_types Keyword.keys(@type_aliases)
   @supported_types @native_types ++ @aliased_types
 
+  @type enum :: atom
+
   ## Public API
 
   @doc false
@@ -120,20 +122,25 @@ defmodule ElvenViews.SerializablePacket do
   end
 
   defp ast_type(env) do
-    ast_type_fun = fn
-      field when field.type in @aliased_types -> {field.name, ast_t(@type_aliases[field.type])}
-      field when field.type in @supported_types -> {field.name, field.type}
-      field -> {field.name, ast_t(field.type)}
-    end
-
     fields_ast =
       env.module
       |> Module.get_attribute(:fields)
-      |> Enum.map(ast_type_fun)
+      |> Enum.map(&{&1.name, ast_for_type(&1.type, &1.opts)})
 
     # %__MODULE__{fields_ast}
     {:%, [], [env.module, {:%{}, [], fields_ast}]}
   end
+
+  defp ast_for_type(nil, _), do: raise("invalid nil type found")
+  defp ast_for_type(:integer, _), do: quote(do: integer())
+  defp ast_for_type(:pos_integer, _), do: quote(do: pos_integer())
+  defp ast_for_type(:non_neg_integer, _), do: quote(do: non_neg_integer())
+  defp ast_for_type(:boolean, _), do: quote(do: boolean())
+  # TODO: use opts[:values]
+  defp ast_for_type(:enum, _), do: quote(do: unquote(__MODULE__).enum())
+  defp ast_for_type(:string, _), do: quote(do: String.t())
+  defp ast_for_type(:list, opts), do: quote(do: list(unquote(ast_for_type(opts[:type], []))))
+  defp ast_for_type(type, _), do: quote(do: unquote(type).t())
 
   defp ast_t(mod) do
     # mod.t()

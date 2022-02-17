@@ -15,7 +15,7 @@ defmodule ElvenViews.SerializablePacketTest do
       assert function_exported?(TestPacket, :__struct__, 1)
     end
 
-    test "define typespec for the struture" do
+    test "define typespec for the structure" do
       code = """
       defmodule MyApp.TestPacket2 do
         use ElvenViews.SerializablePacket
@@ -28,7 +28,7 @@ defmodule ElvenViews.SerializablePacketTest do
         # Little trick to get module bytecode
         # I don't know if there is a better way to do that
         # Maybe use Compiler Tracing ?
-        @after_compile __MODULE__
+        @after_compile TypeInspector
         
         defpacket "test" do
           field :id, :pos_integer
@@ -38,39 +38,22 @@ defmodule ElvenViews.SerializablePacketTest do
           field :message, :string
           field :type, :enum, values: TestPacketEnums.type(:__enumerators__)
           field :my_struct, SerializableTestStruct
-        end
-        
-        ## Print erlang module code
-
-        def __after_compile__(_env, bytecode) do
-          {:ok, abstract_code} = typespecs_abstract_code(bytecode)
-          :io.fwrite('~s~n', [:erl_prettypr.format(:erl_syntax.form_list(abstract_code))])
-        end
-        
-        # From https://github.com/elixir-lang/elixir/blob/main/lib/elixir/lib/code/typespec.ex#L156
-        defp typespecs_abstract_code(binary) do
-          with {:ok, {_, [debug_info: {:debug_info_v1, _backend, data}]}} <-
-                 :beam_lib.chunks(binary, [:debug_info]),
-               {:elixir_v1, %{}, specs} <- data do
-            {:ok, specs}
-          else
-            _ -> :error
-          end
+          field :my_list, :list, type: SerializableTestStruct, default: []
         end
       end
       """
 
       log = capture_io(fn -> Code.compile_string(code) end)
 
-      assert log =~ "-export_type([t/0])"
-      assert log =~ "-type t() :: \#{'__struct__' :="
-      assert log =~ "id := pos_integer"
-      assert log =~ "id2 := non_neg_integer"
-      assert log =~ "id3 := integer"
-      assert log =~ "enabled := boolean"
-      assert log =~ "message := 'Elixir.String':t()"
-      assert log =~ "type := 'Elixir.ElvenViews.SerializableEnum':t()"
-      assert log =~ "my_struct := 'Elixir.MyApp.SerializableTestStruct':t()"
+      assert log =~ "t() :: %MyApp.TestPacket2{"
+      assert log =~ "id: pos_integer()"
+      assert log =~ "id2: non_neg_integer()"
+      assert log =~ "id3: integer()"
+      assert log =~ "enabled: boolean()"
+      assert log =~ "message: String.t()"
+      assert log =~ "type: ElvenViews.SerializablePacket.enum()"
+      assert log =~ "my_struct: MyApp.SerializableTestStruct.t()"
+      assert log =~ "my_list: [MyApp.SerializableTestStruct.t()]"
     end
   end
 
