@@ -142,11 +142,6 @@ defmodule ElvenViews.SerializablePacket do
   defp ast_for_type(:list, opts), do: quote(do: list(unquote(ast_for_type(opts[:type], []))))
   defp ast_for_type(type, _), do: quote(do: unquote(type).t())
 
-  defp ast_t(mod) do
-    # mod.t()
-    {{:., [], [mod, :t]}, [], []}
-  end
-
   defp def_serialize(env) do
     quote do
       @impl true
