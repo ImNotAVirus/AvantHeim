@@ -15,7 +15,7 @@ defmodule ChannelService.Endpoint.UIActions do
   @spec show_emoji(String.t(), map, Socket.t()) :: {:cont, Socket.t()}
   def show_emoji("guri", params, %Socket{} = socket) do
     %{guri_data: guri_data, entity_id: entity_id, entity_type: entity_type} = params
-    entity = CachingService.get_entity_by_id(entity_type, entity_id)
+    entity = ElvenCaching.get_entity_by_id(entity_type, entity_id)
 
     case {entity, guri_data} do
       {{:ok, e}, g} when g >= 973 and g <= 999 ->

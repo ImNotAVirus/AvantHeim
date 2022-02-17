@@ -4,6 +4,7 @@ defmodule ChannelService.Endpoint.GameActions do
   """
 
   alias ElvenCore.Socket
+  alias ElvenCaching.CharacterRegistry
   alias ChannelService.Endpoint.EntityInteractions
 
   alias ChannelService.Endpoint.{
@@ -17,7 +18,7 @@ defmodule ChannelService.Endpoint.GameActions do
   @spec game_start(String.t(), map, Socket.t()) :: {:cont, Socket.t()}
   def game_start("game_start", _, %Socket{} = socket) do
     %{character_id: character_id} = socket.assigns
-    {:ok, character} = CachingService.get_character_by_id(character_id)
+    {:ok, character} = CharacterRegistry.get(character_id)
 
     Socket.send(socket, PlayerViews.render(:tit, character))
     Socket.send(socket, PlayerViews.render(:fd, character))

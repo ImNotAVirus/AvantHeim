@@ -13,7 +13,7 @@ defmodule ElvenCaching do
   ## Public API
 
   @spec get_entity_by_id(EntityEnums.entity_type(), pos_integer) ::
-          {:ok, entity()} | {:error, any}
+          {:ok, entity()} | {:error, :not_found}
   def get_entity_by_id(entity_type_val, entity_id) do
     case EntityEnums.entity_type(entity_type_val, :key) do
       :character -> CharacterRegistry.get(entity_id)

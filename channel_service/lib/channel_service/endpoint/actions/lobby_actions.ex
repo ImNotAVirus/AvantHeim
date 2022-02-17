@@ -6,8 +6,9 @@ defmodule ChannelService.Endpoint.LobbyActions do
   require Logger
 
   alias ElvenCore.Socket
-  alias ChannelService.Endpoint.LobbyViews
+  alias ElvenCaching.CharacterRegistry
   alias ElvenDatabase.Players.{Account, Characters}
+  alias ChannelService.Endpoint.LobbyViews
 
   ## Public API
 
@@ -35,7 +36,12 @@ defmodule ChannelService.Endpoint.LobbyActions do
           socket
 
         character ->
-          {:ok, _} = CachingService.init_character(character, socket)
+          {:ok, _} =
+            character
+            |> Map.from_struct()
+            |> Map.put(:socket, socket)
+            |> CharacterRegistry.create()
+          
           Socket.send(socket, LobbyViews.render(:ok, nil))
           Socket.assign(socket, character_id: character.id)
       end

@@ -4,6 +4,7 @@ defmodule ChannelService.Endpoint.NameCommand do
   """
 
   alias ElvenCore.Socket
+  alias ElvenCaching.CharacterRegistry
   alias ElvenCaching.Entity.Character
   alias ChannelService.Endpoint.{ChatViews, UIViews}
   alias ChannelService.Endpoint.EntityInteractions
@@ -27,10 +28,10 @@ defmodule ChannelService.Endpoint.NameCommand do
   @spec handle_command(String.t(), [String.t()], Socket.t()) :: {:cont, Socket.t()}
   def handle_command("$name", ["set", name], socket) do
     %{character_id: character_id} = socket.assigns
-    {:ok, character} = CachingService.get_character_by_id(character_id)
+    {:ok, character} = CharacterRegistry.get(character_id)
 
     if String.match?(name, @name_regex) do
-      {:ok, new_char} = CachingService.write_character(%Character{character | name: name})
+      {:ok, new_char} = CharacterRegistry.write(%Character{character | name: name})
 
       Socket.send(socket, UIViews.render(:cancel, %{type: 2, entity: new_char}))
       EntityInteractions.map_enter(new_char)
@@ -46,7 +47,7 @@ defmodule ChannelService.Endpoint.NameCommand do
 
   def handle_command("$name", _, socket) do
     %{character_id: character_id} = socket.assigns
-    {:ok, character} = CachingService.get_character_by_id(character_id)
+    {:ok, character} = CharacterRegistry.get(character_id)
     send_message(socket, character, usage(nil), :special_red)
     {:cont, socket}
   end

@@ -7,6 +7,7 @@ defmodule ChannelService.Endpoint.GoldCommand do
   alias ChannelService.Endpoint.ChatViews
   alias ChannelService.Endpoint.EntityInteractions
   alias ElvenCaching.Entity.Character
+  alias ElvenCaching.CharacterRegistry
 
   ## Public API
 
@@ -55,7 +56,7 @@ defmodule ChannelService.Endpoint.GoldCommand do
   @spec handle_command(String.t(), [String.t()], Socket.t()) :: {:cont, Socket.t()}
   def handle_command("$gold", args, socket) do
     %{character_id: character_id} = socket.assigns
-    {:ok, character} = CachingService.get_character_by_id(character_id)
+    {:ok, character} = CharacterRegistry.get(character_id)
 
     case args do
       ["get"] ->
@@ -98,12 +99,12 @@ defmodule ChannelService.Endpoint.GoldCommand do
   @spec apply_on_character(Socket.t(), Character.t(), [String.t()], String.t(), callback) ::
           :ok | {:error, atom}
   defp apply_on_character(socket, character, args, name, callback) do
-    case CachingService.get_character_by_name(name) do
-      {:ok, nil} ->
-        send_message(socket, character, "#{name} is not logged", :special_red)
-
+    case CharacterRegistry.get_by_name(name) do
       {:ok, target} ->
         callback.(socket, character, args, target)
+
+      {:error, :not_found} ->
+        send_message(socket, character, "#{name} is not logged", :special_red)
     end
   end
 
