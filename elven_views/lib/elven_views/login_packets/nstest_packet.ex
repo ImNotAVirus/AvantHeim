@@ -3,55 +3,42 @@ defmodule ElvenViews.LoginPackets.NsTeSTPacket do
   TODO: Documentation.
   """
 
-  use ElvenCore.SerializableStruct
+  use ElvenViews.SerializablePacket
 
-  alias __MODULE__
   alias ElvenViews.LoginPackets.NsTeST.Channel
 
+  ## Packet definition
+
   # TODO: region & auth_type must be enums!!!!
-  # region = 0 - International (cf. NoS0577)
-  # 0 = ORG, 1 = STEAM, 2 = GF
-  @enforce_keys [:encryption_key, :username, :server_list]
-  @additional_keys [region: 0, auth_type: 2]
-  defstruct @enforce_keys ++ @additional_keys
+  defpacket "NsTeST" do
+    # region: 0 - International (cf. NoS0577)
+    field :region, :non_neg_integer, default: 0
+    field :username, :string
+    # auth_type: 0 = ORG, 1 = STEAM, 2 = GF
+    field :auth_type, :non_neg_integer, default: 2
+    field :server1, :string, default: empty_server()
+    field :server2, :string, default: empty_server()
+    field :server3, :string, default: empty_server()
+    field :server4, :string, default: empty_server()
+    field :server5, :string, default: empty_server()
+    field :server6, :string, default: empty_server()
+    field :unused_servers, :string, default: unused_servers()
+    field :unknown, :integer, default: 0
+    field :encryption_key, :non_neg_integer
+    field :server_list, :list, type: Channel, joiner: " "
+    field :terminator, :string, default: "-1:-1:-1:10000.10000.1"
+  end
 
-  @type t :: %NsTeSTPacket{
-          encryption_key: non_neg_integer,
-          username: String.t(),
-          server_list: [Channel.t()]
-        }
+  ## Private functions
 
-  @impl true
-  def serialize(%NsTeSTPacket{} = struct, _) do
-    %NsTeSTPacket{
-      region: region,
-      username: username,
-      auth_type: auth_type,
-      encryption_key: encryption_key,
-      server_list: server_list
-    } = struct
+  defp empty_server() do
+    "-99 0 -99 0 -99 0 -99 0"
+  end
 
-    terminator = "-1:-1:-1:10000.10000.1"
-
-    unused_servers =
-      ["-99 0 -99 0 -99 0 -99 0"]
-      |> Stream.cycle()
-      |> Enum.take(3)
-      |> Enum.join(" ")
-
-    # TODO: Implement characters count
-    # "<channel_id> <characters_count> x4"
-    List.flatten([
-      ["NsTeST", region, username, auth_type],
-      ["-99 0 -99 0 -99 0 -99 0"],
-      ["-99 0 -99 0 -99 0 -99 0"],
-      ["-99 0 -99 0 -99 0 -99 0"],
-      ["-99 0 -99 0 -99 0 -99 0"],
-      ["-99 0 -99 0 -99 0 -99 0"],
-      ["-99 0 -99 0 -99 0 -99 0"],
-      [unused_servers, 0, encryption_key],
-      serialize_term(server_list, joiner: " "),
-      terminator
-    ])
+  defp unused_servers() do
+    [empty_server()]
+    |> Stream.cycle()
+    |> Enum.take(3)
+    |> Enum.join(" ")
   end
 end

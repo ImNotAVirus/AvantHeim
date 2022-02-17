@@ -31,9 +31,10 @@ defmodule ElvenViews.LoginPackets.NsTeSTPacketTest do
 
     test "with non empty channel list" do
       channel = channel_mock()
-      packet = [channel] |> nstest_mock() |> serialize()
+      packet = [channel, channel] |> nstest_mock() |> serialize()
 
-      assert packet_index(packet, 13) == Channel.serialize(channel, [])
+      expected = Channel.serialize(channel, []) <> " " <> Channel.serialize(channel, [])
+      assert packet_index(packet, 13) == expected
     end
   end
 

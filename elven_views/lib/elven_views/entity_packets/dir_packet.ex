@@ -3,35 +3,15 @@ defmodule ElvenViews.EntityPackets.DirPacket do
   Player direction
   """
 
-  use ElvenCore.SerializableStruct
+  use ElvenViews.SerializablePacket
 
-  import ElvenEnums.EntityEnums, only: [entity_type: 2, direction_type: 2]
+  import ElvenEnums.EntityEnums, only: [entity_type: 1, direction_type: 1]
 
-  alias __MODULE__
-  alias ElvenEnums.EntityEnums
+  ## Packet definition
 
-  @enforce_keys [:entity_type, :entity_id, :direction_type]
-  defstruct @enforce_keys
-
-  @type t :: %DirPacket{
-          entity_type: EntityEnums.entity_type_keys(),
-          entity_id: pos_integer,
-          direction_type: EntityEnums.direction_type_keys()
-        }
-
-  @impl true
-  def serialize(%DirPacket{} = struct, _) do
-    %DirPacket{
-      entity_type: entity_type_atom,
-      entity_id: entity_id,
-      direction_type: direction_type_atom
-    } = struct
-
-    [
-      "dir",
-      entity_type(entity_type_atom, :value),
-      entity_id,
-      direction_type(direction_type_atom, :value)
-    ]
+  defpacket "dir" do
+    field :entity_type, :enum, values: entity_type(:__enumerators__)
+    field :entity_id, :pos_integer
+    field :direction_type, :enum, values: direction_type(:__enumerators__)
   end
 end

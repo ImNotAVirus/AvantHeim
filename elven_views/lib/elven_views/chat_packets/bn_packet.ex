@@ -3,21 +3,12 @@ defmodule ElvenViews.ChatPackets.BnPacket do
   TODO: Documentation.
   """
 
-  use ElvenCore.SerializableStruct
+  use ElvenViews.SerializablePacket
 
-  alias __MODULE__
+  ## Packet definition
 
-  @enforce_keys [:id, :message]
-  defstruct @enforce_keys
-
-  @type t :: %BnPacket{
-          id: pos_integer,
-          message: String.t()
-        }
-
-  @impl true
-  def serialize(%BnPacket{} = struct, _) do
-    %BnPacket{id: id, message: message} = struct
-    ["bn", id, serialize_term(message, escape: true)]
+  defpacket "bn" do
+    field :id, :pos_integer
+    field :message, :string, escape: true
   end
 end
