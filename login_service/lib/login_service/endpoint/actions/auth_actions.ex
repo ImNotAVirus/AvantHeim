@@ -24,14 +24,14 @@ defmodule LoginService.Endpoint.AuthActions do
   Header can be "NoS0575" or "NoS0577"
   """
   @spec login(String.t(), map, Socket.t()) :: any
-  def login(_header, args, %Socket{id: socket_id} = socket) do
+  def login(_header, args, %Socket{} = socket) do
     render =
       with {:ok, _client_version} <- check_client_version(args, socket),
            {:ok, _client_checksum} <- check_client_checksum(args, socket),
            {:ok, _guid} <- check_guid(args, socket),
            {:ok, account} <- check_credentials(args, socket),
            {:ok, encryption_key} <- create_session(account, socket) do
-        Logger.debug("Authentication succeed for #{socket_id} (username: #{account.username})")
+        Logger.debug("Authentication succeed (username: #{account.username})")
 
         LoginViews.render(:login_succeed, %{
           username: account.username,
@@ -40,7 +40,7 @@ defmodule LoginService.Endpoint.AuthActions do
           port: @port
         })
       else
-        reason -> render_error(reason, args, socket_id)
+        reason -> render_error(reason, args)
       end
 
     Socket.send(socket, render)
@@ -63,11 +63,11 @@ defmodule LoginService.Endpoint.AuthActions do
     {:ok, client_checksum}
   end
 
-  defp check_guid(%{installation_guid: guid}, socket) do
+  defp check_guid(%{installation_guid: guid}, _socket) do
     # Currently unused
     # TODO: Can be saved later in database to check multiclients/multiaccounts for example
     # Or if user is banned
-    Logger.debug("GUID for #{socket.id}: #{guid}")
+    Logger.debug("GUID: #{guid}")
     {:ok, guid}
   end
 
@@ -107,28 +107,28 @@ defmodule LoginService.Endpoint.AuthActions do
     end
   end
 
-  defp render_error(reason, args, socket_id) do
+  defp render_error(reason, args) do
     case reason do
       {:error, :client_version} ->
-        Logger.warn("Invalid client version (got: #{args.client_version})", socket_id: socket_id)
+        Logger.warn("Invalid client version (got: #{args.client_version})")
         LoginViews.render(:login_error, %{error: :old_client})
 
       {:error, :client_checksum} ->
-        Logger.warn("Invalid client checksum (got: #{args.client_checksum})", socket_id: socket_id)
+        Logger.warn("Invalid client checksum (got: #{args.client_checksum})")
 
         LoginViews.render(:login_error, %{error: :old_client})
 
       {:error, :bad_credentials} ->
-        Logger.warn("Invalid credentials", socket_id: socket_id)
+        Logger.warn("Invalid credentials")
         LoginViews.render(:login_error, %{error: :bad_credentials})
 
       {:error, :already_connected} ->
         user = Map.get(args, :username) || Map.get(args, :token)
-        Logger.warn("Already connected (username: #{user})", socket_id: socket_id)
+        Logger.warn("Already connected (username: #{user})")
         LoginViews.render(:login_error, %{error: :already_connected})
 
       e ->
-        Logger.warn("Got unknown login error: #{inspect(e)}", socket_id: socket_id)
+        Logger.warn("Got unknown login error: #{inspect(e)}")
         LoginViews.render(:login_error, %{})
     end
   end
