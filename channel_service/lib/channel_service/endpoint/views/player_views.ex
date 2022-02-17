@@ -3,7 +3,7 @@ defmodule ChannelService.Endpoint.PlayerViews do
   TODO: Documentation
   """
 
-  alias CachingService.Player.Character
+  alias ElvenCaching.Entity.Character
 
   alias ChannelService.Endpoint.PlayerPackets.{
     CInfo,

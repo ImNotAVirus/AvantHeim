@@ -6,7 +6,7 @@ defmodule ChannelService.Endpoint.GoldCommand do
   alias ElvenCore.Socket
   alias ChannelService.Endpoint.ChatViews
   alias ChannelService.Endpoint.EntityInteractions
-  alias CachingService.Player.Character
+  alias ElvenCaching.Entity.Character
 
   ## Public API
 
