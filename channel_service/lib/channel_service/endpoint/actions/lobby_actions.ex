@@ -41,7 +41,7 @@ defmodule ChannelService.Endpoint.LobbyActions do
             |> Map.from_struct()
             |> Map.put(:socket, socket)
             |> CharacterRegistry.create()
-          
+
           Socket.send(socket, LobbyViews.render(:ok, nil))
           Socket.assign(socket, character_id: character.id)
       end
