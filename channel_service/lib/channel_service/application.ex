@@ -11,6 +11,7 @@ defmodule ChannelService.Application do
       {Cluster.Supervisor, [topologies, [name: LoginService.ClusterSupervisor]]},
       {ElvenCaching.MnesiaClusterManager, []},
       {ElvenCaching.SessionRegistry, []},
+      {ElvenCaching.CharacterRegistry, []},
       {ChannelService.Endpoint, name: ChannelService.Endpoint}
     ]
 
