@@ -24,7 +24,7 @@ defmodule ChannelService.Endpoint.GameActions do
     Socket.send(socket, PlayerViews.render(:fd, character))
     # TODO: Socket.send(socket, PlayerViews.render(:ski, character))
 
-    EntityInteractions.map_enter(character)
+    EntityInteractions.send_map_enter(character)
 
     Socket.send(socket, PlayerViews.render(:rsfi, character))
     Socket.send(socket, PlayerViews.render(:fs, character))

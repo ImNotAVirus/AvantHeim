@@ -19,8 +19,8 @@ defmodule ChannelService.Endpoint.EntityInteractions do
     ChatViews
   }
 
-  @spec map_enter(Character.t()) :: :ok
-  def map_enter(%Character{} = character) do
+  @spec send_map_enter(Character.t()) :: :ok
+  def send_map_enter(%Character{} = character) do
     ## Self packets
     Socket.send(character.socket, PlayerViews.render(:c_info, character))
     Socket.send(character.socket, EntityViews.render(:c_mode, character))
@@ -36,7 +36,21 @@ defmodule ChannelService.Endpoint.EntityInteractions do
     %EntityPosition{map_id: map_id} = Entity.get_position(character)
 
     {:ok, players} = CharacterRegistry.get_by_map_id(map_id, [{:!==, :id, character.id}])
-    Enum.each(players, &send_visibility_packets(character, &1))
+    Enum.each(players, &send_entity_enter_packets(character, &1))
+
+    # {:ok, monster} = CachingService.get_monsters_by_map_id(map_id)
+    # Enum.each(monster, &send_entity_enter_packets(character, &1))
+  end
+
+  @spec send_map_leave(Character.t()) :: :ok
+  def send_map_leave(%Character{} = character) do
+    ## Self packets
+    Socket.send(character.socket, MapViews.render(:mapout, character))
+
+    ## Other players packets
+    %EntityPosition{map_id: map_id} = Entity.get_position(character)
+    {:ok, players} = CharacterRegistry.get_by_map_id(map_id, [{:!==, :id, character.id}])
+    Enum.each(players, &send_entity_leave_packets(&1, character))
   end
 
   @spec set_dir(Character.t(), EntityEnums.direction_type_keys()) ::
@@ -174,11 +188,16 @@ defmodule ChannelService.Endpoint.EntityInteractions do
     Enum.each(players, &Socket.send(&1.socket, packet))
   end
 
-  @spec send_visibility_packets(Character.t(), Character.t()) :: :ok | {:error, atom}
-  defp send_visibility_packets(self, character) do
+  @spec send_entity_enter_packets(Character.t(), ElvenCaching.entity()) :: :ok | {:error, atom}
+  defp send_entity_enter_packets(%Character{} = self, %Character{} = character) do
     Socket.send(self.socket, VisibilityViews.render(:in, character))
     Socket.send(character.socket, VisibilityViews.render(:in, self))
     Socket.send(self.socket, EntityViews.render(:c_mode, character))
     Socket.send(character.socket, EntityViews.render(:c_mode, self))
+  end
+
+  @spec send_entity_leave_packets(Character.t(), ElvenCaching.entity()) :: :ok | {:error, atom}
+  defp send_entity_leave_packets(%Character{} = character, entity) do
+    Socket.send(character.socket, VisibilityViews.render(:out, entity))
   end
 end

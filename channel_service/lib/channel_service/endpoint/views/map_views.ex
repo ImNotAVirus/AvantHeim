@@ -10,6 +10,7 @@ defmodule ChannelService.Endpoint.MapViews do
   alias ChannelService.Endpoint.MapPackets.{
     At,
     CMap,
+    MapOut,
     Mv
   }
 
@@ -43,6 +44,10 @@ defmodule ChannelService.Endpoint.MapViews do
       map_vnum: map_vnum,
       is_static_map: not is_instance
     }
+  end
+
+  def render(:mapout, %Character{}) do
+    %MapOut{}
   end
 
   def render(:mv, %Character{} = character) do

@@ -14,7 +14,7 @@ defmodule LoginService.Application do
       {LoginService.Endpoint, name: LoginService.Endpoint}
     ]
 
-    opts = [strategy: :one_for_all, name: LoginService.Supervisor]
+    opts = [strategy: :rest_for_one, name: LoginService.Supervisor]
     Supervisor.start_link(children, opts)
   end
 end
