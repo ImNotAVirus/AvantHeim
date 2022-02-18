@@ -93,7 +93,12 @@ defmodule ElvenCaching.Entity.Character do
   ## Implement protocols
 
   defimpl ElvenCaching.Entity do
-    def get_position(%Character{} = character) do
+    def type(%Character{}), do: :character
+    def id(%Character{id: id}), do: id
+  end
+
+  defimpl ElvenCaching.MovableEntity do
+    def position(%Character{} = character) do
       EntityPosition.new(
         character.map_id,
         character.map_vnum,
@@ -102,7 +107,7 @@ defmodule ElvenCaching.Entity.Character do
       )
     end
 
-    def set_position(%Character{} = character, %EntityPosition{} = pos) do
+    def position(%Character{} = character, %EntityPosition{} = pos) do
       %Character{
         character
         | map_id: pos.map_id,

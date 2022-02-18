@@ -5,7 +5,7 @@ defmodule ChannelService.Endpoint.EntityInteractions do
 
   alias ElvenCore.Socket
   alias ElvenCaching.CharacterRegistry
-  alias ElvenCaching.Entity
+  alias ElvenCaching.MovableEntity
   alias ElvenCaching.Entity.EntityPosition
   alias ElvenCaching.Entity.Character
   alias ElvenEnums.EntityEnums
@@ -33,7 +33,7 @@ defmodule ChannelService.Endpoint.EntityInteractions do
     Socket.send(character.socket, EntityViews.render(:cond, character))
 
     ## Other players packets
-    %EntityPosition{map_id: map_id} = Entity.get_position(character)
+    %EntityPosition{map_id: map_id} = MovableEntity.position(character)
 
     {:ok, players} = CharacterRegistry.get_by_map_id(map_id, [{:!==, :id, character.id}])
     Enum.each(players, &send_entity_enter_packets(character, &1))
@@ -48,7 +48,7 @@ defmodule ChannelService.Endpoint.EntityInteractions do
     Socket.send(character.socket, MapViews.render(:mapout, character))
 
     ## Other players packets
-    %EntityPosition{map_id: map_id} = Entity.get_position(character)
+    %EntityPosition{map_id: map_id} = MovableEntity.position(character)
     {:ok, players} = CharacterRegistry.get_by_map_id(map_id, [{:!==, :id, character.id}])
     Enum.each(players, &send_entity_leave_packets(&1, character))
   end
@@ -183,7 +183,7 @@ defmodule ChannelService.Endpoint.EntityInteractions do
   @spec broadcast_on_map(Character.t(), any, boolean) :: :ok
   defp broadcast_on_map(%Character{} = character, packet, including_self \\ true) do
     guards = if including_self, do: [], else: [{:!==, :id, character.id}]
-    %EntityPosition{map_id: map_id} = Entity.get_position(character)
+    %EntityPosition{map_id: map_id} = MovableEntity.position(character)
     {:ok, players} = CharacterRegistry.get_by_map_id(map_id, guards)
     Enum.each(players, &Socket.send(&1.socket, packet))
   end

@@ -4,8 +4,10 @@ defmodule ChannelService.Endpoint.MapActions do
   """
 
   alias ElvenCore.Socket
-  alias ElvenCaching.Entity.Character
   alias ElvenCaching.CharacterRegistry
+  alias ElvenCaching.MovableEntity
+  alias ElvenCaching.Entity.EntityPosition
+
   alias ChannelService.Endpoint.EntityInteractions
   alias ChannelService.Endpoint.EntityViews
 
@@ -27,15 +29,18 @@ defmodule ChannelService.Endpoint.MapActions do
   @spec ncif(String.t(), map, Socket.t()) :: {:cont, Socket.t()}
   def ncif("ncif", params, %Socket{} = socket) do
     %{entity_type: entity_type, entity_id: entity_id} = params
-
     %{character_id: character_id} = socket.assigns
-    # FIXME: Use Entity.get_position/1 instead
-    {:ok, %Character{map_id: cur_map}} = CharacterRegistry.get(character_id)
 
+    # Get current character
+    {:ok, character} = CharacterRegistry.get(character_id)
+    %EntityPosition{map_id: map_id} = MovableEntity.position(character)
+
+    # Get target
     maybe_entity = ElvenCaching.get_entity_by_id(entity_type, entity_id)
 
+    # If the entity is on the same map
     case maybe_entity do
-      {:ok, %{map_id: ^cur_map} = target} ->
+      {:ok, %{map_id: ^map_id} = target} ->
         Socket.send(socket, EntityViews.render(:st, target))
 
       _ ->

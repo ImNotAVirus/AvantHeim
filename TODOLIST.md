@@ -1,22 +1,10 @@
 # TODOLIST
 
-## Views
+## Views / Packet structs
 
-Move all Views in ChannelService into ElvenViews
-
-## Simple ECS pattern
-
-For example:
-
-```elixir
-protocol Entity
-- Entity.type()
-- Entity.id()
-
-protocol MovableEntity
-- Entity.position()
-- Entity.position(new_position)
-```
+- Move all Views & Packets in ChannelService into ElvenViews
+- Add tests for all Views & Packets
+- Try EVERY features to see if something was broke during refactoring
 
 ## PresenceManager
 

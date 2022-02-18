@@ -3,11 +3,16 @@ defprotocol ElvenCaching.Entity do
   TODO: Documentation
   """
 
-  alias ElvenCaching.Entity.EntityPosition
+  alias ElvenEnums.EntityEnums
 
-  @spec get_position(t()) :: EntityPosition.t()
-  def get_position(entity)
+  @type entity_type :: EntityEnums.entity_type_keys()
+  @type entity_id :: EntityEnums.pos_integer()
 
-  @spec set_position(t(), EntityPosition.t()) :: t()
-  def set_position(entity, position)
+  @doc "Returns the Entity type"
+  @spec type(t()) :: entity_type()
+  def type(entity)
+
+  @doc "Returns the Entity id"
+  @spec id(t()) :: entity_id()
+  def id(entity)
 end
