@@ -6,7 +6,11 @@ defmodule ChannelService.Endpoint.VisibilityViews do
   alias ElvenCaching.Entity
   alias ElvenCaching.Entity.EntityPosition
   alias ElvenCaching.Entity.Character
-  alias ChannelService.Endpoint.VisibilityPackets.InCharacter
+
+  alias ChannelService.Endpoint.VisibilityPackets.{
+    InCharacter,
+    Out
+  }
 
   ## Public API
 
@@ -62,6 +66,13 @@ defmodule ChannelService.Endpoint.VisibilityViews do
       hero_level: FakeData.hero_level(character_id: character.id),
       size: FakeData.size(character_id: character.id),
       title_id: FakeData.title_id(character_id: character.id)
+    }
+  end
+
+  def render(:out, %Character{} = character) do
+    %Out{
+      entity_type: :character,
+      entity_id: character.id
     }
   end
 end

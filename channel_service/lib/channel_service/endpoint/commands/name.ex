@@ -34,7 +34,7 @@ defmodule ChannelService.Endpoint.NameCommand do
       {:ok, new_char} = CharacterRegistry.write(%Character{character | name: name})
 
       Socket.send(socket, UIViews.render(:cancel, %{type: 2, entity: new_char}))
-      EntityInteractions.map_enter(new_char)
+      EntityInteractions.send_map_enter(new_char)
 
       send_message(socket, new_char, "Your character name is now #{name}", :special_green)
     else

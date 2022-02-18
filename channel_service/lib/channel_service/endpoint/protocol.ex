@@ -11,6 +11,7 @@ defmodule ChannelService.Endpoint.Protocol do
   alias ElvenCaching.SessionRegistry
   alias ElvenDatabase.Players.{Account, Accounts, Characters}
 
+  alias ChannelService.PresenceManager
   alias ChannelService.Endpoint.LobbyViews
 
   @behaviour :ranch_protocol
@@ -55,8 +56,7 @@ defmodule ChannelService.Endpoint.Protocol do
 
     with {:ok, session} <- SessionRegistry.get(username),
          :ok <- validate_session(session, encryption_key),
-         # TODO: PresenceManager
-         # :ok <- EndpointManager.register_username(username),
+         :ok <- PresenceManager.register_username(username),
          {:ok, _} <- cache_session_as_logged(session),
          {:ok, account} <- get_account(session),
          :ok <- send_character_list(account, new_socket) do

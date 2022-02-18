@@ -12,10 +12,11 @@ defmodule ChannelService.Application do
       {ElvenCaching.MnesiaClusterManager, []},
       {ElvenCaching.SessionRegistry, [disable_clean: true]},
       {ElvenCaching.CharacterRegistry, []},
+      {ChannelService.PresenceManager, []},
       {ChannelService.Endpoint, name: ChannelService.Endpoint}
     ]
 
-    opts = [strategy: :one_for_all, name: ChannelService.Supervisor]
+    opts = [strategy: :rest_for_one, name: ChannelService.Supervisor]
     Supervisor.start_link(children, opts)
   end
 end
