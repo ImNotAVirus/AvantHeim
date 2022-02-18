@@ -8,11 +8,14 @@ defmodule ElvenCaching.Entity.EntityPosition do
 
   # pos_integer: static map - reference: instance
   @type map_id :: pos_integer | reference
+  @type map_vnum :: pos_integer
+  @type map_axis :: non_neg_integer
+
   @type t :: %EntityPosition{
           map_id: map_id(),
-          map_vnum: pos_integer,
-          map_x: non_neg_integer,
-          map_y: non_neg_integer,
+          map_vnum: map_vnum(),
+          map_x: map_axis(),
+          map_y: map_axis(),
           is_instance: boolean
         }
 

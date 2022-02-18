@@ -40,12 +40,16 @@ defmodule ElvenCaching.Entity.Character do
   alias __MODULE__
   alias ElvenCore.Socket
   alias ElvenEnums.{EntityEnums, PlayerEnums}
-
   alias ElvenCaching.Entity.EntityPosition
+
+  # Protocols
+  alias ElvenCaching.Entity
+  alias ElvenCaching.MapEntity
+  alias ElvenCaching.LevelableEntity
 
   @type t :: %Character{
           # Required attributes
-          id: pos_integer,
+          id: Entity.entity_id(),
           account_id: pos_integer,
           name: String.t(),
           gender: PlayerEnums.gender_keys(),
@@ -53,12 +57,12 @@ defmodule ElvenCaching.Entity.Character do
           hair_color: PlayerEnums.hair_color_keys(),
           hair_style: PlayerEnums.hair_style_keys(),
           faction: PlayerEnums.faction_keys(),
-          map_vnum: pos_integer,
-          map_x: non_neg_integer,
-          map_y: non_neg_integer,
-          level: non_neg_integer,
-          job_level: non_neg_integer,
-          hero_level: non_neg_integer,
+          map_vnum: EntityPosition.map_vnum(),
+          map_x: EntityPosition.map_axis(),
+          map_y: EntityPosition.map_axis(),
+          level: LevelableEntity.level(),
+          job_level: LevelableEntity.level(),
+          hero_level: LevelableEntity.level(),
           level_xp: non_neg_integer,
           job_level_xp: non_neg_integer,
           hero_level_xp: non_neg_integer,
@@ -67,8 +71,8 @@ defmodule ElvenCaching.Entity.Character do
           socket: Socket.t(),
           # Virtual attributes
           map_id: EntityPosition.map_id(),
-          speed: non_neg_integer,
-          direction: EntityEnums.direction_type_keys()
+          speed: MapEntity.speed(),
+          direction: MapEntity.direction()
         }
 
   ## Public API
