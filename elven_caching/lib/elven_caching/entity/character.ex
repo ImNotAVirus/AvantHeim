@@ -97,7 +97,7 @@ defmodule ElvenCaching.Entity.Character do
     def id(%Character{id: id}), do: id
   end
 
-  defimpl ElvenCaching.MovableEntity do
+  defimpl ElvenCaching.MapEntity do
     def position(%Character{} = character) do
       EntityPosition.new(
         character.map_id,

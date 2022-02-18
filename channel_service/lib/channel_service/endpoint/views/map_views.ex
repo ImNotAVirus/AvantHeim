@@ -3,7 +3,7 @@ defmodule ChannelService.Endpoint.MapViews do
   TODO: Documentation
   """
 
-  alias ElvenCaching.MovableEntity
+  alias ElvenCaching.MapEntity
   alias ElvenCaching.Entity.EntityPosition
   alias ElvenCaching.Entity.Character
 
@@ -22,7 +22,7 @@ defmodule ChannelService.Endpoint.MapViews do
       map_vnum: map_vnum,
       map_x: map_x,
       map_y: map_y
-    } = MovableEntity.position(character)
+    } = MapEntity.position(character)
 
     %At{
       character_id: character.id,
@@ -38,7 +38,7 @@ defmodule ChannelService.Endpoint.MapViews do
     %EntityPosition{
       map_vnum: map_vnum,
       is_instance: is_instance
-    } = MovableEntity.position(character)
+    } = MapEntity.position(character)
 
     %CMap{
       map_vnum: map_vnum,
@@ -54,7 +54,7 @@ defmodule ChannelService.Endpoint.MapViews do
     %EntityPosition{
       map_x: map_x,
       map_y: map_y
-    } = MovableEntity.position(character)
+    } = MapEntity.position(character)
 
     %Mv{
       entity_type: :character,

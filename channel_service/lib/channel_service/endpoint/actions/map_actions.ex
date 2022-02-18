@@ -5,7 +5,7 @@ defmodule ChannelService.Endpoint.MapActions do
 
   alias ElvenCore.Socket
   alias ElvenCaching.CharacterRegistry
-  alias ElvenCaching.MovableEntity
+  alias ElvenCaching.MapEntity
   alias ElvenCaching.Entity.EntityPosition
 
   alias ChannelService.Endpoint.EntityInteractions
@@ -33,7 +33,7 @@ defmodule ChannelService.Endpoint.MapActions do
 
     # Get current character
     {:ok, character} = CharacterRegistry.get(character_id)
-    %EntityPosition{map_id: map_id} = MovableEntity.position(character)
+    %EntityPosition{map_id: map_id} = MapEntity.position(character)
 
     # Get target
     maybe_entity = ElvenCaching.get_entity_by_id(entity_type, entity_id)
