@@ -3,7 +3,7 @@ defmodule ChannelService.Endpoint.VisibilityViews do
   TODO: Documentation
   """
 
-  alias ElvenCaching.MovableEntity
+  alias ElvenCaching.MapEntity
   alias ElvenCaching.Entity.EntityPosition
   alias ElvenCaching.Entity.Character
 
@@ -19,7 +19,7 @@ defmodule ChannelService.Endpoint.VisibilityViews do
     %EntityPosition{
       map_x: map_x,
       map_y: map_y
-    } = MovableEntity.position(character)
+    } = MapEntity.position(character)
 
     hp = FakeData.hp(character_id: character.id)
     hp_max = FakeData.hp_max(character_id: character.id)

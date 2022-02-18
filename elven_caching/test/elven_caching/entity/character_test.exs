@@ -2,7 +2,7 @@ defmodule ElvenCaching.Entity.CharacterTest do
   use EntityCase, async: true
 
   alias ElvenCaching.Entity
-  alias ElvenCaching.MovableEntity
+  alias ElvenCaching.MapEntity
   alias ElvenCaching.Entity.Character
   alias ElvenCaching.Entity.EntityPosition
 
@@ -41,10 +41,10 @@ defmodule ElvenCaching.Entity.CharacterTest do
     end
   end
 
-  describe "MovableEntity protocol" do
+  describe "MapEntity protocol" do
     test "position/1" do
       character = Character.new(character_attrs_mock())
-      assert %EntityPosition{} = MovableEntity.position(character)
+      assert %EntityPosition{} = MapEntity.position(character)
     end
 
     test "position/2" do
@@ -52,7 +52,7 @@ defmodule ElvenCaching.Entity.CharacterTest do
       position = EntityPosition.new(123, 456, 789)
 
       assert %Character{map_id: 123, map_vnum: 123, map_x: 456, map_y: 789} =
-               MovableEntity.position(character, position)
+               MapEntity.position(character, position)
     end
   end
 end
