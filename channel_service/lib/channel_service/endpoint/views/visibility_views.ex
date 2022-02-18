@@ -3,6 +3,7 @@ defmodule ChannelService.Endpoint.VisibilityViews do
   TODO: Documentation
   """
 
+  alias ElvenCaching.Entity
   alias ElvenCaching.MapEntity
   alias ElvenCaching.Entity.EntityPosition
   alias ElvenCaching.Entity.Character
@@ -69,10 +70,10 @@ defmodule ChannelService.Endpoint.VisibilityViews do
     }
   end
 
-  def render(:out, %Character{} = character) do
+  def render(:out, entity) do
     %Out{
-      entity_type: :character,
-      entity_id: character.id
+      entity_type: Entity.type(entity),
+      entity_id: Entity.id(entity)
     }
   end
 end

@@ -7,6 +7,7 @@ defmodule ChannelService.Endpoint.PlayerViews do
 
   alias ChannelService.Endpoint.PlayerPackets.{
     CInfo,
+    CMode,
     Fd,
     Fs,
     Lev,
@@ -59,6 +60,19 @@ defmodule ChannelService.Endpoint.PlayerViews do
       hp_max: FakeData.hp_max(character_id: character.id),
       mp: FakeData.mp(character_id: character.id),
       mp_max: FakeData.mp_max(character_id: character.id)
+    }
+  end
+
+  def render(:c_mode, %Character{} = character) do
+    %CMode{
+      entity_type: :character,
+      entity_id: character.id,
+      morph: FakeData.morph(character_id: character.id),
+      morph_upgrade: FakeData.morph_upgrade(character_id: character.id),
+      morph_design: FakeData.morph_design(character_id: character.id),
+      is_arena_winner: FakeData.is_arena_winner(character_id: character.id),
+      size: FakeData.size(character_id: character.id),
+      item_morph: FakeData.item_morph(character_id: character.id)
     }
   end
 

@@ -1,4 +1,4 @@
-defmodule ChannelService.Endpoint.EntityPackets.CMode do
+defmodule ChannelService.Endpoint.PlayerPackets.CMode do
   @moduledoc """
   TODO: Documentation.
 
