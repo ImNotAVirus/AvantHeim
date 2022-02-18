@@ -3,11 +3,13 @@ defmodule ChannelService.Endpoint.EntityViews do
   TODO: Documentation
   """
 
-  alias ElvenCaching.Entity.Character
+  alias ElvenCaching.Entity
+  alias ElvenCaching.MapEntity
+  alias ElvenCaching.BattleEntity
+  alias ElvenCaching.LevelableEntity
 
   alias ChannelService.Endpoint.EntityPackets.{
     CharSc,
-    CMode,
     Cond,
     Eff,
     St,
@@ -17,65 +19,53 @@ defmodule ChannelService.Endpoint.EntityViews do
   ## Public API
 
   @spec render(atom, any) :: any
-  def render(:c_mode, %Character{} = character) do
-    %CMode{
-      entity_type: :character,
-      entity_id: character.id,
-      morph: FakeData.morph(character_id: character.id),
-      morph_upgrade: FakeData.morph_upgrade(character_id: character.id),
-      morph_design: FakeData.morph_design(character_id: character.id),
-      is_arena_winner: FakeData.is_arena_winner(character_id: character.id),
-      size: FakeData.size(character_id: character.id),
-      item_morph: FakeData.item_morph(character_id: character.id)
-    }
-  end
-
-  def render(:st, %Character{} = character) do
+  def render(:st, entity) do
     %St{
-      entity_type: :character,
-      entity_id: character.id,
-      level: character.level,
-      hero_level: character.hero_level,
-      hp: FakeData.hp(character_id: character.id),
-      hp_max: FakeData.hp_max(character_id: character.id),
-      mp: FakeData.mp(character_id: character.id),
-      mp_max: FakeData.mp_max(character_id: character.id),
+      entity_type: Entity.type(entity),
+      entity_id: Entity.id(entity),
+      level: LevelableEntity.level(entity),
+      hero_level: LevelableEntity.hero_level(entity),
+      hp: BattleEntity.hp(entity),
+      hp_max: BattleEntity.hp_max(entity),
+      mp: BattleEntity.mp(entity),
+      mp_max: BattleEntity.mp_max(entity),
+      # TODO: Buff is a System. Not sure how to do it currently
       buffs: []
     }
   end
 
-  def render(:char_sc, %Character{} = character) do
+  ## TODO: Test on PNJ
+  def render(:char_sc, entity) do
     %CharSc{
-      entity_type: :character,
-      entity_id: character.id,
-      size: FakeData.size(character_id: character.id)
+      entity_type: Entity.type(entity),
+      entity_id: Entity.id(entity),
+      size: MapEntity.size(entity)
     }
   end
 
-  def render(:cond, %Character{} = character) do
+  def render(:cond, entity) do
     %Cond{
-      entity_type: :character,
-      entity_id: character.id,
-      no_attack: FakeData.no_attack(character_id: character.id),
-      no_move: FakeData.no_move(character_id: character.id),
-      speed: character.speed
+      entity_type: Entity.type(entity),
+      entity_id: Entity.id(entity),
+      no_attack: not BattleEntity.can_attack(entity),
+      no_move: not BattleEntity.can_move(entity),
+      speed: MapEntity.speed(entity)
     }
   end
 
-  # TODO : Improve that to support pnj | mobs | mates
-  def render(:eff, %{entity: %Character{id: id}, value: value}) do
+  def render(:eff, %{entity: entity, value: value}) do
     %Eff{
-      entity_type: :character,
-      entity_id: id,
+      entity_type: Entity.type(entity),
+      entity_id: Entity.id(entity),
       value: value
     }
   end
 
-  def render(:dir, %Character{} = character) do
+  def render(:dir, entity) do
     %Dir{
-      entity_type: :character,
-      entity_id: character.id,
-      direction: character.direction
+      entity_type: Entity.type(entity),
+      entity_id: Entity.id(entity),
+      direction: MapEntity.direction(entity)
     }
   end
 end

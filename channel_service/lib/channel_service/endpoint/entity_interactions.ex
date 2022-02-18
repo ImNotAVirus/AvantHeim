@@ -23,7 +23,7 @@ defmodule ChannelService.Endpoint.EntityInteractions do
   def send_map_enter(%Character{} = character) do
     ## Self packets
     Socket.send(character.socket, PlayerViews.render(:c_info, character))
-    Socket.send(character.socket, EntityViews.render(:c_mode, character))
+    Socket.send(character.socket, PlayerViews.render(:c_mode, character))
     Socket.send(character.socket, PlayerViews.render(:lev, character))
     Socket.send(character.socket, PlayerViews.render(:stat, character))
     Socket.send(character.socket, MapViews.render(:at, character))
@@ -192,8 +192,8 @@ defmodule ChannelService.Endpoint.EntityInteractions do
   defp send_entity_enter_packets(%Character{} = self, %Character{} = character) do
     Socket.send(self.socket, VisibilityViews.render(:in, character))
     Socket.send(character.socket, VisibilityViews.render(:in, self))
-    Socket.send(self.socket, EntityViews.render(:c_mode, character))
-    Socket.send(character.socket, EntityViews.render(:c_mode, self))
+    Socket.send(self.socket, PlayerViews.render(:c_mode, character))
+    Socket.send(character.socket, PlayerViews.render(:c_mode, self))
   end
 
   @spec send_entity_leave_packets(Character.t(), ElvenCaching.entity()) :: :ok | {:error, atom}

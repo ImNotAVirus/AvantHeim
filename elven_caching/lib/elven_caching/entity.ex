@@ -6,7 +6,7 @@ defprotocol ElvenCaching.Entity do
   alias ElvenEnums.EntityEnums
 
   @type entity_type :: EntityEnums.entity_type_keys()
-  @type entity_id :: EntityEnums.pos_integer()
+  @type entity_id :: pos_integer()
 
   @doc "Returns the Entity type"
   @spec type(t()) :: entity_type()
