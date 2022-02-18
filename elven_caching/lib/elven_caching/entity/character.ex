@@ -39,8 +39,9 @@ defmodule ElvenCaching.Entity.Character do
 
   alias __MODULE__
   alias ElvenCore.Socket
-  alias ElvenCaching.Entity.EntityPosition
   alias ElvenEnums.{EntityEnums, PlayerEnums}
+
+  alias ElvenCaching.Entity.EntityPosition
 
   @type t :: %Character{
           # Required attributes
@@ -93,12 +94,29 @@ defmodule ElvenCaching.Entity.Character do
   ## Implement protocols
 
   defimpl ElvenCaching.Entity do
-    def type(%Character{}), do: :character
+    def type(_), do: :character
     def id(%Character{id: id}), do: id
   end
 
   defimpl ElvenCaching.MapEntity do
-    def position(%Character{} = character) do
+    import EntityEnums, only: [direction_type: 1]
+
+    def size(character), do: FakeData.size(character_id: character.id)
+    def size(_character, _size), do: raise("unimplemented setter for size")
+
+    def direction(%Character{direction: direction}), do: direction
+
+    def direction(character, direction) when direction in direction_type(:__values__) do
+      %Character{character | direction: direction}
+    end
+
+    def speed(%Character{speed: speed}), do: speed
+
+    def speed(character, speed) when is_integer(speed) do
+      %Character{character | speed: speed}
+    end
+
+    def position(character) do
       EntityPosition.new(
         character.map_id,
         character.map_vnum,
@@ -107,7 +125,7 @@ defmodule ElvenCaching.Entity.Character do
       )
     end
 
-    def position(%Character{} = character, %EntityPosition{} = pos) do
+    def position(character, %EntityPosition{} = pos) do
       %Character{
         character
         | map_id: pos.map_id,
@@ -116,5 +134,39 @@ defmodule ElvenCaching.Entity.Character do
           map_y: pos.map_y
       }
     end
+  end
+
+  defimpl ElvenCaching.LevelableEntity do
+    def level(%Character{level: level}), do: level
+
+    def level(character, level) when is_integer(level) do
+      %Character{character | level: level}
+    end
+
+    def hero_level(%Character{hero_level: hero_level}), do: hero_level
+
+    def hero_level(character, hero_level) when is_integer(hero_level) do
+      %Character{character | hero_level: hero_level}
+    end
+  end
+
+  defimpl ElvenCaching.BattleEntity do
+    def hp(character), do: FakeData.hp(character_id: character.id)
+    def hp(_character, _hp), do: raise("unimplemented setter for hp")
+
+    def hp_max(character), do: FakeData.hp_max(character_id: character.id)
+    def hp_max(_character, _hp_max), do: raise("unimplemented setter for hp_max")
+
+    def mp(character), do: FakeData.mp(character_id: character.id)
+    def mp(_character, _mp), do: raise("unimplemented setter for mp")
+
+    def mp_max(character), do: FakeData.mp_max(character_id: character.id)
+    def mp_max(_character, _mp_max), do: raise("unimplemented setter for mp_max")
+
+    def can_attack(character), do: FakeData.can_attack(character_id: character.id)
+    def can_attack(_character, _can_attack), do: raise("unimplemented setter for can_attack")
+
+    def can_move(character), do: FakeData.can_move(character_id: character.id)
+    def can_move(_character, _can_move), do: raise("unimplemented setter for can_move")
   end
 end

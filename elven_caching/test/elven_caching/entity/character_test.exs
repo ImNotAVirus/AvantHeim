@@ -3,8 +3,10 @@ defmodule ElvenCaching.Entity.CharacterTest do
 
   alias ElvenCaching.Entity
   alias ElvenCaching.MapEntity
+  alias ElvenCaching.LevelableEntity
+  alias ElvenCaching.BattleEntity
+
   alias ElvenCaching.Entity.Character
-  alias ElvenCaching.Entity.EntityPosition
 
   ## Tests
 
@@ -29,30 +31,25 @@ defmodule ElvenCaching.Entity.CharacterTest do
     end
   end
 
-  describe "Entity protocol" do
-    test "type/1" do
+  describe "Character implements protocol" do
+    test "ElvenCaching.Entity" do
       character = Character.new(character_attrs_mock())
-      assert Entity.type(character) == :character
+      assert Entity.impl_for(character)
     end
 
-    test "id/2" do
+    test "ElvenCaching.MapEntity" do
       character = Character.new(character_attrs_mock())
-      assert Entity.id(character) == character.id
-    end
-  end
-
-  describe "MapEntity protocol" do
-    test "position/1" do
-      character = Character.new(character_attrs_mock())
-      assert %EntityPosition{} = MapEntity.position(character)
+      assert MapEntity.impl_for(character)
     end
 
-    test "position/2" do
+    test "ElvenCaching.LevelableEntity" do
       character = Character.new(character_attrs_mock())
-      position = EntityPosition.new(123, 456, 789)
+      assert LevelableEntity.impl_for(character)
+    end
 
-      assert %Character{map_id: 123, map_vnum: 123, map_x: 456, map_y: 789} =
-               MapEntity.position(character, position)
+    test "ElvenCaching.BattleEntity" do
+      character = Character.new(character_attrs_mock())
+      assert BattleEntity.impl_for(character)
     end
   end
 end

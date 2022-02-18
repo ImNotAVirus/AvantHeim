@@ -24,8 +24,8 @@ defmodule FakeData do
 
   def direction(character_id: _), do: :south
   def map_music(character_id: _), do: 1
-  def no_attack(character_id: _), do: false
-  def no_move(character_id: _), do: false
+  def can_attack(character_id: _), do: true
+  def can_move(character_id: _), do: true
 
   def group_id(character_id: _), do: -1
 
