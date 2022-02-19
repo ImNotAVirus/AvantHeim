@@ -47,4 +47,10 @@ defmodule ElvenEnums.PlayerEnums do
     dark_grey: 7,
     light_blue: 8,
     pink_red: 9
+
+  defenum :family_rank,
+    member: 0,
+    keeper: 1,
+    deputy: 2,
+    head: 3
 end

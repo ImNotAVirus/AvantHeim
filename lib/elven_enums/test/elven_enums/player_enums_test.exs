@@ -15,4 +15,5 @@ defmodule ElvenViews.PlayerEnumsTest do
   test_enum PlayerEnums, :character_class
   test_enum PlayerEnums, :hair_style
   test_enum PlayerEnums, :hair_color
+  test_enum PlayerEnums, :family_rank
 end
