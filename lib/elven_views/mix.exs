@@ -29,6 +29,7 @@ defmodule ElvenViews.MixProject do
     [
       {:elven_core, path: "../elven_core"},
       {:elven_enums, path: "../elven_enums"},
+      {:elven_i18n, path: "../elven_i18n"},
       {:simple_enum, "~> 0.1"}
     ]
   end

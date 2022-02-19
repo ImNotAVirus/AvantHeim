@@ -70,7 +70,7 @@ defmodule ElvenViews.SerializablePacket do
   defmacro field(name, type, opts \\ []) do
     expanded_type = type |> Macro.expand(__CALLER__) |> resolve_type!()
     nullable = Keyword.get(opts, :nullable, false)
-    
+
     updated_opts =
       opts
       |> Keyword.delete(:default)
@@ -191,7 +191,7 @@ defmodule ElvenViews.SerializablePacket do
       default: default,
       nullable: nullable
     } = field
-    
+
     value_ast = maybe_default_ast(name, default)
 
     # if opts: serialize_term(value_ast, opts)
@@ -211,7 +211,7 @@ defmodule ElvenViews.SerializablePacket do
       _ -> {:||, [context: Elixir, import: Kernel], [value, default_ast]}
     end
   end
-  
+
   defp nullable_type_ast(type, value_ast, opts) do
     new_opts =
       case type do
@@ -231,7 +231,7 @@ defmodule ElvenViews.SerializablePacket do
 
   defp resolve_type!(type) do
     # Is type a module? 
-    Code.ensure_loaded?(type) || raise "invalid type #{inspect(type)}"
+    Code.ensure_compiled!(type)
 
     # Is module implement the `SerializerProtocol` protocol
     protocol = ElvenCore.Socket.SerializerProtocol
