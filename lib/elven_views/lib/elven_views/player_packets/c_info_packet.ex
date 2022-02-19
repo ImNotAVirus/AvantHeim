@@ -5,10 +5,9 @@ defmodule ElvenViews.PlayerPackets.CInfoPacket do
 
   use ElvenViews.SerializablePacket
 
-  import ElvenEnums.EntityEnums, only: [authority: 1]
-  
   import ElvenEnums.PlayerEnums,
     only: [
+      authority: 1,
       gender: 1,
       hair_style: 1,
       hair_color: 1,
