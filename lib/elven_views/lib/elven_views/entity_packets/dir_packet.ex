@@ -12,6 +12,6 @@ defmodule ElvenViews.EntityPackets.DirPacket do
   defpacket "dir" do
     field :entity_type, :enum, values: entity_type(:__enumerators__)
     field :entity_id, :pos_integer
-    field :direction_type, :enum, values: direction_type(:__enumerators__)
+    field :direction, :enum, values: direction_type(:__enumerators__)
   end
 end

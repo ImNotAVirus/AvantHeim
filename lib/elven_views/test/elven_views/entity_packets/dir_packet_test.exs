@@ -23,7 +23,7 @@ defmodule ElvenViews.EntityPackets.DirPacketTest do
     %DirPacket{
       entity_type: :character,
       entity_id: 22,
-      direction_type: :north
+      direction: :north
     }
   end
 end
