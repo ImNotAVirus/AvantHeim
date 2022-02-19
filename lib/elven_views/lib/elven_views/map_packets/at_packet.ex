@@ -15,6 +15,9 @@ defmodule ElvenViews.MapPackets.AtPacket do
     field :map_x, :non_neg_integer
     field :map_y, :non_neg_integer
     field :direction, :enum, values: direction_type(:__enumerators__)
+    field :unknown1, :integer, default: 0
     field :map_music, :non_neg_integer
+    field :unknown2, :integer, default: 2
+    field :unknown3, :integer, default: -1
   end
 end
