@@ -9,40 +9,44 @@ defmodule ElvenViews.LoginPackets.NsTeSTPacketTest do
   describe "serialize/2" do
     test "with empty channel list" do
       mock = nstest_mock([])
-      packet = serialize_structure(mock)
+      packet = structure_to_iolist(mock)
 
       assert is_list(packet)
       assert packet_index(packet, 0) == "NsTeST"
-      assert packet_index(packet, 1) == structure_default(mock, :region)
-      assert packet_index(packet, 2) == mock.username
-      assert packet_index(packet, 3) == structure_default(mock, :auth_type)
-      assert packet_index(packet, 4) == structure_default(mock, :server1)
-      assert packet_index(packet, 5) == structure_default(mock, :server2)
-      assert packet_index(packet, 6) == structure_default(mock, :server3)
-      assert packet_index(packet, 7) == structure_default(mock, :server4)
-      assert packet_index(packet, 8) == structure_default(mock, :server5)
-      assert packet_index(packet, 9) == structure_default(mock, :server6)
-      assert packet_index(packet, 10) == structure_default(mock, :unused_servers)
-      assert packet_index(packet, 11) == 0
-      assert packet_index(packet, 12) == mock.encryption_key
+      assert packet_index(packet, 1) == "0"
+      assert packet_index(packet, 2) == "admin"
+      assert packet_index(packet, 3) == "2"
+      assert packet_index(packet, 4) == "-99 0 -99 0 -99 0 -99 0"
+      assert packet_index(packet, 5) == "-99 0 -99 0 -99 0 -99 0"
+      assert packet_index(packet, 6) == "-99 0 -99 0 -99 0 -99 0"
+      assert packet_index(packet, 7) == "-99 0 -99 0 -99 0 -99 0"
+      assert packet_index(packet, 8) == "-99 0 -99 0 -99 0 -99 0"
+      assert packet_index(packet, 9) == "-99 0 -99 0 -99 0 -99 0"
+      assert packet_index(packet, 10) == unused_server()
+      assert packet_index(packet, 11) == "0"
+      assert packet_index(packet, 12) == "123"
       assert packet_index(packet, 13) == "-1"
       assert packet_index(packet, 14) == "-1:-1:-1:10000.10000.1"
     end
 
     test "with non empty channel list" do
-      channel = channel_mock()
-      packet = [channel, channel] |> nstest_mock() |> serialize_structure()
+      mock = nstest_mock([channel_mock(), channel_mock()])
+      packet = structure_to_iolist(mock)
 
-      expected = serialize_structure(channel) <> " " <> serialize_structure(channel)
+      expected = "127.0.0.1:4000:0:1.1.ElvenGard 127.0.0.1:4000:0:1.1.ElvenGard"
       assert packet_index(packet, 13) == expected
     end
   end
 
   ## Helpers
 
+  defp unused_server() do
+    "-99 0 -99 0 -99 0 -99 0 -99 0 -99 0 -99 0 -99 0 -99 0 -99 0 -99 0 -99 0"
+  end
+
   defp nstest_mock(server_list) do
     %NsTeSTPacket{
-      encryption_key: 132,
+      encryption_key: 123,
       username: "admin",
       server_list: server_list
     }

@@ -1,28 +1,24 @@
 defmodule ElvenViews.EntityPackets.CModePacketTest do
   use PacketCase, async: true
 
-  require ElvenEnums.EntityEnums
-
-  alias ElvenEnums.EntityEnums
   alias ElvenViews.EntityPackets.CModePacket
 
   ## Tests
 
   describe "serialize/2" do
     test "can serialize a packet structure" do
-      mock = c_mode_mock()
-      packet = serialize_structure(mock)
+      packet = structure_to_iolist(c_mode_mock())
 
       assert is_list(packet)
       assert packet_index(packet, 0) == "c_mode"
-      assert packet_index(packet, 1) == EntityEnums.entity_type(mock.entity_type, :value)
-      assert packet_index(packet, 2) == mock.entity_id
-      assert packet_index(packet, 3) == mock.morph
-      assert packet_index(packet, 4) == mock.morph_upgrade
-      assert packet_index(packet, 5) == mock.morph_design
-      assert packet_index(packet, 6) == mock.is_arena_winner
-      assert packet_index(packet, 7) == mock.size
-      assert packet_index(packet, 8) == mock.item_morph
+      assert packet_index(packet, 1) == "1"
+      assert packet_index(packet, 2) == "111"
+      assert packet_index(packet, 3) == "222"
+      assert packet_index(packet, 4) == "333"
+      assert packet_index(packet, 5) == "444"
+      assert packet_index(packet, 6) == "0"
+      assert packet_index(packet, 7) == "555"
+      assert packet_index(packet, 8) == "666"
     end
   end
 
@@ -31,13 +27,13 @@ defmodule ElvenViews.EntityPackets.CModePacketTest do
   defp c_mode_mock() do
     %CModePacket{
       entity_type: :character,
-      entity_id: 1,
-      morph: 11,
-      morph_upgrade: 15,
-      morph_design: 10,
+      entity_id: 111,
+      morph: 222,
+      morph_upgrade: 333,
+      morph_design: 444,
       is_arena_winner: false,
-      size: 13,
-      item_morph: 1
+      size: 555,
+      item_morph: 666
     }
   end
 end
