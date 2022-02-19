@@ -10,14 +10,17 @@ defmodule ElvenViews.MapPackets.AtPacketTest do
       packet = structure_to_iolist(at_mock())
 
       assert is_list(packet)
-      assert length(packet) == 7
+      assert length(packet) == 10
       assert packet_index(packet, 0) == "at"
       assert packet_index(packet, 1) == "4574"
       assert packet_index(packet, 2) == "1"
       assert packet_index(packet, 3) == "79"
       assert packet_index(packet, 4) == "116"
       assert packet_index(packet, 5) == "0"
-      assert packet_index(packet, 6) == "2770"
+      assert packet_index(packet, 6) == "0"
+      assert packet_index(packet, 7) == "2770"
+      assert packet_index(packet, 8) == "2"
+      assert packet_index(packet, 9) == "-1"
     end
   end
 

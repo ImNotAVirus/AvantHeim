@@ -3,7 +3,8 @@ defmodule ElvenViews.SerializablePacket do
   TODO: Documentation.
   """
 
-  @native_types [:integer, :pos_integer, :non_neg_integer, :boolean, :list]
+  @integer_types [:integer, :pos_integer, :non_neg_integer]
+  @native_types @integer_types ++ [:boolean, :list]
   @type_aliases [string: String, enum: ElvenViews.SerializableEnum]
   @aliased_types Keyword.keys(@type_aliases)
   @supported_types @native_types ++ @aliased_types
@@ -35,7 +36,9 @@ defmodule ElvenViews.SerializablePacket do
   @doc """
   TODO: Documentation
   """
-  defmacro defpacket(name, do: exp) do
+  defmacro defpacket(name, maybe_do \\ []) do
+    exp = Keyword.get(maybe_do, :do, [])
+
     quote do
       if Module.get_attribute(__MODULE__, :name) do
         raise "can't define multiple packets is the same module: #{inspect(__MODULE__)}"
@@ -66,7 +69,12 @@ defmodule ElvenViews.SerializablePacket do
   """
   defmacro field(name, type, opts \\ []) do
     expanded_type = type |> Macro.expand(__CALLER__) |> resolve_type!()
-    updated_opts = Keyword.delete(opts, :default)
+    nullable = Keyword.get(opts, :nullable, false)
+
+    updated_opts =
+      opts
+      |> Keyword.delete(:default)
+      |> Keyword.delete(:nullable)
 
     escaped_default =
       case opts[:default] do
@@ -80,7 +88,8 @@ defmodule ElvenViews.SerializablePacket do
         name: unquote(name),
         type: unquote(expanded_type),
         opts: unquote(updated_opts),
-        default: unquote(escaped_default)
+        default: unquote(escaped_default),
+        nullable: unquote(nullable)
       }
     end
   end
@@ -174,13 +183,22 @@ defmodule ElvenViews.SerializablePacket do
     end
   end
 
-  defp serialize_field_ast(%{type: _, name: name, opts: opts, default: default}) do
+  defp serialize_field_ast(field) do
+    %{
+      type: type,
+      name: name,
+      opts: opts,
+      default: default,
+      nullable: nullable
+    } = field
+
     value_ast = maybe_default_ast(name, default)
 
     # if opts: serialize_term(value_ast, opts)
-    case opts do
-      [] -> value_ast
-      _ -> quote(do: serialize_term(unquote(value_ast), unquote(opts)))
+    case {nullable, opts} do
+      {true, _} -> nullable_type_ast(type, value_ast, opts)
+      {false, []} -> value_ast
+      {false, _} -> quote(do: serialize_term(unquote(value_ast), unquote(opts)))
     end
   end
 
@@ -194,13 +212,26 @@ defmodule ElvenViews.SerializablePacket do
     end
   end
 
+  defp nullable_type_ast(type, value_ast, opts) do
+    new_opts =
+      case type do
+        :string -> Enum.concat([as: :string], opts)
+        t when t in @integer_types -> Enum.concat([as: :integer], opts)
+        _ -> raise "unsuported type #{inspect(type)} with nullable attribut"
+      end
+
+    quote do
+      serialize_term(unquote(value_ast), unquote(new_opts))
+    end
+  end
+
   ## Private helpers
 
   defp resolve_type!(type) when type in @supported_types, do: type
 
   defp resolve_type!(type) do
     # Is type a module? 
-    Code.ensure_loaded?(type) || raise "invalid type #{inspect(type)}"
+    Code.ensure_compiled!(type)
 
     # Is module implement the `SerializerProtocol` protocol
     protocol = ElvenCore.Socket.SerializerProtocol

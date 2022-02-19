@@ -8,7 +8,7 @@ defmodule PacketCase do
 
   using do
     quote do
-      import ElvenCore.Socket.Serializer, only: [serialize_term: 2]
+      import ElvenCore.Socket.Serializer, only: [serialize_term: 1, serialize_term: 2]
 
       defp structure_to_iolist(struct, opts \\ []) do
         struct
