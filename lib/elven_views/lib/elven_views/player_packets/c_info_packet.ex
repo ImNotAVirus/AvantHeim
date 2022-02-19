@@ -13,7 +13,7 @@ defmodule ElvenViews.PlayerPackets.CInfoPacket do
       character_class: 1
     ]
 
-  alias ElvenViews.PlayerPackets.CInfo.FamilyIdRankSubPacket
+  alias ElvenViews.SubPackets.FamilyIdRankSubPacket
 
   ## Packet definition
 

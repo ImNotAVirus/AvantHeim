@@ -1,4 +1,4 @@
-defmodule ElvenViews.PlayerPackets.CInfo.FamilyIdRankSubPacket do
+defmodule ElvenViews.SubPackets.FamilyIdRankSubPacket do
   @moduledoc false
 
   use ElvenCore.SerializableStruct
