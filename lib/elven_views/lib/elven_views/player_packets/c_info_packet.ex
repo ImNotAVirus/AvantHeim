@@ -6,7 +6,13 @@ defmodule ElvenViews.PlayerPackets.CInfoPacket do
   use ElvenViews.SerializablePacket
 
   import ElvenEnums.PlayerEnums,
-    only: [family_rank: 1, gender: 1, hair_style: 1, hair_color: 1, character_class: 1]
+    only: [
+      family_rank: 1,
+      gender: 1,
+      hair_style: 1,
+      hair_color: 1,
+      character_class: 1
+    ]
 
   ## Packet definition
 
