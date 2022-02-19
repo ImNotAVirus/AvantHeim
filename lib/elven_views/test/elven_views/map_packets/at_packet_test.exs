@@ -19,7 +19,7 @@ defmodule ElvenViews.MapPackets.AtPacketTest do
       assert packet_index(packet, 6) == "2770"
     end
   end
-  
+
   ## Helpers
 
   defp at_mock() do
