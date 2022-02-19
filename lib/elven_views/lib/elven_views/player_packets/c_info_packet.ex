@@ -5,6 +5,8 @@ defmodule ElvenViews.PlayerPackets.CInfoPacket do
 
   use ElvenViews.SerializablePacket
 
+  import ElvenEnums.EntityEnums, only: [authority: 1]
+  
   import ElvenEnums.PlayerEnums,
     only: [
       gender: 1,
@@ -24,7 +26,7 @@ defmodule ElvenViews.PlayerPackets.CInfoPacket do
     field :family_id_rank, FamilyIdRankSubPacket
     field :family_name, :string, nullable: true
     field :character_id, :pos_integer
-    field :name_color_id, :non_neg_integer
+    field :authority, :enum, values: authority(:__enumerators__)
     field :gender, :enum, values: gender(:__enumerators__)
     field :hair_style, :enum, values: hair_style(:__enumerators__)
     field :hair_color, :enum, values: hair_color(:__enumerators__)
