@@ -10,6 +10,7 @@ defmodule ElvenViews.EntityPackets.CModePacketTest do
       packet = structure_to_iolist(c_mode_mock())
 
       assert is_list(packet)
+      assert length(packet) == 9
       assert packet_index(packet, 0) == "c_mode"
       assert packet_index(packet, 1) == "1"
       assert packet_index(packet, 2) == "111"

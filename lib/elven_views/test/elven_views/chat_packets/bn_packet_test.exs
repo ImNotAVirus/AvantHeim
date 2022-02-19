@@ -10,6 +10,7 @@ defmodule ElvenViews.ChatPackets.BnPacketTest do
       packet = structure_to_iolist(bn_mock())
 
       assert is_list(packet)
+      assert length(packet) == 3
       assert packet_index(packet, 0) == "bn"
       assert packet_index(packet, 1) == "123"
       assert packet_index(packet, 2) == "Hello^welcome^to^AvantHeim"

@@ -10,6 +10,7 @@ defmodule ElvenViews.EntityPackets.CharScPacketTest do
       packet = structure_to_iolist(char_sc_mock())
 
       assert is_list(packet)
+      assert length(packet) == 4
       assert packet_index(packet, 0) == "char_sc"
       assert packet_index(packet, 1) == "1"
       assert packet_index(packet, 2) == "11"

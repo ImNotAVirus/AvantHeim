@@ -11,6 +11,7 @@ defmodule ElvenViews.LoginPackets.FailcPacketTest do
       packet = structure_to_iolist(mock)
 
       assert is_list(packet)
+      assert length(packet) == 2
       assert packet_index(packet, 0) == "failc"
       assert packet_index(packet, 1) == "5"
     end

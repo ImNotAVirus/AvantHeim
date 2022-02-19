@@ -10,6 +10,7 @@ defmodule ElvenViews.EntityPackets.DirPacketTest do
       packet = structure_to_iolist(dir_mock())
 
       assert is_list(packet)
+      assert length(packet) == 4
       assert packet_index(packet, 0) == "dir"
       assert packet_index(packet, 1) == "1"
       assert packet_index(packet, 2) == "22"

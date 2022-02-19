@@ -10,6 +10,7 @@ defmodule ElvenViews.MapPackets.MapOutPacketTest do
       packet = structure_to_iolist(mapout_mock())
 
       assert is_list(packet)
+      assert length(packet) == 1
       assert packet_index(packet, 0) == "mapout"
     end
   end
