@@ -10,10 +10,6 @@ defmodule PacketCase do
     quote do
       import ElvenCore.Socket.Serializer, only: [serialize_term: 2]
 
-      defp serialize_structure(struct, opts \\ []) do
-        struct.__struct__.serialize(struct, opts)
-      end
-
       defp structure_to_iolist(struct, opts \\ []) do
         struct
         |> struct.__struct__.serialize(opts)

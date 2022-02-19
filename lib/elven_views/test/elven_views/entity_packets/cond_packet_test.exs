@@ -1,25 +1,21 @@
 defmodule ElvenViews.EntityPackets.CondPacketTest do
   use PacketCase, async: true
 
-  require ElvenEnums.EntityEnums
-
-  alias ElvenEnums.EntityEnums
   alias ElvenViews.EntityPackets.CondPacket
 
   ## Tests
 
   describe "serialize/2" do
     test "can serialize a packet structure" do
-      mock = cond_mock()
-      packet = serialize_structure(mock)
+      packet = structure_to_iolist(cond_mock())
 
       assert is_list(packet)
       assert packet_index(packet, 0) == "cond"
-      assert packet_index(packet, 1) == EntityEnums.entity_type(mock.entity_type, :value)
-      assert packet_index(packet, 2) == mock.entity_id
-      assert packet_index(packet, 3) == mock.no_attack
-      assert packet_index(packet, 4) == mock.no_move
-      assert packet_index(packet, 5) == mock.speed
+      assert packet_index(packet, 1) == "3"
+      assert packet_index(packet, 2) == "22"
+      assert packet_index(packet, 3) == "1"
+      assert packet_index(packet, 4) == "0"
+      assert packet_index(packet, 5) == "33"
     end
   end
 
@@ -27,11 +23,11 @@ defmodule ElvenViews.EntityPackets.CondPacketTest do
 
   defp cond_mock() do
     %CondPacket{
-      entity_type: :character,
-      entity_id: 1,
-      no_attack: false,
+      entity_type: :monster,
+      entity_id: 22,
+      no_attack: true,
       no_move: false,
-      speed: 10
+      speed: 33
     }
   end
 end
