@@ -35,7 +35,9 @@ defmodule ElvenViews.SerializablePacket do
   @doc """
   TODO: Documentation
   """
-  defmacro defpacket(name, do: exp) do
+  defmacro defpacket(name, maybe_do \\ []) do
+    exp = Keyword.get(maybe_do, :do, [])
+
     quote do
       if Module.get_attribute(__MODULE__, :name) do
         raise "can't define multiple packets is the same module: #{inspect(__MODULE__)}"

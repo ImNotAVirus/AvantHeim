@@ -7,6 +7,5 @@ defmodule ElvenViews.MapPackets.MapOutPacket do
 
   ## Packet definition
 
-  defpacket "mapout" do
-  end
+  defpacket "mapout"
 end
