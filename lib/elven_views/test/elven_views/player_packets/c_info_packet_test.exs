@@ -26,7 +26,7 @@ defmodule ElvenViews.PlayerPackets.CInfoPacketTest do
       assert packet_index(packet, 5) == "AvantHeim"
       # field :character_id
       assert packet_index(packet, 6) == "4615"
-      # field :name_color_id
+      # field :authority
       assert packet_index(packet, 7) == "10"
       # field :gender
       assert packet_index(packet, 8) == "0"
@@ -81,7 +81,7 @@ defmodule ElvenViews.PlayerPackets.CInfoPacketTest do
         group_id: 221,
         family_id_rank: family_id_rank,
         family_name: "AvantHeim",
-        name_color_id: 10,
+        authority: :administrator,
         gender: :male,
         hair_style: :hair_style_d,
         hair_color: :brown,
