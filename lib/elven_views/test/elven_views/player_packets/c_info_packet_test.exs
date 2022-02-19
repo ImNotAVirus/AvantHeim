@@ -2,7 +2,7 @@ defmodule ElvenViews.PlayerPackets.CInfoPacketTest do
   use PacketCase, async: true
 
   alias ElvenViews.PlayerPackets.CInfoPacket
-  alias ElvenViews.PlayerPackets.CInfo.FamilyIdRankSubPacket
+  alias ElvenViews.SubPackets.FamilyIdRankSubPacket
 
   ## Tests
 
@@ -66,24 +66,6 @@ defmodule ElvenViews.PlayerPackets.CInfoPacketTest do
       assert packet_index(packet, 4) == "-1"
       assert packet_index(packet, 5) == "-"
       assert packet_index(packet, 16) == "0"
-    end
-
-    test "can serialize family rank i18n" do
-      family_attrs = %{family_id_rank: %FamilyIdRankSubPacket{id: 123, rank: :head}}
-      packet = structure_to_iolist(c_info_mock(family_attrs))
-      assert packet_index(packet, 4) == "123.915"
-
-      family_attrs = %{family_id_rank: %FamilyIdRankSubPacket{id: 123, rank: :deputy}}
-      packet = structure_to_iolist(c_info_mock(family_attrs))
-      assert packet_index(packet, 4) == "123.916"
-
-      family_attrs = %{family_id_rank: %FamilyIdRankSubPacket{id: 123, rank: :keeper}}
-      packet = structure_to_iolist(c_info_mock(family_attrs))
-      assert packet_index(packet, 4) == "123.917"
-
-      family_attrs = %{family_id_rank: %FamilyIdRankSubPacket{id: 123, rank: :member}}
-      packet = structure_to_iolist(c_info_mock(family_attrs))
-      assert packet_index(packet, 4) == "123.918"
     end
   end
 
