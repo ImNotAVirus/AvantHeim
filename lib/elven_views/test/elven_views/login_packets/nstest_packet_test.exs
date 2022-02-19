@@ -12,6 +12,7 @@ defmodule ElvenViews.LoginPackets.NsTeSTPacketTest do
       packet = structure_to_iolist(mock)
 
       assert is_list(packet)
+      assert length(packet) == 15
       assert packet_index(packet, 0) == "NsTeST"
       assert packet_index(packet, 1) == "0"
       assert packet_index(packet, 2) == "admin"

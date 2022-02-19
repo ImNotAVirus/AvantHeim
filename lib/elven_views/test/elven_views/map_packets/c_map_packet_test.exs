@@ -10,6 +10,7 @@ defmodule ElvenViews.MapPackets.CMapPacketTest do
       packet = structure_to_iolist(c_map_mock())
 
       assert is_list(packet)
+      assert length(packet) == 3
       assert packet_index(packet, 0) == "c_map"
       assert packet_index(packet, 1) == "15"
       assert packet_index(packet, 2) == "0"

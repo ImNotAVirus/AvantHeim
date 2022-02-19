@@ -10,6 +10,7 @@ defmodule ElvenViews.EntityPackets.CondPacketTest do
       packet = structure_to_iolist(cond_mock())
 
       assert is_list(packet)
+      assert length(packet) == 6
       assert packet_index(packet, 0) == "cond"
       assert packet_index(packet, 1) == "3"
       assert packet_index(packet, 2) == "22"
