@@ -69,12 +69,14 @@ defmodule ElvenViews.SerializablePacket do
   """
   defmacro field(name, type, opts \\ []) do
     expanded_type = type |> Macro.expand(__CALLER__) |> resolve_type!()
+    apply = opts |> Keyword.get(:apply) |> Macro.escape()
     nullable = Keyword.get(opts, :nullable, false)
 
     updated_opts =
       opts
       |> Keyword.delete(:default)
       |> Keyword.delete(:nullable)
+      |> Keyword.delete(:apply)
 
     escaped_default =
       case opts[:default] do
@@ -89,7 +91,8 @@ defmodule ElvenViews.SerializablePacket do
         type: unquote(expanded_type),
         opts: unquote(updated_opts),
         default: unquote(escaped_default),
-        nullable: unquote(nullable)
+        nullable: unquote(nullable),
+        apply: unquote(apply)
       }
     end
   end
@@ -166,7 +169,11 @@ defmodule ElvenViews.SerializablePacket do
 
   defp serialize_ast(env) do
     fields = Module.get_attribute(env.module, :fields)
-    Enum.map(fields, &serialize_field_ast/1)
+    serialized_values = Enum.map(fields, &serialize_field_ast/1)
+
+    serialized_values
+    |> Enum.zip(fields)
+    |> Enum.map(&apply_ast/1)
   end
 
   defp serialize_field_ast(%{type: :enum, name: name, opts: opts, default: default}) do
@@ -223,6 +230,13 @@ defmodule ElvenViews.SerializablePacket do
     quote do
       serialize_term(unquote(value_ast), unquote(new_opts))
     end
+  end
+
+  defp apply_ast({value, %{apply: nil}}), do: value
+
+  defp apply_ast({value, %{apply: apply}}) do
+    # apply.(value)
+    {{:., [], [apply]}, [], [value]}
   end
 
   ## Private helpers
