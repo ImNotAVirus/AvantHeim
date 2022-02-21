@@ -7,23 +7,25 @@
 # General application configuration
 import Config
 
-## Login configs
+## General configs
 
-config :login_service,
-  packet_schemas: LoginService.PacketSchemas,
-  client_version: System.get_env("CLIENT_VERSION", "0.9.3.3152"),
-  world_ip: "127.0.0.1",
-  world_port: 5000
+config :logger, :console,
+  level: :debug,
+  format: "[$time] [$level] $metadata$message\n",
+  metadata: [:application, :socket_id],
+  colors: [info: :green]
 
-config :login_service, LoginService.Endpoint,
-  listener_name: :login_service,
-  transport: :ranch_tcp,
-  transport_opts: [ip: {127, 0, 0, 1}, port: 4002],
-  protocol: LoginService.Endpoint.Protocol,
-  protocol_opts: []
+## Database configs
+if :elven_database in Mix.Project.deps_apps() do
+  config :elven_database, ecto_repos: [ElvenDatabase.Repo]
 
-# Import global config
-import_config "../../../config/config.exs"
+  config :elven_database, ElvenDatabase.Repo,
+    database: "elvengard_dev",
+    username: "postgres",
+    password: "postgres",
+    hostname: "localhost",
+    port: 5432
+end
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

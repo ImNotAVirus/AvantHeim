@@ -7,14 +7,6 @@
 # General application configuration
 import Config
 
-## General configs
-
-config :logger, :console,
-  level: :debug,
-  format: "[$time] [$level] $metadata$message\n",
-  metadata: [:application, :socket_id],
-  colors: [info: :green]
-
 ## Channel configs
 
 config :channel_service,
@@ -27,19 +19,11 @@ config :channel_service, ChannelService.Endpoint,
   protocol: ChannelService.Endpoint.Protocol,
   protocol_opts: []
 
-## Database configs
-
-config :elven_database, ecto_repos: [ElvenDatabase.Repo]
-
-config :elven_database, ElvenDatabase.Repo,
-  database: "elvengard_dev",
-  username: "postgres",
-  password: "postgres",
-  hostname: "localhost",
-  port: 5432
+# Import global config
+import_config "../../../config/config.exs"
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
-if File.exists?("config/#{config_env()}.exs") do
+if File.exists?("#{__DIR__}/#{config_env()}.exs") do
   import_config "#{config_env()}.exs"
 end
