@@ -178,7 +178,7 @@ defmodule ElvenViews.SerializablePacket do
 
   defp serialize_field_ast(%{type: :enum, name: name, opts: opts, default: default}) do
     values = opts[:values]
-    value_ast = maybe_default_ast(name, default)
+    value_ast = maybe_default_ast(name, :enum, default)
 
     error =
       quote do
@@ -199,23 +199,35 @@ defmodule ElvenViews.SerializablePacket do
       nullable: nullable
     } = field
 
-    value_ast = maybe_default_ast(name, default)
+    if nullable and default == :drop do
+      raise "field can't be nullable and dropable"
+    end
+
+    value_ast = maybe_default_ast(name, type, default)
 
     # if opts: serialize_term(value_ast, opts)
-    case {nullable, opts} do
-      {true, _} -> nullable_type_ast(type, value_ast, opts)
-      {false, []} -> value_ast
-      {false, _} -> quote(do: serialize_term(unquote(value_ast), unquote(opts)))
+    case {nullable, opts, default} do
+      {true, _, _} -> nullable_type_ast(type, value_ast, opts)
+      {false, opts, :drop} -> dropable_type_ast(value_ast, opts)
+      {false, [], _} -> value_ast
+      {false, _, _} -> quote(do: serialize_term(unquote(value_ast), unquote(opts)))
     end
   end
 
-  defp maybe_default_ast(name, default_ast) do
+  defp maybe_default_ast(name, type, default_ast) do
     value = quote(do: struct.unquote(name))
 
     # if default_ast: struct.name || default
-    case default_ast do
-      nil -> value
+    case {type, default_ast} do
+      {_, nil} -> value
+      {:list, :drop} -> maybe_drop_list_ast(value)
       _ -> {:||, [context: Elixir, import: Kernel], [value, default_ast]}
+    end
+  end
+
+  defp maybe_drop_list_ast(value_ast) do
+    quote do
+      if unquote(value_ast) != [], do: unquote(value_ast), else: nil
     end
   end
 
@@ -229,6 +241,14 @@ defmodule ElvenViews.SerializablePacket do
 
     quote do
       serialize_term(unquote(value_ast), unquote(new_opts))
+    end
+  end
+
+  defp dropable_type_ast(value_ast, opts) do
+    dropable_opts = Keyword.put(opts, :as, :drop)
+
+    quote do
+      serialize_term(unquote(value_ast), unquote(dropable_opts))
     end
   end
 
