@@ -13,6 +13,7 @@ defmodule PacketCase do
       defp structure_to_iolist(struct, opts \\ []) do
         struct
         |> struct.__struct__.serialize(opts)
+        |> Enum.reject(&(&1 == :"$drop"))
         |> Enum.map(&serialize_term(&1, opts))
       end
 

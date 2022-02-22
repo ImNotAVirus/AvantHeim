@@ -21,24 +21,21 @@ defmodule ElvenCore.Socket.Serializers do
 
   defimpl ElvenCore.Socket.SerializerProtocol, for: Atom do
     def serialize(data, opts) do
-      {as, _new_opts} = Keyword.pop(opts, :as)
+      as = Keyword.get(opts, :as)
+
+      raise_fun = fn value ->
+        raise "can't serialize atom: #{inspect(value)}. " <>
+                "Try to use :as options or call serialize_term/2"
+      end
 
       case {data, as} do
-        {nil, :string} ->
-          "-"
-
-        {nil, :integer} ->
-          "-1"
-
-        {true, _} ->
-          "1"
-
-        {false, _} ->
-          "0"
-
-        {x, _} ->
-          raise "can't serialize atom: #{inspect(x)}. " <>
-                  "Try to use :as options or call serialize_term/2"
+        {:"$drop", _} -> :"$drop"
+        {nil, :string} -> "-"
+        {nil, :integer} -> "-1"
+        {nil, :drop} -> :"$drop"
+        {true, _} -> "1"
+        {false, _} -> "0"
+        {x, _} -> raise_fun.(x)
       end
     end
   end
@@ -51,6 +48,7 @@ defmodule ElvenCore.Socket.Serializers do
 
       data
       |> Enum.map(&serialize_term(&1, new_opts))
+      |> Enum.reject(&(&1 == :"$drop"))
       |> Enum.join(joiner)
     end
   end
