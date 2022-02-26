@@ -15,7 +15,6 @@ defmodule ElvenViews.UIPackets.SMemoiPacket do
     field :text_color, :enum, values: text_color(:__enumerators__)
     field :i18n_key, :string, apply: &i18n/1
     field :first_argument, :integer, default: 0
-    field :second_argument, :integer, default: 0
   end
 
   ## Private function

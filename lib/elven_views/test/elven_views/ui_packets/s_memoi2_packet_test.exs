@@ -10,12 +10,14 @@ defmodule ElvenViews.UIPackets.SMemoi2PacketTest do
       packet = structure_to_iolist(smemoi2_mock())
 
       assert is_list(packet)
-      assert length(packet) == 5
+      assert length(packet) == 7
       assert packet_index(packet, 0) == "s_memoi2"
       assert packet_index(packet, 1) == "4"
       assert packet_index(packet, 2) == "2154"
-      assert packet_index(packet, 3) == "5000"
-      assert packet_index(packet, 4) == "6999"
+      assert packet_index(packet, 3) == "3"
+      assert packet_index(packet, 4) == "5,000"
+      assert packet_index(packet, 5) == "6,999,000"
+      assert packet_index(packet, 6) == "0"
     end
   end
 
@@ -26,7 +28,7 @@ defmodule ElvenViews.UIPackets.SMemoi2PacketTest do
       text_color: :green,
       i18n_key: "LolaLopears",
       bank_gold: 5000,
-      gold: 6999
+      gold: 6_999_000
     }
   end
 end
