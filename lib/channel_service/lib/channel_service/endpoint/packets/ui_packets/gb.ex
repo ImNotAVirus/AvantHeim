@@ -5,7 +5,7 @@ defmodule ChannelService.Endpoint.UIPackets.Gb do
 
   use ElvenCore.SerializableStruct
 
-  import ElvenEnums.BankEnums, only: [action_type: 2]
+  import ElvenViews.UIPackets.BankEnums, only: [action_type: 2]
 
   alias __MODULE__
 
