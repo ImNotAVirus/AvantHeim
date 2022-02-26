@@ -14,8 +14,10 @@ defmodule ElvenViews.UIPackets.SMemoi2Packet do
   defpacket "s_memoi2" do
     field :text_color, :enum, values: text_color(:__enumerators__)
     field :i18n_key, :string, apply: &i18n/1
-    field :bank_gold, :non_neg_integer
-    field :gold, :non_neg_integer
+    field :argument_count, :integer, default: 3
+    field :bank_gold, :non_neg_integer, apply: &ElvenCore.format_number/1
+    field :gold, :non_neg_integer, apply: &ElvenCore.format_number/1
+    field :unknown, :integer, default: 0
   end
 
   ## Private function
