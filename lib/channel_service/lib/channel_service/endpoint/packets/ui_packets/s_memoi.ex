@@ -5,7 +5,7 @@ defmodule ChannelService.Endpoint.UIPackets.SMemoi do
 
   use ElvenCore.SerializableStruct
 
-  import ElvenEnums.BankEnums, only: [text_color: 2]
+  import ElvenViews.UIPackets.BankEnums, only: [text_color: 2]
 
   alias __MODULE__
 
