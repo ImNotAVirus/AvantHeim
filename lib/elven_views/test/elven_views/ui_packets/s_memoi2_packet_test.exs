@@ -13,9 +13,9 @@ defmodule ElvenViews.UIPackets.SMemoi2PacketTest do
       assert length(packet) == 7
       assert packet_index(packet, 0) == "s_memoi2"
       assert packet_index(packet, 1) == "4"
-      assert packet_index(packet, 2) == "2154"
+      assert packet_index(packet, 2) == "2345"
       assert packet_index(packet, 3) == "3"
-      assert packet_index(packet, 4) == "5,000"
+      assert packet_index(packet, 4) == "5"
       assert packet_index(packet, 5) == "6,999,000"
       assert packet_index(packet, 6) == "0"
     end
@@ -26,7 +26,7 @@ defmodule ElvenViews.UIPackets.SMemoi2PacketTest do
   defp smemoi2_mock() do
     %SMemoi2Packet{
       text_color: :green,
-      i18n_key: "LolaLopears",
+      i18n_key: "BalanceBank",
       bank_gold: 5000,
       gold: 6_999_000
     }
