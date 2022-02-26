@@ -19,8 +19,6 @@ defmodule ElvenViews.UIPackets.InfoPacketTest do
   ## Helpers
 
   defp info_mock() do
-    %InfoPacket{
-      message: "This is Info Packet"
-    }
+    %InfoPacket{message: "This is Info Packet"}
   end
 end
