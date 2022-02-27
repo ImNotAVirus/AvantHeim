@@ -3,12 +3,10 @@ defmodule ElvenViews.ChatViews do
   TODO: Documentation
   """
 
-  import ElvenViews, only: [optional_param: 2, required_param: 2]
+  use ElvenViews
 
   alias ElvenCaching.Entity
   alias ElvenViews.ChatPackets.{BnPacket, SayPacket}
-
-  @behaviour ElvenViews
 
   ## Public API
 
