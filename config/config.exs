@@ -16,7 +16,11 @@ config :logger, :console,
   colors: [info: :green]
 
 ## Database configs
-if :elven_database in Mix.Project.deps_apps() do
+required_app = fn app ->
+  app == Mix.Project.config()[:app] or app in Mix.Project.deps_apps()
+end
+
+if required_app.(:elven_database) do
   config :elven_database, ecto_repos: [ElvenDatabase.Repo]
 
   config :elven_database, ElvenDatabase.Repo,
