@@ -54,7 +54,9 @@ defmodule ChannelService.PresenceManager do
     {username, updated_state} = Map.pop!(state, ref)
     {:ok, session} = SessionRegistry.get(username)
 
-    Logger.info("#{inspect(username)} is now disconnected (reason: #{reason}). Cleaning...")
+    Logger.info("#{inspect(username)} is now disconnected (reason: #{inspect(reason)})")
+    Logger.info("Cleaning...")
+
     cleanup_session(session)
     SessionRegistry.delete(username)
 
