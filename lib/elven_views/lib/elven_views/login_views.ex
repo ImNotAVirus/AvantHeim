@@ -3,12 +3,10 @@ defmodule ElvenViews.LoginViews do
   TODO: Documentation
   """
 
-  import ElvenViews, only: [optional_param: 2, required_param: 2]
+  use ElvenViews
 
   alias ElvenViews.LoginPackets.NsTeST.Channel
   alias ElvenViews.LoginPackets.{FailcPacket, NsTeSTPacket}
-
-  @behaviour ElvenViews
 
   ## Public API
 

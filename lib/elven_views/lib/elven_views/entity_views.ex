@@ -3,22 +3,21 @@ defmodule ElvenViews.EntityViews do
   TODO: Documentation
   """
 
-  import ElvenViews, only: [optional_param: 2, required_param: 2]
+  use ElvenViews
 
   alias ElvenCaching.Entity
   alias ElvenCaching.MapEntity
   alias ElvenCaching.BattleEntity
+  alias ElvenCaching.BattleEntityHelper
   alias ElvenCaching.LevelableEntity
 
   alias ElvenViews.EntityPackets.{
-    CharSc,
-    Cond,
-    Eff,
-    St,
-    Dir
+    CharScPacket,
+    CondPacket,
+    EffPacket,
+    StPacket,
+    DirPacket
   }
-
-  @behaviour ElvenViews
 
   ## Public API
 
@@ -27,15 +26,15 @@ defmodule ElvenViews.EntityViews do
     entity = required_param(args, :entity)
     buffs = optional_param(args, :buffs, [])
 
-    %St{
+    %StPacket{
       entity_type: Entity.type(entity),
       entity_id: Entity.id(entity),
       level: LevelableEntity.level(entity),
       hero_level: LevelableEntity.hero_level(entity),
       hp: BattleEntity.hp(entity),
-      hp_max: BattleEntity.hp_max(entity),
+      hp_percent: BattleEntityHelper.hp_percent(entity),
       mp: BattleEntity.mp(entity),
-      mp_max: BattleEntity.mp_max(entity),
+      mp_percent: BattleEntityHelper.mp_percent(entity),
       # TODO: Buff is a System. Not sure how to do it currently
       buffs: buffs
     }
@@ -45,7 +44,7 @@ defmodule ElvenViews.EntityViews do
   def render(:char_sc, args) do
     entity = required_param(args, :entity)
 
-    %CharSc{
+    %CharScPacket{
       entity_type: Entity.type(entity),
       entity_id: Entity.id(entity),
       size: MapEntity.size(entity)
@@ -55,7 +54,7 @@ defmodule ElvenViews.EntityViews do
   def render(:cond, args) do
     entity = required_param(args, :entity)
 
-    %Cond{
+    %CondPacket{
       entity_type: Entity.type(entity),
       entity_id: Entity.id(entity),
       no_attack: not BattleEntity.can_attack(entity),
@@ -68,7 +67,7 @@ defmodule ElvenViews.EntityViews do
     entity = required_param(args, :entity)
     value = required_param(args, :value)
 
-    %Eff{
+    %EffPacket{
       entity_type: Entity.type(entity),
       entity_id: Entity.id(entity),
       value: value
@@ -78,7 +77,7 @@ defmodule ElvenViews.EntityViews do
   def render(:dir, args) do
     entity = required_param(args, :entity)
 
-    %Dir{
+    %DirPacket{
       entity_type: Entity.type(entity),
       entity_id: Entity.id(entity),
       direction: MapEntity.direction(entity)
