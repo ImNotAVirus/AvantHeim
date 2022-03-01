@@ -17,7 +17,7 @@ defmodule ElvenViews.ChatViewsTest do
       assert render.message == mock.message
     end
   end
-  
+
   describe "render:say" do
     test "returns a packet structure" do
       mock = mock_say()
@@ -36,11 +36,11 @@ defmodule ElvenViews.ChatViewsTest do
   defp mock_bn() do
     %{id: 123, message: "This is a message"}
   end
-  
+
   defp mock_say() do
     %{entity: character_mock(), message: "This is a message", color: :special_gold}
   end
-  
+
   def character_mock(attrs \\ %{}) do
     attrs |> character_attrs_mock() |> Character.new()
   end

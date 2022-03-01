@@ -16,7 +16,8 @@ defmodule ElvenViews.EntityViews do
     CondPacket,
     EffPacket,
     StPacket,
-    DirPacket
+    DirPacket,
+    CModePacket
   }
 
   ## Public API
@@ -81,6 +82,21 @@ defmodule ElvenViews.EntityViews do
       entity_type: Entity.type(entity),
       entity_id: Entity.id(entity),
       direction: MapEntity.direction(entity)
+    }
+  end
+
+  def render(:c_mode, args) do
+    character = required_param(args, :character)
+
+    %CModePacket{
+      entity_type: :character,
+      entity_id: character.id,
+      morph: FakeData.morph(character_id: character.id),
+      morph_upgrade: FakeData.morph_upgrade(character_id: character.id),
+      morph_design: FakeData.morph_design(character_id: character.id),
+      is_arena_winner: FakeData.is_arena_winner(character_id: character.id),
+      size: FakeData.size(character_id: character.id),
+      item_morph: FakeData.item_morph(character_id: character.id)
     }
   end
 end

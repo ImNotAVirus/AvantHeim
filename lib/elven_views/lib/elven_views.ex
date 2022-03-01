@@ -11,12 +11,11 @@ defmodule ElvenViews do
   defmacro __using__(_) do
     quote do
       @behaviour unquote(__MODULE__)
-      
+
       import ElvenViews, only: [optional_param: 2, optional_param: 3, required_param: 2]
     end
   end
-  
-  
+
   @spec optional_param(map, atom, any) :: any
   def optional_param(args, key, default \\ nil) do
     args[key] || default

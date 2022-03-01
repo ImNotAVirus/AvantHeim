@@ -62,7 +62,7 @@ end
 
 defmodule ElvenCaching.BattleEntityHelper do
   alias ElvenCaching.BattleEntity
-  
+
   @doc "Calculate BattleEntity hp_percent as integer"
   @spec hp_percent(BattleEntity.t()) :: integer
   def hp_percent(entity) do
