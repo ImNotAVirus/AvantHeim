@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{"name": "root", "path": ".."},
+		{"path": "../lib/login_service"},
+		{"path": "../lib/channel_service"},
+		{"path": "../lib/elven_caching"},
+		{"path": "../lib/elven_core"},
+		{"path": "../lib/elven_database"},
+		{"path": "../lib/elven_enums"},
+		{"path": "../lib/elven_i18n"},
+		{"path": "../lib/elven_views"}
+	],
+	"settings": {}
+}
