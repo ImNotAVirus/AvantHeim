@@ -30,5 +30,30 @@
 			"editor.formatOnPaste": true,
 			"editor.formatOnSave": true
 		}
+	},
+	"tasks": {
+		"version": "2.0.0",
+		"tasks": [
+			{
+				"label": "Elixir: Run tests for the current app",
+				"type": "shell",
+				"command": "./mix --app $(basename ${fileWorkspaceFolder}) test --trace",
+				"problemMatcher": [],
+				"group": {
+					"kind": "test",
+					"isDefault": true
+				},
+				"presentation": {
+				  "echo": true,
+				  "reveal": "always",
+				  "focus": false,
+				  "panel": "shared",
+				  "clear": true
+				}
+			}
+		]
+	},
+	"extensions": {
+		"recommendations": ["JakeBecker.elixir-ls", "EditorConfig.EditorConfig"]
 	}
 }
