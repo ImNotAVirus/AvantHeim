@@ -1,0 +1,5 @@
+# Do not push client and data files
+/priv/*
+
+# Allow some extensions
+!.gitkeep

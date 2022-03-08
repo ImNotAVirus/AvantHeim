@@ -19,6 +19,10 @@ config :channel_service, ChannelService.Endpoint,
   protocol: ChannelService.Endpoint.Protocol,
   protocol_opts: []
 
+## MapService configs
+
+config :map_service, ChannelService.MapManager, lazy: true
+
 # Import global config
 import_config "../../../config/config.exs"
 

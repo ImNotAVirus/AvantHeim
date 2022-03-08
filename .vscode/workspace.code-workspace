@@ -3,6 +3,7 @@
 		{"name": "root", "path": ".."},
 		{"path": "../lib/login_service"},
 		{"path": "../lib/channel_service"},
+		{"path": "../lib/map_service"},
 		{"path": "../lib/elven_caching"},
 		{"path": "../lib/elven_core"},
 		{"path": "../lib/elven_database"},
