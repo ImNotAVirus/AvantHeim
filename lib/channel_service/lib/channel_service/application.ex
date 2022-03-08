@@ -8,11 +8,12 @@ defmodule ChannelService.Application do
     topologies = Application.get_env(:libcluster, :topologies, [])
 
     children = [
-      {Cluster.Supervisor, [topologies, [name: LoginService.ClusterSupervisor]]},
+      {Cluster.Supervisor, [topologies, [name: ChannelService.ClusterSupervisor]]},
       {ElvenCaching.MnesiaClusterManager, []},
       {ElvenCaching.SessionRegistry, [disable_clean: true]},
       {ElvenCaching.CharacterRegistry, []},
       {ChannelService.PresenceManager, []},
+      {MapService.MapManager, name: ChannelService.MapManager},
       {ChannelService.Endpoint, name: ChannelService.Endpoint}
     ]
 
