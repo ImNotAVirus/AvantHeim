@@ -11,11 +11,11 @@ defmodule ElvenViews.LoginViews do
   ## Public API
 
   @impl true
-  def render(:login_error, args) do
+  def render(:failc, args) do
     %FailcPacket{error: optional_param(args, :error)}
   end
 
-  def render(:login_succeed, args) do
+  def render(:nstest, args) do
     encryption_key = required_param(args, :encryption_key)
     username = required_param(args, :username)
 
