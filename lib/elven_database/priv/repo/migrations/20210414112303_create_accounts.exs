@@ -1,9 +1,9 @@
 defmodule ElvenDatabase.Repo.Migrations.CreateAccounts do
   use Ecto.Migration
-  
+
   require ElvenDatabase.EctoEnumHelpers
   require ElvenEnums.PlayerEnums
-  
+
   alias ElvenDatabase.EctoEnumHelpers
   alias ElvenEnums.PlayerEnums
 
