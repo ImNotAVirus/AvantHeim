@@ -14,16 +14,18 @@ alias ElvenDatabase.Players.{Account, Accounts, Characters}
 
 ## Accounts
 
-%Account{id: admin_id} = Accounts.create!(%{
-  username: "admin",
-  password: "admin",
-  authority: :administrator
-})
+%Account{id: admin_id} =
+  Accounts.create!(%{
+    username: "admin",
+    password: "admin",
+    authority: :administrator
+  })
 
-%Account{id: user_id} = Accounts.create!(%{
-  username: "user",
-  password: "user"
-})
+%Account{id: user_id} =
+  Accounts.create!(%{
+    username: "user",
+    password: "user"
+  })
 
 ## Characters
 
