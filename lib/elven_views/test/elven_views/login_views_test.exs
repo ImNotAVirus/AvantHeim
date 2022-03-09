@@ -1,5 +1,5 @@
 defmodule ElvenViews.LoginViewsTest do
-  use ExUnit.Case, async: true
+  use ViewCase, async: true
 
   alias ElvenViews.LoginViews
 
