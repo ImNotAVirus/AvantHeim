@@ -10,6 +10,8 @@ defmodule FakeData do
   def mp(character_id: _), do: 5_000
   def mp_max(character_id: _), do: 5_000
 
+  def authority(character_id: 1), do: :game_master
+  def authority(character_id: _), do: :player
   def name_color_id(character_id: 1), do: 2
   def name_color_id(character_id: _), do: 0
   def morph(character_id: 1), do: 0

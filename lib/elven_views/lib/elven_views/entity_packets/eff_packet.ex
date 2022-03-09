@@ -1,4 +1,4 @@
-defmodule ElvenViews.ChatPackets.SayPacket do
+defmodule ElvenViews.EntityPackets.EffPacket do
   @moduledoc """
   TODO: Documentation.
   """
@@ -6,14 +6,12 @@ defmodule ElvenViews.ChatPackets.SayPacket do
   use ElvenViews.SerializablePacket
 
   import ElvenEnums.EntityEnums, only: [entity_type: 1]
-  import ElvenViews.ChatPackets.SayEnums, only: [color_type: 1]
 
   ## Packet definition
 
-  defpacket "say" do
+  defpacket "eff" do
     field :entity_type, :enum, values: entity_type(:__enumerators__)
     field :entity_id, :pos_integer
-    field :color, :enum, values: color_type(:__enumerators__), default: :default
-    field :message, :string
+    field :value, :pos_integer
   end
 end
