@@ -27,6 +27,14 @@ defprotocol ElvenCaching.MapEntity do
   @spec direction(t(), direction()) :: t()
   def direction(entity, direction)
 
+  @doc "Get the MapEntity is_sitting"
+  @spec is_sitting(t()) :: boolean
+  def is_sitting(entity)
+
+  @doc "Set the MapEntity is_sitting"
+  @spec is_sitting(t(), boolean) :: t()
+  def is_sitting(entity, is_sitting)
+
   @doc "Get the MapEntity speed"
   @spec speed(t()) :: speed()
   def speed(entity)

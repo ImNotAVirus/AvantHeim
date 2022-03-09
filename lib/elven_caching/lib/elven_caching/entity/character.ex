@@ -29,7 +29,8 @@ defmodule ElvenCaching.Entity.Character do
   @virtual_attributes %{
     map_id: nil,
     speed: 20,
-    direction: :south
+    direction: :south,
+    is_sitting: false
   }
 
   use Memento.Table,
@@ -72,7 +73,8 @@ defmodule ElvenCaching.Entity.Character do
           # Virtual attributes
           map_id: EntityPosition.map_id(),
           speed: MapEntity.speed(),
-          direction: MapEntity.direction()
+          direction: MapEntity.direction(),
+          is_sitting: boolean()
         }
 
   ## Public API
@@ -112,6 +114,12 @@ defmodule ElvenCaching.Entity.Character do
 
     def direction(character, direction) when direction in direction_type(:__values__) do
       %Character{character | direction: direction}
+    end
+
+    def is_sitting(%Character{is_sitting: is_sitting}), do: is_sitting
+
+    def is_sitting(character, is_sitting) when is_boolean(is_sitting) do
+      %Character{character | is_sitting: is_sitting}
     end
 
     def speed(%Character{speed: speed}), do: speed

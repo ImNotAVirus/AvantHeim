@@ -61,7 +61,7 @@ defmodule ChannelService.Endpoint.VisibilityViews do
       morph_design: FakeData.morph_design(character_id: character.id),
       level: character.level,
       family_level: FakeData.family_level(character_id: character.id),
-      family_icon_ids: FakeData.family_icon_ids(character_id: character.id),
+      family_icons: FakeData.family_icons(character_id: character.id),
       is_arena_winner: FakeData.is_arena_winner(character_id: character.id),
       compliment: FakeData.compliment(character_id: character.id),
       hero_level: FakeData.hero_level(character_id: character.id),

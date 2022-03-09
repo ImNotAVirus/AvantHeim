@@ -39,7 +39,8 @@ defmodule FakeData do
   def family_name(character_id: _), do: nil
   def family_level(character_id: 1), do: 20
   def family_level(character_id: _), do: 0
-  def family_icon_ids(character_id: _), do: [0, 0, 0]
+  def family_icons(character_id: 1), do: [true, true, true]
+  def family_icons(character_id: _), do: [false, false, false]
 
   def cp(character_id: _), do: 100
   def hero_level(character_id: _), do: 0
