@@ -24,11 +24,11 @@ defmodule ElvenViews.UIViews do
   @impl true
   def render(:cancel, args) do
     cancel_type = required_param(args, :cancel_type)
-    entity_id = required_param(args, :entity_id)
+    entity = required_param(args, :entity)
 
     %CancelPacket{
       cancel_type: cancel_type,
-      entity_id: Entity.id(entity_id)
+      entity_id: Entity.id(entity)
     }
   end
 
