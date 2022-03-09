@@ -25,7 +25,7 @@ defmodule ElvenViews.LobbyViews do
     character = required_param(args, :character)
     equipments = required_param(args, :equipments)
     pets = optional_param(args, :pets, [])
-    design = optional_param(args, :pets, 0)
+    design = optional_param(args, :design, 0)
 
     [
       hat,
