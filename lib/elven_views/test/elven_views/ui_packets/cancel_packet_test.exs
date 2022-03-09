@@ -13,7 +13,7 @@ defmodule ElvenViews.UIPackets.CancelPacketTest do
       assert length(packet) == 4
       assert packet_index(packet, 0) == "cancel"
       assert packet_index(packet, 1) == "0"
-      assert packet_index(packet, 2) == "0"
+      assert packet_index(packet, 2) == "132"
       assert packet_index(packet, 3) == "-1"
     end
   end
@@ -22,7 +22,8 @@ defmodule ElvenViews.UIPackets.CancelPacketTest do
 
   defp cancel_mock() do
     %CancelPacket{
-      cancel_type: :skill
+      cancel_type: :skill,
+      entity_id: 132
     }
   end
 end
