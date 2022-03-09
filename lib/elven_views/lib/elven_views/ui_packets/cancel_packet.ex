@@ -11,7 +11,7 @@ defmodule ElvenViews.UIPackets.CancelPacket do
 
   defpacket "cancel" do
     field :cancel_type, :enum, values: cancel_type(:__enumerators__)
-    field :entity_id, :integer, default: 0
+    field :entity_id, :integer
     field :unknown, :integer, default: -1
   end
 end
