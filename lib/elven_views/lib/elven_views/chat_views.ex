@@ -23,7 +23,7 @@ defmodule ElvenViews.ChatViews do
     %SayPacket{
       entity_type: entity_type,
       entity_id: entity_id,
-      color: Map.get(args, :color, :default),
+      color: Map.get(args, :color),
       message: message
     }
   end
