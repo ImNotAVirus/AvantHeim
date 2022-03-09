@@ -22,7 +22,7 @@ defmodule ElvenViews.UIPackets.CancelPacketTest do
 
   defp cancel_mock() do
     %CancelPacket{
-      cancel_type: :auto_attack
+      cancel_type: :skill
     }
   end
 end
