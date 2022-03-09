@@ -5,8 +5,6 @@ defmodule ElvenViews.PlayerViews do
 
   use ElvenViews
 
-  alias ElvenCaching.Entity.Character
-
   alias ElvenViews.SubPackets.FamilyIdRankSubPacket
 
   alias ElvenViews.PlayerPackets.{
