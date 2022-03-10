@@ -78,8 +78,8 @@ defmodule ElvenViews.PlayerViewsTest do
       assert render.job_level == mock.character.job_level
       assert render.job_level_xp == mock.character.job_level_xp
       assert is_integer(render.job_level_xp_max)
-      assert is_integer(render.hero_level)
-      assert is_integer(render.hero_level_xp)
+      assert render.hero_level == mock.character.hero_level
+      assert render.hero_level_xp == mock.character.hero_level_xp
       assert is_integer(render.hero_level_xp_max)
       assert is_integer(render.reputation)
       assert is_integer(render.cp)

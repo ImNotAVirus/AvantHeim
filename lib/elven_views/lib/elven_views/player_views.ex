@@ -77,8 +77,8 @@ defmodule ElvenViews.PlayerViews do
       job_level: character.job_level,
       job_level_xp: character.job_level_xp,
       job_level_xp_max: FakeData.job_level_xp_max(character_id: character.id),
-      hero_level: FakeData.hero_level(character_id: character.id),
-      hero_level_xp: FakeData.hero_level_xp(character_id: character.id),
+      hero_level: character.hero_level,
+      hero_level_xp: character.hero_level_xp,
       hero_level_xp_max: FakeData.hero_level_xp_max(character_id: character.id),
       reputation: FakeData.reputation(character_id: character.id),
       cp: FakeData.cp(character_id: character.id)

@@ -12,19 +12,16 @@ defmodule FakeData do
 
   def authority(character_id: 1), do: :game_master
   def authority(character_id: _), do: :player
-  def name_color_id(character_id: 1), do: 2
-  def name_color_id(character_id: _), do: 0
   def morph(character_id: 1), do: 0
   def morph(character_id: _), do: 24
   def morph_upgrade(character_id: _), do: 15
   def morph_design(character_id: _), do: 12
   def is_invisible(character_id: _), do: false
   def is_arena_winner(character_id: 1), do: true
-  def is_arena_winner(character_id: _), do: true
+  def is_arena_winner(character_id: _), do: false
   def size(character_id: _), do: 10
   def item_morph(character_id: _), do: 0
 
-  def direction(character_id: _), do: :south
   def map_music(character_id: _), do: 1
   def can_attack(character_id: _), do: true
   def can_move(character_id: _), do: true
@@ -43,8 +40,6 @@ defmodule FakeData do
   def family_icons(character_id: _), do: [false, false, false]
 
   def cp(character_id: _), do: 100
-  def hero_level(character_id: _), do: 0
-  def hero_level_xp(character_id: _), do: 0
   def level_xp_max(character_id: _), do: 10_000
   def job_level_xp_max(character_id: _), do: 10_000
   def hero_level_xp_max(character_id: _), do: 0
