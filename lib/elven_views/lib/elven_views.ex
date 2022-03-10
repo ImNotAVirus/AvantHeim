@@ -13,6 +13,8 @@ defmodule ElvenViews do
       @behaviour unquote(__MODULE__)
 
       import ElvenViews, only: [optional_param: 2, optional_param: 3, required_param: 2]
+
+      def render(key), do: render(key, %{})
     end
   end
 

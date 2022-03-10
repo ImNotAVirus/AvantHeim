@@ -130,7 +130,7 @@ defmodule ChannelService.Endpoint.Protocol do
   defp send_character_list(%Account{} = account, socket) do
     character_list = Characters.all_by_account_id(account.id)
 
-    Socket.send(socket, LobbyViews.render(:clist_start, nil))
+    Socket.send(socket, LobbyViews.render(:clist_start))
 
     Enum.each(character_list, fn character ->
       equipments = FakeData.equipments(character_id: character.id)
@@ -146,7 +146,7 @@ defmodule ChannelService.Endpoint.Protocol do
       )
     end)
 
-    Socket.send(socket, LobbyViews.render(:clist_end, nil))
+    Socket.send(socket, LobbyViews.render(:clist_end))
   end
 
   defp recv_encryption_key(socket) do

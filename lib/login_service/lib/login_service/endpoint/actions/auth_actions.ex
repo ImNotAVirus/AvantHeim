@@ -129,7 +129,7 @@ defmodule LoginService.Endpoint.AuthActions do
 
       e ->
         Logger.warn("Got unknown login error: #{inspect(e)}")
-        LoginViews.render(:failc, %{})
+        LoginViews.render(:failc)
     end
   end
 end

@@ -50,7 +50,7 @@ defmodule ChannelService.Endpoint.EntityInteractions do
   @spec send_map_leave(Character.t()) :: :ok
   def send_map_leave(%Character{} = character) do
     ## Self packets
-    Socket.send(character.socket, MapViews.render(:mapout, %{}))
+    Socket.send(character.socket, MapViews.render(:mapout))
 
     ## Other players packets
     %EntityPosition{map_id: map_id} = MapEntity.position(character)
