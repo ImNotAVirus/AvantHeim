@@ -1,5 +1,5 @@
 # Do not push client and data files
-/priv/*
+/priv/base_maps/*
 
 # Allow some extensions
 !.gitkeep
