@@ -2,4 +2,4 @@ import Config
 
 ## MapService configs
 
-config :map_service, ChannelService.MapManager, lazy: false
+config :map_service, :loader_config, lazy: false

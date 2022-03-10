@@ -21,7 +21,7 @@ config :channel_service, ChannelService.Endpoint,
 
 ## MapService configs
 
-config :map_service, ChannelService.MapManager, lazy: true
+config :map_service, :loader_config, lazy: true
 
 # Import global config
 import_config "../../../config/config.exs"

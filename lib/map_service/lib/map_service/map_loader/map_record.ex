@@ -1,4 +1,4 @@
-defmodule MapService.MapManager.MapRecord do
+defmodule MapService.MapLoader.MapRecord do
   @moduledoc """
   TODO: Documentation
   """
