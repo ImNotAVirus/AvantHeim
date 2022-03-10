@@ -55,7 +55,7 @@ defmodule ElvenViews.LobbyViewsTest do
       assert render.class == mock.character.class
       assert render.level == mock.character.level
       assert render.hero_level == mock.character.hero_level
-      assert is_struct(render.equipments, EquipmentSubPacket)
+      assert %EquipmentSubPacket{} = render.equipments
       assert render.job_level == mock.character.job_level
       assert render.pets == mock.pets
       assert render.design == mock.design
