@@ -25,8 +25,8 @@ defmodule ElvenViews.PlayerViewsTest do
       assert render.character_id == mock.character.id
       assert render.name == mock.character.name
       assert is_integer(render.group_id)
-      assert is_struct(render.family_id_rank, FamilyIdRankSubPacket)
-      assert is_binary(render.family_name) or render.family_name == nil
+      assert %FamilyIdRankSubPacket{} = render.family_id_rank
+      assert is_binary(render.family_name) or is_nil(render.family_name)
       assert is_atom(render.authority)
       assert render.gender == mock.character.gender
       assert render.hair_style == mock.character.hair_style
