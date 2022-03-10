@@ -22,7 +22,7 @@ defmodule ElvenViews.LoginViewsTest do
     end
 
     test "error is optional" do
-      mock = mock_failc(%{error: nil})
+      mock = mock_failc(%{})
       render = LoginViews.render(:failc, mock)
 
       assert %FailcPacket{} = render
