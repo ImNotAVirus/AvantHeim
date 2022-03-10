@@ -5,13 +5,9 @@ defmodule ChannelService.Endpoint.GameActions do
 
   alias ElvenCore.Socket
   alias ElvenCaching.CharacterRegistry
-  alias ChannelService.Endpoint.EntityInteractions
+  alias ElvenViews.{ChatViews, PlayerViews, UIViews}
 
-  alias ChannelService.Endpoint.{
-    ChatViews,
-    PlayerViews,
-    UIViews
-  }
+  alias ChannelService.Endpoint.EntityInteractions
 
   ## Packet handlers
 
@@ -20,16 +16,16 @@ defmodule ChannelService.Endpoint.GameActions do
     %{character_id: character_id} = socket.assigns
     {:ok, character} = CharacterRegistry.get(character_id)
 
-    Socket.send(socket, PlayerViews.render(:tit, character))
-    Socket.send(socket, PlayerViews.render(:fd, character))
-    # TODO: Socket.send(socket, PlayerViews.render(:ski, character))
+    Socket.send(socket, PlayerViews.render(:tit, %{character: character}))
+    Socket.send(socket, PlayerViews.render(:fd, %{character: character}))
+    # TODO: Socket.send(socket, PlayerViews.render(:ski, %{character: character}))
 
     EntityInteractions.send_map_enter(character)
 
-    Socket.send(socket, PlayerViews.render(:rsfi, character))
-    Socket.send(socket, PlayerViews.render(:fs, character))
+    Socket.send(socket, PlayerViews.render(:rsfi, %{}))
+    Socket.send(socket, PlayerViews.render(:fs, %{character: character}))
 
-    Socket.send(socket, UIViews.render(:gold, character))
+    Socket.send(socket, UIViews.render(:gold, %{character: character}))
 
     # TODO: Socket.send(socket, InventoryViews.render(:qslot, %{slot_id: 0, character: character}))
     # TODO: Socket.send(socket, InventoryViews.render(:qslot, %{slot_id: 1, character: character}))

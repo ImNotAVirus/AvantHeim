@@ -3,13 +3,13 @@ defmodule ChannelService.Endpoint.MapActions do
   TODO: Documentation
   """
 
-  alias ElvenCore.Socket
   alias ElvenCaching.CharacterRegistry
   alias ElvenCaching.MapEntity
   alias ElvenCaching.Entity.EntityPosition
+  alias ElvenCore.Socket
+  alias ElvenViews.EntityViews
 
   alias ChannelService.Endpoint.EntityInteractions
-  alias ChannelService.Endpoint.EntityViews
 
   ## Packet handlers
 
@@ -41,7 +41,8 @@ defmodule ChannelService.Endpoint.MapActions do
     # If the entity is on the same map
     case maybe_entity do
       {:ok, %{map_id: ^map_id} = target} ->
-        Socket.send(socket, EntityViews.render(:st, target))
+        render = EntityViews.render(:st, %{entity: target, buffs: []})
+        Socket.send(socket, render)
 
       _ ->
         :ok
