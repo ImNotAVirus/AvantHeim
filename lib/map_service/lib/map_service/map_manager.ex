@@ -7,7 +7,9 @@ defmodule MapService.MapManager do
 
   require Logger
 
-  import ElvenEnums.MapEnums, only: [portal_type: 1]
+  alias MapService.ConfigFile.MapConfig
+
+  @type map_config :: map
 
   @root_path :code.priv_dir(:map_service)
 
@@ -22,15 +24,22 @@ defmodule MapService.MapManager do
 
   @spec start_link(Keyword.t()) :: GenServer.on_start()
   def start_link(opts) do
-    name = Keyword.get(opts, :name) || raise ArgumentError, "must supply a name"
-    app_config = Application.get_env(:map_service, name, @default_config)
+    name = Keyword.get(opts, :name, __MODULE__)
+    app_config = Application.get_env(:map_service, name, [])
     args_config = Keyword.get(opts, :config, [])
-    config = Keyword.merge(app_config, args_config)
+    config = @default_config |> Keyword.merge(app_config) |> Keyword.merge(args_config)
 
     check_config!(name, config)
 
     state = config |> Enum.into(%{}) |> Map.put(:name, name)
+
     GenServer.start_link(__MODULE__, state, name: name)
+  end
+
+  @spec start_base_map(non_neg_integer) :: {:ok, map_config()}
+  @spec start_base_map(atom | pid, non_neg_integer) :: {:ok, map_config()}
+  def start_base_map(manager \\ __MODULE__, map_vnum) do
+    GenServer.call(manager, {:start_base_map, map_vnum})
   end
 
   ## GenServer behaviour
@@ -55,6 +64,11 @@ defmodule MapService.MapManager do
     {:noreply, state}
   end
 
+  @impl true
+  def handle_call({:start_base_map, _map_vnum}, _from, state) do
+    {:reply, :ok, state}
+  end
+
   ## Private functions
 
   defp check_config!(name, config) do
@@ -75,61 +89,22 @@ defmodule MapService.MapManager do
 
       "#{dir}/*.{yml,yaml}"
       |> Path.wildcard()
-      |> Enum.map(&YamlElixir.read_from_file!/1)
-      |> Enum.map(&parse_map_config(&1, id, dir))
-      |> List.flatten()
-      |> Enum.into(%{})
-      |> Map.put(:id, id)
+      |> Enum.map(&YamlElixir.read_from_file!(&1, atoms: true))
+      |> Enum.reduce(%{}, fn element, acc -> Map.merge(acc, element, &merger/3) end)
+      |> Map.put("map_id", id)
+      |> Map.put("map_dir", dir)
+      |> MapConfig.new()
+      |> tap(&debug/1)
     end)
   end
 
-  defp parse_map_config(config, id, dir) do
-    Enum.map(config, fn
-      {"map_music_id", music_id} -> [music_id: music_id]
-      {"map_vnum", vnum} -> [map_vnum: vnum]
-      {"grid_file", grid_file} -> parse_map_grid!(id, dir, grid_file)
-      {"portals", portals} -> parse_map_portals!(portals, id)
-      {"npcs", _npcs} -> [npcs: []]
-    end)
-  end
+  defp merger("portals", v1, v2), do: Enum.concat(v1, v2)
+  defp merger("npcs", v1, v2), do: Enum.concat(v1, v2)
 
-  defp parse_map_grid!(id, dir, grid_filename) do
-    filename = Path.join(dir, grid_filename)
-
-    <<width::16-little, height::16-little, map_grid::binary>> = File.read!(filename)
-    total_size = width * height
-    <<_::bytes-size(total_size)>> = map_grid
-
-    Logger.debug("Map parsed: id=#{id} size=#{width}x#{height}")
-
-    [width: width, height: height, grid: map_grid]
-  end
-
-  defp parse_map_portals!(portals, id) do
-    [portals: Enum.map(portals, &parse_map_portal!(&1, id))]
-  end
-
-  defp parse_map_portal!(portals, map_id) do
-    portals
-    |> Enum.map(fn
-      {"destination_map_id", destination_map_id} -> {:destination_map_id, destination_map_id}
-      {"destination_map_x", destination_map_x} -> {:destination_map_x, destination_map_x}
-      {"destination_map_y", destination_map_y} -> {:destination_map_y, destination_map_y}
-      {"source_map_id", source_map_id} -> {:source_map_id, source_map_id}
-      {"source_map_x", source_map_x} -> {:source_map_x, source_map_x}
-      {"source_map_y", source_map_y} -> {:source_map_y, source_map_y}
-      {"type", type} -> {:type, portal_type_to_enum(type, map_id)}
-    end)
-    |> Enum.into(%{})
-  end
-
-  defp portal_type_to_enum(type, map_id) do
-    atom = String.to_existing_atom(type)
-
-    if atom not in portal_type(:__keys__) do
-      raise "unknown portal type #{inspect(atom)} for map #{map_id}"
-    end
-
-    atom
+  defp debug(map) do
+    Logger.debug(
+      "Map parsed: vnum=#{map.vnum} size=#{map.width}x#{map.height} " <>
+        "portals=#{length(map.portals)} npcs=#{length(map.npcs)}"
+    )
   end
 end
