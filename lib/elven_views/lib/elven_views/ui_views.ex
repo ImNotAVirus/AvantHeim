@@ -78,7 +78,12 @@ defmodule ElvenViews.UIViews do
     i18n_key = required_param(args, :i18n_key)
     text_color = optional_param(args, :text_color)
 
-    bank_gold = ElvenCore.format_number(character.bank_gold)
+    bank_gold =
+      character.bank_gold
+      |> Kernel./(1000)
+      |> Kernel.trunc()
+      |> ElvenCore.format_number()
+
     gold = ElvenCore.format_number(character.gold)
 
     %SMemoi2Packet{
