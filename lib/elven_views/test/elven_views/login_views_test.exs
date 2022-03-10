@@ -26,7 +26,7 @@ defmodule ElvenViews.LoginViewsTest do
       render = LoginViews.render(:failc, mock)
 
       assert %FailcPacket{} = render
-      assert render.error == nil
+      assert is_nil(render.error)
     end
   end
 
