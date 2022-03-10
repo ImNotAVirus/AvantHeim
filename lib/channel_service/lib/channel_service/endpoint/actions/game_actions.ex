@@ -22,7 +22,7 @@ defmodule ChannelService.Endpoint.GameActions do
 
     EntityInteractions.send_map_enter(character)
 
-    Socket.send(socket, PlayerViews.render(:rsfi, %{}))
+    Socket.send(socket, PlayerViews.render(:rsfi))
     Socket.send(socket, PlayerViews.render(:fs, %{character: character}))
 
     Socket.send(socket, UIViews.render(:gold, %{character: character}))
