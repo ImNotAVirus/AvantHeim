@@ -3,10 +3,11 @@ defmodule ChannelService.Endpoint.NameCommand do
   TODO: Documentation
   """
 
-  alias ElvenCore.Socket
   alias ElvenCaching.CharacterRegistry
   alias ElvenCaching.Entity.Character
-  alias ChannelService.Endpoint.{ChatViews, UIViews}
+  alias ElvenCore.Socket
+  alias ElvenViews.{ChatViews, UIViews}
+
   alias ChannelService.Endpoint.EntityInteractions
 
   @name_regex ~r/^[\x21-\x7E\xA1-\xAC\xAE-\xFF\x{4e00}-\x{9fa5}\x{0E01}-\x{0E3A}\x{0E3F}-\x{0E5B}\x2E]{4,14}$/u
@@ -33,7 +34,7 @@ defmodule ChannelService.Endpoint.NameCommand do
     if String.match?(name, @name_regex) do
       {:ok, new_char} = CharacterRegistry.write(%Character{character | name: name})
 
-      Socket.send(socket, UIViews.render(:cancel, %{type: 2, entity: new_char}))
+      Socket.send(socket, UIViews.render(:cancel, %{cancel_type: :action, entity: new_char}))
       EntityInteractions.send_map_enter(new_char)
 
       send_message(socket, new_char, "Your character name is now #{name}", :special_green)

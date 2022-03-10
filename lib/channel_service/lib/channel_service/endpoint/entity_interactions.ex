@@ -10,7 +10,7 @@ defmodule ChannelService.Endpoint.EntityInteractions do
   alias ElvenCaching.Entity.Character
   alias ElvenEnums.EntityEnums
 
-  alias ChannelService.Endpoint.{
+  alias ElvenViews.{
     EntityViews,
     MapViews,
     PlayerViews,
@@ -21,16 +21,21 @@ defmodule ChannelService.Endpoint.EntityInteractions do
 
   @spec send_map_enter(Character.t()) :: :ok
   def send_map_enter(%Character{} = character) do
+    character_args = %{character: character}
+    entity_args = %{entity: character}
+    stat_args = %{character: character, option: 0}
+    at_args = %{character: character, map_music: 1}
+
     ## Self packets
-    Socket.send(character.socket, PlayerViews.render(:c_info, character))
-    Socket.send(character.socket, PlayerViews.render(:c_mode, character))
-    Socket.send(character.socket, PlayerViews.render(:lev, character))
-    Socket.send(character.socket, PlayerViews.render(:stat, character))
-    Socket.send(character.socket, MapViews.render(:at, character))
-    Socket.send(character.socket, MapViews.render(:c_map, character))
-    # TODO: Socket.send(character.socket, PlayerViews.render(:sc, character))
-    Socket.send(character.socket, EntityViews.render(:char_sc, character))
-    Socket.send(character.socket, EntityViews.render(:cond, character))
+    Socket.send(character.socket, PlayerViews.render(:c_info, character_args))
+    Socket.send(character.socket, PlayerViews.render(:lev, character_args))
+    Socket.send(character.socket, PlayerViews.render(:stat, stat_args))
+    Socket.send(character.socket, MapViews.render(:at, at_args))
+    Socket.send(character.socket, MapViews.render(:c_map, character_args))
+    # TODO: Socket.send(character.socket, PlayerViews.render(:sc, character_args))
+    Socket.send(character.socket, EntityViews.render(:c_mode, character_args))
+    Socket.send(character.socket, EntityViews.render(:char_sc, entity_args))
+    Socket.send(character.socket, EntityViews.render(:cond, entity_args))
 
     ## Other players packets
     %EntityPosition{map_id: map_id} = MapEntity.position(character)
@@ -45,7 +50,7 @@ defmodule ChannelService.Endpoint.EntityInteractions do
   @spec send_map_leave(Character.t()) :: :ok
   def send_map_leave(%Character{} = character) do
     ## Self packets
-    Socket.send(character.socket, MapViews.render(:mapout, character))
+    Socket.send(character.socket, MapViews.render(:mapout, %{}))
 
     ## Other players packets
     %EntityPosition{map_id: map_id} = MapEntity.position(character)
@@ -60,7 +65,8 @@ defmodule ChannelService.Endpoint.EntityInteractions do
 
     case CharacterRegistry.write(new_char) do
       {:ok, new_char} ->
-        broadcast_on_map(new_char, EntityViews.render(:dir, new_char), false)
+        render = EntityViews.render(:dir, %{entity: new_char})
+        broadcast_on_map(new_char, render, false)
         {:ok, new_char}
 
       {:error, _} = x ->
@@ -83,7 +89,7 @@ defmodule ChannelService.Endpoint.EntityInteractions do
     Socket.send(
       character.socket,
       UIViews.render(:gb, %{
-        entity: character,
+        character: character,
         action_type: :open_from_savings_book,
         bank_rank: 1,
         bank_tax: 0
@@ -93,13 +99,13 @@ defmodule ChannelService.Endpoint.EntityInteractions do
     # Text: Balance: %s Golds; Carrying: %s Gold
     Socket.send(
       character.socket,
-      UIViews.render(:s_memoi2, %{entity: character, i18n_vnum: 2345})
+      UIViews.render(:s_memoi2, %{i18n_key: "BalanceBank", character: character})
     )
 
     # Text: We'll do our best. Thank you for using the Cuarry Bank.
     Socket.send(
       character.socket,
-      UIViews.render(:s_memoi, %{i18n_vnum: 2353})
+      UIViews.render(:s_memoi, %{i18n_key: "ThankYouForUsingTheCuarryBank"})
     )
   end
 
@@ -134,7 +140,7 @@ defmodule ChannelService.Endpoint.EntityInteractions do
 
     case CharacterRegistry.write(new_char) do
       {:ok, new_char} ->
-        broadcast_on_map(new_char, EntityViews.render(:cond, new_char))
+        broadcast_on_map(new_char, EntityViews.render(:cond, %{entity: new_char}))
         {:ok, new_char}
 
       {:error, _} = x ->
@@ -149,7 +155,12 @@ defmodule ChannelService.Endpoint.EntityInteractions do
 
     case CharacterRegistry.write(new_char) do
       {:ok, new_char} ->
-        broadcast_on_map(new_char, MapViews.render(:mv, new_char), false)
+        broadcast_on_map(
+          new_char,
+          MapViews.render(:mv, %{entity: new_char}),
+          false
+        )
+
         {:ok, new_char}
 
       {:error, _} = x ->
@@ -172,7 +183,7 @@ defmodule ChannelService.Endpoint.EntityInteractions do
   defp send_gold_ui(%Character{} = character) do
     case CharacterRegistry.write(character) do
       {:ok, character} ->
-        Socket.send(character.socket, UIViews.render(:gold, character))
+        Socket.send(character.socket, UIViews.render(:gold, %{character: character}))
         {:ok, character}
 
       {:error, _} = x ->
@@ -190,14 +201,20 @@ defmodule ChannelService.Endpoint.EntityInteractions do
 
   @spec send_entity_enter_packets(Character.t(), ElvenCaching.entity()) :: :ok | {:error, atom}
   defp send_entity_enter_packets(%Character{} = self, %Character{} = character) do
-    Socket.send(self.socket, VisibilityViews.render(:in, character))
-    Socket.send(character.socket, VisibilityViews.render(:in, self))
-    Socket.send(self.socket, PlayerViews.render(:c_mode, character))
-    Socket.send(character.socket, PlayerViews.render(:c_mode, self))
+    equipments1 = FakeData.equipments(character_id: character.id)
+    render1 = VisibilityViews.render(:in, %{entity: character, equipments: equipments1})
+    Socket.send(self.socket, render1)
+
+    equipments2 = FakeData.equipments(character_id: self.id)
+    render2 = VisibilityViews.render(:in, %{entity: self, equipments: equipments2})
+    Socket.send(character.socket, render2)
+
+    Socket.send(self.socket, EntityViews.render(:c_mode, %{character: character}))
+    Socket.send(character.socket, EntityViews.render(:c_mode, %{character: self}))
   end
 
   @spec send_entity_leave_packets(Character.t(), ElvenCaching.entity()) :: :ok | {:error, atom}
   defp send_entity_leave_packets(%Character{} = character, entity) do
-    Socket.send(character.socket, VisibilityViews.render(:out, entity))
+    Socket.send(character.socket, VisibilityViews.render(:out, %{entity: entity}))
   end
 end

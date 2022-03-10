@@ -3,10 +3,11 @@ defmodule ChannelService.Endpoint.EffectCommand do
   TODO: Documentation
   """
 
-  alias ElvenCore.Socket
-  alias ChannelService.Endpoint.ChatViews
-  alias ChannelService.Endpoint.EntityInteractions
   alias ElvenCaching.CharacterRegistry
+  alias ElvenCore.Socket
+  alias ElvenViews.ChatViews
+
+  alias ChannelService.Endpoint.EntityInteractions
 
   ## Public API
 

@@ -9,8 +9,7 @@ defmodule ChannelService.Endpoint.LobbyActions do
   alias ElvenCaching.{CharacterRegistry, SessionRegistry}
   alias ElvenCaching.Account.Session
   alias ElvenDatabase.Players.{Account, Characters}
-
-  alias ChannelService.Endpoint.LobbyViews
+  alias ElvenViews.LobbyViews
 
   ## Public API
 
