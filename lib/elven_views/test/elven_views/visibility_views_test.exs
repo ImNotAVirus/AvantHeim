@@ -52,7 +52,7 @@ defmodule ElvenViews.VisibilityViewsTest do
       assert is_boolean(render.is_arena_winner)
       assert is_integer(render.compliment)
       assert is_integer(render.size)
-      assert is_integer(render.hero_level)
+      assert render.hero_level == mock.entity.hero_level
       assert is_integer(render.title_id)
     end
   end

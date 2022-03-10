@@ -123,7 +123,7 @@ defmodule ElvenViews.VisibilityViews do
       is_arena_winner: FakeData.is_arena_winner(character_id: character.id),
       compliment: FakeData.compliment(character_id: character.id),
       size: FakeData.size(character_id: character.id),
-      hero_level: FakeData.hero_level(character_id: character.id),
+      hero_level: character.hero_level,
       title_id: FakeData.title_id(character_id: character.id)
     }
   end
