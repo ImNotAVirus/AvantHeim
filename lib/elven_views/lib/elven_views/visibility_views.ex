@@ -5,6 +5,7 @@ defmodule ElvenViews.VisibilityViews do
 
   use ElvenViews
 
+  alias ElvenCaching.BattleEntityHelper
   alias ElvenCaching.Entity
   alias ElvenCaching.MapEntity
   alias ElvenCaching.Entity.EntityPosition
@@ -75,12 +76,8 @@ defmodule ElvenViews.VisibilityViews do
     weapon_upgrade = %ItemUpgradeRaritySubPacket{upgrade: 0, rarity: 0}
     armor_upgrade = %ItemUpgradeRaritySubPacket{upgrade: 0, rarity: 0}
 
-    hp = FakeData.hp(character_id: character.id)
-    hp_max = FakeData.hp_max(character_id: character.id)
-    mp = FakeData.mp(character_id: character.id)
-    mp_max = FakeData.mp_max(character_id: character.id)
-    hp_percent = trunc(hp * 100 / hp_max)
-    mp_percent = trunc(mp * 100 / mp_max)
+    hp_percent = BattleEntityHelper.hp_percent(character)
+    mp_percent = BattleEntityHelper.mp_percent(character)
 
     %EntityPosition{
       map_x: map_x,
