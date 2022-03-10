@@ -56,17 +56,20 @@ defmodule MapService.MapManager do
   end
 
   @impl true
-  def handle_continue(:init_base_maps, %{name: name} = state) do
-    map_info = parse_maps_info!(state)
+  def handle_continue(:init_base_maps, %{base_maps_path: base_maps_path, name: name} = state) do
+    map_dirs = Path.wildcard("#{base_maps_path}/*")
+    map_vnums = Enum.map(map_dirs, &(&1 |> Path.basename() |> String.to_integer()))
 
-    Logger.info("#{inspect(name)} is now monitoring #{length(map_info)} maps")
+    Enum.each(map_vnums, &do_start_base_map(&1, state))
+
+    Logger.info("#{inspect(name)} is now monitoring #{length(map_vnums)} maps")
 
     {:noreply, state}
   end
 
   @impl true
-  def handle_call({:start_base_map, _map_vnum}, _from, state) do
-    {:reply, :ok, state}
+  def handle_call({:start_base_map, map_vnum}, _from, state) do
+    {:reply, do_start_base_map(map_vnum, state), state}
   end
 
   ## Private functions
@@ -80,22 +83,28 @@ defmodule MapService.MapManager do
     end)
   end
 
-  defp parse_maps_info!(%{base_maps_path: base_maps_path}) do
-    map_dirs = Path.wildcard("#{base_maps_path}/*")
+  defp do_start_base_map(vnum, state) do
+    config = get_map_config(vnum, state)
 
-    Enum.map(map_dirs, fn dir ->
-      id = dir |> Path.basename() |> String.to_integer()
-      Logger.debug("Parsing map##{id}: #{Path.relative_to_cwd(dir)}")
+    # TODO: Start map process with config
+    # TODO: Monitor map process
 
-      "#{dir}/*.{yml,yaml}"
-      |> Path.wildcard()
-      |> Enum.map(&YamlElixir.read_from_file!(&1, atoms: true))
-      |> Enum.reduce(%{}, fn element, acc -> Map.merge(acc, element, &merger/3) end)
-      |> Map.put("map_id", id)
-      |> Map.put("map_dir", dir)
-      |> MapConfig.new()
-      |> tap(&debug/1)
-    end)
+    {:ok, config}
+  end
+
+  defp get_map_config(vnum, %{base_maps_path: base_maps_path}) do
+    dir = Path.join(base_maps_path, Integer.to_string(vnum))
+
+    Logger.debug("Parsing map##{vnum}: #{Path.relative_to_cwd(dir)}")
+
+    "#{dir}/*.{yml,yaml}"
+    |> Path.wildcard()
+    |> Enum.map(&YamlElixir.read_from_file!(&1, atoms: true))
+    |> Enum.reduce(%{}, fn element, acc -> Map.merge(acc, element, &merger/3) end)
+    |> Map.put("map_id", vnum)
+    |> Map.put("map_dir", dir)
+    |> MapConfig.new()
+    |> tap(&debug/1)
   end
 
   defp merger("portals", v1, v2), do: Enum.concat(v1, v2)
