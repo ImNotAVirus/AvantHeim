@@ -8,7 +8,8 @@
 		{"path": "../lib/elven_database"},
 		{"path": "../lib/elven_enums"},
 		{"path": "../lib/elven_i18n"},
-		{"path": "../lib/elven_views"}
+		{"path": "../lib/elven_views"},
+		{"path": "../lib/elven_algorithms"}
 	],
 	"settings": {
 		"files.insertFinalNewline": true,
