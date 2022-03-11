@@ -11,8 +11,8 @@ defmodule MapService.StaticMapProcess do
 
   ## Public API
 
-  @spec start_link(MapConfig.t(), GenServer.options()) :: GenServer.on_start()
-  def start_link(config, process_opts) do
+  @spec start_link({MapConfig.t(), GenServer.options()}) :: GenServer.on_start()
+  def start_link({config, process_opts}) do
     GenServer.start_link(__MODULE__, config, process_opts)
   end
 
