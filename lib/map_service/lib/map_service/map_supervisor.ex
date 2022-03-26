@@ -1,4 +1,4 @@
-defmodule MapService.MapManager do
+defmodule MapService.MapSupervisor do
   @moduledoc """
   TODO: Documentation
   """
@@ -13,12 +13,13 @@ defmodule MapService.MapManager do
 
   @spec start_link(Keyword.t()) :: Supervisor.on_start()
   def start_link(opts) do
-    name = opts[:name] || raise ArgumentError, "must supply a name"
-    Supervisor.start_link(__MODULE__, opts, name: supervisor(name))
+    name = opts[:name] || __MODULE__
+    new_opts = Keyword.put_new(opts, :name, name)
+    Supervisor.start_link(__MODULE__, new_opts, name: supervisor(name))
   end
 
   @spec start_static_map(atom, non_neg_integer) :: {:ok, map_config()} | {:error, any}
-  def start_static_map(manager, map_vnum) do
+  def start_static_map(manager \\ __MODULE__, map_vnum) do
     GenServer.call(loader(manager), {:start_static_map, map_vnum})
   end
 

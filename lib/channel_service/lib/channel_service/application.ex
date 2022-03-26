@@ -13,7 +13,6 @@ defmodule ChannelService.Application do
       {ElvenCaching.SessionRegistry, [disable_clean: true]},
       {ElvenCaching.CharacterRegistry, []},
       {ChannelService.PresenceManager, []},
-      {MapService.MapManager, name: ChannelService.MapManager},
       {ChannelService.Endpoint, name: ChannelService.Endpoint}
     ]
 

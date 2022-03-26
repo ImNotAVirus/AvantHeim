@@ -7,17 +7,9 @@
 # General application configuration
 import Config
 
-## Channel configs
+## MapService configs
 
-config :channel_service,
-  packet_schemas: ChannelService.PacketSchemas
-
-config :channel_service, ChannelService.Endpoint,
-  listener_name: :channel_service,
-  transport: :ranch_tcp,
-  transport_opts: [ip: {127, 0, 0, 1}, port: 5000],
-  protocol: ChannelService.Endpoint.Protocol,
-  protocol_opts: []
+config :map_service, :loader_config, lazy: false
 
 # Import global config
 import_config "../../../config/config.exs"

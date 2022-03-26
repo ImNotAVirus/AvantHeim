@@ -14,7 +14,8 @@ defmodule MapService.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      extra_applications: [:logger]
+      extra_applications: [:logger],
+      mod: {MapService.Application, []}
     ]
   end
 
@@ -22,7 +23,9 @@ defmodule MapService.MixProject do
   defp deps do
     [
       {:elven_enums, path: "../elven_enums"},
-      {:yaml_elixir, "~> 2.8", runtime: false}
+      {:elven_caching, path: "../elven_caching"},
+      {:yaml_elixir, "~> 2.8", runtime: false},
+      {:libcluster, "~> 3.3"}
     ]
   end
 end

@@ -26,7 +26,7 @@ defmodule ChannelService.MixProject do
       {:elven_database, path: "../elven_database"},
       {:elven_views, path: "../elven_views"},
       {:elven_caching, path: "../elven_caching"},
-      {:map_service, path: "../map_service"},
+      {:map_service, path: "../map_service", runtime: false},
       {:libcluster, "~> 3.3"},
       {:ranch, "~> 2.0"}
     ]
