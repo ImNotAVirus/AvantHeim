@@ -5,52 +5,34 @@ defmodule MapService.MapSupervisor do
 
   use Supervisor
 
-  alias MapService.MapLoader
-
-  @type map_config :: map
-
   ## Public API
 
   @spec start_link(Keyword.t()) :: Supervisor.on_start()
   def start_link(opts) do
-    name = opts[:name] || __MODULE__
-    new_opts = Keyword.put_new(opts, :name, name)
-    Supervisor.start_link(__MODULE__, new_opts, name: supervisor(name))
-  end
-
-  @spec start_static_map(atom, non_neg_integer) :: {:ok, map_config()} | {:error, any}
-  def start_static_map(manager \\ __MODULE__, map_vnum) do
-    GenServer.call(loader(manager), {:start_static_map, map_vnum})
+    name = opts[:base_name] || raise "must define a base name"
+    Supervisor.start_link(__MODULE__, opts, name: MapService.supervisor(name))
   end
 
   ## GenServer behaviour
 
   @impl true
   def init(opts) do
-    name = opts[:name]
+    name = opts[:base_name]
 
     children = [
-      {Registry, keys: :unique, name: map_registry(name)},
-      {DynamicSupervisor, strategy: :one_for_one, name: static_maps_supervisor(name)},
-      {DynamicSupervisor, strategy: :one_for_one, name: instances_supervisor(name)},
-      {MapLoader,
+      {Registry, keys: :unique, name: MapService.map_registry(name)},
+      {DynamicSupervisor, strategy: :one_for_one, name: MapService.static_maps_supervisor(name)},
+      {DynamicSupervisor, strategy: :one_for_one, name: MapService.instances_supervisor(name)},
+      {MapService.MapLoader,
        [
-         name: loader(name),
+         name: MapService.loader(name),
          config: Application.get_env(:map_service, :loader_config, []),
-         map_registry: map_registry(name),
-         static_maps_supervisor: static_maps_supervisor(name),
-         instances_supervisor: instances_supervisor(name)
+         map_registry: MapService.map_registry(name),
+         static_maps_supervisor: MapService.static_maps_supervisor(name),
+         instances_supervisor: MapService.instances_supervisor(name)
        ]}
     ]
 
     Supervisor.init(children, strategy: :one_for_one)
   end
-
-  ## Private functions
-
-  defp supervisor(base_mod), do: :"#{base_mod}.Supervisor"
-  defp map_registry(base_mod), do: :"#{base_mod}.MapRegistry"
-  defp static_maps_supervisor(base_mod), do: :"#{base_mod}.StaticMapsSupervisor"
-  defp instances_supervisor(base_mod), do: :"#{base_mod}.InstancesSupervisor"
-  defp loader(base_mod), do: :"#{base_mod}.MapLoader"
 end

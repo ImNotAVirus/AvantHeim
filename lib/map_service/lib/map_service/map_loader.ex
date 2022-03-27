@@ -8,7 +8,7 @@ defmodule MapService.MapLoader do
   require Logger
 
   alias MapService.ConfigFile.MapConfig
-  alias MapService.StaticMapProcess
+  alias MapService.MapProcess
 
   @root_path :code.priv_dir(:map_service)
 
@@ -104,7 +104,7 @@ defmodule MapService.MapLoader do
          {:config, {:ok, config}} <- {:config, get_map_config(vnum, state)} do
       args = {config, name: static_via_registry(map_registry, vnum)}
 
-      {:ok, _process} = DynamicSupervisor.start_child(static_maps_sup, {StaticMapProcess, args})
+      {:ok, _process} = DynamicSupervisor.start_child(static_maps_sup, {MapProcess, args})
       {:ok, config}
     else
       {:lookup, [_]} -> {:error, :already_registered}

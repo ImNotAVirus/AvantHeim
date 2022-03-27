@@ -1,4 +1,4 @@
-defmodule MapService.StaticMapProcess do
+defmodule MapService.MapProcess do
   @moduledoc false
 
   use GenServer
@@ -20,7 +20,7 @@ defmodule MapService.StaticMapProcess do
 
   @impl true
   def init(config) do
-    Logger.debug("StaticMapProcess##{config.id} started")
+    Logger.debug("MapProcess##{config.id} started")
     {:ok, %{config: config, character_ids: MapSet.new()}, :hibernate}
   end
 end

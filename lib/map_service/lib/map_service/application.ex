@@ -11,7 +11,7 @@ defmodule MapService.Application do
       {Cluster.Supervisor, [topologies, [name: MapService.ClusterSupervisor]]},
       {ElvenCaching.MnesiaClusterManager, []},
       {ElvenCaching.CharacterRegistry, []},
-      {MapService.MapSupervisor, []}
+      {MapService.MapSupervisor, base_name: MapTree}
     ]
 
     opts = [strategy: :rest_for_one, name: MapService.Supervisor]
