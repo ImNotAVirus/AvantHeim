@@ -45,25 +45,25 @@ defmodule ElvenAlgorithms.BattleAlgorithmsTest do
     end
 
     test "swordman" do
-      Enum.each(adventurer_mp_max(), fn {level, mp} ->
+      Enum.each(swordman_mp_max(), fn {level, mp} ->
         assert BattleAlgorithms.mp_max(:swordman, level) == mp
       end)
     end
 
     test "archer" do
-      Enum.each(adventurer_mp_max(), fn {level, mp} ->
+      Enum.each(archer_mp_max(), fn {level, mp} ->
         assert BattleAlgorithms.mp_max(:archer, level) == mp
       end)
     end
 
     test "magician" do
-      Enum.each(adventurer_mp_max(), fn {level, mp} ->
+      Enum.each(magician_mp_max(), fn {level, mp} ->
         assert BattleAlgorithms.mp_max(:magician, level) == mp
       end)
     end
 
     test "martial_artist" do
-      Enum.each(adventurer_mp_max(), fn {level, mp} ->
+      Enum.each(martial_artist_mp_max(), fn {level, mp} ->
         assert BattleAlgorithms.mp_max(:martial_artist, level) == mp
       end)
     end
