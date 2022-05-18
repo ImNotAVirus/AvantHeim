@@ -5,6 +5,8 @@ defmodule ElvenAlgorithms.ExperienceAlgorithms do
 
   import ElvenAlgorithms
 
+  @fairy_max_level 80
+
   ## Experience Algorithm
 
   @xp_constant List.flatten([
@@ -94,6 +96,14 @@ defmodule ElvenAlgorithms.ExperienceAlgorithms do
   for {constant, level} <- Enum.with_index(@specialist_exp_constant, 1) do
     def specialist_exp(unquote(level)) do
       unquote(constant)
+    end
+  end
+
+  for level <- 0..@fairy_max_level do
+    fairy_xp = if level < 40, do: level * level + 50, else: (level * level + 50) * 3
+
+    def fairy_exp(unquote(level)) do
+      unquote(fairy_xp)
     end
   end
 end
