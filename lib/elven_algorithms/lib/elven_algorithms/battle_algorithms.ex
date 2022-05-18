@@ -41,7 +41,7 @@ defmodule ElvenAlgorithms.BattleAlgorithms do
 
     mp =
       floor(9.25 * mpx + 50.75) +
-        (mpx - 2) / 4 * 2 * (modulus(mpx - 2, 4) + 1 + (mpx - 6) / 4 * 2)
+        trunc((mpx - 2) / 4) * 2 * (modulus(mpx - 2, 4) + 1 + trunc((mpx - 6) / 4) * 2)
 
     mp_trunc = trunc(mp)
 
