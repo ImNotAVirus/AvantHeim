@@ -41,6 +41,19 @@ defmodule ElvenAlgorithms.ExperienceAlgorithms do
                       [715_000, 730_000, 745_000, 760_000, 775_000, 790_000]
                     ])
 
+  @hero_exp_constant List.flatten([
+                       [949_560, 1_068_540, 1_197_000, 1_335_300, 1_483_800, 1_642_860],
+                       [1_812_840, 1_994_100, 2_187_000, 2_391_900, 2_609_160, 2_839_110],
+                       [3_082_080, 3_338_400, 3_608_400, 3_892_410, 4_190_760, 4_503_780],
+                       [4_831_800, 5_175_150, 5_534_160, 5_909_100, 6_300_240, 6_707_850],
+                       [7_132_200, 7_573_560, 8_032_200, 8_508_390, 9_002_400, 9_514_500],
+                       [10_044_960, 10_594_020, 11_161_920, 11_748_900, 12_355_200, 12_981_060],
+                       [13_626_720, 14_292_420, 14_978_400, 15_684_900, 16_412_160, 17_160_390],
+                       [17_929_800, 18_720_600, 19_533_000, 20_367_210, 21_223_440, 22_101_900],
+                       [23_002_800, 23_926_350, 24_872_760, 25_842_210, 26_834_880, 27_850_950],
+                       [33_224_190, 38_207_818, 43_938_990, 50_529_838, 58_109_313, 66_825_709]
+                     ])
+
   for {constant, level} <- Enum.with_index(@xp_constant, 1) do
     def exp(unquote(level)) do
       unquote(constant)
@@ -49,6 +62,12 @@ defmodule ElvenAlgorithms.ExperienceAlgorithms do
 
   for {constant, level} <- Enum.with_index(@job_exp_constant, 1) do
     def job_exp(unquote(level)) do
+      unquote(constant)
+    end
+  end
+
+  for {constant, level} <- Enum.with_index(@hero_exp_constant, 1) do
+    def hero_exp(unquote(level)) do
       unquote(constant)
     end
   end
