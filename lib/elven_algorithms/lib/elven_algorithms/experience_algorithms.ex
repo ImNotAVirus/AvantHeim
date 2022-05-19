@@ -27,6 +27,14 @@ defmodule ElvenAlgorithms.ExperienceAlgorithms do
                  [1_843_704_000, 1_990_719_000, 2_140_719_000]
                ])
 
+  for {constant, level} <- Enum.with_index(@xp_constant, 1) do
+    def exp(unquote(level)) do
+      unquote(constant)
+    end
+  end
+
+  ## Job Experience Algorithm
+
   @job_exp_constant List.flatten([
                       [14500, 19000, 23500, 28000, 32500, 37000, 41500],
                       [46000, 50500, 55000, 59500, 64000, 68500, 73000],
@@ -42,6 +50,13 @@ defmodule ElvenAlgorithms.ExperienceAlgorithms do
                       [625_000, 640_000, 655_000, 670_000, 685_000, 700_000],
                       [715_000, 730_000, 745_000, 760_000, 775_000, 790_000]
                     ])
+  for {constant, level} <- Enum.with_index(@job_exp_constant, 1) do
+    def job_exp(unquote(level)) do
+      unquote(constant)
+    end
+  end
+
+  ## Hero Experience Algorithm
 
   @hero_exp_constant List.flatten([
                        [949_560, 1_068_540, 1_197_000, 1_335_300, 1_483_800, 1_642_860],
@@ -55,6 +70,13 @@ defmodule ElvenAlgorithms.ExperienceAlgorithms do
                        [23_002_800, 23_926_350, 24_872_760, 25_842_210, 26_834_880, 27_850_950],
                        [33_224_190, 38_207_818, 43_938_990, 50_529_838, 58_109_313, 66_825_709]
                      ])
+  for {constant, level} <- Enum.with_index(@hero_exp_constant, 1) do
+    def hero_exp(unquote(level)) do
+      unquote(constant)
+    end
+  end
+
+  ## Specialist Experience Algorithm
 
   @specialist_exp_constant List.flatten([
                              [15000, 25000, 35000, 45000, 55000, 65000, 75000, 85000],
@@ -74,30 +96,13 @@ defmodule ElvenAlgorithms.ExperienceAlgorithms do
                              [4_996_142, 5_153_504, 5_314_250, 5_478_416, 5_646_038, 5_817_152],
                              [5_991_794]
                            ])
-
-  for {constant, level} <- Enum.with_index(@xp_constant, 1) do
-    def exp(unquote(level)) do
-      unquote(constant)
-    end
-  end
-
-  for {constant, level} <- Enum.with_index(@job_exp_constant, 1) do
-    def job_exp(unquote(level)) do
-      unquote(constant)
-    end
-  end
-
-  for {constant, level} <- Enum.with_index(@hero_exp_constant, 1) do
-    def hero_exp(unquote(level)) do
-      unquote(constant)
-    end
-  end
-
   for {constant, level} <- Enum.with_index(@specialist_exp_constant, 1) do
     def specialist_exp(unquote(level)) do
       unquote(constant)
     end
   end
+
+  ## Fairy Experience Algorithm
 
   for level <- 0..@fairy_max_level do
     fairy_xp = if level < 40, do: level * level + 50, else: (level * level + 50) * 3
