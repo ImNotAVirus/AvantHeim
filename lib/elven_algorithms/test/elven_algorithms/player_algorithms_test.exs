@@ -1,38 +1,38 @@
-defmodule ElvenAlgorithms.BattleAlgorithmsTest do
+defmodule ElvenAlgorithms.PlayerAlgorithmsTest do
   use ExUnit.Case
 
-  alias ElvenAlgorithms.BattleAlgorithms
+  alias ElvenAlgorithms.PlayerAlgorithms
 
   ## Tests
 
   describe "hp_max/2 for" do
     test "adventurer" do
       Enum.each(adventurer_hp_max(), fn {level, hp} ->
-        assert BattleAlgorithms.hp_max(:adventurer, level) == hp
+        assert PlayerAlgorithms.hp_max(:adventurer, level) == hp
       end)
     end
 
     test "swordman" do
       Enum.each(swordman_hp_max(), fn {level, hp} ->
-        assert BattleAlgorithms.hp_max(:swordman, level) == hp
+        assert PlayerAlgorithms.hp_max(:swordman, level) == hp
       end)
     end
 
     test "archer" do
       Enum.each(archer_hp_max(), fn {level, hp} ->
-        assert BattleAlgorithms.hp_max(:archer, level) == hp
+        assert PlayerAlgorithms.hp_max(:archer, level) == hp
       end)
     end
 
     test "magician" do
       Enum.each(magician_hp_max(), fn {level, hp} ->
-        assert BattleAlgorithms.hp_max(:magician, level) == hp
+        assert PlayerAlgorithms.hp_max(:magician, level) == hp
       end)
     end
 
     test "martial_artist" do
       Enum.each(martial_artist_hp_max(), fn {level, hp} ->
-        assert BattleAlgorithms.hp_max(:martial_artist, level) == hp
+        assert PlayerAlgorithms.hp_max(:martial_artist, level) == hp
       end)
     end
   end
@@ -40,31 +40,63 @@ defmodule ElvenAlgorithms.BattleAlgorithmsTest do
   describe "mp_max/2 for" do
     test "adventurer" do
       Enum.each(adventurer_mp_max(), fn {level, mp} ->
-        assert BattleAlgorithms.mp_max(:adventurer, level) == mp
+        assert PlayerAlgorithms.mp_max(:adventurer, level) == mp
       end)
     end
 
     test "swordman" do
       Enum.each(swordman_mp_max(), fn {level, mp} ->
-        assert BattleAlgorithms.mp_max(:swordman, level) == mp
+        assert PlayerAlgorithms.mp_max(:swordman, level) == mp
       end)
     end
 
     test "archer" do
       Enum.each(archer_mp_max(), fn {level, mp} ->
-        assert BattleAlgorithms.mp_max(:archer, level) == mp
+        assert PlayerAlgorithms.mp_max(:archer, level) == mp
       end)
     end
 
     test "magician" do
       Enum.each(magician_mp_max(), fn {level, mp} ->
-        assert BattleAlgorithms.mp_max(:magician, level) == mp
+        assert PlayerAlgorithms.mp_max(:magician, level) == mp
       end)
     end
 
     test "martial_artist" do
       Enum.each(martial_artist_mp_max(), fn {level, mp} ->
-        assert BattleAlgorithms.mp_max(:martial_artist, level) == mp
+        assert PlayerAlgorithms.mp_max(:martial_artist, level) == mp
+      end)
+    end
+  end
+
+  describe "close_defense/2 for" do
+    test "adventurer" do
+      Enum.each(adventurer_close_defense(), fn {level, defense} ->
+        assert PlayerAlgorithms.close_defense(:adventurer, level) == defense
+      end)
+    end
+
+    test "swordman" do
+      Enum.each(swordman_close_defense(), fn {level, defense} ->
+        assert PlayerAlgorithms.close_defense(:swordman, level) == defense
+      end)
+    end
+
+    test "archer" do
+      Enum.each(archer_close_defense(), fn {level, defense} ->
+        assert PlayerAlgorithms.close_defense(:archer, level) == defense
+      end)
+    end
+
+    test "magician" do
+      Enum.each(magician_close_defense(), fn {level, defense} ->
+        assert PlayerAlgorithms.close_defense(:magician, level) == defense
+      end)
+    end
+
+    test "martial_artist" do
+      Enum.each(martial_artist_close_defense(), fn {level, defense} ->
+        assert PlayerAlgorithms.close_defense(:martial_artist, level) == defense
       end)
     end
   end
@@ -1108,6 +1140,526 @@ defmodule ElvenAlgorithms.BattleAlgorithmsTest do
       {97, 4315},
       {98, 4381},
       {99, 4448}
+    ]
+  end
+
+  def adventurer_close_defense() do
+    [
+      {1, 5},
+      {2, 5},
+      {3, 6},
+      {4, 6},
+      {5, 7},
+      {6, 7},
+      {7, 8},
+      {8, 8},
+      {9, 9},
+      {10, 9},
+      {11, 10},
+      {12, 10},
+      {13, 11},
+      {14, 11},
+      {15, 12},
+      {16, 12},
+      {17, 13},
+      {18, 13},
+      {19, 14},
+      {20, 14},
+      {21, 15},
+      {22, 15},
+      {23, 16},
+      {24, 16},
+      {25, 17},
+      {26, 17},
+      {27, 18},
+      {28, 18},
+      {29, 19},
+      {30, 19},
+      {31, 20},
+      {32, 20},
+      {33, 21},
+      {34, 21},
+      {35, 22},
+      {36, 22},
+      {37, 23},
+      {38, 23},
+      {39, 24},
+      {40, 24},
+      {41, 25},
+      {42, 25},
+      {43, 26},
+      {44, 26},
+      {45, 27},
+      {46, 27},
+      {47, 28},
+      {48, 28},
+      {49, 29},
+      {50, 29},
+      {51, 30},
+      {52, 30},
+      {53, 31},
+      {54, 31},
+      {55, 32},
+      {56, 32},
+      {57, 33},
+      {58, 33},
+      {59, 34},
+      {60, 34},
+      {61, 35},
+      {62, 35},
+      {63, 36},
+      {64, 36},
+      {65, 37},
+      {66, 37},
+      {67, 38},
+      {68, 38},
+      {69, 39},
+      {70, 39},
+      {71, 40},
+      {72, 40},
+      {73, 41},
+      {74, 41},
+      {75, 42},
+      {76, 42},
+      {77, 43},
+      {78, 43},
+      {79, 44},
+      {80, 44},
+      {81, 45},
+      {82, 45},
+      {83, 46},
+      {84, 46},
+      {85, 47},
+      {86, 47},
+      {87, 48},
+      {88, 48},
+      {89, 49},
+      {90, 49},
+      {91, 50},
+      {92, 50},
+      {93, 51},
+      {94, 51},
+      {95, 52},
+      {96, 52},
+      {97, 53},
+      {98, 53},
+      {99, 54}
+    ]
+  end
+
+  def swordman_close_defense() do
+    [
+      {1, 5},
+      {2, 5},
+      {3, 6},
+      {4, 7},
+      {5, 8},
+      {6, 9},
+      {7, 10},
+      {8, 11},
+      {9, 12},
+      {10, 13},
+      {11, 14},
+      {12, 14},
+      {13, 15},
+      {14, 16},
+      {15, 17},
+      {16, 18},
+      {17, 19},
+      {18, 20},
+      {19, 21},
+      {20, 22},
+      {21, 23},
+      {22, 23},
+      {23, 24},
+      {24, 25},
+      {25, 26},
+      {26, 27},
+      {27, 28},
+      {28, 29},
+      {29, 30},
+      {30, 31},
+      {31, 32},
+      {32, 32},
+      {33, 33},
+      {34, 34},
+      {35, 35},
+      {36, 36},
+      {37, 37},
+      {38, 38},
+      {39, 39},
+      {40, 40},
+      {41, 41},
+      {42, 41},
+      {43, 42},
+      {44, 43},
+      {45, 44},
+      {46, 45},
+      {47, 46},
+      {48, 47},
+      {49, 48},
+      {50, 49},
+      {51, 50},
+      {52, 50},
+      {53, 51},
+      {54, 52},
+      {55, 53},
+      {56, 54},
+      {57, 55},
+      {58, 56},
+      {59, 57},
+      {60, 58},
+      {61, 59},
+      {62, 59},
+      {63, 60},
+      {64, 61},
+      {65, 62},
+      {66, 63},
+      {67, 64},
+      {68, 65},
+      {69, 66},
+      {70, 67},
+      {71, 68},
+      {72, 68},
+      {73, 69},
+      {74, 70},
+      {75, 71},
+      {76, 72},
+      {77, 73},
+      {78, 74},
+      {79, 75},
+      {80, 76},
+      {81, 77},
+      {82, 77},
+      {83, 78},
+      {84, 79},
+      {85, 80},
+      {86, 81},
+      {87, 82},
+      {88, 83},
+      {89, 84},
+      {90, 85},
+      {91, 86},
+      {92, 86},
+      {93, 87},
+      {94, 88},
+      {95, 89},
+      {96, 90},
+      {97, 91},
+      {98, 92},
+      {99, 93}
+    ]
+  end
+
+  def archer_close_defense() do
+    [
+      {1, 5},
+      {2, 5},
+      {3, 6},
+      {4, 6},
+      {5, 7},
+      {6, 8},
+      {7, 8},
+      {8, 9},
+      {9, 10},
+      {10, 10},
+      {11, 11},
+      {12, 12},
+      {13, 12},
+      {14, 13},
+      {15, 14},
+      {16, 14},
+      {17, 15},
+      {18, 16},
+      {19, 16},
+      {20, 17},
+      {21, 18},
+      {22, 18},
+      {23, 19},
+      {24, 19},
+      {25, 20},
+      {26, 21},
+      {27, 21},
+      {28, 22},
+      {29, 23},
+      {30, 23},
+      {31, 24},
+      {32, 25},
+      {33, 25},
+      {34, 26},
+      {35, 27},
+      {36, 27},
+      {37, 28},
+      {38, 29},
+      {39, 29},
+      {40, 30},
+      {41, 31},
+      {42, 31},
+      {43, 32},
+      {44, 32},
+      {45, 33},
+      {46, 34},
+      {47, 34},
+      {48, 35},
+      {49, 36},
+      {50, 36},
+      {51, 37},
+      {52, 38},
+      {53, 38},
+      {54, 39},
+      {55, 40},
+      {56, 40},
+      {57, 41},
+      {58, 42},
+      {59, 42},
+      {60, 43},
+      {61, 44},
+      {62, 44},
+      {63, 45},
+      {64, 45},
+      {65, 46},
+      {66, 47},
+      {67, 47},
+      {68, 48},
+      {69, 49},
+      {70, 49},
+      {71, 50},
+      {72, 51},
+      {73, 51},
+      {74, 52},
+      {75, 53},
+      {76, 53},
+      {77, 54},
+      {78, 55},
+      {79, 55},
+      {80, 56},
+      {81, 57},
+      {82, 57},
+      {83, 58},
+      {84, 58},
+      {85, 59},
+      {86, 60},
+      {87, 60},
+      {88, 61},
+      {89, 62},
+      {90, 62},
+      {91, 63},
+      {92, 64},
+      {93, 64},
+      {94, 65},
+      {95, 66},
+      {96, 66},
+      {97, 67},
+      {98, 68},
+      {99, 68}
+    ]
+  end
+
+  def magician_close_defense() do
+    [
+      {1, 5},
+      {2, 5},
+      {3, 6},
+      {4, 6},
+      {5, 7},
+      {6, 7},
+      {7, 8},
+      {8, 8},
+      {9, 9},
+      {10, 9},
+      {11, 10},
+      {12, 10},
+      {13, 11},
+      {14, 11},
+      {15, 12},
+      {16, 12},
+      {17, 13},
+      {18, 13},
+      {19, 14},
+      {20, 14},
+      {21, 15},
+      {22, 15},
+      {23, 16},
+      {24, 16},
+      {25, 17},
+      {26, 17},
+      {27, 18},
+      {28, 18},
+      {29, 19},
+      {30, 19},
+      {31, 20},
+      {32, 20},
+      {33, 21},
+      {34, 21},
+      {35, 22},
+      {36, 22},
+      {37, 23},
+      {38, 23},
+      {39, 24},
+      {40, 24},
+      {41, 25},
+      {42, 25},
+      {43, 26},
+      {44, 26},
+      {45, 27},
+      {46, 27},
+      {47, 28},
+      {48, 28},
+      {49, 29},
+      {50, 29},
+      {51, 30},
+      {52, 30},
+      {53, 31},
+      {54, 31},
+      {55, 32},
+      {56, 32},
+      {57, 33},
+      {58, 33},
+      {59, 34},
+      {60, 34},
+      {61, 35},
+      {62, 35},
+      {63, 36},
+      {64, 36},
+      {65, 37},
+      {66, 37},
+      {67, 38},
+      {68, 38},
+      {69, 39},
+      {70, 39},
+      {71, 40},
+      {72, 40},
+      {73, 41},
+      {74, 41},
+      {75, 42},
+      {76, 42},
+      {77, 43},
+      {78, 43},
+      {79, 44},
+      {80, 44},
+      {81, 45},
+      {82, 45},
+      {83, 46},
+      {84, 46},
+      {85, 47},
+      {86, 47},
+      {87, 48},
+      {88, 48},
+      {89, 49},
+      {90, 49},
+      {91, 50},
+      {92, 50},
+      {93, 51},
+      {94, 51},
+      {95, 52},
+      {96, 52},
+      {97, 53},
+      {98, 53},
+      {99, 54}
+    ]
+  end
+
+  def martial_artist_close_defense() do
+    [
+      {1, 5},
+      {2, 5},
+      {3, 6},
+      {4, 7},
+      {5, 8},
+      {6, 8},
+      {7, 9},
+      {8, 10},
+      {9, 11},
+      {10, 11},
+      {11, 12},
+      {12, 13},
+      {13, 14},
+      {14, 14},
+      {15, 15},
+      {16, 16},
+      {17, 17},
+      {18, 17},
+      {19, 18},
+      {20, 19},
+      {21, 20},
+      {22, 20},
+      {23, 21},
+      {24, 22},
+      {25, 23},
+      {26, 23},
+      {27, 24},
+      {28, 25},
+      {29, 26},
+      {30, 26},
+      {31, 27},
+      {32, 28},
+      {33, 29},
+      {34, 29},
+      {35, 30},
+      {36, 31},
+      {37, 32},
+      {38, 32},
+      {39, 33},
+      {40, 34},
+      {41, 35},
+      {42, 35},
+      {43, 36},
+      {44, 37},
+      {45, 38},
+      {46, 38},
+      {47, 39},
+      {48, 40},
+      {49, 41},
+      {50, 41},
+      {51, 42},
+      {52, 43},
+      {53, 44},
+      {54, 44},
+      {55, 45},
+      {56, 46},
+      {57, 47},
+      {58, 47},
+      {59, 48},
+      {60, 49},
+      {61, 50},
+      {62, 50},
+      {63, 51},
+      {64, 52},
+      {65, 53},
+      {66, 53},
+      {67, 54},
+      {68, 55},
+      {69, 56},
+      {70, 56},
+      {71, 57},
+      {72, 58},
+      {73, 59},
+      {74, 59},
+      {75, 60},
+      {76, 61},
+      {77, 62},
+      {78, 62},
+      {79, 63},
+      {80, 64},
+      {81, 65},
+      {82, 65},
+      {83, 66},
+      {84, 67},
+      {85, 68},
+      {86, 68},
+      {87, 69},
+      {88, 70},
+      {89, 71},
+      {90, 71},
+      {91, 72},
+      {92, 73},
+      {93, 74},
+      {94, 74},
+      {95, 75},
+      {96, 76},
+      {97, 77},
+      {98, 77},
+      {99, 78}
     ]
   end
 end
