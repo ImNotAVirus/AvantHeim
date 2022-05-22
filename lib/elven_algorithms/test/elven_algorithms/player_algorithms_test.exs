@@ -317,7 +317,7 @@ defmodule ElvenAlgorithms.PlayerAlgorithmsTest do
 
   ## Helpers
 
-  def adventurer_hp_max() do
+  defp adventurer_hp_max() do
     [
       {1, 221},
       {2, 238},
@@ -421,7 +421,7 @@ defmodule ElvenAlgorithms.PlayerAlgorithmsTest do
     ]
   end
 
-  def swordman_hp_max() do
+  defp swordman_hp_max() do
     [
       {1, 221},
       {2, 238},
@@ -525,7 +525,7 @@ defmodule ElvenAlgorithms.PlayerAlgorithmsTest do
     ]
   end
 
-  def archer_hp_max() do
+  defp archer_hp_max() do
     [
       {1, 221},
       {2, 238},
@@ -629,7 +629,7 @@ defmodule ElvenAlgorithms.PlayerAlgorithmsTest do
     ]
   end
 
-  def magician_hp_max() do
+  defp magician_hp_max() do
     [
       {1, 221},
       {2, 238},
@@ -733,7 +733,7 @@ defmodule ElvenAlgorithms.PlayerAlgorithmsTest do
     ]
   end
 
-  def martial_artist_hp_max() do
+  defp martial_artist_hp_max() do
     [
       {1, 221},
       {2, 238},
@@ -837,7 +837,7 @@ defmodule ElvenAlgorithms.PlayerAlgorithmsTest do
     ]
   end
 
-  def adventurer_mp_max() do
+  defp adventurer_mp_max() do
     [
       {1, 60},
       {2, 69},
@@ -941,7 +941,7 @@ defmodule ElvenAlgorithms.PlayerAlgorithmsTest do
     ]
   end
 
-  def swordman_mp_max() do
+  defp swordman_mp_max() do
     [
       {1, 60},
       {2, 69},
@@ -1045,7 +1045,7 @@ defmodule ElvenAlgorithms.PlayerAlgorithmsTest do
     ]
   end
 
-  def archer_mp_max() do
+  defp archer_mp_max() do
     [
       {1, 60},
       {2, 69},
@@ -1149,7 +1149,7 @@ defmodule ElvenAlgorithms.PlayerAlgorithmsTest do
     ]
   end
 
-  def magician_mp_max() do
+  defp magician_mp_max() do
     [
       {1, 60},
       {2, 69},
@@ -1253,7 +1253,7 @@ defmodule ElvenAlgorithms.PlayerAlgorithmsTest do
     ]
   end
 
-  def martial_artist_mp_max() do
+  defp martial_artist_mp_max() do
     [
       {1, 60},
       {2, 69},
@@ -1357,7 +1357,7 @@ defmodule ElvenAlgorithms.PlayerAlgorithmsTest do
     ]
   end
 
-  def adventurer_close_defense() do
+  defp adventurer_close_defense() do
     [
       {1, 5},
       {2, 5},
@@ -1461,7 +1461,7 @@ defmodule ElvenAlgorithms.PlayerAlgorithmsTest do
     ]
   end
 
-  def swordman_close_defense() do
+  defp swordman_close_defense() do
     [
       {1, 5},
       {2, 5},
@@ -1565,7 +1565,7 @@ defmodule ElvenAlgorithms.PlayerAlgorithmsTest do
     ]
   end
 
-  def archer_close_defense() do
+  defp archer_close_defense() do
     [
       {1, 5},
       {2, 5},
@@ -1669,7 +1669,7 @@ defmodule ElvenAlgorithms.PlayerAlgorithmsTest do
     ]
   end
 
-  def magician_close_defense() do
+  defp magician_close_defense() do
     [
       {1, 5},
       {2, 5},
@@ -1773,7 +1773,7 @@ defmodule ElvenAlgorithms.PlayerAlgorithmsTest do
     ]
   end
 
-  def martial_artist_close_defense() do
+  defp martial_artist_close_defense() do
     [
       {1, 5},
       {2, 5},
@@ -1877,7 +1877,7 @@ defmodule ElvenAlgorithms.PlayerAlgorithmsTest do
     ]
   end
 
-  def adventurer_distance_defense() do
+  defp adventurer_distance_defense() do
     [
       {1, 5},
       {2, 5},
@@ -1981,7 +1981,7 @@ defmodule ElvenAlgorithms.PlayerAlgorithmsTest do
     ]
   end
 
-  def swordman_distance_defense() do
+  defp swordman_distance_defense() do
     [
       {1, 5},
       {2, 5},
@@ -2085,7 +2085,7 @@ defmodule ElvenAlgorithms.PlayerAlgorithmsTest do
     ]
   end
 
-  def archer_distance_defense() do
+  defp archer_distance_defense() do
     [
       {1, 5},
       {2, 5},
@@ -2189,7 +2189,7 @@ defmodule ElvenAlgorithms.PlayerAlgorithmsTest do
     ]
   end
 
-  def magician_distance_defense() do
+  defp magician_distance_defense() do
     [
       {1, 25},
       {2, 25},
@@ -2293,7 +2293,7 @@ defmodule ElvenAlgorithms.PlayerAlgorithmsTest do
     ]
   end
 
-  def martial_artist_distance_defense() do
+  defp martial_artist_distance_defense() do
     [
       {1, 15},
       {2, 15},
@@ -2397,7 +2397,7 @@ defmodule ElvenAlgorithms.PlayerAlgorithmsTest do
     ]
   end
 
-  def adventurer_magic_defense() do
+  defp adventurer_magic_defense() do
     [
       {1, 5},
       {2, 5},
@@ -2501,7 +2501,7 @@ defmodule ElvenAlgorithms.PlayerAlgorithmsTest do
     ]
   end
 
-  def swordman_magic_defense() do
+  defp swordman_magic_defense() do
     [
       {1, 5},
       {2, 5},
@@ -2605,7 +2605,7 @@ defmodule ElvenAlgorithms.PlayerAlgorithmsTest do
     ]
   end
 
-  def archer_magic_defense() do
+  defp archer_magic_defense() do
     [
       {1, 5},
       {2, 5},
@@ -2709,7 +2709,7 @@ defmodule ElvenAlgorithms.PlayerAlgorithmsTest do
     ]
   end
 
-  def magician_magic_defense() do
+  defp magician_magic_defense() do
     [
       {1, 5},
       {2, 5},
@@ -2813,7 +2813,7 @@ defmodule ElvenAlgorithms.PlayerAlgorithmsTest do
     ]
   end
 
-  def martial_artist_magic_defense() do
+  defp martial_artist_magic_defense() do
     [
       {1, 5},
       {2, 5},
@@ -2917,7 +2917,7 @@ defmodule ElvenAlgorithms.PlayerAlgorithmsTest do
     ]
   end
 
-  def adventurer_hit_dodge() do
+  defp adventurer_hit_dodge() do
     [
       {1, 10},
       {2, 11},
@@ -3021,7 +3021,7 @@ defmodule ElvenAlgorithms.PlayerAlgorithmsTest do
     ]
   end
 
-  def swordman_hit_dodge() do
+  defp swordman_hit_dodge() do
     [
       {1, 10},
       {2, 11},
@@ -3125,7 +3125,7 @@ defmodule ElvenAlgorithms.PlayerAlgorithmsTest do
     ]
   end
 
-  def archer_hit_dodge() do
+  defp archer_hit_dodge() do
     [
       {1, 20},
       {2, 21},
@@ -3229,7 +3229,7 @@ defmodule ElvenAlgorithms.PlayerAlgorithmsTest do
     ]
   end
 
-  def magician_hit_dodge() do
+  defp magician_hit_dodge() do
     [
       {1, 20},
       {2, 21},
@@ -3333,7 +3333,7 @@ defmodule ElvenAlgorithms.PlayerAlgorithmsTest do
     ]
   end
 
-  def martial_artist_hit_dodge() do
+  defp martial_artist_hit_dodge() do
     [
       {1, 30},
       {2, 31},
@@ -3437,7 +3437,7 @@ defmodule ElvenAlgorithms.PlayerAlgorithmsTest do
     ]
   end
 
-  def adventurer_distance_dodge() do
+  defp adventurer_distance_dodge() do
     [
       {1, 10},
       {2, 11},
@@ -3541,7 +3541,7 @@ defmodule ElvenAlgorithms.PlayerAlgorithmsTest do
     ]
   end
 
-  def swordman_distance_dodge() do
+  defp swordman_distance_dodge() do
     [
       {1, 10},
       {2, 11},
@@ -3645,7 +3645,7 @@ defmodule ElvenAlgorithms.PlayerAlgorithmsTest do
     ]
   end
 
-  def archer_distance_dodge() do
+  defp archer_distance_dodge() do
     [
       {1, 20},
       {2, 21},
@@ -3749,7 +3749,7 @@ defmodule ElvenAlgorithms.PlayerAlgorithmsTest do
     ]
   end
 
-  def magician_distance_dodge() do
+  defp magician_distance_dodge() do
     [
       {1, 10},
       {2, 11},
@@ -3853,7 +3853,7 @@ defmodule ElvenAlgorithms.PlayerAlgorithmsTest do
     ]
   end
 
-  def martial_artist_distance_dodge() do
+  defp martial_artist_distance_dodge() do
     [
       {1, 20},
       {2, 21},
@@ -3957,7 +3957,7 @@ defmodule ElvenAlgorithms.PlayerAlgorithmsTest do
     ]
   end
 
-  def adventurer_base_damage() do
+  defp adventurer_base_damage() do
     [
       {1, 10},
       {2, 11},
@@ -4061,7 +4061,7 @@ defmodule ElvenAlgorithms.PlayerAlgorithmsTest do
     ]
   end
 
-  def swordman_base_damage() do
+  defp swordman_base_damage() do
     [
       {1, 10},
       {2, 11},
@@ -4165,7 +4165,7 @@ defmodule ElvenAlgorithms.PlayerAlgorithmsTest do
     ]
   end
 
-  def archer_base_damage() do
+  defp archer_base_damage() do
     [
       {1, 60},
       {2, 61},
@@ -4269,7 +4269,7 @@ defmodule ElvenAlgorithms.PlayerAlgorithmsTest do
     ]
   end
 
-  def magician_base_damage() do
+  defp magician_base_damage() do
     [
       {1, 10},
       {2, 11},
@@ -4373,7 +4373,7 @@ defmodule ElvenAlgorithms.PlayerAlgorithmsTest do
     ]
   end
 
-  def martial_artist_base_damage() do
+  defp martial_artist_base_damage() do
     [
       {1, 10},
       {2, 11},
@@ -4477,7 +4477,7 @@ defmodule ElvenAlgorithms.PlayerAlgorithmsTest do
     ]
   end
 
-  def adventurer_secondary_damage() do
+  defp adventurer_secondary_damage() do
     [
       {1, 10},
       {2, 11},
@@ -4581,7 +4581,7 @@ defmodule ElvenAlgorithms.PlayerAlgorithmsTest do
     ]
   end
 
-  def swordman_secondary_damage() do
+  defp swordman_secondary_damage() do
     [
       {1, 10},
       {2, 11},
@@ -4685,7 +4685,7 @@ defmodule ElvenAlgorithms.PlayerAlgorithmsTest do
     ]
   end
 
-  def archer_secondary_damage() do
+  defp archer_secondary_damage() do
     [
       {1, 10},
       {2, 11},
@@ -4789,7 +4789,7 @@ defmodule ElvenAlgorithms.PlayerAlgorithmsTest do
     ]
   end
 
-  def magician_secondary_damage() do
+  defp magician_secondary_damage() do
     [
       {1, 10},
       {2, 11},
@@ -4893,7 +4893,7 @@ defmodule ElvenAlgorithms.PlayerAlgorithmsTest do
     ]
   end
 
-  def martial_artist_secondary_damage() do
+  defp martial_artist_secondary_damage() do
     [
       {1, 30},
       {2, 31},

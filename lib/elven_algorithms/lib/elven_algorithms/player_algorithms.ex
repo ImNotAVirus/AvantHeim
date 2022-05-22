@@ -5,7 +5,7 @@ defmodule ElvenAlgorithms.PlayerAlgorithms do
 
   import ElvenAlgorithms
 
-  @max_level 99
+  @max_level Application.compile_env(:elven_algorithms, :player_max_level, 99)
 
   ## HP Max Algorithm
 
