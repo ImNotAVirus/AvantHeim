@@ -9,8 +9,7 @@ defmodule ChannelService.Endpoint.LobbyActions do
   alias ElvenCaching.{CharacterRegistry, SessionRegistry}
   alias ElvenCaching.Account.Session
   alias ElvenDatabase.Players.{Account, Characters}
-
-  alias ChannelService.Endpoint.LobbyViews
+  alias ElvenViews.LobbyViews
 
   ## Public API
 
@@ -40,7 +39,7 @@ defmodule ChannelService.Endpoint.LobbyActions do
         character ->
           {:ok, _} = update_cache_session(username)
           {:ok, _} = create_cache_character(character, socket)
-          Socket.send(socket, LobbyViews.render(:ok, nil))
+          Socket.send(socket, LobbyViews.render(:ok))
           Socket.assign(socket, character_id: character.id)
       end
 

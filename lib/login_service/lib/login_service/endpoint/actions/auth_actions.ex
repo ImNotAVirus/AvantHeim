@@ -33,7 +33,7 @@ defmodule LoginService.Endpoint.AuthActions do
            {:ok, encryption_key} <- create_session(account, socket) do
         Logger.debug("Authentication succeed (username: #{account.username})")
 
-        LoginViews.render(:login_succeed, %{
+        LoginViews.render(:nstest, %{
           username: account.username,
           encryption_key: encryption_key,
           ip: @ip,
@@ -111,25 +111,25 @@ defmodule LoginService.Endpoint.AuthActions do
     case reason do
       {:error, :client_version} ->
         Logger.warn("Invalid client version (got: #{args.client_version})")
-        LoginViews.render(:login_error, %{error: :old_client})
+        LoginViews.render(:failc, %{error: :old_client})
 
       {:error, :client_checksum} ->
         Logger.warn("Invalid client checksum (got: #{args.client_checksum})")
 
-        LoginViews.render(:login_error, %{error: :old_client})
+        LoginViews.render(:failc, %{error: :old_client})
 
       {:error, :bad_credentials} ->
         Logger.warn("Invalid credentials")
-        LoginViews.render(:login_error, %{error: :bad_credentials})
+        LoginViews.render(:failc, %{error: :bad_credentials})
 
       {:error, :already_connected} ->
         user = Map.get(args, :username) || Map.get(args, :token)
         Logger.warn("Already connected (username: #{user})")
-        LoginViews.render(:login_error, %{error: :already_connected})
+        LoginViews.render(:failc, %{error: :already_connected})
 
       e ->
         Logger.warn("Got unknown login error: #{inspect(e)}")
-        LoginViews.render(:login_error, %{})
+        LoginViews.render(:failc)
     end
   end
 end

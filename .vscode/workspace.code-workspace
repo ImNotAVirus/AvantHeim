@@ -36,6 +36,20 @@
 		"version": "2.0.0",
 		"tasks": [
 			{
+				"label": "Elixir: Get deps for the current app",
+				"type": "shell",
+				"command": "./mix --app $(basename ${fileWorkspaceFolder}) deps.get",
+				"problemMatcher": [],
+				"group": "none",
+				"presentation": {
+				  "echo": true,
+				  "reveal": "always",
+				  "focus": false,
+				  "panel": "shared",
+				  "clear": true
+				}
+			},
+			{
 				"label": "Elixir: Run tests for the current app",
 				"type": "shell",
 				"command": "./mix --app $(basename ${fileWorkspaceFolder}) test --trace",
@@ -44,6 +58,20 @@
 					"kind": "test",
 					"isDefault": true
 				},
+				"presentation": {
+				  "echo": true,
+				  "reveal": "always",
+				  "focus": false,
+				  "panel": "shared",
+				  "clear": true
+				}
+			},
+			{
+				"label": "Elixir: Run tests for the current file",
+				"type": "shell",
+				"command": "./mix --app $(basename ${fileWorkspaceFolder}) test --trace $(echo ${relativeFile} | sed -E 's;^lib/\\w+/(lib|test)/;test/;' | sed -E 's;.ex$;_test.exs;')",
+				"problemMatcher": [],
+				"group": "none",
 				"presentation": {
 				  "echo": true,
 				  "reveal": "always",

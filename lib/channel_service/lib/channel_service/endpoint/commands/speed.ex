@@ -3,9 +3,10 @@ defmodule ChannelService.Endpoint.SpeedCommand do
   TODO: Documentation
   """
 
-  alias ElvenCore.Socket
   alias ElvenCaching.CharacterRegistry
-  alias ChannelService.Endpoint.ChatViews
+  alias ElvenCore.Socket
+  alias ElvenViews.ChatViews
+
   alias ChannelService.Endpoint.EntityInteractions
 
   ## Public API

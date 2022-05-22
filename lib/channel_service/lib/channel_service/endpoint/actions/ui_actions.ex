@@ -4,8 +4,9 @@ defmodule ChannelService.Endpoint.UIActions do
   """
 
   alias ElvenCore.Socket
+  alias ElvenViews.UIViews
+
   alias ChannelService.Endpoint.EntityInteractions
-  alias ChannelService.Endpoint.UIViews
 
   ## Packet handlers
 

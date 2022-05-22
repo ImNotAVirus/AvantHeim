@@ -3,21 +3,19 @@ defmodule ElvenViews.LoginViews do
   TODO: Documentation
   """
 
-  import ElvenViews, only: [optional_param: 2, required_param: 2]
+  use ElvenViews
 
   alias ElvenViews.LoginPackets.NsTeST.Channel
   alias ElvenViews.LoginPackets.{FailcPacket, NsTeSTPacket}
 
-  @behaviour ElvenViews
-
   ## Public API
 
   @impl true
-  def render(:login_error, args) do
+  def render(:failc, args) do
     %FailcPacket{error: optional_param(args, :error)}
   end
 
-  def render(:login_succeed, args) do
+  def render(:nstest, args) do
     encryption_key = required_param(args, :encryption_key)
     username = required_param(args, :username)
 

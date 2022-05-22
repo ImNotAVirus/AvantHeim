@@ -59,3 +59,19 @@ defprotocol ElvenCaching.BattleEntity do
   @spec can_move(t(), boolean) :: t()
   def can_move(entity, can_move)
 end
+
+defmodule ElvenCaching.BattleEntityHelper do
+  alias ElvenCaching.BattleEntity
+
+  @doc "Calculate BattleEntity hp_percent as integer"
+  @spec hp_percent(BattleEntity.t()) :: integer
+  def hp_percent(entity) do
+    trunc(BattleEntity.hp(entity) * 100 / BattleEntity.hp_max(entity))
+  end
+
+  @doc "Calculate BattleEntity mp_percent as integer"
+  @spec mp_percent(BattleEntity.t()) :: integer
+  def mp_percent(entity) do
+    trunc(BattleEntity.mp(entity) * 100 / BattleEntity.mp_max(entity))
+  end
+end

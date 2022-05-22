@@ -13,7 +13,7 @@ defmodule ElvenViews.ChatPackets.SayPacket do
   defpacket "say" do
     field :entity_type, :enum, values: entity_type(:__enumerators__)
     field :entity_id, :pos_integer
-    field :color, :enum, values: color_type(:__enumerators__)
+    field :color, :enum, values: color_type(:__enumerators__), default: :default
     field :message, :string
   end
 end
