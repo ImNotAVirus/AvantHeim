@@ -9,7 +9,7 @@ defmodule ElvenAlgorithms.PlayerAlgorithms do
 
   ## HP Max Algorithm
 
-  @hp_constant %{
+  @hp_constants %{
     adventurer: 0,
     swordman: 8,
     archer: 3,
@@ -17,7 +17,7 @@ defmodule ElvenAlgorithms.PlayerAlgorithms do
     martial_artist: 5
   }
 
-  for level <- 1..@max_level, {class, multiplier} <- @hp_constant do
+  for level <- 1..@max_level, {class, multiplier} <- @hp_constants do
     hpx = level + floor((level - 1) * multiplier / 10)
     hp = trunc(0.5 * hpx ** 2 + 15.5 * hpx + 205)
 
@@ -28,7 +28,7 @@ defmodule ElvenAlgorithms.PlayerAlgorithms do
 
   ## MP Max Algorithm
 
-  @mp_constant %{
+  @mp_constants %{
     adventurer: 0,
     swordman: 0,
     archer: 1,
@@ -36,7 +36,7 @@ defmodule ElvenAlgorithms.PlayerAlgorithms do
     martial_artist: 2
   }
 
-  for level <- 1..@max_level, {class, multiplier} <- @mp_constant do
+  for level <- 1..@max_level, {class, multiplier} <- @mp_constants do
     mpx = level + floor((level - 1) * multiplier / 10)
 
     mp =
@@ -52,7 +52,7 @@ defmodule ElvenAlgorithms.PlayerAlgorithms do
 
   ## Close Defense Algorithm
 
-  @close_defense_constant %{
+  @close_defense_constants %{
     adventurer:
       List.flatten([
         [5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12],
@@ -110,7 +110,7 @@ defmodule ElvenAlgorithms.PlayerAlgorithms do
       ])
   }
 
-  for {class, constants} <- @close_defense_constant,
+  for {class, constants} <- @close_defense_constants,
       {constant, level} <- Enum.with_index(constants, 1) do
     def close_defense(unquote(class), unquote(level)) do
       unquote(constant)
@@ -119,7 +119,7 @@ defmodule ElvenAlgorithms.PlayerAlgorithms do
 
   ## Distance Defense Algorithm
 
-  @distance_defense_constant %{
+  @distance_defense_constants %{
     adventurer:
       List.flatten([
         [5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12],
@@ -177,7 +177,7 @@ defmodule ElvenAlgorithms.PlayerAlgorithms do
       ])
   }
 
-  for {class, constants} <- @distance_defense_constant,
+  for {class, constants} <- @distance_defense_constants,
       {constant, level} <- Enum.with_index(constants, 1) do
     def distance_defense(unquote(class), unquote(level)) do
       unquote(constant)
@@ -186,7 +186,7 @@ defmodule ElvenAlgorithms.PlayerAlgorithms do
 
   ## Magic Defense Algorithm
 
-  @magic_defense_constant %{
+  @magic_defense_constants %{
     adventurer:
       List.flatten([
         [5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12],
@@ -244,7 +244,7 @@ defmodule ElvenAlgorithms.PlayerAlgorithms do
       ])
   }
 
-  for {class, constants} <- @magic_defense_constant,
+  for {class, constants} <- @magic_defense_constants,
       {constant, level} <- Enum.with_index(constants, 1) do
     def magic_defense(unquote(class), unquote(level)) do
       unquote(constant)
@@ -253,7 +253,7 @@ defmodule ElvenAlgorithms.PlayerAlgorithms do
 
   ## Hit Dodge Algorithm
 
-  @hit_dodge_constant %{
+  @hit_dodge_constants %{
     adventurer:
       List.flatten([
         [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23],
@@ -311,7 +311,7 @@ defmodule ElvenAlgorithms.PlayerAlgorithms do
       ])
   }
 
-  for {class, constants} <- @hit_dodge_constant,
+  for {class, constants} <- @hit_dodge_constants,
       {constant, level} <- Enum.with_index(constants, 1) do
     def hit_dodge(unquote(class), unquote(level)) do
       unquote(constant)
@@ -320,7 +320,7 @@ defmodule ElvenAlgorithms.PlayerAlgorithms do
 
   ## Distance Dodge Algorithm
 
-  @distance_dodge_constant %{
+  @distance_dodge_constants %{
     adventurer:
       List.flatten([
         [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23],
@@ -378,7 +378,7 @@ defmodule ElvenAlgorithms.PlayerAlgorithms do
       ])
   }
 
-  for {class, constants} <- @distance_dodge_constant,
+  for {class, constants} <- @distance_dodge_constants,
       {constant, level} <- Enum.with_index(constants, 1) do
     def distance_dodge(unquote(class), unquote(level)) do
       unquote(constant)
@@ -387,7 +387,7 @@ defmodule ElvenAlgorithms.PlayerAlgorithms do
 
   ## Damage Algorithm
 
-  @base_damage_constant %{
+  @base_damage_constants %{
     adventurer:
       List.flatten([
         [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23],
@@ -445,7 +445,7 @@ defmodule ElvenAlgorithms.PlayerAlgorithms do
       ])
   }
 
-  for {class, constants} <- @base_damage_constant,
+  for {class, constants} <- @base_damage_constants,
       {constant, level} <- Enum.with_index(constants, 1) do
     def base_damage(unquote(class), unquote(level)) do
       unquote(constant)
@@ -454,7 +454,7 @@ defmodule ElvenAlgorithms.PlayerAlgorithms do
 
   ## Secondary Damage Algorithm
 
-  @secondary_damage_constant %{
+  @secondary_damage_constants %{
     adventurer:
       List.flatten([
         [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23],
@@ -512,10 +512,26 @@ defmodule ElvenAlgorithms.PlayerAlgorithms do
       ])
   }
 
-  for {class, constants} <- @secondary_damage_constant,
+  for {class, constants} <- @secondary_damage_constants,
       {constant, level} <- Enum.with_index(constants, 1) do
     def secondary_damage(unquote(class), unquote(level)) do
       unquote(constant)
+    end
+  end
+
+  ## Speed Algorithm
+
+  @speed_constants %{
+    adventurer: 11,
+    swordman: 11,
+    archer: 12,
+    magician: 10,
+    martial_artist: 11
+  }
+
+  for {class, speed} <- @speed_constants do
+    def speed(unquote(class)) do
+      unquote(speed)
     end
   end
 end

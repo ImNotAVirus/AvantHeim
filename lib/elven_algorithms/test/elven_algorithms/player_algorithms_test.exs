@@ -293,6 +293,28 @@ defmodule ElvenAlgorithms.PlayerAlgorithmsTest do
     end
   end
 
+  describe "speed/1 for" do
+    test "adventurer" do
+      assert PlayerAlgorithms.speed(:adventurer) == 11
+    end
+
+    test "swordman" do
+      assert PlayerAlgorithms.speed(:swordman) == 11
+    end
+
+    test "archer" do
+      assert PlayerAlgorithms.speed(:archer) == 12
+    end
+
+    test "magician" do
+      assert PlayerAlgorithms.speed(:magician) == 10
+    end
+
+    test "martial_artist" do
+      assert PlayerAlgorithms.speed(:martial_artist) == 11
+    end
+  end
+
   ## Helpers
 
   def adventurer_hp_max() do

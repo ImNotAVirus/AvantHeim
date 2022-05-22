@@ -5,33 +5,33 @@ defmodule ElvenAlgorithms.ExperienceAlgorithmsTest do
 
   ## Tests
 
-  describe "experience/1 for" do
-    test "experience" do
-      Enum.each(experience(), fn {level, exp} ->
+  describe "experiences/1 for" do
+    test "experiences" do
+      Enum.each(experiences(), fn {level, exp} ->
         assert ExperienceAlgorithms.exp(level) == exp
       end)
     end
 
-    test "job_experience" do
-      Enum.each(job_experience(), fn {level, exp} ->
+    test "job_experiences" do
+      Enum.each(job_experiences(), fn {level, exp} ->
         assert ExperienceAlgorithms.job_exp(level) == exp
       end)
     end
 
-    test "hero_experience" do
-      Enum.each(hero_experience(), fn {level, exp} ->
+    test "hero_experiences" do
+      Enum.each(hero_experiences(), fn {level, exp} ->
         assert ExperienceAlgorithms.hero_exp(level) == exp
       end)
     end
 
-    test "specialist_experience" do
-      Enum.each(specialist_experience(), fn {level, exp} ->
+    test "specialist_experiences" do
+      Enum.each(specialist_experiences(), fn {level, exp} ->
         assert ExperienceAlgorithms.specialist_exp(level) == exp
       end)
     end
 
-    test "fairy_experience" do
-      Enum.each(fairy_experience(), fn {level, exp} ->
+    test "fairy_experiences" do
+      Enum.each(fairy_experiences(), fn {level, exp} ->
         assert ExperienceAlgorithms.fairy_exp(level) == exp
       end)
     end
@@ -39,7 +39,7 @@ defmodule ElvenAlgorithms.ExperienceAlgorithmsTest do
 
   ## Helpers
 
-  def experience() do
+  def experiences() do
     [
       {1, 300},
       {2, 840},
@@ -143,7 +143,7 @@ defmodule ElvenAlgorithms.ExperienceAlgorithmsTest do
     ]
   end
 
-  def job_experience() do
+  def job_experiences() do
     [
       {1, 14500},
       {2, 19000},
@@ -228,7 +228,7 @@ defmodule ElvenAlgorithms.ExperienceAlgorithmsTest do
     ]
   end
 
-  def hero_experience() do
+  def hero_experiences() do
     [
       {1, 949_560},
       {2, 1_068_540},
@@ -293,7 +293,7 @@ defmodule ElvenAlgorithms.ExperienceAlgorithmsTest do
     ]
   end
 
-  def specialist_experience() do
+  def specialist_experiences() do
     [
       {1, 15000},
       {2, 25000},
@@ -397,7 +397,7 @@ defmodule ElvenAlgorithms.ExperienceAlgorithmsTest do
     ]
   end
 
-  def fairy_experience() do
+  def fairy_experiences() do
     [
       {0, 50},
       {1, 51},
