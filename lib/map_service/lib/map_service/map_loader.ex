@@ -104,7 +104,11 @@ defmodule MapService.MapLoader do
          {:config, {:ok, config}} <- {:config, get_map_config(vnum, state)} do
       args = {config, name: static_via_registry(map_registry, vnum)}
 
-      {:ok, _process} = DynamicSupervisor.start_child(static_maps_sup, {MapProcess, args})
+      {:ok, process} = DynamicSupervisor.start_child(static_maps_sup, {MapProcess, args})
+      _map_mon_ref = Process.monitor(process)
+
+      # TODO: Save proc mon and detect crashes
+
       {:ok, config}
     else
       {:lookup, [_]} -> {:error, :already_registered}

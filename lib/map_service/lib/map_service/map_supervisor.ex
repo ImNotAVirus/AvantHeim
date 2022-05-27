@@ -21,8 +21,6 @@ defmodule MapService.MapSupervisor do
 
     children = [
       {Registry, keys: :unique, name: MapService.map_registry(name)},
-      {DynamicSupervisor, strategy: :one_for_one, name: MapService.static_maps_supervisor(name)},
-      {DynamicSupervisor, strategy: :one_for_one, name: MapService.instances_supervisor(name)},
       {MapService.MapLoader,
        [
          name: MapService.loader(name),
@@ -30,9 +28,11 @@ defmodule MapService.MapSupervisor do
          map_registry: MapService.map_registry(name),
          static_maps_supervisor: MapService.static_maps_supervisor(name),
          instances_supervisor: MapService.instances_supervisor(name)
-       ]}
+       ]},
+      {DynamicSupervisor, strategy: :one_for_one, name: MapService.static_maps_supervisor(name)},
+      {DynamicSupervisor, strategy: :one_for_one, name: MapService.instances_supervisor(name)}
     ]
 
-    Supervisor.init(children, strategy: :one_for_one)
+    Supervisor.init(children, strategy: :rest_for_one)
   end
 end
