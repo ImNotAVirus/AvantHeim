@@ -11,6 +11,8 @@ import Config
 
 config :map_service, :loader_config, lazy: false
 
+config :map_service, tree_name: MapServiceTree
+
 # Import global config
 import_config "../../../config/config.exs"
 

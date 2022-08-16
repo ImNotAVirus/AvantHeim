@@ -8,29 +8,26 @@ defmodule MapService.MapSupervisor do
   ## Public API
 
   @spec start_link(Keyword.t()) :: Supervisor.on_start()
-  def start_link(opts) do
-    name = opts[:base_name] || raise "must define a base name"
-    Supervisor.start_link(__MODULE__, opts, name: MapService.supervisor(name))
+  def start_link(_opts) do
+    Supervisor.start_link(__MODULE__, [], name: MapService.supervisor())
   end
 
   ## GenServer behaviour
 
   @impl true
-  def init(opts) do
-    name = opts[:base_name]
-
+  def init(_opts) do
     children = [
-      {Registry, keys: :unique, name: MapService.map_registry(name)},
+      {Registry, keys: :unique, name: MapService.map_registry()},
       {MapService.MapLoader,
        [
-         name: MapService.loader(name),
+         name: MapService.loader(),
          config: Application.get_env(:map_service, :loader_config, []),
-         map_registry: MapService.map_registry(name),
-         static_maps_supervisor: MapService.static_maps_supervisor(name),
-         instances_supervisor: MapService.instances_supervisor(name)
+         map_registry: MapService.map_registry(),
+         static_maps_supervisor: MapService.static_maps_supervisor(),
+         instances_supervisor: MapService.instances_supervisor()
        ]},
-      {DynamicSupervisor, strategy: :one_for_one, name: MapService.static_maps_supervisor(name)},
-      {DynamicSupervisor, strategy: :one_for_one, name: MapService.instances_supervisor(name)}
+      {DynamicSupervisor, strategy: :one_for_one, name: MapService.static_maps_supervisor()},
+      {DynamicSupervisor, strategy: :one_for_one, name: MapService.instances_supervisor()}
     ]
 
     Supervisor.init(children, strategy: :rest_for_one)

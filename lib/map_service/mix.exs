@@ -24,6 +24,7 @@ defmodule MapService.MixProject do
     [
       {:elven_enums, path: "../elven_enums"},
       {:elven_caching, path: "../elven_caching"},
+      {:elven_views, path: "../elven_views"},
       {:yaml_elixir, "~> 2.8", runtime: false},
       {:libcluster, "~> 3.3"}
     ]

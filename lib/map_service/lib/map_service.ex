@@ -3,11 +3,13 @@ defmodule MapService do
   Documentation for `MapService`.
   """
 
+  @tree_name Application.compile_env!(:map_service, :tree_name)
+
   ## Internal API
 
-  def supervisor(base), do: :"#{base}.Supervisor"
-  def map_registry(base), do: :"#{base}.MapRegistry"
-  def static_maps_supervisor(base), do: :"#{base}.StaticMapsSupervisor"
-  def instances_supervisor(base), do: :"#{base}.InstancesSupervisor"
-  def loader(base), do: :"#{base}.MapLoader"
+  def supervisor(base \\ @tree_name), do: :"#{base}.Supervisor"
+  def map_registry(base \\ @tree_name), do: :"#{base}.MapRegistry"
+  def static_maps_supervisor(base \\ @tree_name), do: :"#{base}.StaticMapsSupervisor"
+  def instances_supervisor(base \\ @tree_name), do: :"#{base}.InstancesSupervisor"
+  def loader(base \\ @tree_name), do: :"#{base}.MapLoader"
 end
