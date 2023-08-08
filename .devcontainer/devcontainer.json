@@ -1,0 +1,29 @@
+{
+	"image": "mcr.microsoft.com/vscode/devcontainers/base:jammy",
+	"features": {
+		"ghcr.io/devcontainers/features/common-utils:2": {
+			"configureZshAsDefaultShell": true
+		},
+		"ghcr.io/devcontainers-contrib/features/elixir-asdf:2": {
+			"elixirVersion": "1.14.4",
+			"erlangVersion": "25.3"
+		},
+		"ghcr.io/devcontainers/features/docker-in-docker:2": {
+			"dockerDashComposeVersion": "v2"
+		}
+	},
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"yzhang.markdown-all-in-one",
+				"JakeBecker.elixir-ls",
+				"EditorConfig.EditorConfig",
+				"streetsidesoftware.code-spell-checker",
+				"esbenp.prettier-vscode",
+				"ms-azuretools.vscode-docker",
+				"GitHub.vscode-pull-request-github",
+				"github.vscode-github-actions"
+			]
+		}
+	}
+}
