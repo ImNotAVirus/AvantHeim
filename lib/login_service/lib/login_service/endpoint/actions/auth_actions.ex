@@ -5,9 +5,10 @@ defmodule LoginService.Endpoint.AuthActions do
 
   require Logger
 
+  alias ElvenGard.Network.Socket
+
   alias ElvenCaching.Account.Session
   alias ElvenCaching.SessionRegistry
-  alias ElvenCore.Socket
   alias ElvenDatabase.Players.{Account, Accounts}
   alias ElvenViews.LoginViews
 
