@@ -48,7 +48,8 @@ defmodule ElvenPackets.Client.AreaPackets do
   # ---
   # Example: "guri 10 2 1 0"
   #######
-  packet "guri", as: Guri do
+  @deserializable true
+  defpacket "guri", as: Guri do
     field :type, NsInteger, using: guri_type(:emoji, :value)
     field :entity_type, NsInteger
     field :entity_id, NsInteger
