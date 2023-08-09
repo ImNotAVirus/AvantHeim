@@ -2,7 +2,7 @@ defmodule ElvenPackets.Client.LobbyPacketsTest do
   use ExUnit.Case, async: true
 
   alias ElvenGard.Network.Socket
-  alias ElvenPackets.Client.LobbyPackets.{Char_NEW, Char_DEL}
+  alias ElvenPackets.Client.LobbyPackets.{CharNEW, CharDEL, Select, GameStart}
 
   test "can deserialize Char_NEW" do
     params = "TestChar 0 1 1 2"
@@ -19,5 +19,15 @@ defmodule ElvenPackets.Client.LobbyPacketsTest do
     assert %Char_DEL{} = packet = Char_DEL.deserialize("Char_DEL", params, %Socket{})
     assert packet.slot == 3
     assert packet.password == "password"
+  end
+
+  test "can deserialize select" do
+    params = "2"
+    assert %select{} = packet = select.deserialize("select", params, %Socket{})
+    assert packet.slot == 2
+  end
+
+  test "can deserialize game_start" do
+    assert %game_start{} = game_start.deserialize("game_start", nil, %Socket{})
   end
 end

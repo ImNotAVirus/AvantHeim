@@ -13,7 +13,7 @@ defmodule ElvenPackets.Client.LobbyPackets do
   # Example: "Char_NEW TestChar 0 1 1 2"
   #######
   @deserializable true
-  defpacket "Char_NEW" do
+  defpacket "Char_NEW", as: CharNEW do
     field :name, NsString
     field :slot, NsInteger
     field :gender, NsInteger, desc: "Enum: GenderType"
@@ -27,8 +27,26 @@ defmodule ElvenPackets.Client.LobbyPackets do
   # Example: "Char_DEL 3 password"
   #######
   @deserializable true
-  packet "Char_DEL" do
+  defpacket "Char_DEL", as: CharDEL do
     field :slot, NsInteger
     field :password, NsString
   end
+
+  #######
+  # Select a character
+  # ---
+  # Example: "select 2"
+  #######
+  @deserializable true
+  defpacket "select", as: Select do
+    field :slot, NsInteger
+  end
+
+  #######
+  # Enter in game
+  # ---
+  # Example: "game_start"
+  #######
+  @deserializable true
+  defpacket "game_start", as: GameStart
 end
