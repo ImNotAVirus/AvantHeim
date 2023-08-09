@@ -7,6 +7,8 @@ defmodule ElvenPackets.Client.AreaPackets do
 
   alias ElvenPackets.Types.{NsInteger, NsString}
 
+  import ElvenViews.UIPackets.GuriEnums, only: [guri_type: 2]
+
   #######
   # Walk around the map
   # ---
@@ -42,14 +44,26 @@ defmodule ElvenPackets.Client.AreaPackets do
   end
 
   #######
+  # Display emoji, do dance ect
+  # ---
+  # Example: "guri 10 2 1 0"
+  #######
+  packet "guri", as: Guri do
+    field :type, NsInteger, using: guri_type(:emoji, :value)
+    field :entity_type, NsInteger
+    field :entity_id, NsInteger
+    field :guri_data, NsInteger
+  end
+
+  #######
   # Handle packet sended by the client when a player is pressing his arrow keyboard
   # ---
   # Example: "dir 1 2 3"
   #######
   @deserializable true
   defpacket "dir", as: Dir do
-    field :dir, :integer
-    field :entity_type, :integer
-    field :entity_id, :integer
+    field :dir, NsInteger
+    field :entity_type, NsInteger
+    field :entity_id, NsInteger
   end
 end
