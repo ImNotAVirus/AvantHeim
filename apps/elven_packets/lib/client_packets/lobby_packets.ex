@@ -1,4 +1,4 @@
-defmodule ElvenPackets.Client.CharacterCdPackets do
+defmodule ElvenPackets.Client.LobbyPackets do
   @moduledoc """
   TODO: ElvenPackets.Client.LoginPackets
   """

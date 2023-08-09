@@ -1,8 +1,8 @@
-defmodule ElvenPackets.Client.CharacterCdPacketsTest do
+defmodule ElvenPackets.Client.LobbyPacketsTest do
   use ExUnit.Case, async: true
 
   alias ElvenGard.Network.Socket
-  alias ElvenPackets.Client.CharacterCdPackets.{Char_NEW, Char_DEL}
+  alias ElvenPackets.Client.LobbyPackets.{Char_NEW, Char_DEL}
 
   test "can deserialize Char_NEW" do
     params = "TestChar 0 1 1 2"
