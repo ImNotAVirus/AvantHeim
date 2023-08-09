@@ -26,7 +26,7 @@ if required_app.(:elven_database) do
   config :elven_database, ElvenDatabase.Repo,
     database: "elvengard_dev",
     username: "postgres",
-    password: "postgres",
+    password: "uSUs8ZSa3zT9",
     hostname: "localhost",
     port: 5432
 end

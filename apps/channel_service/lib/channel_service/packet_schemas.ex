@@ -25,33 +25,6 @@ defmodule ChannelService.PacketSchemas do
   ## Lobby packets
 
   #######
-  # Ask for a character creation
-  # ---
-  # Example: "Char_NEW TestChar 0 1 1 2"
-  #######
-  packet "Char_NEW" do
-    field :name, :string
-    field :slot, :integer
-    field :gender, :integer, desc: "Enum: GenderType"
-    field :hair_style, :integer, desc: "Enum: HairStyle"
-    field :hair_color, :integer, desc: "Enum: HairColor"
-
-    resolve LobbyActions, :create_character
-  end
-
-  #######
-  # Ask for a character suppression
-  # ---
-  # Example: "Char_DEL 3 password"
-  #######
-  packet "Char_DEL" do
-    field :slot, :integer
-    field :password, :string
-
-    resolve LobbyActions, :delete_character
-  end
-
-  #######
   # Select a character
   # ---
   # Example: "select 2"
