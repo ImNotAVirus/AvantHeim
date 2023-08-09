@@ -1,6 +1,6 @@
 defmodule ElvenPackets.Client.LobbyPackets do
   @moduledoc """
-  TODO: ElvenPackets.Client.LoginPackets
+  TODO: ElvenPackets.Client.LobbyPackets
   """
 
   use ElvenGard.Network.PacketSerializer
