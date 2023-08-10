@@ -5,7 +5,7 @@ defmodule ElvenPackets.Server.LoginPackets do
 
   use ElvenGard.Network.PacketSerializer
 
-  import ElvenPackets.Server.LoginEnums, only: [failc_error: 1]
+  import ElvenPackets.Enums.LoginEnums, only: [failc_error: 1]
 
   alias ElvenPackets.Types.NsEnum
 

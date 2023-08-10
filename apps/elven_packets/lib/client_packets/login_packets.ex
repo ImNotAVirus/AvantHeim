@@ -5,7 +5,9 @@ defmodule ElvenPackets.Client.LoginPackets do
 
   use ElvenGard.Network.PacketSerializer
 
-  alias ElvenPackets.Types.{NsInteger, NsString}
+  import ElvenPackets.Enums.LoginEnums, only: [login_region: 1]
+
+  alias ElvenPackets.Types.{NsEnum, NsInteger, NsString}
 
   #######
   # The login packet (GameForge old client)
@@ -20,9 +22,10 @@ defmodule ElvenPackets.Client.LoginPackets do
       field :password, NsString
       field :installation_guid, NsString
       field :unknown, NsString
-      field :region_code, NsInteger
+      field :region, NsEnum, values: login_region(:__enumerators__)
       field :client_version, NsString
-      field :always_0, NsString #, using: "0"
+      # , using: "0"
+      field :always_0, NsString
       field :client_checksum, NsString
     end
   end
@@ -35,12 +38,14 @@ defmodule ElvenPackets.Client.LoginPackets do
   @deserializable true
   defpacket "NoS0577" do
     field :token, NsString
-    field :empty, NsString #, using: ""
+    # , using: ""
+    field :empty, NsString
     field :installation_guid, NsString
     field :unknown, NsString
-    field :region_code, NsInteger
+    field :region, NsEnum, values: login_region(:__enumerators__)
     field :client_version, NsString
-    field :always_0, NsString #, using: "0"
+    # , using: "0"
+    field :always_0, NsString
     field :client_checksum, NsString
   end
 end
