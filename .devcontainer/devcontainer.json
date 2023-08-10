@@ -5,7 +5,7 @@
 			"configureZshAsDefaultShell": true
 		},
 		"ghcr.io/devcontainers-contrib/features/elixir-asdf:2": {
-			"elixirVersion": "1.14.4",
+			"elixirVersion": "1.14.4-otp-25",
 			"erlangVersion": "25.3"
 		},
 		"ghcr.io/devcontainers/features/docker-in-docker:2": {
