@@ -16,6 +16,17 @@ defmodule ElvenPackets.Server.LoginPacketsTest do
   end
 
   test "can serialize NsTeST" do
-    assert :foo = serialize_packet(%NsTeST{})
+    server_list = []
+
+    packet = %NsTeST{
+      region: :fr,
+      username: "admin",
+      encryption_key: 123,
+      server_list: []
+    }
+
+    {header, params} = serialize_packet(packet)
+
+    assert :foo = [header | params] |> Enum.intersperse(" ") |> :erlang.list_to_binary()
   end
 end

@@ -1,3 +1,10 @@
+defmodule ElvenPackets.Server.LoginPackets.Macros do
+  @moduledoc false
+
+  defmacro empty_server(), do: "-99 0 -99 0 -99 0 -99 0"
+  defmacro unused_servers(), do: List.duplicate(empty_server(), 3)
+end
+
 defmodule ElvenPackets.Server.LoginPackets do
   @moduledoc """
   TODO: ElvenPackets.Server.LoginPackets
@@ -6,8 +13,9 @@ defmodule ElvenPackets.Server.LoginPackets do
   use ElvenGard.Network.PacketSerializer
 
   import ElvenPackets.Enums.LoginEnums, only: [failc_error: 1, login_region: 1, auth_type: 1]
+  import ElvenPackets.Server.LoginPackets.Macros
 
-  alias ElvenPackets.Types.{NsEnum, NsInteger, NsString}
+  alias ElvenPackets.Types.{NsEnum, NsInteger, NsList, NsString}
 
   ## Login packets
 
@@ -27,15 +35,10 @@ defmodule ElvenPackets.Server.LoginPackets do
     field :server4, NsString, default: empty_server()
     field :server5, NsString, default: empty_server()
     field :server6, NsString, default: empty_server()
-    field :unused_servers, NsString, default: unused_servers()
+    field :unused_servers, NsList, joiner: " ", default: unused_servers()
     field :unknown, NsInteger, default: 0
     field :encryption_key, NsInteger
     field :server_list, NsList, type: Channel, joiner: " "
     field :terminator, NsString, default: "-1:-1:-1:10000.10000.1"
   end
-
-  ## Helpers
-
-  defmacro empty_server(), do: "-99 0 -99 0 -99 0 -99 0"
-  defmacro unused_servers(), do: List.duplicate(empty_server(), 3)
 end
