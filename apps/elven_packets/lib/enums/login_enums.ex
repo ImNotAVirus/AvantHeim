@@ -9,6 +9,10 @@ defmodule ElvenPackets.Enums.LoginEnums do
 
   defenum :login_region, [:en, :de, :fr, :it, :pl, :es, :cz, :ru, :tr]
 
+  ## NsTeST
+
+  defenum :auth_type, [:org, :steam, :gf]
+
   ## failc
   defenum :failc_error, old_client: 1, generic: 2, already_connected: 4, bad_credentials: 5
 end
