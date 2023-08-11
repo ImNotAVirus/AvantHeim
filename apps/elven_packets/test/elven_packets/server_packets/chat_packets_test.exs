@@ -7,7 +7,7 @@ defmodule ElvenPackets.Server.ChatPacketsTest do
   
   describe "bn" do
     test "can be serialized" do
-      packet = %Bn{id: 123, message: "Hello^welcome^to^AvantHeim"}
+      packet = %Bn{id: 123, message: "Hello welcome to AvantHeim"}
       assert {"bn", params} = serialize_packet(packet)
       assert is_list(params)
       assert length(params) == 2
