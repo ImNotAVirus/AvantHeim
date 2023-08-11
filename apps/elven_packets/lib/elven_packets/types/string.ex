@@ -12,7 +12,7 @@ defmodule ElvenPackets.Types.NsString do
   @impl true
   @spec decode(binary(), Keyword.t()) :: {t(), binary()}
   def decode(data, opts) when is_binary(data) do
-    case Keyword.get(opts, :full, false) do
+    case Keyword.get(opts, :fill, false) do
       false -> do_decode(data)
       true -> {data, ""}
     end

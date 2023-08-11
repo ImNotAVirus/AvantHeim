@@ -20,6 +20,6 @@ defmodule ElvenPackets.Types.NsStringTest do
   end
 
   test "support full option for decoding" do
-    assert {"data with space", ""} = NsString.decode("data with space", full: true)
+    assert {"data with space", ""} = NsString.decode("data with space", fill: true)
   end
 end
