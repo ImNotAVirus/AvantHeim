@@ -30,6 +30,7 @@ defmodule LoginService.Endpoint.NetworkCodec do
 
   def serialize(raw, _socket) when is_list(raw) do
     raw
+    |> List.flatten()
     |> Enum.intersperse(" ")
     |> :erlang.list_to_binary()
     |> Cryptography.encrypt()
