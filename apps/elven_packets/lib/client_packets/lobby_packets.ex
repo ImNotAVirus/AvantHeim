@@ -5,7 +5,9 @@ defmodule ElvenPackets.Client.LobbyPackets do
 
   use ElvenGard.Network.PacketSerializer
 
-  alias ElvenPackets.Types.{NsInteger, NsString}
+  import ElvenPackets.Enums.LobbyEnums, only: [hair_color: 1, hair_style: 1, gender: 1]
+
+  alias ElvenPackets.Types.{NsInteger, NsString, NsEnum}
 
   #######
   # Ask for a character creation
@@ -16,9 +18,9 @@ defmodule ElvenPackets.Client.LobbyPackets do
   defpacket "Char_NEW", as: CharNEW do
     field :name, NsString
     field :slot, NsInteger
-    field :gender, NsInteger, desc: "Enum: GenderType"
-    field :hair_style, NsInteger, desc: "Enum: HairStyle"
-    field :hair_color, NsInteger, desc: "Enum: HairColor"
+    field :gender, NsEnum, values: gender(:__enumerators__)
+    field :hair_style, NsEnum, values: hair_style(:__enumerators__)
+    field :hair_color, NsEnum, values: hair_color(:__enumerators__)
   end
 
   #######

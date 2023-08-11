@@ -13,8 +13,6 @@ defmodule ChannelService.PacketSchemas do
     UIActions
   }
 
-  import ElvenViews.UIPackets.GuriEnums, only: [guri_type: 2]
-
   ## Ignore some packets
 
   ignore_packet "0"

@@ -19,17 +19,23 @@ defmodule ElvenPackets.Client.AreaPacketsTest do
     assert packet.message == "DarkyZ"
   end
 
+  test "can deserialize say with spaces" do
+    params = "Ceci est un test"
+    assert %Say{} = packet = Say.deserialize("say", params, %Socket{})
+    assert packet.message == "Ceci est un test"
+  end
+
   test "can deserialize ncif" do
     params = "1 123"
     assert %Ncif{} = packet = Ncif.deserialize("ncif", params, %Socket{})
-    assert packet.entity_type == 1
+    assert packet.entity_type == :player
     assert packet.entity_id == 123
   end
 
   test "can deserialize guri" do
     params = "10 2 1 0"
     assert %Guri{} = packet = Guri.deserialize("guri", params, %Socket{})
-    assert packet.type == 10
+    assert packet.type == :emoji
     assert packet.entity_type == 2
     assert packet.entity_id == 1
     assert packet.guri_data == 0
@@ -38,8 +44,8 @@ defmodule ElvenPackets.Client.AreaPacketsTest do
   test "can deserialize dir" do
     params = "1 2 3"
     assert %Dir{} = packet = Dir.deserialize("dir", params, %Socket{})
-    assert packet.dir == 1
-    assert packet.entity_type == 2
+    assert packet.dir == :east
+    assert packet.entity_type == :monster
     assert packet.entity_id == 3
   end
 end

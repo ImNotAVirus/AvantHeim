@@ -6,28 +6,29 @@ defmodule ElvenPackets.Client.LobbyPacketsTest do
 
   test "can deserialize Char_NEW" do
     params = "TestChar 0 1 1 2"
-    assert %CharNEW{} = packet = Char_NEW.deserialize("Char_NEW", params, %Socket{})
+    assert %CharNEW{} = packet = CharNEW.deserialize("Char_NEW", params, %Socket{})
     assert packet.name == "TestChar"
     assert packet.slot == 0
-    assert packet.gender == 1
-    assert packet.hair_style == 1
-    assert packet.hair_color == 2
+    assert packet.gender == :female
+    assert packet.hair_style == :hair_style_b
+    assert packet.hair_color == :blue
   end
 
   test "can deserialize Char_DEL" do
     params = "3 password"
-    assert %CharDEL{} = packet = Char_DEL.deserialize("Char_DEL", params, %Socket{})
+    assert %CharDEL{} = packet = CharDEL.deserialize("Char_DEL", params, %Socket{})
     assert packet.slot == 3
     assert packet.password == "password"
   end
 
   test "can deserialize select" do
     params = "2"
-    assert %Select{} = packet = select.deserialize("select", params, %Socket{})
+    assert %Select{} = packet = Select.deserialize("select", params, %Socket{})
     assert packet.slot == 2
   end
 
   test "can deserialize game_start" do
-    assert %GameStart{} = game_start.deserialize("game_start", nil, %Socket{})
+    params = ""
+    assert %GameStart{} = GameStart.deserialize("game_start", params, %Socket{})
   end
 end

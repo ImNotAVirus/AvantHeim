@@ -5,9 +5,9 @@ defmodule ElvenPackets.Client.AreaPackets do
 
   use ElvenGard.Network.PacketSerializer
 
-  alias ElvenPackets.Types.{NsInteger, NsString}
+  import ElvenPackets.Enums.AreaEnums, only: [guri_type: 1, entity_type: 1, direction_type: 1]
 
-  import ElvenViews.UIPackets.GuriEnums, only: [guri_type: 2]
+  alias ElvenPackets.Types.{NsInteger, NsString, NsEnum}
 
   #######
   # Walk around the map
@@ -39,7 +39,7 @@ defmodule ElvenPackets.Client.AreaPackets do
   #######
   @deserializable true
   defpacket "ncif", as: Ncif do
-    field :entity_type, NsInteger
+    field :entity_type, NsEnum, values: entity_type(:__enumerators__)
     field :entity_id, NsInteger
   end
 
@@ -50,7 +50,7 @@ defmodule ElvenPackets.Client.AreaPackets do
   #######
   @deserializable true
   defpacket "guri", as: Guri do
-    field :type, NsInteger, using: guri_type(:emoji, :value)
+    field :type, NsEnum, values: guri_type(:__enumerators__)
     field :entity_type, NsInteger
     field :entity_id, NsInteger
     field :guri_data, NsInteger
@@ -63,8 +63,8 @@ defmodule ElvenPackets.Client.AreaPackets do
   #######
   @deserializable true
   defpacket "dir", as: Dir do
-    field :dir, NsInteger
-    field :entity_type, NsInteger
+    field :dir, NsEnum, values: direction_type(:__enumerators__)
+    field :entity_type, NsEnum, values: entity_type(:__enumerators__)
     field :entity_id, NsInteger
   end
 end
