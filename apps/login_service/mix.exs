@@ -25,7 +25,7 @@ defmodule LoginService.MixProject do
       {:elven_database, path: "../elven_database"},
       {:elven_caching, path: "../elven_caching"},
       {:elven_packets, path: "../elven_packets"},
-      {:libcluster, "~> 3.3"}
+      {:libcluster, "~> 3.3"},
       {:elvengard_network, github: "imnotavirus/elvengard_network", branch: "documentation"}
     ]
   end
