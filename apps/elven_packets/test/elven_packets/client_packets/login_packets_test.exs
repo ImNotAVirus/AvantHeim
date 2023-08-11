@@ -12,7 +12,7 @@ defmodule ElvenPackets.Client.LoginPacketsTest do
     assert packet.password == "[sha512_hash]"
     assert packet.installation_guid == "[guid]"
     assert packet.unknown == "0047BA11"
-    assert packet.region_code == 0
+    assert packet.region == :en
     assert packet.client_version == "0.9.3.3086"
     assert packet.always_0 == "0"
     assert packet.client_checksum == "[md5_hash]"
@@ -27,7 +27,7 @@ defmodule ElvenPackets.Client.LoginPacketsTest do
     assert packet.empty == ""
     assert packet.installation_guid == "61f80977-8f3d-4643-99ea-8b0b9227c49e"
     assert packet.unknown == "006C993A"
-    assert packet.region_code == 2
+    assert packet.region == :fr
     assert packet.client_version == "0.9.3.3147"
     assert packet.always_0 == "0"
     assert packet.client_checksum == "749389B569B0668FD52FD037BB02FCB3"

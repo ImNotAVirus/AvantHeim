@@ -10,7 +10,7 @@ defmodule ElvenPackets.Types.NsInteger do
   ## Behaviour impls
 
   @impl true
-  @spec decode(bitstring, keyword) :: {t(), bitstring}
+  @spec decode(binary(), Keyword.t()) :: {t(), binary()}
   def decode(data, _opts) when is_binary(data) do
     case String.split(data, ElvenPackets.separator(), parts: 2) do
       [string] -> {String.to_integer(string, 10), ""}
@@ -19,7 +19,7 @@ defmodule ElvenPackets.Types.NsInteger do
   end
 
   @impl true
-  @spec encode(t(), keyword) :: bitstring
+  @spec encode(t(), Keyword.t()) :: binary()
   def encode(data, _opts) when is_integer(data) do
     Integer.to_string(data)
   end

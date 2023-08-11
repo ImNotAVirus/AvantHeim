@@ -19,14 +19,7 @@ defmodule LoginService.Endpoint.NetworkCodec do
   def deserialize(raw, socket) do
     decrypted = raw |> Cryptography.decrypt(socket.assigns) |> String.trim_trailing("\n")
     [packet_id, rest] = String.split(decrypted, " ", parts: 2)
-
-    packet = ClientPackets.decode(packet_id, rest, socket)
-
-    if is_nil(packet) do
-      raise "unable to decode packet with id #{inspect(packet_id)} - #{inspect(raw)}"
-    end
-
-    packet
+    ClientPackets.decode(packet_id, rest, socket)
   end
 
   @impl true
