@@ -14,8 +14,12 @@ defmodule ElvenPackets.Types.NsStringTest do
   test "can be encoded" do
     assert "data" = NsString.encode("data")
   end
-  
+
   test "support escape option for encoding" do
     assert "data^with^space" = NsString.encode("data with space", escape: true)
+  end
+
+  test "support full option for decoding" do
+    assert {"data with space", ""} = NsString.decode("data with space", full: true)
   end
 end
