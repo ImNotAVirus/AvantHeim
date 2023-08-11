@@ -20,7 +20,10 @@ defmodule ElvenPackets.Types.NsString do
 
   @impl true
   @spec encode(t(), Keyword.t()) :: binary()
-  def encode(data, _opts) when is_binary(data) do
-    data
+  def encode(data, opts) when is_binary(data) do
+    case Keyword.get(opts, :escape, false) do
+      false -> data
+      true -> String.replace(data, " ", "^")
+    end
   end
 end
