@@ -4,7 +4,7 @@ defmodule ElvenPackets.Client.LobbyPacketsTest do
   alias ElvenGard.Network.Socket
   alias ElvenPackets.Client.LobbyPackets.{CharNEW, CharDEL, Select, GameStart}
 
-  describe "Char_NEW" do
+  describe "char_NEW" do
     test "can be deserialized" do
       params = "TestChar 0 1 1 2"
       assert %CharNEW{} = packet = CharNEW.deserialize("Char_NEW", params, %Socket{})
@@ -16,7 +16,7 @@ defmodule ElvenPackets.Client.LobbyPacketsTest do
     end
   end
 
-  describe "Char_DEL" do
+  describe "char_DEL" do
     test "can be deserialized" do
       params = "3 password"
       assert %CharDEL{} = packet = CharDEL.deserialize("Char_DEL", params, %Socket{})

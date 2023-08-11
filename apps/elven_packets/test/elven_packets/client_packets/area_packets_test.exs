@@ -4,7 +4,7 @@ defmodule ElvenPackets.Client.AreaPacketsTest do
   alias ElvenGard.Network.Socket
   alias ElvenPackets.Client.AreaPackets.{Walk, Say, Ncif, Guri, Dir}
 
-  describe "Walk" do
+  describe "walk" do
     test "can be deserialized" do
       params = "3 1 313 25"
       assert %Walk{} = packet = Walk.deserialize("walk", params, %Socket{})
@@ -15,7 +15,7 @@ defmodule ElvenPackets.Client.AreaPacketsTest do
     end
   end
 
-  describe "Say" do
+  describe "say" do
     test "can be deserialized" do
       params = "DarkyZ"
       assert %Say{} = packet = Say.deserialize("say", params, %Socket{})
@@ -29,7 +29,7 @@ defmodule ElvenPackets.Client.AreaPacketsTest do
     end
   end
 
-  describe "Ncif" do
+  describe "ncif" do
     test "can be deserialized" do
       params = "1 123"
       assert %Ncif{} = packet = Ncif.deserialize("ncif", params, %Socket{})
@@ -38,7 +38,7 @@ defmodule ElvenPackets.Client.AreaPacketsTest do
     end
   end
 
-  describe "Guri" do
+  describe "guri" do
     test "can be deserialized" do
       params = "10 2 1 0"
       assert %Guri{} = packet = Guri.deserialize("guri", params, %Socket{})
@@ -49,7 +49,7 @@ defmodule ElvenPackets.Client.AreaPacketsTest do
     end
   end
 
-  describe "Dir" do
+  describe "dir" do
     test "can be deserialized" do
       params = "1 2 3"
       assert %Dir{} = packet = Dir.deserialize("dir", params, %Socket{})
