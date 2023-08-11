@@ -10,10 +10,7 @@ defmodule LoginService.Endpoint.AuthActions do
   alias ElvenCaching.Account.Session
   alias ElvenCaching.SessionRegistry
   alias ElvenDatabase.Players.{Account, Accounts}
-  alias ElvenViews.LoginViews
-
-  @ip Application.fetch_env!(:login_service, :world_ip)
-  @port Application.fetch_env!(:login_service, :world_port)
+  alias ElvenPackets.Views.LoginViews
 
   # If env != prod: use encryption_key = 0
   @default_encryption_key if Mix.env() == :prod, do: nil, else: 0
@@ -37,8 +34,8 @@ defmodule LoginService.Endpoint.AuthActions do
         LoginViews.render(:nstest, %{
           username: account.username,
           encryption_key: encryption_key,
-          ip: @ip,
-          port: @port
+          ip: ip(),
+          port: port()
         })
       else
         reason -> render_error(reason, args)
@@ -48,6 +45,9 @@ defmodule LoginService.Endpoint.AuthActions do
   end
 
   ## Private functions
+
+  defp ip(), do: Application.fetch_env!(:login_service, :world_ip)
+  defp port(), do: Application.fetch_env!(:login_service, :world_port)
 
   defp check_client_version(%{client_version: version}, _socket) do
     requirement = Application.fetch_env!(:login_service, :client_version)
