@@ -3,7 +3,7 @@ defmodule ElvenPackets.Types.NsIntegerTest do
 
   alias ElvenPackets.Types.NsInteger
 
-  test "can be deserialized" do
+  test "can be decoded" do
     assert {1337, ""} = NsInteger.decode("1337")
     assert {1337, ""} = NsInteger.decode("1337 ")
     assert {1337, "garbage"} = NsInteger.decode("1337 garbage")
@@ -11,7 +11,7 @@ defmodule ElvenPackets.Types.NsIntegerTest do
     assert {1337, "garbage with space"} = NsInteger.decode("1337 garbage with space")
   end
 
-  test "can be serialized" do
+  test "can be encoded" do
     assert "1337" = NsInteger.encode(1337)
   end
 end

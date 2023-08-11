@@ -3,7 +3,7 @@ defmodule ElvenPackets.Types.NsEnumTest do
 
   alias ElvenPackets.Types.NsEnum
 
-  test "can be deserialized" do
+  test "can be decoded" do
     opts = [values: [foo: 1, bar: 2]]
 
     assert {:foo, ""} = NsEnum.decode("1", opts)
@@ -13,7 +13,7 @@ defmodule ElvenPackets.Types.NsEnumTest do
     assert {:foo, "garbage with space"} = NsEnum.decode("1 garbage with space", opts)
   end
 
-  test "can be serialized" do
+  test "can be encoded" do
     opts = [values: [foo: 1, bar: 2]]
 
     assert "1" = NsEnum.encode(:foo, opts)

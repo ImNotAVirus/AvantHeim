@@ -3,7 +3,7 @@ defmodule ElvenPackets.Types.NsBooleanTest do
 
   alias ElvenPackets.Types.NsBoolean
 
-  test "can be deserialized" do
+  test "can be decoded" do
     assert {true, ""} = NsBoolean.decode("1")
     assert {false, ""} = NsBoolean.decode("0")
     assert {true, "garbage"} = NsBoolean.decode("1 garbage")
@@ -11,7 +11,7 @@ defmodule ElvenPackets.Types.NsBooleanTest do
     assert {true, "garbage with space"} = NsBoolean.decode("1 garbage with space")
   end
 
-  test "can be serialized" do
+  test "can be encoded" do
     assert "1" = NsBoolean.encode(true)
     assert "0" = NsBoolean.encode(false)
   end

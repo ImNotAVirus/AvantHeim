@@ -3,7 +3,7 @@ defmodule ElvenPackets.Types.NsStringTest do
 
   alias ElvenPackets.Types.NsString
 
-  test "can be deserialized" do
+  test "can be decoded" do
     assert {"data", ""} = NsString.decode("data")
     assert {"data", ""} = NsString.decode("data ")
     assert {"data", "garbage"} = NsString.decode("data garbage")
@@ -11,7 +11,7 @@ defmodule ElvenPackets.Types.NsStringTest do
     assert {"data", "garbage with space"} = NsString.decode("data garbage with space")
   end
 
-  test "can be serialized" do
+  test "can be encoded" do
     assert "data" = NsString.encode("data")
   end
 end
