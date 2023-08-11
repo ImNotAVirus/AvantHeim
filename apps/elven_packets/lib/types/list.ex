@@ -31,6 +31,8 @@ defmodule ElvenPackets.Types.NsList do
 
   @impl true
   @spec encode(t(), Keyword.t()) :: iolist()
+  def encode([], _opts), do: "-1"
+
   def encode(list, opts) when is_list(list) do
     type = Keyword.get(opts, :type)
     joiner = Keyword.fetch!(opts, :joiner)
