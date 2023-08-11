@@ -1,6 +1,6 @@
-defmodule ElvenViews.UIPackets.GuriEnums do
+defmodule ElvenPackets.Enums.AreaEnums do
   @moduledoc """
-  TODO: Documentation.
+  TODO: ElvenPackets.Enums.AreaEnums
   """
 
   import SimpleEnum, only: [defenum: 2]

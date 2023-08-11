@@ -26,6 +26,7 @@ defmodule ElvenPackets.MixProject do
   defp deps do
     [
       {:elvengard_network, github: "imnotavirus/elvengard_network", branch: "documentation"},
+      {:elven_enums, path: "../elven_enums"},
       {:simple_enum, "~> 0.1"}
     ]
   end
