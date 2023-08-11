@@ -15,6 +15,7 @@ defmodule ElvenPackets.Server.LoginPackets do
   import ElvenPackets.Enums.LoginEnums, only: [failc_error: 1, login_region: 1, auth_type: 1]
   import ElvenPackets.Server.LoginPackets.Macros
 
+  alias ElvenPackets.SubPackets.Login.NsTeST.Channel
   alias ElvenPackets.Types.{NsEnum, NsInteger, NsList, NsString}
 
   ## Login packets
