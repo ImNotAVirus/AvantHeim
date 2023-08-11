@@ -33,6 +33,7 @@ defmodule LoginService.Endpoint.AuthActions do
 
         LoginViews.render(:nstest, %{
           username: account.username,
+          region: args.region,
           encryption_key: encryption_key,
           ip: ip(),
           port: port()
@@ -130,7 +131,7 @@ defmodule LoginService.Endpoint.AuthActions do
 
       e ->
         Logger.warn("Got unknown login error: #{inspect(e)}")
-        LoginViews.render(:failc)
+        LoginViews.render(:failc, %{})
     end
   end
 end

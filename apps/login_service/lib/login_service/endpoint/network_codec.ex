@@ -5,7 +5,7 @@ defmodule LoginService.Endpoint.NetworkCodec do
 
   @behaviour ElvenGard.Network.NetworkCodec
 
-  alias LoginService.ClientPackets
+  alias ElvenPackets.Client.LoginPackets
   alias LoginService.Endpoint.Cryptography
 
   @impl true
@@ -19,16 +19,19 @@ defmodule LoginService.Endpoint.NetworkCodec do
   def deserialize(raw, socket) do
     decrypted = raw |> Cryptography.decrypt(socket.assigns) |> String.trim_trailing("\n")
     [packet_id, rest] = String.split(decrypted, " ", parts: 2)
-    ClientPackets.decode(packet_id, rest, socket)
+    LoginPackets.deserialize(packet_id, rest, socket)
   end
 
   @impl true
   def serialize(struct, socket) when is_struct(struct) do
-    {packet_id, params} = struct.__struct__.encode(struct)
+    {packet_id, params} = struct.__struct__.serialize(struct)
     serialize([packet_id, params], socket)
   end
 
   def serialize(raw, _socket) when is_list(raw) do
-    Enum.intersperse(raw, " ")
+    raw
+    |> Enum.intersperse(" ")
+    |> :erlang.list_to_binary()
+    |> Cryptography.encrypt()
   end
 end

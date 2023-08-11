@@ -19,6 +19,7 @@ defmodule ElvenPackets.Views.LoginViews do
 
   def render(:nstest, args) do
     encryption_key = required_param(args, :encryption_key)
+    region = required_param(args, :region)
     username = required_param(args, :username)
 
     # TODO: Support multiple channels
@@ -27,6 +28,7 @@ defmodule ElvenPackets.Views.LoginViews do
 
     %NsTeST{
       encryption_key: encryption_key,
+      region: region,
       username: username,
       server_list: [
         %Channel{

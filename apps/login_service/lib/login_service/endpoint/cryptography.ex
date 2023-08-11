@@ -3,7 +3,7 @@ defmodule LoginService.Endpoint.Cryptography do
   Cryptography for a NosTale login server.
   """
 
-  use Bitwise, only_operators: true
+  import Bitwise, only: [{:"^^^", 2}, {:&&&, 2}]
 
   @doc """
   Encrypt a login packet.
