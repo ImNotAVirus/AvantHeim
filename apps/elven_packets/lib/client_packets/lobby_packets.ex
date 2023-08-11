@@ -5,7 +5,7 @@ defmodule ElvenPackets.Client.LobbyPackets do
 
   use ElvenGard.Network.PacketSerializer
 
-  import ElvenPackets.Enums.LobbyEnums, only: [hair_color: 1, hair_style: 1, gender: 1]
+  import ElvenEnums.PlayerEnums, only: [hair_color: 1, hair_style: 1, gender: 1]
 
   alias ElvenPackets.Types.{NsInteger, NsString, NsEnum}
 

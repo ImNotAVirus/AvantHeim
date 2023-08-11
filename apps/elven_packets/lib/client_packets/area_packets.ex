@@ -5,7 +5,8 @@ defmodule ElvenPackets.Client.AreaPackets do
 
   use ElvenGard.Network.PacketSerializer
 
-  import ElvenPackets.Enums.AreaEnums, only: [guri_type: 1, entity_type: 1, direction_type: 1]
+  import ElvenPackets.Enums.AreaEnums, only: [guri_type: 1]
+  import ElvenEnums.EntityEnums, only: [entity_type: 1, direction_type: 1]
 
   alias ElvenPackets.Types.{NsInteger, NsString, NsEnum}
 
@@ -51,7 +52,7 @@ defmodule ElvenPackets.Client.AreaPackets do
   @deserializable true
   defpacket "guri", as: Guri do
     field :type, NsEnum, values: guri_type(:__enumerators__)
-    field :entity_type, NsInteger
+    field :entity_type, NsEnum, values: entity_type(:__enumerators__)
     field :entity_id, NsInteger
     field :guri_data, NsInteger
   end
