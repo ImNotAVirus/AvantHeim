@@ -77,7 +77,7 @@ defmodule ElvenPackets.Client.PlayerPackets do
   end
 
   #######
-  # Display completed act
+  # Show hp/mp bar of player
   # ---
   # Example: "stat 201 201 150 150 0 1"
   #######
