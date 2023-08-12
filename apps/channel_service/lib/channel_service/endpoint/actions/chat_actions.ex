@@ -3,7 +3,7 @@ defmodule ChannelService.Endpoint.ChatActions do
   TODO: Documentation
   """
 
-  alias ElvenCore.Socket
+  alias ElvenGard.Network.Socket
   alias ChannelService.Endpoint.EntityInteractions
   alias ElvenCaching.CharacterRegistry
 

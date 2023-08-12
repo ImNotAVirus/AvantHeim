@@ -5,8 +5,8 @@ defmodule ChannelService.Endpoint.NameCommand do
 
   alias ElvenCaching.CharacterRegistry
   alias ElvenCaching.Entity.Character
-  alias ElvenCore.Socket
-  alias ElvenViews.{ChatViews, UIViews}
+  alias ElvenGard.Network.Socket
+  alias ElvenPackets.Views.{ChatViews, UIViews}
 
   alias ChannelService.Endpoint.EntityInteractions
 

@@ -6,11 +6,11 @@ defmodule ChannelService.Endpoint.Protocol do
   require Logger
   require ElvenCaching.Account.Session
 
-  alias ElvenCore.Socket
+  alias ElvenGard.Network.Socket
   alias ElvenCaching.Account.Session
   alias ElvenCaching.SessionRegistry
   alias ElvenDatabase.Players.{Account, Accounts, Characters}
-  alias ElvenViews.LobbyViews
+  alias ElvenPackets.Views.LobbyViews
 
   alias ChannelService.PresenceManager
 

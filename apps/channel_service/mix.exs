@@ -22,12 +22,12 @@ defmodule ChannelService.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:elven_core, path: "../elven_core"},
-      {:elven_database, path: "../elven_database"},
-      {:elven_views, path: "../elven_views"},
-      {:elven_caching, path: "../elven_caching"},
+      {:elvengard_network, github: "imnotavirus/elvengard_network", branch: "documentation"},
       {:libcluster, "~> 3.3"},
-      {:ranch, "~> 2.0"}
+      {:elven_database, path: "../elven_database"},
+      {:elven_caching, path: "../elven_caching"},
+      {:elven_packets, path: "../elven_packets"},
+      {:elven_core, path: "../elven_core"}
     ]
   end
 end

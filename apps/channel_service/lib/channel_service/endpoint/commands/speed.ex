@@ -4,8 +4,8 @@ defmodule ChannelService.Endpoint.SpeedCommand do
   """
 
   alias ElvenCaching.CharacterRegistry
-  alias ElvenCore.Socket
-  alias ElvenViews.ChatViews
+  alias ElvenGard.Network.Socket
+  alias ElvenPackets.Views.ChatViews
 
   alias ChannelService.Endpoint.EntityInteractions
 

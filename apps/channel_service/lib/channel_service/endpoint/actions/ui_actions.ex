@@ -3,8 +3,8 @@ defmodule ChannelService.Endpoint.UIActions do
   TODO: Documentation
   """
 
-  alias ElvenCore.Socket
-  alias ElvenViews.UIViews
+  alias ElvenGard.Network.Socket
+  alias ElvenPackets.Views.UIViews
 
   alias ChannelService.Endpoint.EntityInteractions
 

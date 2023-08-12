@@ -3,9 +3,9 @@ defmodule ChannelService.Endpoint.GameActions do
   TODO: Documentation
   """
 
-  alias ElvenCore.Socket
+  alias ElvenGard.Network.Socket
   alias ElvenCaching.CharacterRegistry
-  alias ElvenViews.{ChatViews, PlayerViews, UIViews}
+  alias ElvenPackets.Views.{ChatViews, PlayerViews, UIViews}
 
   alias ChannelService.Endpoint.EntityInteractions
 
