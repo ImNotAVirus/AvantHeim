@@ -1,4 +1,4 @@
-defmodule LoginService.Endpoint.AuthActions do
+defmodule LoginService.AuthActions do
   @moduledoc """
   TODO: Documentation
   """
