@@ -1,4 +1,4 @@
-defmodule ChannelService.Endpoint.LobbyActions do
+defmodule ChannelService.LobbyActions do
   @moduledoc """
   TODO: Documentation
   """

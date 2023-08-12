@@ -7,7 +7,7 @@ defmodule ChannelService.Endpoint.Cryptography do
   ### TODO: THIS MODULE NEED REFACTORING !
   ###
 
-  use Bitwise, only_operators: true
+  import Bitwise, only: [{:"^^^", 2}, {:&&&, 2}, {:>>>, 2}, {:"~~~", 1}]
 
   @table ["\0", " ", "-", ".", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "\n", "\0"]
 

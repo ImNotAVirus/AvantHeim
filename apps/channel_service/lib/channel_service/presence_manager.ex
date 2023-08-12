@@ -10,7 +10,7 @@ defmodule ChannelService.PresenceManager do
   alias ElvenCaching.Account.Session
   alias ElvenCaching.{CharacterRegistry, SessionRegistry}
 
-  alias ChannelService.Endpoint.EntityInteractions
+  alias ChannelService.EntityInteractions
 
   @manager_name __MODULE__
 

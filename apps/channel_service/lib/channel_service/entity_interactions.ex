@@ -1,4 +1,4 @@
-defmodule ChannelService.Endpoint.EntityInteractions do
+defmodule ChannelService.EntityInteractions do
   @moduledoc """
   TODO: Break theses functions into another modules
   """

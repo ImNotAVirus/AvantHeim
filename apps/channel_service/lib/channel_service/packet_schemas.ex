@@ -5,14 +5,6 @@ defmodule ChannelService.PacketSchemas do
 
   use ElvenCore.{CommandSchema, PacketSchema}
 
-  alias ChannelService.Endpoint.{
-    LobbyActions,
-    GameActions,
-    MapActions,
-    ChatActions,
-    UIActions
-  }
-
   ## Ignore some packets
 
   ignore_packet "0"
@@ -22,9 +14,9 @@ defmodule ChannelService.PacketSchemas do
 
   ## Commands
 
-  defcommand "speed", ChannelService.Endpoint.SpeedCommand
-  defcommand "name", ChannelService.Endpoint.NameCommand
-  defcommand "effect", ChannelService.Endpoint.EffectCommand
-  defcommand "gold", ChannelService.Endpoint.GoldCommand
-  defcommand "bank", ChannelService.Endpoint.BankCommand
+  defcommand "speed", ChannelService.SpeedCommand
+  defcommand "name", ChannelService.NameCommand
+  defcommand "effect", ChannelService.EffectCommand
+  defcommand "gold", ChannelService.GoldCommand
+  defcommand "bank", ChannelService.BankCommand
 end

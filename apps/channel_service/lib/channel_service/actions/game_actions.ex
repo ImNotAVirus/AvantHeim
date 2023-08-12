@@ -1,4 +1,4 @@
-defmodule ChannelService.Endpoint.GameActions do
+defmodule ChannelService.GameActions do
   @moduledoc """
   TODO: Documentation
   """
@@ -7,7 +7,7 @@ defmodule ChannelService.Endpoint.GameActions do
   alias ElvenCaching.CharacterRegistry
   alias ElvenPackets.Views.{ChatViews, PlayerViews, UIViews}
 
-  alias ChannelService.Endpoint.EntityInteractions
+  alias ChannelService.EntityInteractions
 
   ## Packet handlers
 

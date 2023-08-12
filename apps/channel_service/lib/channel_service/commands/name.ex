@@ -1,4 +1,4 @@
-defmodule ChannelService.Endpoint.NameCommand do
+defmodule ChannelService.NameCommand do
   @moduledoc """
   TODO: Documentation
   """
@@ -8,7 +8,7 @@ defmodule ChannelService.Endpoint.NameCommand do
   alias ElvenGard.Network.Socket
   alias ElvenPackets.Views.{ChatViews, UIViews}
 
-  alias ChannelService.Endpoint.EntityInteractions
+  alias ChannelService.EntityInteractions
 
   @name_regex ~r/^[\x21-\x7E\xA1-\xAC\xAE-\xFF\x{4e00}-\x{9fa5}\x{0E01}-\x{0E3A}\x{0E3F}-\x{0E5B}\x2E]{4,14}$/u
 

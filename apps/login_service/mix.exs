@@ -7,7 +7,8 @@ defmodule LoginService.MixProject do
       version: "0.1.0",
       elixir: "~> 1.13",
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+      elixirc_options: [warnings_as_errors: true]
     ]
   end
 

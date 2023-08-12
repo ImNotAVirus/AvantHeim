@@ -1,4 +1,4 @@
-defmodule ChannelService.Endpoint.GoldCommand do
+defmodule ChannelService.GoldCommand do
   @moduledoc """
   TODO: Documentation.
   """
@@ -8,7 +8,7 @@ defmodule ChannelService.Endpoint.GoldCommand do
   alias ElvenGard.Network.Socket
   alias ElvenPackets.Views.ChatViews
 
-  alias ChannelService.Endpoint.EntityInteractions
+  alias ChannelService.EntityInteractions
 
   ## Public API
 

@@ -1,226 +1,36 @@
 defmodule ChannelService.Endpoint.Protocol do
   @moduledoc false
 
-  use GenServer
+  use ElvenGard.Network.Endpoint.Protocol
 
   require Logger
-  require ElvenCaching.Account.Session
+
+  import ElvenGard.Network.Socket, only: [assign: 3]
 
   alias ElvenGard.Network.Socket
-  alias ElvenCaching.Account.Session
-  alias ElvenCaching.SessionRegistry
-  alias ElvenDatabase.Players.{Account, Accounts, Characters}
-  alias ElvenPackets.Views.LobbyViews
 
-  alias ChannelService.PresenceManager
-
-  @behaviour :ranch_protocol
-
-  @handshake_timeout 3_000
-  @timeout 70_000
-  @separator " "
-
-  @packet_encoder ChannelService.Endpoint.Cryptography
-  @packet_schemas Application.fetch_env!(:channel_service, :packet_schemas)
-
-  ## Ranch Protocol behaviour
+  ## Callbacks
 
   @impl true
-  def start_link(ref, transport, opts) do
-    pid = :proc_lib.spawn_link(__MODULE__, :init, [{ref, transport, opts}])
-    {:ok, pid}
-  end
-
-  ## GenServer behaviour
-
-  @impl true
-  def init({ref, transport, _opts}) do
-    {:ok, transport_pid} = :ranch.handshake(ref)
-    {:ok, {address, port}} = :inet.peername(transport_pid)
-
-    socket = Socket.new(transport, transport_pid, @packet_encoder)
-
+  def handle_init(%Socket{} = socket) do
+    Logger.info("New connection: #{socket.id}")
     Logger.metadata(socket_id: socket.id)
-    Logger.info("New connection: #{:inet.ntoa(address)}:#{port}")
 
-    :gen_server.enter_loop(__MODULE__, [], socket, {:continue, :client_handshake})
+    %Socket{transport: transport, transport_pid: transport_pid} = socket
+    :ok = transport.setopts(transport_pid, packet: :raw, reuseaddr: true)
+
+    {:ok, assign(socket, :state, :init)}
   end
 
   @impl true
-  def handle_continue(:client_handshake, socket) do
-    encryption_key = recv_encryption_key(socket)
-    new_socket = Socket.assign(socket, encryption_key: encryption_key)
-    username = recv_username(new_socket)
-
-    %Socket{transport_pid: transport_pid, transport: transport} = new_socket
-
-    with {:ok, session} <- SessionRegistry.get(username),
-         :ok <- validate_session(session, encryption_key),
-         :ok <- PresenceManager.register_username(username),
-         {:ok, _} <- cache_session_as_logged(session),
-         {:ok, account} <- get_account(session),
-         :ok <- send_character_list(account, new_socket) do
-      transport.setopts(transport_pid, active: :once)
-      {:noreply, Socket.assign(new_socket, account: account), @timeout}
-    else
-      e ->
-        Logger.warn("Invalid Handshake (reason: #{inspect(e)})")
-        transport.shutdown(transport_pid, :read_write)
-        {:stop, :normal, new_socket}
-    end
-  end
-
-  @impl true
-  def handle_info({:tcp, transport_pid, message}, socket) do
-    %Socket{transport_pid: ^transport_pid, transport: transport} = socket
-
+  def handle_message(message, %Socket{} = socket) do
     Logger.debug("New message (len: #{byte_size(message)})")
-
-    new_socket =
-      with {:ok, packets} <- parse_message(message, socket) do
-        Enum.reduce_while(packets, socket, &resolve_packet/2)
-      else
-        {:error, msg} ->
-          Logger.warn(msg)
-          socket
-      end
-
-    transport.setopts(transport_pid, active: :once)
-    {:noreply, new_socket, @timeout}
+    {:ok, socket}
   end
 
-  def handle_info({:tcp_closed, transport_pid}, socket) do
-    %Socket{transport_pid: ^transport_pid} = socket
-    Logger.info("Player disconnected")
-    {:stop, :normal, socket}
-  end
-
-  def handle_info(:timeout, socket) do
-    %Socket{transport_pid: transport_pid, transport: transport} = socket
-    Logger.error("An error occured with the client: :timeout")
-    transport.shutdown(transport_pid, :read_write)
-    {:stop, {:shutdown, :timeout}, socket}
-  end
-
-  ## Private functions
-
-  defp validate_session(session, encryption_key) do
-    case session do
-      %Session{encryption_key: ^encryption_key} = s when not Session.is_logged(s) -> :ok
-      _ -> {:error, session}
-    end
-  end
-
-  defp cache_session_as_logged(session) do
-    session
-    |> Session.set_ttl(:infinity)
-    |> Session.set_state(:in_lobby)
-    |> SessionRegistry.write()
-  end
-
-  defp get_account(%Session{} = session) do
-    %Session{username: username, password: password} = session
-
-    case Accounts.log_in(username, password) do
-      %Account{} = acc -> {:ok, acc}
-      _ -> {:error, :cant_fetch_account}
-    end
-  end
-
-  defp send_character_list(%Account{} = account, socket) do
-    character_list = Characters.all_by_account_id(account.id)
-
-    Socket.send(socket, LobbyViews.render(:clist_start))
-
-    Enum.each(character_list, fn character ->
-      equipments = FakeData.equipments(character_id: character.id)
-
-      Socket.send(
-        socket,
-        LobbyViews.render(:clist, %{
-          character: character,
-          equipments: equipments,
-          pets: [],
-          design: 0
-        })
-      )
-    end)
-
-    Socket.send(socket, LobbyViews.render(:clist_end))
-  end
-
-  defp recv_encryption_key(socket) do
-    {:ok, encryption_key} = Socket.recv(socket, 0, @handshake_timeout)
-    String.to_integer(encryption_key)
-  end
-
-  if Mix.env() != :prod do
-    defp recv_username(new_socket) do
-      {:ok, [username, _]} = Socket.recv(new_socket, 0, @handshake_timeout)
-      [username, _] = String.split(username, " ", parts: 2)
-      username
-    end
-  else
-    defp recv_username(new_socket) do
-      {:ok, [username, "thisisgfmode"]} = Socket.recv(new_socket, 0, @handshake_timeout)
-      [username, "GF 0"] = String.split(username, " ", parts: 2)
-      username
-    end
-  end
-
-  defp parse_message(message, socket) do
-    case Socket.handle_in(message, socket) do
-      {:ok, packets} ->
-        result =
-          packets
-          |> Stream.map(&String.replace_trailing(&1, "\n", ""))
-          |> Stream.map(&String.replace_trailing(&1, " ", ""))
-          |> Stream.map(&split_header/1)
-          |> Enum.map(&@packet_schemas.parse(&1, socket, separator: @separator))
-
-        {:ok, result}
-
-      e ->
-        {:error, "Unable to decrypt packets (#{inspect(e)})"}
-    end
-  end
-
-  defp split_header(packet) do
-    case String.split(packet, @separator, parts: 2) do
-      [header, bin_args] -> {header, bin_args}
-      [header] -> {header, ""}
-    end
-  end
-
-  defp resolve_packet({:ok, {header, args}}, socket) do
-    case @packet_schemas.resolve(header, args, socket) do
-      {:cont, %Socket{}} = x ->
-        x
-
-      {:halt, {:ok, _args}, %Socket{}} ->
-        raise "unimplemented halt return"
-
-      {:halt, {:error, _reason}, %Socket{}} ->
-        raise "unimplemented halt return"
-
-      x ->
-        raise """
-        handler for #{header} #{inspect(args)} must return `{:cont, socket}`, \
-        `{:halt, {:ok, :some_args}, socket}`, or `{:halt, {:error, reason}, socket} `. \
-        Returned: #{inspect(x)}
-        """
-    end
-  end
-
-  defp resolve_packet({:ignore, {header, args}}, socket) do
-    split = String.split(args, @separator)
-    Logger.debug("Ignored packet '#{header}' with args #{inspect(split)}")
-    {:cont, socket}
-  end
-
-  defp resolve_packet({:error, :invalid, {header, args}}, socket) do
-    split = String.split(args, @separator)
-    Logger.warn("Unknown packet '#{header}' with args #{inspect(split)}")
-    {:cont, socket}
+  @impl true
+  def handle_halt(reason, %Socket{} = socket) do
+    Logger.info("disconnected (reason: #{inspect(reason)})")
+    {:ok, socket}
   end
 end
