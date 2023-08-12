@@ -28,13 +28,19 @@ defmodule ChannelService.Endpoint.PacketHandlers do
   end
 
   # Third packet received: password
-  def handle_packet({:handshake, [_password]}, socket) do
-    {:cont, socket}
+  def handle_packet({:handshake, [password]}, socket) do
+    params = %{username: socket.assigns.username, password: password}
+
+    case ChannelService.AuthActions.handshake(:handshake, params, socket) do
+      {:cont, socket} -> {:cont, assign(socket, :state, :ok)}
+      {:halt, _} = result -> result
+    end
   end
 
   ## Normal handlers
 
-  def handle_packet(packet, _socket) do
-    raise "unimplemented handler for #{inspect(packet)}"
+  def handle_packet(packet, socket) do
+    Logger.warn("unimplemented handler for #{inspect(packet)}")
+    {:cont, socket}
   end
 end

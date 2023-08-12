@@ -15,15 +15,8 @@ defmodule ChannelService.Endpoint.NetworkCodec do
   ## Behaviour impls
 
   @impl true
-  def next(<<>>, _socket), do: {nil, <<>>}
-
-  def next(raw, socket) when has_state(socket, :handshake) do
+  def next(raw, socket) do
     Cryptography.next(raw, socket.assigns.enc_key)
-  end
-
-  def next(raw, _socket) do
-    raise "unimplemented next for #{inspect(raw, limit: :infinity)}"
-    # {raw, ""}
   end
 
   @impl true
@@ -31,34 +24,38 @@ defmodule ChannelService.Endpoint.NetworkCodec do
     packet =
       raw
       |> Cryptography.unpack()
-      |> IO.inspect()
       |> String.split(" ")
-      # Remove keep alive
+      # Remove packet unique id
       |> Enum.drop(1)
 
     {:handshake, packet}
   end
 
   def deserialize(raw, _socket) do
-    raise "unimplemented deserialize - #{inspect(raw, limit: :infinity)}"
+    _packet =
+      raw
+      |> Cryptography.unpack()
+      |> String.split(" ", parts: 3)
+      # Remove packet unique id
+      |> Enum.drop(1)
 
-    # decrypted = raw |> Cryptography.decrypt(socket.assigns) |> String.trim_trailing("\n")
-    # [packet_id, rest] = String.split(decrypted, " ", parts: 2)
-    # ChannelPackets.deserialize(packet_id, rest, socket)
+    # case packet do
+    #   [packet_id] -> ChannelPackets.deserialize(packet_id, "", socket)
+    #   [packet_id, params] -> ChannelPackets.deserialize(packet_id, params, socket)
+    # end
   end
 
   @impl true
-  def serialize(struct, _socket) when is_struct(struct) do
-    raise "unimplemented serialize"
-    # {packet_id, params} = struct.__struct__.serialize(struct)
-    # serialize([packet_id, params], socket)
+  def serialize(struct, socket) when is_struct(struct) do
+    {packet_id, params} = struct.__struct__.serialize(struct)
+    serialize([packet_id, params], socket)
   end
 
   def serialize(raw, _socket) when is_list(raw) do
-    # raw
-    # |> List.flatten()
-    # |> Enum.intersperse(" ")
-    # |> :erlang.list_to_binary()
-    # |> Cryptography.encrypt()
+    raw
+    |> List.flatten()
+    |> Enum.intersperse(" ")
+    |> :erlang.list_to_binary()
+    |> Cryptography.encrypt()
   end
 end

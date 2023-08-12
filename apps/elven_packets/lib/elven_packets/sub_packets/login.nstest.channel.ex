@@ -17,6 +17,8 @@ defmodule ElvenPackets.SubPackets.Login.NsTeST.Channel do
           population: non_neg_integer
         }
 
+  ## ElvenGard.Network.Type behaviour
+
   @impl true
   @spec encode(t(), Keyword.t()) :: binary()
   def encode(%Channel{} = struct, _) do

@@ -55,7 +55,7 @@ defmodule ChannelService.PresenceManager do
     {:ok, session} = SessionRegistry.get(username)
 
     Logger.info("#{inspect(username)} is now disconnected (reason: #{inspect(reason)})")
-    Logger.info("Cleaning...")
+    Logger.info("Cleaning session...")
 
     cleanup_session(session)
     SessionRegistry.delete(username)

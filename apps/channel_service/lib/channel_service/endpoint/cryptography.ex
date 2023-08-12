@@ -58,7 +58,7 @@ defmodule ChannelService.Endpoint.Cryptography do
   ## Private functions
 
   defp do_next(raw, enc_key, acc \\ [])
-  defp do_next(<<>>, nil, _acc), do: nil
+  defp do_next(<<>>, _enc_key, _acc), do: nil
 
   defp do_next(<<byte::8, rest::binary>>, nil, acc) do
     case do_world_xor(byte, -1, -1) do
