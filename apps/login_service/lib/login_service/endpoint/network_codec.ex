@@ -9,11 +9,8 @@ defmodule LoginService.Endpoint.NetworkCodec do
   alias LoginService.Endpoint.Cryptography
 
   @impl true
-  def next(<<>>), do: {nil, <<>>}
-
-  def next(message) do
-    {message, ""}
-  end
+  def next(<<>>, _socket), do: {nil, <<>>}
+  def next(message, _socket), do: {message, ""}
 
   @impl true
   def deserialize(raw, socket) do

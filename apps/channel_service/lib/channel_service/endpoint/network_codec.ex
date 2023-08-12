@@ -6,19 +6,42 @@ defmodule ChannelService.Endpoint.NetworkCodec do
   @behaviour ElvenGard.Network.NetworkCodec
 
   # alias ElvenPackets.Client.ChannelPackets
-  # alias ChannelService.Endpoint.Cryptography
+  alias ChannelService.Endpoint.Cryptography
+
+  ## Helpers
+
+  defguardp has_state(socket, state) when socket.assigns.state == state
+
+  ## Behaviour impls
 
   @impl true
-  def next(<<>>), do: {nil, <<>>}
+  def next(<<>>, _socket), do: {nil, <<>>}
 
-  def next(message) do
-    raise "unimplemented next for #{inspect(message, limit: :infinity)}"
-    # {message, ""}
+  def next(raw, socket) when has_state(socket, :handshake) do
+    Cryptography.next(raw, socket.assigns.enc_key)
+  end
+
+  def next(raw, _socket) do
+    raise "unimplemented next for #{inspect(raw, limit: :infinity)}"
+    # {raw, ""}
   end
 
   @impl true
-  def deserialize(_raw, _socket) do
-    raise "unimplemented deserialize"
+  def deserialize(raw, socket) when has_state(socket, :handshake) do
+    packet =
+      raw
+      |> Cryptography.unpack()
+      |> IO.inspect()
+      |> String.split(" ")
+      # Remove keep alive
+      |> Enum.drop(1)
+
+    {:handshake, packet}
+  end
+
+  def deserialize(raw, _socket) do
+    raise "unimplemented deserialize - #{inspect(raw, limit: :infinity)}"
+
     # decrypted = raw |> Cryptography.decrypt(socket.assigns) |> String.trim_trailing("\n")
     # [packet_id, rest] = String.split(decrypted, " ", parts: 2)
     # ChannelPackets.deserialize(packet_id, rest, socket)
