@@ -12,16 +12,12 @@ defmodule LoginService.Endpoint.AuthActions do
   alias ElvenDatabase.Players.{Account, Accounts}
   alias ElvenPackets.Views.LoginViews
 
-  # If env != prod: use encryption_key = 0
-  @default_encryption_key if Mix.env() == :prod, do: nil, else: 0
-  @max_encryption_key 65535
-
   ## Public API
 
   @doc """
   Header can be "NoS0575" or "NoS0577"
   """
-  @spec login(String.t(), map, Socket.t()) :: any
+  @spec login(String.t(), struct(), Socket.t()) :: any
   def login(_header, args, %Socket{} = socket) do
     render =
       with {:ok, _client_version} <- check_client_version(args, socket),
@@ -47,6 +43,13 @@ defmodule LoginService.Endpoint.AuthActions do
 
   ## Private functions
 
+  if Mix.env() != :prod do
+    defp gen_encryption_key(), do: 0
+  else
+    @max_encryption_key 65535
+    defp gen_encryption_key(), do: :rand.uniform(@max_encryption_key)
+  end
+
   defp ip(), do: Application.fetch_env!(:login_service, :world_ip)
   defp port(), do: Application.fetch_env!(:login_service, :world_port)
 
@@ -62,7 +65,10 @@ defmodule LoginService.Endpoint.AuthActions do
   defp check_client_checksum(%{client_checksum: client_checksum}, _socket) do
     # Currently unused
     # TODO: Can be checked later for client modification for example
-    {:ok, client_checksum}
+    case :erlang.phash2(0, 1) do
+      0 -> {:ok, client_checksum}
+      _ -> {:error, :client_checksum}
+    end
   end
 
   defp check_guid(%{installation_guid: guid}, _socket) do
@@ -97,10 +103,7 @@ defmodule LoginService.Endpoint.AuthActions do
       account_id: account.id,
       username: account.username,
       password: account.hashed_password,
-      # Little trick for avoid Elixir warning 
-      encryption_key:
-        (:erlang.phash2(0, 1) == 0 and @default_encryption_key) ||
-          :rand.uniform(@max_encryption_key)
+      encryption_key: gen_encryption_key()
     }
 
     case SessionRegistry.create(attrs) do
@@ -109,29 +112,24 @@ defmodule LoginService.Endpoint.AuthActions do
     end
   end
 
-  defp render_error(reason, args) do
-    case reason do
-      {:error, :client_version} ->
-        Logger.warn("Invalid client version (got: #{args.client_version})")
-        LoginViews.render(:failc, %{error: :old_client})
+  defp render_error({:error, :client_version}, args) do
+    Logger.warn("Invalid client version (got: #{args.client_version})")
+    LoginViews.render(:failc, %{error: :old_client})
+  end
 
-      {:error, :client_checksum} ->
-        Logger.warn("Invalid client checksum (got: #{args.client_checksum})")
+  defp render_error({:error, :client_checksum}, args) do
+    Logger.warn("Invalid client checksum (got: #{args.client_checksum})")
+    LoginViews.render(:failc, %{error: :old_client})
+  end
 
-        LoginViews.render(:failc, %{error: :old_client})
+  defp render_error({:error, :bad_credentials}, _args) do
+    Logger.warn("Invalid credentials")
+    LoginViews.render(:failc, %{error: :bad_credentials})
+  end
 
-      {:error, :bad_credentials} ->
-        Logger.warn("Invalid credentials")
-        LoginViews.render(:failc, %{error: :bad_credentials})
-
-      {:error, :already_connected} ->
-        user = Map.get(args, :username) || Map.get(args, :token)
-        Logger.warn("Already connected (username: #{user})")
-        LoginViews.render(:failc, %{error: :already_connected})
-
-      e ->
-        Logger.warn("Got unknown login error: #{inspect(e)}")
-        LoginViews.render(:failc, %{})
-    end
+  defp render_error({:error, :already_connected}, args) do
+    user = Map.get(args, :username) || "token:#{Map.get(args, :token)}"
+    Logger.warn("Already connected (user: #{user})")
+    LoginViews.render(:failc, %{error: :already_connected})
   end
 end
