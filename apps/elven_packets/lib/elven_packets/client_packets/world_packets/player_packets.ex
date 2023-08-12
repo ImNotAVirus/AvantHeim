@@ -18,7 +18,7 @@ defmodule ElvenPackets.Client.PlayerPackets do
   alias ElvenPackets.Types.{NsInteger, NsString, NsEnum}
 
   #######
-  # Update reputation display
+  # Reputation display
   # ---
   # Example: "fd 2 3 5 1"
   #######
@@ -31,7 +31,7 @@ defmodule ElvenPackets.Client.PlayerPackets do
   end
 
   #######
-  # Update faction display
+  # Faction display
   # ---
   # Example: "fs 1"
   #######
@@ -41,7 +41,7 @@ defmodule ElvenPackets.Client.PlayerPackets do
   end
 
   #######
-  # Update character information display about levels
+  # Character information display about levels
   # ---
   # Example: "lev 1 28319 1 1321 1980918 31289031 50000 1 10 1 100 0"
   #######
@@ -92,7 +92,7 @@ defmodule ElvenPackets.Client.PlayerPackets do
   end
 
   #######
-  # Display completed act
+  # Display title
   # ---
   # Example: "tit 1 Fizo"
   #######
