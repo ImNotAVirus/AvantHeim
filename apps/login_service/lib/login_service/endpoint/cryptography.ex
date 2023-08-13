@@ -3,7 +3,7 @@ defmodule LoginService.Endpoint.Cryptography do
   Cryptography for a NosTale login server.
   """
 
-  use Bitwise, only_operators: true
+  import Bitwise, only: [band: 2, bxor: 2]
 
   @doc """
   Encrypt a login packet.
@@ -15,7 +15,7 @@ defmodule LoginService.Endpoint.Cryptography do
   """
   @spec encrypt(String.t()) :: binary
   def encrypt(packet) do
-    data = for <<c <- packet>>, into: <<>>, do: <<c + 15 &&& 0xFF::size(8)>>
+    data = for <<c <- packet>>, into: <<>>, do: <<band(c + 15, 0xFF)::size(8)>>
     <<data::binary, 0x19::size(8)>>
   end
 
@@ -65,8 +65,8 @@ defmodule LoginService.Endpoint.Cryptography do
   @spec do_decrypt(byte) :: binary
   defp do_decrypt(byte) do
     case byte do
-      c when c > 14 -> <<(c - 15) ^^^ 195::utf8>>
-      c -> <<(256 - (15 - c)) ^^^ 195::utf8>>
+      c when c > 0x0E -> <<bxor(c - 0x0F, 0xC3)::utf8>>
+      c -> <<bxor(0x100 - (0x0F - c), 0xC3)::utf8>>
     end
   end
 end

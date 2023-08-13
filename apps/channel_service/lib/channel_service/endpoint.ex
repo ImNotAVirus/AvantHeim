@@ -1,39 +1,18 @@
 defmodule ChannelService.Endpoint do
   @moduledoc """
-  TODO: Documentation
+  Documentation for ChannelService.Endpoint
   """
+
+  use ElvenGard.Network.Endpoint, otp_app: :channel_service
 
   require Logger
 
-  ## Public API
+  ## Callbacks
 
-  @doc """
-  Returns the child specification to start the endpoint
-  under a supervision tree.
-  """
-  def child_spec(_opts) do
-    config = fetch_config!()
-
-    log_starting(config)
-
-    :ranch.child_spec(
-      {__MODULE__, config[:listener_name]},
-      config[:transport],
-      config[:transport_opts],
-      config[:protocol],
-      config[:protocol_opts]
-    )
-  end
-
-  ## Private functions
-
-  defp fetch_config!() do
-    Application.fetch_env!(:channel_service, __MODULE__)
-  end
-
-  defp log_starting(config) do
-    host = get_in(config, [:transport_opts, :ip])
-    port = get_in(config, [:transport_opts, :port])
+  @impl true
+  def handle_start(config) do
+    host = get_in(config, [:transport_opts, :socket_opts, :ip])
+    port = get_in(config, [:transport_opts, :socket_opts, :port])
     Logger.info("ChannelService started on #{:inet.ntoa(host)}:#{port}")
   end
 end

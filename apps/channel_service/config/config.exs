@@ -9,15 +9,15 @@ import Config
 
 ## Channel configs
 
-config :channel_service,
-  packet_schemas: ChannelService.PacketSchemas
-
 config :channel_service, ChannelService.Endpoint,
   listener_name: :channel_service,
   transport: :ranch_tcp,
-  transport_opts: [ip: {127, 0, 0, 1}, port: 5000],
-  protocol: ChannelService.Endpoint.Protocol,
-  protocol_opts: []
+  transport_opts: [ip: "127.0.0.1", port: 5000],
+  protocol: ChannelService.Endpoint.Protocol
+
+config :channel_service, ChannelService.Endpoint.Protocol,
+  packet_handler: ChannelService.Endpoint.PacketHandlers,
+  network_codec: ChannelService.Endpoint.NetworkCodec
 
 # Import global config
 import_config "../../../config/config.exs"
