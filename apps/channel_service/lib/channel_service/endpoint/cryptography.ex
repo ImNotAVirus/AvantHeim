@@ -46,15 +46,6 @@ defmodule ChannelService.Endpoint.Cryptography do
     <<data::binary, 0xFF::size(8)>>
   end
 
-  @doc """
-  Decrypt a channel packet.
-  """
-  @spec decrypt(binary, map) :: [String.t()]
-  def decrypt(binary, %{encryption_key: encryption_key}) when not is_nil(encryption_key),
-    do: decrypt_channel(binary, encryption_key)
-
-  def decrypt(binary, _), do: decrypt_session(binary)
-
   ## Private functions
 
   defp do_next(raw, enc_key, acc \\ [])
@@ -83,37 +74,6 @@ defmodule ChannelService.Endpoint.Cryptography do
   defp do_world_xor(char, offset, 3), do: (char + offset + 0x40) ^^^ 0xC3 &&& 0xFF
   defp do_world_xor(char, _, _), do: char - 0x0F &&& 0xFF
 
-  @spec decrypt_session(binary) :: [String.t()]
-  defp decrypt_session(binary) do
-    binary
-    |> world_xor(-1, true)
-    |> unpack(@table)
-    |> split_keepalive(true)
-    |> Enum.at(0)
-    |> Kernel.elem(1)
-  end
-
-  @spec decrypt_channel(binary, integer, boolean) :: [binary | {integer, binary}]
-  defp decrypt_channel(binary, encryption_key, _remove_keepalive? \\ true) do
-    binary
-    |> world_xor(encryption_key, false)
-    |> unpack(@table)
-    # |> split_keepalive(keepalive?)
-    |> remove_keepalive()
-  end
-
-  @spec world_xor(raw :: binary, encryption_key :: integer, is_key_packet :: boolean) :: binary
-  defp world_xor(binary, _, true) do
-    for <<c <- binary>>, into: "", do: do_world_xor(c, -1, -1)
-  end
-
-  defp world_xor(binary, encryption_key, false) do
-    decryption_type = encryption_key >>> 6 &&& 3
-    offset = encryption_key &&& 0xFF
-    for <<c <- binary>>, into: "", do: do_world_xor(c, offset, decryption_type)
-  end
-
-  @spec do_unpack(binary, [<<_::8>>, ...], [binary]) :: packet
   defp do_unpack(binary, chars_to_unpack, result \\ [])
 
   defp do_unpack("", _, result) do
@@ -149,22 +109,6 @@ defmodule ChannelService.Endpoint.Cryptography do
       right_byte = Enum.at(chars_to_unpack, l)
       if l != 0, do: left_byte <> right_byte, else: left_byte
     end
-  end
-
-  @spec split_keepalive([packet], boolean) :: [packet] | [{integer, packet}]
-  defp split_keepalive(packet, false), do: packet
-
-  defp split_keepalive(packet, true) do
-    packet
-    |> Stream.map(&String.split(&1, " ", parts: 2))
-    |> Enum.map(fn [l, r] -> {String.to_integer(l), r} end)
-  end
-
-  @spec remove_keepalive([packet]) :: [packet]
-  defp remove_keepalive(packet) do
-    packet
-    |> Stream.map(&String.split(&1, " ", parts: 2))
-    |> Enum.map(fn [_, packet] -> packet end)
   end
 
   @spec do_encrypt(char, integer, integer) :: binary
