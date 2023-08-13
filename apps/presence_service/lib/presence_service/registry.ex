@@ -7,7 +7,10 @@ defmodule PresenceService.Registry do
 
   require Logger
 
+  alias PresenceService.Session
+
   @name {:global, __MODULE__}
+  @session_sup PresenceService.SessionSupervisor
 
   ## Public API
 
@@ -15,8 +18,8 @@ defmodule PresenceService.Registry do
     GenServer.start_link(__MODULE__, nil, name: @name)
   end
 
-  def track(pid, account_id, account_name) do
-    GenServer.call(@name, {:track, pid, account_id, account_name})
+  def track(pid, %Session{} = session) do
+    GenServer.call(@name, {:track, pid, session})
   end
 
   def get_session_by_id(account_id) do
@@ -46,15 +49,27 @@ defmodule PresenceService.Registry do
   end
 
   @impl true
-  def handle_call({:track, pid, account_id, account_name}, _from, state) do
+  def handle_call({:track, pid, session}, _from, state) do
+    %Session{username: account_name, account_id: account_id} = session
+
     with {:id, nil} <- {:id, state[:id_mapping][account_id]},
          {:name, nil} <- {:name, state[:name_mapping][account_name]} do
+      # Start the state process
+      session_spec = {PresenceService.SessionProcess, session}
+      {:ok, session_pid} = DynamicSupervisor.start_child(@session_sup, session_spec)
+
       ref = Process.monitor(pid)
 
+      ref_map = %{
+        pid: pid,
+        account_id: account_id,
+        account_name: account_name
+      }
+
       state
-      |> put_in([:id_mapping, account_id], pid)
-      |> put_in([:name_mapping, account_name], pid)
-      |> put_in([:ref_mapping, ref], {account_id, account_name})
+      |> put_in([:id_mapping, account_id], session_pid)
+      |> put_in([:name_mapping, account_name], session_pid)
+      |> put_in([:ref_mapping, ref], ref_map)
       |> then(&{:ok, &1})
     else
       _ -> {{:error, :already_exists}, state}

@@ -5,5 +5,8 @@ defmodule ElvenPubSub.Topics do
 
   ## Sessions
 
+  # Events:
+  # - {:disconnected, PresenceService.Session.t()} 
+
   def session(), do: "session"
 end
