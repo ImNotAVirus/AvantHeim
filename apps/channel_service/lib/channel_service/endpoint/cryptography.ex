@@ -7,7 +7,7 @@ defmodule ChannelService.Endpoint.Cryptography do
   ### TODO: THIS MODULE NEED REFACTORING !
   ###
 
-  import Bitwise, only: [{:"^^^", 2}, {:&&&, 2}, {:>>>, 2}, {:"~~~", 1}]
+  import Bitwise, only: [{:"^^^", 2}, {:&&&, 2}, {:>>>, 2}, {:"~~~", 1}, band: 2, bxor: 2, bsr: 2]
 
   @table ["\0", " ", "-", ".", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "\n", "\0"]
 
@@ -48,6 +48,11 @@ defmodule ChannelService.Endpoint.Cryptography do
 
   @doc """
   Decrypt a channel packet.
+
+  ## Examples
+
+      iex> ChannelService.Endpoint.Cryptography.decrypt(<<159, 172, 100, 160, 99, 235, 103, 120, 99, 14>>, %{})
+      "5 59115 1098142510;;"
   """
   @spec decrypt(binary, map) :: [String.t()]
   def decrypt(binary, %{encryption_key: encryption_key}) when not is_nil(encryption_key),
@@ -83,14 +88,9 @@ defmodule ChannelService.Endpoint.Cryptography do
   defp do_world_xor(char, offset, 3), do: (char + offset + 0x40) ^^^ 0xC3 &&& 0xFF
   defp do_world_xor(char, _, _), do: char - 0x0F &&& 0xFF
 
-  @spec decrypt_session(binary) :: [String.t()]
+  @spec decrypt_session(binary) :: binary
   defp decrypt_session(binary) do
-    binary
-    |> world_xor(-1, true)
-    |> unpack(@table)
-    |> split_keepalive(true)
-    |> Enum.at(0)
-    |> Kernel.elem(1)
+    for <<c <- binary>>, into: <<>>, do: do_decrypt_session(c)
   end
 
   @spec decrypt_channel(binary, integer, boolean) :: [binary | {integer, binary}]
@@ -173,5 +173,26 @@ defmodule ChannelService.Endpoint.Cryptography do
   defp do_encrypt(char, index, length) do
     remaining = if length - index > 0x7E, do: 0x7E, else: length - index
     <<remaining::size(8), ~~~char::size(8)>>
+  end
+
+  #
+  # Private functions
+  #
+
+  defp do_decrypt_session(c) do
+    first_byte = c - 0xF
+    second_byte = band(first_byte, 0xF0)
+    first_key = first_byte - second_byte
+    second_key = bsr(second_byte, 0x4)
+
+    for key <- [second_key, first_key], into: <<>> do
+      case key do
+        0 -> <<0x20>>
+        1 -> <<0x20>>
+        2 -> <<0x2D>>
+        3 -> <<0x2E>>
+        _ -> <<0x2C + key>>
+      end
+    end
   end
 end
