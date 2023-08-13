@@ -1,4 +1,4 @@
-defmodule ElvenPackets.SubPackets.Player.CInfo.FamilyIdRank do
+defmodule ElvenPackets.SubPackets.Player.CInfo.Family do
   @moduledoc false
 
   use ElvenGard.Network.Type
@@ -6,27 +6,28 @@ defmodule ElvenPackets.SubPackets.Player.CInfo.FamilyIdRank do
   alias __MODULE__
   alias ElvenI18n.PacketConstString
 
-  @enforce_keys [:id, :rank]
+  @enforce_keys [:id, :rank, :name]
   defstruct @enforce_keys
 
-  @type t :: %FamilyIdRank{
-          id: integer,
-          rank: PlayerEnums.family_rank_keys()
+  @type t :: %Family{
+          name: String.t() | nil,
+          rank: PlayerEnums.family_rank_keys(),
+          id: String.t()
         }
 
   @spec default() :: t()
   def default() do
-    %FamilyIdRank{id: -1, rank: :member}
+    %Family{id: -1, rank: :member, name: nil}
   end
 
   @impl true
   @spec encode(t(), Keyword.t()) :: binary()
-  def encode(%FamilyIdRank{} = struct, _) do
-    %FamilyIdRank{id: id, rank: rank} = struct
+  def encode(%Family{} = struct, _) do
+    %Family{id: id, rank: rank, name: name} = struct
 
     case id < 0 do
       true -> "-1"
-      false -> "#{id}.#{i18n(rank)}"
+      false -> "#{id}.#{i18n(rank)} #{name}"
     end
   end
 

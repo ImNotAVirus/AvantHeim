@@ -1,7 +1,7 @@
 defmodule ElvenPackets.Client.PlayerPacketsTest do
   use ElvenPackets.PacketCase, async: true
 
-  alias ElvenPackets.SubPackets.Player.CInfo.FamilyIdRank
+  alias ElvenPackets.SubPackets.Player.CInfo.Family
   alias ElvenPackets.Server.PlayerPackets.{Fd, Fs, Lev, Rsfi, Stat, Tit, CInfo}
 
   ## Tests
@@ -14,22 +14,22 @@ defmodule ElvenPackets.Client.PlayerPacketsTest do
       assert length(params) == 18
       assert Enum.at(params, 0) == "Fizo"
       assert Enum.at(params, 1) == "-"
-      assert Enum.at(params, 2) == 1
-      assert Enum.at(params, 3) == "1.918"
-      assert Enum.at(params, 4) == 1
-      assert Enum.at(params, 5) == 1
-      assert Enum.at(params, 6) == 2
-      assert Enum.at(params, 7) == 1
-      assert Enum.at(params, 8) == 2
-      assert Enum.at(params, 9) == 2
-      assert Enum.at(params, 10) == 123
-      assert Enum.at(params, 11) == 456
-      assert Enum.at(params, 12) == 789
-      assert Enum.at(params, 13) == false
-      assert Enum.at(params, 14) == 2
-      assert Enum.at(params, 15) == 3
-      assert Enum.at(params, 16) == 4
-      assert Enum.at(params, 17) == true
+      assert Enum.at(params, 2) == "1"
+      assert Enum.at(params, 3) == "1.918 >>Trying"
+      assert Enum.at(params, 4) == "1"
+      assert Enum.at(params, 5) == "0"
+      assert Enum.at(params, 6) == "0"
+      assert Enum.at(params, 7) == "1"
+      assert Enum.at(params, 8) == "0"
+      assert Enum.at(params, 9) == "2"
+      assert Enum.at(params, 10) == "123"
+      assert Enum.at(params, 11) == "456"
+      assert Enum.at(params, 12) == "789"
+      assert Enum.at(params, 13) == "0"
+      assert Enum.at(params, 14) == "2"
+      assert Enum.at(params, 15) == "3"
+      assert Enum.at(params, 16) == "4"
+      assert Enum.at(params, 17) == "1"
     end
   end
 
@@ -122,15 +122,14 @@ defmodule ElvenPackets.Client.PlayerPacketsTest do
     %CInfo{
       name: "Fizo",
       group_id: 1,
-      family_id_rank: [%FamilyIdRank{id: 1, rank: :member}],
+      family: %Family{id: 1, rank: :member, name: ">>Trying"},
       character_id: 1,
       authority: :player,
       gender: :male,
       hair_style: :hair_style_b,
-      hair_color: :darke_purple,
+      hair_color: :dark_purple,
       class: :archer,
       reputation_icon_id: 123,
-      family_name: "test",
       compliment: 456,
       morph: 789,
       is_invisible: false,

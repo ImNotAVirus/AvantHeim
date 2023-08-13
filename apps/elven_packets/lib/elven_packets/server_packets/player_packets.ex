@@ -15,7 +15,7 @@ defmodule ElvenPackets.Server.PlayerPackets do
       faction: 1
     ]
 
-  alias ElvenPackets.SubPackets.Player.CInfo.FamilyIdRank
+  alias ElvenPackets.SubPackets.Player.CInfo.Family
   alias ElvenPackets.Types.{NsInteger, NsString, NsEnum, NsBoolean, NsList}
 
   #######
@@ -28,8 +28,7 @@ defmodule ElvenPackets.Server.PlayerPackets do
     field :name, NsString
     field :vnum, NsString, default: "-"
     field :group_id, NsInteger
-    field :family_id_rank, NsList, type: FamilyIdRank, joiner: " "
-    field :family_name, NsString, nullable: true
+    field :family, Family
     field :character_id, NsInteger
     field :authority, NsEnum, values: authority(:__enumerators__)
     field :gender, NsEnum, values: gender(:__enumerators__)
