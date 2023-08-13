@@ -50,13 +50,18 @@ defmodule ChannelService.Endpoint.Cryptography do
   Decrypt a channel packet.
 
   ## Examples
+      iex> ChannelService.Endpoint.Cryptography.decrypt(<<198, 228, 203, 145, 70, 205, 214, 220, 208, 217, 208, 196, 7, 212, 73, 255, 208, 203, 222, 209, 215, 208, 210, 218, 193, 112, 67, 220, 208, 210, 63, 199, 228, 203, 161, 16, 72, 215, 214, 221, 200, 214, 200, 214, 248, 193, 160, 65, 218, 193, 224, 66, 241, 205>>, %{})
+      "7391784-.37:83898 868 71;481.6; 8 788;8-848 8.877-2 .0898 8.. 7491785-  .584838:75837583:57-5 .-877-9 ..:-7:"
 
       iex> ChannelService.Endpoint.Cryptography.decrypt(<<159, 172, 100, 160, 99, 235, 103, 120, 99, 14>>, %{})
       "5 59115 1098142510;;"
   """
   @spec decrypt(binary, map) :: [String.t()]
-  def decrypt(binary, %{encryption_key: encryption_key}) when not is_nil(encryption_key),
-    do: decrypt_channel(binary, encryption_key)
+  def decrypt(binary, %{encryption_key: encryption_key}) when not is_nil(encryption_key) do
+    mode = bsr(encryption_key, band(6, 0x03))
+    offset = band(encryption_key, 0xFF) + band(0x40, 0xFF)
+    do_decrypt_channel(binary, mode, offset)
+  end
 
   def decrypt(binary, _), do: decrypt_session(binary)
 
@@ -193,6 +198,15 @@ defmodule ChannelService.Endpoint.Cryptography do
         3 -> <<0x2E>>
         _ -> <<0x2C + key>>
       end
+    end
+  end
+
+  defp do_decrypt_channel(c, mode, offset) do
+    case mode do
+      0 -> <<c - offset>>
+      1 -> <<c + offset>>
+      2 -> <<bxor(c - offset, 0xC3)>>
+      3 -> <<bxor(c + offset, 0xC3)>>
     end
   end
 end
