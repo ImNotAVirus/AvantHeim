@@ -1,6 +1,6 @@
-defmodule ElvenPackets.Client.PlayerPackets do
+defmodule ElvenPackets.Server.PlayerPackets do
   @moduledoc """
-  TODO: ElvenPackets.Client.PlayerPackets
+  TODO: ElvenPackets.Server.PlayerPackets
   """
 
   use ElvenGard.Network.PacketSerializer
@@ -15,7 +15,36 @@ defmodule ElvenPackets.Client.PlayerPackets do
       faction: 1
     ]
 
-  alias ElvenPackets.Types.{NsInteger, NsString, NsEnum}
+  alias ElvenPackets.SubPackets.Player.CInfo.FamilyIdRank
+  alias ElvenPackets.Types.{NsInteger, NsString, NsEnum, NsBoolean, NsList}
+
+  #######
+  # Reputation display
+  # ---
+  # Example: "c_info Fizo - 1 1.915 family 12 1 1 1 1 1 1 1 1 1 1 1 1 0"
+  #######
+  @serializable true
+  defpacket "c_info", as: CInfo do
+    field :name, NsString
+    field :vnum, NsString, default: "-"
+    field :group_id, NsInteger
+    field :family_id_rank, NsList, type: FamilyIdRank, joiner: " "
+    field :family_name, NsString, nullable: true
+    field :character_id, NsInteger
+    field :authority, NsEnum, values: authority(:__enumerators__)
+    field :gender, NsEnum, values: gender(:__enumerators__)
+    field :hair_style, NsEnum, values: hair_style(:__enumerators__)
+    field :hair_color, NsEnum, values: hair_color(:__enumerators__)
+    field :class, NsEnum, values: character_class(:__enumerators__)
+    field :reputation_icon_id, NsInteger
+    field :compliment, NsInteger
+    field :morph, NsInteger
+    field :is_invisible, NsBoolean
+    field :family_level, NsInteger
+    field :morph_upgrade, NsInteger
+    field :morph_design, NsInteger
+    field :is_arena_winner, NsBoolean
+  end
 
   #######
   # Reputation display
