@@ -1,8 +1,10 @@
 {
 	"folders": [
 		{"name": "root", "path": ".."},
+		{"path": "../apps/presence_service"},
 		{"path": "../apps/login_service"},
 		{"path": "../apps/channel_service"},
+		{"path": "../apps/elven_pubsub"},
 		{"path": "../apps/elven_caching"},
 		{"path": "../apps/elven_core"},
 		{"path": "../apps/elven_database"},
