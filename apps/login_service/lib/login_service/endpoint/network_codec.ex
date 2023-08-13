@@ -9,12 +9,13 @@ defmodule LoginService.Endpoint.NetworkCodec do
   alias LoginService.Endpoint.Cryptography
 
   @impl true
-  def next(<<>>, _socket), do: {nil, <<>>}
-  def next(message, _socket), do: {message, ""}
+  def next(raw, socket) do
+    Cryptography.next(raw, socket.assigns.enc_key)
+  end
 
   @impl true
   def deserialize(raw, socket) do
-    decrypted = raw |> Cryptography.decrypt(socket.assigns) |> String.trim_trailing("\n")
+    decrypted = Cryptography.decrypt(raw, socket.assigns)
     [packet_id, rest] = String.split(decrypted, " ", parts: 2)
     LoginPackets.deserialize(packet_id, rest, socket)
   end
