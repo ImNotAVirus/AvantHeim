@@ -40,9 +40,9 @@ defmodule ElvenPackets.Client.PlayerPacketsTest do
       assert is_list(params)
       assert length(params) == 4
       assert Enum.at(params, 0) == "1"
-      assert Enum.at(params, 1) == "1"
-      assert Enum.at(params, 2) == "1"
-      assert Enum.at(params, 3) == "1"
+      assert Enum.at(params, 1) == "2"
+      assert Enum.at(params, 2) == "3"
+      assert Enum.at(params, 3) == "4"
     end
   end
 
@@ -61,17 +61,17 @@ defmodule ElvenPackets.Client.PlayerPacketsTest do
       assert is_list(params)
       assert length(params) == 12
       assert Enum.at(params, 0) == "1"
-      assert Enum.at(params, 1) == "1"
-      assert Enum.at(params, 2) == "1"
-      assert Enum.at(params, 3) == "1"
-      assert Enum.at(params, 4) == "1"
-      assert Enum.at(params, 5) == "1"
-      assert Enum.at(params, 6) == "1"
-      assert Enum.at(params, 7) == "1"
-      assert Enum.at(params, 8) == "1"
-      assert Enum.at(params, 9) == "1"
-      assert Enum.at(params, 10) == "1"
-      assert Enum.at(params, 11) == "1"
+      assert Enum.at(params, 1) == "2"
+      assert Enum.at(params, 2) == "3"
+      assert Enum.at(params, 3) == "4"
+      assert Enum.at(params, 4) == "5"
+      assert Enum.at(params, 5) == "6"
+      assert Enum.at(params, 6) == "7"
+      assert Enum.at(params, 7) == "8"
+      assert Enum.at(params, 8) == "9"
+      assert Enum.at(params, 9) == "10"
+      assert Enum.at(params, 10) == "11"
+      assert Enum.at(params, 11) == "12"
     end
   end
 
@@ -82,11 +82,11 @@ defmodule ElvenPackets.Client.PlayerPacketsTest do
       assert is_list(params)
       assert length(params) == 6
       assert Enum.at(params, 0) == "1"
-      assert Enum.at(params, 1) == "1"
-      assert Enum.at(params, 2) == "1"
-      assert Enum.at(params, 3) == "1"
-      assert Enum.at(params, 4) == "1"
-      assert Enum.at(params, 5) == "1"
+      assert Enum.at(params, 1) == "2"
+      assert Enum.at(params, 2) == "3"
+      assert Enum.at(params, 3) == "4"
+      assert Enum.at(params, 4) == "5"
+      assert Enum.at(params, 5) == "6"
     end
   end
 
@@ -97,11 +97,11 @@ defmodule ElvenPackets.Client.PlayerPacketsTest do
       assert is_list(params)
       assert length(params) == 6
       assert Enum.at(params, 0) == "1"
-      assert Enum.at(params, 1) == "1"
-      assert Enum.at(params, 2) == "1"
-      assert Enum.at(params, 3) == "1"
-      assert Enum.at(params, 4) == "1"
-      assert Enum.at(params, 5) == "1"
+      assert Enum.at(params, 1) == "2"
+      assert Enum.at(params, 2) == "3"
+      assert Enum.at(params, 3) == "4"
+      assert Enum.at(params, 4) == "5"
+      assert Enum.at(params, 5) == "6"
     end
   end
 
@@ -143,9 +143,9 @@ defmodule ElvenPackets.Client.PlayerPacketsTest do
   defp fd() do
     %Fd{
       reputation: 1,
-      reputation_icon_id: 1,
-      dignity: 1,
-      dignity_icon_id: 1
+      reputation_icon_id: 2,
+      dignity: 3,
+      dignity_icon_id: 4
     }
   end
 
@@ -156,39 +156,39 @@ defmodule ElvenPackets.Client.PlayerPacketsTest do
   defp stat() do
     %Stat{
       hp: 1,
-      hp_max: 1,
-      mp: 1,
-      mp_max: 1,
-      unknown: 1,
-      option: 1
+      hp_max: 2,
+      mp: 3,
+      mp_max: 4,
+      unknown: 5,
+      option: 6
     }
   end
 
   defp rsfi() do
     %Rsfi{
       act: 1,
-      act_part: 1,
-      unknown: 1,
-      unknown2: 1,
-      ts: 1,
-      ts_max: 1
+      act_part: 2,
+      unknown: 3,
+      unknown2: 4,
+      ts: 5,
+      ts_max: 6
     }
   end
 
   defp lev() do
     %Lev{
       level: 1,
-      level_xp: 1,
-      job_level: 1,
-      job_level_xp: 1,
-      level_xp_max: 1,
-      job_level_xp_max: 1,
-      reputation: 1,
-      cp: 1,
-      hero_level_xp: 1,
-      hero_level: 1,
-      hero_level_xp_max: 1,
-      unknown: 1
+      level_xp: 2,
+      job_level: 3,
+      job_level_xp: 4,
+      level_xp_max: 5,
+      job_level_xp_max: 6,
+      reputation: 7,
+      cp: 8,
+      hero_level_xp: 9,
+      hero_level: 10,
+      hero_level_xp_max: 11,
+      unknown: 12
     }
   end
 
