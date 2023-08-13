@@ -56,14 +56,16 @@ defmodule ChannelService.Endpoint.Cryptography do
       iex> ChannelService.Endpoint.Cryptography.decrypt(<<159, 172, 100, 160, 99, 235, 103, 120, 99, 14>>, %{})
       "5 59115 1098142510;;"
   """
-  @spec decrypt(binary, map) :: [String.t()]
+  @spec decrypt(binary, map) :: binary
   def decrypt(binary, %{encryption_key: encryption_key}) when not is_nil(encryption_key) do
     mode = bsr(encryption_key, band(6, 0x03))
     offset = band(encryption_key, 0xFF) + band(0x40, 0xFF)
     do_decrypt_channel(binary, mode, offset)
   end
 
-  def decrypt(binary, _), do: decrypt_session(binary)
+  def decrypt(binary, _) do
+    for <<c <- binary>>, into: <<>>, do: do_decrypt_session(c)
+  end
 
   ## Private functions
 
@@ -92,20 +94,6 @@ defmodule ChannelService.Endpoint.Cryptography do
   defp do_world_xor(char, offset, 2), do: (char - offset - 0x40) ^^^ 0xC3 &&& 0xFF
   defp do_world_xor(char, offset, 3), do: (char + offset + 0x40) ^^^ 0xC3 &&& 0xFF
   defp do_world_xor(char, _, _), do: char - 0x0F &&& 0xFF
-
-  @spec decrypt_session(binary) :: binary
-  defp decrypt_session(binary) do
-    for <<c <- binary>>, into: <<>>, do: do_decrypt_session(c)
-  end
-
-  @spec decrypt_channel(binary, integer, boolean) :: [binary | {integer, binary}]
-  defp decrypt_channel(binary, encryption_key, _remove_keepalive? \\ true) do
-    binary
-    |> world_xor(encryption_key, false)
-    |> unpack(@table)
-    # |> split_keepalive(keepalive?)
-    |> remove_keepalive()
-  end
 
   @spec world_xor(raw :: binary, encryption_key :: integer, is_key_packet :: boolean) :: binary
   defp world_xor(binary, _, true) do
