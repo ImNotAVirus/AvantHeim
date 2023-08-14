@@ -16,12 +16,28 @@ defmodule ChannelService.Endpoint.Cryptography do
 
   ## Public API
 
+  @doc """
+  Get the next packet from a raw binary.
+
+  ## Examples
+
+      iex> ChannelService.Endpoint.Cryptography.next(<<198, 228, 203, 145, 70, 205, 214, 220, 208, 217, 208, 196, 7, 212, 73, 255, 208, 203, 222, 209, 215, 208, 210, 218, 193, 112, 67, 220, 208, 210, 63, 199, 228, 203, 161, 16, 72, 215, 214, 221, 200, 214, 200, 214, 248, 193, 160, 65, 218, 193, 224, 66, 241, 205, 199, 228, 203, 161, 16, 72, 215, 214, 221, 200, 214, 200, 214, 248, 193, 160, 65, 218, 193, 224, 66, 241, 205>>, 0)
+      {<<198, 228, 203, 145, 70, 205, 214, 220, 208, 217, 208, 196, 7, 212, 73>>, <<208, 203, 222, 209, 215, 208, 210, 218, 193, 112, 67, 220, 208, 210, 63, 199, 228, 203, 161, 16, 72, 215, 214, 221, 200, 214, 200, 214, 248, 193, 160, 65, 218, 193, 224, 66, 241, 205, 199, 228, 203, 161, 16, 72, 215, 214, 221, 200, 214, 200, 214, 248, 193, 160, 65, 218, 193, 224, 66, 241, 205>>}
+  """
   @spec next(binary(), integer() | nil) :: {binary() | nil, binary()}
-  def next(raw, enc_key) do
-    case do_next(raw, enc_key) do
-      {packet, rest} -> {packet, rest}
-      nil -> {nil, raw}
-    end
+  def next(raw, key) do
+    offset = band(key, 0xFF)
+    mode = bsr(key, band(6, 3))
+
+    delimiter =
+      case mode do
+        0 -> 0xFF + offset
+        1 -> 0xFF - offset
+        2 -> bxor(0xFF + offset, 0xC3)
+        3 -> bxor(0xFF - offset, 0xC3)
+      end
+
+    do_next(raw, delimiter)
   end
 
   @spec unpack(binary(), any()) :: packet()
@@ -82,43 +98,6 @@ defmodule ChannelService.Endpoint.Cryptography do
 
   ## Private functions
 
-  defp do_next(raw, enc_key, acc \\ [])
-  defp do_next(<<>>, _enc_key, _acc), do: nil
-
-  defp do_next(<<byte::8, rest::binary>>, nil, acc) do
-    case do_world_xor(byte, -1, -1) do
-      0xFF -> {acc |> Enum.reverse() |> :erlang.list_to_binary(), rest}
-      byte -> do_next(rest, nil, [byte | acc])
-    end
-  end
-
-  defp do_next(<<byte::8, rest::binary>>, enc_key, acc) do
-    offset = enc_key &&& 0xFF
-    decryption_type = enc_key >>> 6 &&& 3
-
-    case do_world_xor(byte, offset, decryption_type) do
-      0xFF -> {acc |> Enum.reverse() |> :erlang.list_to_binary(), rest}
-      byte -> do_next(rest, enc_key, [byte | acc])
-    end
-  end
-
-  defp do_world_xor(char, offset, 0), do: char - offset - 0x40 &&& 0xFF
-  defp do_world_xor(char, offset, 1), do: char + offset + 0x40 &&& 0xFF
-  defp do_world_xor(char, offset, 2), do: (char - offset - 0x40) ^^^ 0xC3 &&& 0xFF
-  defp do_world_xor(char, offset, 3), do: (char + offset + 0x40) ^^^ 0xC3 &&& 0xFF
-  defp do_world_xor(char, _, _), do: char - 0x0F &&& 0xFF
-
-  @spec world_xor(raw :: binary, encryption_key :: integer, is_key_packet :: boolean) :: binary
-  defp world_xor(binary, _, true) do
-    for <<c <- binary>>, into: "", do: do_world_xor(c, -1, -1)
-  end
-
-  defp world_xor(binary, encryption_key, false) do
-    decryption_type = encryption_key >>> 6 &&& 3
-    offset = encryption_key &&& 0xFF
-    for <<c <- binary>>, into: "", do: do_world_xor(c, offset, decryption_type)
-  end
-
   @spec do_unpack(binary, [<<_::8>>, ...], [binary]) :: packet
   defp do_unpack(binary, chars_to_unpack, result \\ [])
 
@@ -157,9 +136,13 @@ defmodule ChannelService.Endpoint.Cryptography do
     end
   end
 
-  #
-  # Private functions
-  #
+  defp do_next(<<c, rest::binary>>, delimiter, acc \\ <<>>) do
+    if c == delimiter do
+      {acc, rest}
+    else
+      do_next(rest, delimiter, <<acc::binary, c>>)
+    end
+  end
 
   defp do_decrypt_session(c) do
     first_byte = c - 0xF
