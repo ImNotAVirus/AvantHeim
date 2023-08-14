@@ -7,8 +7,7 @@ defmodule ChannelService.Endpoint.Cryptography do
   ### TODO: THIS MODULE NEED REFACTORING !
   ###
 
-  import Bitwise,
-    only: [{:"^^^", 2}, {:&&&, 2}, {:>>>, 2}, {:"~~~", 1}, band: 2, bxor: 2, bsr: 2, bnot: 1]
+  import Bitwise, only: [band: 2, bxor: 2, bsr: 2, bnot: 1]
 
   @table ["\0", " ", "-", ".", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "\n", "\0"]
 
@@ -108,8 +107,8 @@ defmodule ChannelService.Endpoint.Cryptography do
   end
 
   defp do_unpack(<<byte::size(8), rest::binary>>, chars_to_unpack, result) do
-    is_packed = (byte &&& 0x80) > 0
-    tmp_len = byte &&& 0x7F
+    is_packed = band(byte, 0x80) > 0
+    tmp_len = band(byte, 0x7F)
     len = if is_packed, do: ceil(tmp_len / 2), else: tmp_len
 
     <<chunk::bytes-size(len), next::binary>> = rest
@@ -125,7 +124,7 @@ defmodule ChannelService.Endpoint.Cryptography do
           is_packed :: boolean
         ) :: binary
   defp decode_chunk(chunk, _, false) do
-    for <<c <- chunk>>, into: "", do: <<c ^^^ 0xFF>>
+    for <<c <- chunk>>, into: "", do: <<bxor(c, 0xFF)>>
   end
 
   defp decode_chunk(chunk, chars_to_unpack, true) do
