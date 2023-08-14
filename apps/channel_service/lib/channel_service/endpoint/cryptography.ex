@@ -7,7 +7,8 @@ defmodule ChannelService.Endpoint.Cryptography do
   ### TODO: THIS MODULE NEED REFACTORING !
   ###
 
-  import Bitwise, only: [{:"^^^", 2}, {:&&&, 2}, {:>>>, 2}, {:"~~~", 1}, band: 2, bxor: 2, bsr: 2]
+  import Bitwise,
+    only: [{:"^^^", 2}, {:&&&, 2}, {:>>>, 2}, {:"~~~", 1}, band: 2, bxor: 2, bsr: 2, bnot: 1]
 
   @table ["\0", " ", "-", ".", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "\n", "\0"]
 
@@ -33,17 +34,29 @@ defmodule ChannelService.Endpoint.Cryptography do
 
   ## Examples
 
+      iex> ChannelService.Endpoint.Cryptography.encrypt("foo")
+      <<3, 153, 144, 144, 255>>
   """
-  @spec encrypt(String.t()) :: binary
+  @spec encrypt(binary) :: binary
   def encrypt(packet) do
     bytes =
       packet
-      |> :unicode.characters_to_list(:utf8)
+      |> :binary.bin_to_list()
       |> Enum.with_index()
 
-    length = length(bytes)
-    data = for {b, i} <- bytes, into: <<>>, do: do_encrypt(b, i, length)
-    <<data::binary, 0xFF::size(8)>>
+    len = length(bytes)
+
+    data =
+      for {c, i} <- bytes, into: <<>> do
+        if rem(i, 0x7E) != 0 do
+          <<bnot(c)>>
+        else
+          remaining = if len - i > 0x7E, do: 0x7E, else: len - i
+          <<remaining, bnot(c)>>
+        end
+      end
+
+    <<data::binary, 0xFF>>
   end
 
   @doc """
@@ -158,14 +171,6 @@ defmodule ChannelService.Endpoint.Cryptography do
     packet
     |> Stream.map(&String.split(&1, " ", parts: 2))
     |> Enum.map(fn [_, packet] -> packet end)
-  end
-
-  @spec do_encrypt(char, integer, integer) :: binary
-  defp do_encrypt(char, index, _) when rem(index, 0x7E) != 0, do: <<(~~~char)>>
-
-  defp do_encrypt(char, index, length) do
-    remaining = if length - index > 0x7E, do: 0x7E, else: length - index
-    <<remaining::size(8), ~~~char::size(8)>>
   end
 
   #

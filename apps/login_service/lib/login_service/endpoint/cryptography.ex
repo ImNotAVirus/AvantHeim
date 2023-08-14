@@ -20,8 +20,12 @@ defmodule LoginService.Endpoint.Cryptography do
   """
   @spec encrypt(String.t()) :: binary
   def encrypt(packet) do
-    data = for <<c <- packet>>, into: <<>>, do: <<band(c + 15, 0xFF)::size(8)>>
-    <<data::binary, 0x19::size(8)>>
+    data =
+      for <<c <- packet>>, into: <<>> do
+        <<band(c + 15, 0xFF)::size(8)>>
+      end
+
+    <<data::binary, 0x19>>
   end
 
   @doc """
