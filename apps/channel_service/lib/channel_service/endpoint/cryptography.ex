@@ -123,7 +123,7 @@ defmodule ChannelService.Endpoint.Cryptography do
   end
 
   def decrypt(binary, _) do
-    for <<c <- binary>>, into: <<>>, do: do_decrypt_session(c)
+    do_decrypt_session(binary)
   end
 
   ## Private functions
@@ -166,7 +166,11 @@ defmodule ChannelService.Endpoint.Cryptography do
     end
   end
 
-  defp do_decrypt_session(c) do
+  defp do_decrypt_session(<<>>) do
+    <<>>
+  end
+
+  defp do_decrypt_session(<<c>>) do
     first_byte = c - 0xF
     second_byte = band(first_byte, 0xF0)
     first_key = first_byte - second_byte
@@ -181,6 +185,10 @@ defmodule ChannelService.Endpoint.Cryptography do
         _ -> <<0x2C + key>>
       end
     end
+  end
+
+  defp do_decrypt_session(packet) do
+    for <<c <- packet>>, into: <<>>, do: do_decrypt_session(<<c>>)
   end
 
   defp do_decrypt_channel(c, mode, offset) do
