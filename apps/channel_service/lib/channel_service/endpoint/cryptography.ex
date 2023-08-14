@@ -113,14 +113,12 @@ defmodule ChannelService.Endpoint.Cryptography do
       "5 59115 1098142510;;"
   """
   @spec decrypt(binary, map) :: binary
-  def decrypt(binary, %{encryption_key: encryption_key}) when not is_nil(encryption_key) do
-    mode = decrypt_mode(encryption_key)
-    offset = decrypt_offset(encryption_key)
-    do_decrypt_channel(binary, mode, offset)
+  def decrypt(binary, assigns) when is_map_key(assigns, :offset) and is_map_key(assigns, :mode) do
+    do_decrypt_channel(binary, assigns)
   end
 
-  def decrypt(binary, _) do
-    do_decrypt_session(binary)
+  def decrypt(binary, assigns) do
+    do_decrypt_session(binary, assigns)
   end
 
   ## Private functions
@@ -163,11 +161,11 @@ defmodule ChannelService.Endpoint.Cryptography do
     end
   end
 
-  defp do_decrypt_session(<<>>) do
+  defp do_decrypt_session(<<>>, _assigns) do
     <<>>
   end
 
-  defp do_decrypt_session(<<c>>) do
+  defp do_decrypt_session(<<c>>, _assigns) do
     first_byte = c - 0xF
     second_byte = band(first_byte, 0xF0)
     first_key = first_byte - second_byte
@@ -184,16 +182,16 @@ defmodule ChannelService.Endpoint.Cryptography do
     end
   end
 
-  defp do_decrypt_session(packet) do
-    for <<c <- packet>>, into: <<>>, do: do_decrypt_session(<<c>>)
+  defp do_decrypt_session(packet, assigns) do
+    for <<c <- packet>>, into: <<>>, do: do_decrypt_session(<<c>>, assigns)
   end
 
-  defp do_decrypt_channel(c, mode, offset) do
-    case mode do
-      0 -> <<c - offset>>
-      1 -> <<c + offset>>
-      2 -> <<bxor(c - offset, 0xC3)>>
-      3 -> <<bxor(c + offset, 0xC3)>>
+  defp do_decrypt_channel(c, assigns) do
+    case assigns.mode do
+      0 -> <<c - assigns.offset>>
+      1 -> <<c + assigns.offset>>
+      2 -> <<bxor(c - assigns.offset, 0xC3)>>
+      3 -> <<bxor(c + assigns.offset, 0xC3)>>
     end
   end
 
