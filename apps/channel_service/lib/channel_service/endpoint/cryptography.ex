@@ -18,11 +18,8 @@ defmodule ChannelService.Endpoint.Cryptography do
   @doc """
   Decrypt the delimiter from a key.
   """
-  @spec decrypt_delimiter(integer()) :: integer()
-  def decrypt_delimiter(key) do
-    offset = decrypt_offset(key)
-    mode = decrypt_mode(key)
-
+  @spec decrypt_delimiter(integer(), integer()) :: integer()
+  def decrypt_delimiter(offset, mode) do
     case mode do
       0 -> 0xFF + offset
       1 -> 0xFF - offset
@@ -52,21 +49,21 @@ defmodule ChannelService.Endpoint.Cryptography do
 
   ## Examples
 
-      iex> ChannelService.Endpoint.Cryptography.next(<<198, 228, 203, 145, 70, 205, 214, 220, 208, 217, 208, 196, 7, 212, 73, 255, 208, 203, 222, 209, 215, 208, 210, 218, 193, 112, 67, 220, 208, 210, 63, 199, 228, 203, 161, 16, 72, 215, 214, 221, 200, 214, 200, 214, 248, 193, 160, 65, 218, 193, 224, 66, 241, 205, 199, 228, 203, 161, 16, 72, 215, 214, 221, 200, 214, 200, 214, 248, 193, 160, 65, 218, 193, 224, 66, 241, 205>>, 0xFF)
+      iex> ChannelService.Endpoint.Cryptography.next(<<198, 228, 203, 145, 70, 205, 214, 220, 208, 217, 208, 196, 7, 212, 73, 255, 208, 203, 222, 209, 215, 208, 210, 218, 193, 112, 67, 220, 208, 210, 63, 199, 228, 203, 161, 16, 72, 215, 214, 221, 200, 214, 200, 214, 248, 193, 160, 65, 218, 193, 224, 66, 241, 205, 199, 228, 203, 161, 16, 72, 215, 214, 221, 200, 214, 200, 214, 248, 193, 160, 65, 218, 193, 224, 66, 241, 205>>, %{delimiter: 0xFF})
       {<<198, 228, 203, 145, 70, 205, 214, 220, 208, 217, 208, 196, 7, 212, 73>>, <<208, 203, 222, 209, 215, 208, 210, 218, 193, 112, 67, 220, 208, 210, 63, 199, 228, 203, 161, 16, 72, 215, 214, 221, 200, 214, 200, 214, 248, 193, 160, 65, 218, 193, 224, 66, 241, 205, 199, 228, 203, 161, 16, 72, 215, 214, 221, 200, 214, 200, 214, 248, 193, 160, 65, 218, 193, 224, 66, 241, 205>>}
   """
-  @spec next(binary(), integer(), binary()) :: {binary() | nil, binary()}
-  def next(raw, delimiter, acc \\ <<>>)
+  @spec next(binary(), map(), binary()) :: {binary() | nil, binary()}
+  def next(raw, assigns, acc \\ <<>>)
 
-  def next(<<>>, delimiter, acc) do
+  def next(<<>>, assigns, acc) do
     {acc, <<>>}
   end
 
-  def next(<<c, rest::binary>>, delimiter, acc) do
-    if c == delimiter do
+  def next(<<c, rest::binary>>, assigns, acc) do
+    if c == assigns.delimiter do
       {acc, rest}
     else
-      next(rest, delimiter, <<acc::binary, c>>)
+      next(rest, assigns, <<acc::binary, c>>)
     end
   end
 

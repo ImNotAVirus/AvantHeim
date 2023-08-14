@@ -12,14 +12,26 @@ defmodule ChannelService.Endpoint.PacketHandlers do
   ## Special handlers without packet headers
 
   # First packet received: encryption key
-  def handle_packet({:handshake, [enc_key]}, socket) when is_nil(socket.assigns.enc_key) do
-    enc_key = String.to_integer(enc_key)
+  def handle_packet({:handshake, [encryption_key]}, socket)
+      when is_nil(socket.assigns.encryption_key) do
+    encryption_key = String.to_integer(encryption_key)
 
-    if enc_key == 0 and @mix_env == :prod do
+    if encryption_key == 0 and @mix_env == :prod do
       Logger.warn("Encryption key is 0", socket_id: socket.id)
     end
 
-    {:cont, assign(socket, :enc_key, enc_key)}
+    offset = ChannelService.Endpoint.Cryptography.decrypt_offset(encryption_key)
+    mode = ChannelService.Endpoint.Cryptography.decrypt_mode(encryption_key)
+    delimiter = ChannelService.Endpoint.Cryptography.decrypt_delimiter(offset, mode)
+
+    socket =
+      socket
+      |> assign(:offset, offset)
+      |> assign(:mode, mode)
+      |> assign(:delimiter, delimiter)
+      |> assign(:encryption_key, encryption_key)
+
+    {:cont, socket}
   end
 
   # Second packet received: username

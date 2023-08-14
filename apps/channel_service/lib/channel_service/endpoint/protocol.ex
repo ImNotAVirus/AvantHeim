@@ -19,7 +19,7 @@ defmodule ChannelService.Endpoint.Protocol do
     %Socket{transport: transport, transport_pid: transport_pid} = socket
     :ok = transport.setopts(transport_pid, packet: :raw, reuseaddr: true)
 
-    {:ok, assign(socket, state: :handshake, enc_key: nil, username: nil)}
+    {:ok, assign(socket, state: :handshake, encryption_key: nil, username: nil)}
   end
 
   @impl true
