@@ -157,22 +157,6 @@ defmodule ChannelService.Endpoint.Cryptography do
     end
   end
 
-  @spec split_keepalive([packet], boolean) :: [packet] | [{integer, packet}]
-  defp split_keepalive(packet, false), do: packet
-
-  defp split_keepalive(packet, true) do
-    packet
-    |> Stream.map(&String.split(&1, " ", parts: 2))
-    |> Enum.map(fn [l, r] -> {String.to_integer(l), r} end)
-  end
-
-  @spec remove_keepalive([packet]) :: [packet]
-  defp remove_keepalive(packet) do
-    packet
-    |> Stream.map(&String.split(&1, " ", parts: 2))
-    |> Enum.map(fn [_, packet] -> packet end)
-  end
-
   #
   # Private functions
   #
