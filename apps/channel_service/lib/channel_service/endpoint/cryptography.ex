@@ -16,27 +16,58 @@ defmodule ChannelService.Endpoint.Cryptography do
   ## Public API
 
   @doc """
+  Decrypt the delimiter from a key.
+  """
+  @spec decrypt_delimiter(integer()) :: integer()
+  def decrypt_delimiter(key) do
+    offset = decrypt_offset(key)
+    mode = decrypt_mode(key)
+
+    case mode do
+      0 -> 0xFF + offset
+      1 -> 0xFF - offset
+      2 -> bxor(0xFF + offset, 0xC3)
+      3 -> bxor(0xFF - offset, 0xC3)
+    end
+  end
+
+  @doc """
+  Decrypt the offset from a key.
+  """
+  @spec decrypt_offset(integer()) :: integer()
+  def decrypt_offset(key) do
+    band(key, 0xFF)
+  end
+
+  @doc """
+  Decrypt the mode from a key.
+  """
+  @spec decrypt_mode(integer()) :: integer()
+  def decrypt_mode(key) do
+    bsr(key, band(6, 3))
+  end
+
+  @doc """
   Get the next packet from a raw binary.
 
   ## Examples
 
-      iex> ChannelService.Endpoint.Cryptography.next(<<198, 228, 203, 145, 70, 205, 214, 220, 208, 217, 208, 196, 7, 212, 73, 255, 208, 203, 222, 209, 215, 208, 210, 218, 193, 112, 67, 220, 208, 210, 63, 199, 228, 203, 161, 16, 72, 215, 214, 221, 200, 214, 200, 214, 248, 193, 160, 65, 218, 193, 224, 66, 241, 205, 199, 228, 203, 161, 16, 72, 215, 214, 221, 200, 214, 200, 214, 248, 193, 160, 65, 218, 193, 224, 66, 241, 205>>, 0)
+      iex> ChannelService.Endpoint.Cryptography.next(<<198, 228, 203, 145, 70, 205, 214, 220, 208, 217, 208, 196, 7, 212, 73, 255, 208, 203, 222, 209, 215, 208, 210, 218, 193, 112, 67, 220, 208, 210, 63, 199, 228, 203, 161, 16, 72, 215, 214, 221, 200, 214, 200, 214, 248, 193, 160, 65, 218, 193, 224, 66, 241, 205, 199, 228, 203, 161, 16, 72, 215, 214, 221, 200, 214, 200, 214, 248, 193, 160, 65, 218, 193, 224, 66, 241, 205>>, 0xFF)
       {<<198, 228, 203, 145, 70, 205, 214, 220, 208, 217, 208, 196, 7, 212, 73>>, <<208, 203, 222, 209, 215, 208, 210, 218, 193, 112, 67, 220, 208, 210, 63, 199, 228, 203, 161, 16, 72, 215, 214, 221, 200, 214, 200, 214, 248, 193, 160, 65, 218, 193, 224, 66, 241, 205, 199, 228, 203, 161, 16, 72, 215, 214, 221, 200, 214, 200, 214, 248, 193, 160, 65, 218, 193, 224, 66, 241, 205>>}
   """
-  @spec next(binary(), integer() | nil) :: {binary() | nil, binary()}
-  def next(raw, key) do
-    offset = band(key, 0xFF)
-    mode = bsr(key, band(6, 3))
+  @spec next(binary(), integer(), binary()) :: {binary() | nil, binary()}
+  def next(raw, delimiter, acc \\ <<>>)
 
-    delimiter =
-      case mode do
-        0 -> 0xFF + offset
-        1 -> 0xFF - offset
-        2 -> bxor(0xFF + offset, 0xC3)
-        3 -> bxor(0xFF - offset, 0xC3)
-      end
+  def next(<<>>, delimiter, acc) do
+    {acc, <<>>}
+  end
 
-    do_next(raw, delimiter)
+  def next(<<c, rest::binary>>, delimiter, acc) do
+    if c == delimiter do
+      {acc, rest}
+    else
+      next(rest, delimiter, <<acc::binary, c>>)
+    end
   end
 
   @spec unpack(binary(), any()) :: packet()
@@ -86,8 +117,8 @@ defmodule ChannelService.Endpoint.Cryptography do
   """
   @spec decrypt(binary, map) :: binary
   def decrypt(binary, %{encryption_key: encryption_key}) when not is_nil(encryption_key) do
-    mode = bsr(encryption_key, band(6, 0x03))
-    offset = band(encryption_key, 0xFF) + band(0x40, 0xFF)
+    mode = decrypt_mode(encryption_key)
+    offset = decrypt_offset(encryption_key)
     do_decrypt_channel(binary, mode, offset)
   end
 
@@ -132,14 +163,6 @@ defmodule ChannelService.Endpoint.Cryptography do
       left_byte = Enum.at(chars_to_unpack, h)
       right_byte = Enum.at(chars_to_unpack, l)
       if l != 0, do: left_byte <> right_byte, else: left_byte
-    end
-  end
-
-  defp do_next(<<c, rest::binary>>, delimiter, acc \\ <<>>) do
-    if c == delimiter do
-      {acc, rest}
-    else
-      do_next(rest, delimiter, <<acc::binary, c>>)
     end
   end
 
