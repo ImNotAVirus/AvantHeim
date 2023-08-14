@@ -9,8 +9,8 @@ defmodule LoginService.Endpoint.NetworkCodec do
   alias LoginService.Endpoint.Cryptography
 
   @impl true
-  def next(raw, _socket) do
-    Cryptography.next(raw)
+  def next(raw, socket) do
+    Cryptography.next(raw, socket.assigns)
   end
 
   @impl true
