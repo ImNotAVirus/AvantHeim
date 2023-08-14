@@ -16,7 +16,7 @@ defmodule ElvenPackets.Server.PlayerPackets do
     ]
 
   alias ElvenPackets.SubPackets.Player.CInfo.Family
-  alias ElvenPackets.Types.{NsInteger, NsString, NsEnum, NsBoolean, NsList}
+  alias ElvenPackets.Types.{NsInteger, NsString, NsEnum, NsBoolean}
 
   #######
   # Reputation display

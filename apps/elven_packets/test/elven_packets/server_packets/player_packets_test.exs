@@ -35,7 +35,7 @@ defmodule ElvenPackets.Client.PlayerPacketsTest do
 
   describe "fd" do
     test "can be serialized" do
-      packet = fd()
+      packet = %Fd{reputation: 1, reputation_icon_id: 2, dignity: 3, dignity_icon_id: 4}
       assert {"fd", params} = serialize_packet(packet)
       assert is_list(params)
       assert length(params) == 4
@@ -48,7 +48,7 @@ defmodule ElvenPackets.Client.PlayerPacketsTest do
 
   describe "fs" do
     test "can be serialized" do
-      packet = fs()
+      packet = %Fs{faction: :angel}
       assert {"fs", [params]} = serialize_packet(packet)
       assert params == "1"
     end
@@ -77,7 +77,7 @@ defmodule ElvenPackets.Client.PlayerPacketsTest do
 
   describe "rsfi" do
     test "can be serialized" do
-      packet = rsfi()
+      packet = %Rsfi{act: 1, act_part: 2, unknown: 3, unknown2: 4, ts: 5, ts_max: 6}
       assert {"rsfi", params} = serialize_packet(packet)
       assert is_list(params)
       assert length(params) == 6
@@ -92,7 +92,7 @@ defmodule ElvenPackets.Client.PlayerPacketsTest do
 
   describe "stat" do
     test "can be serialized" do
-      packet = stat()
+      packet = %Stat{hp: 1, hp_max: 2, mp: 3, mp_max: 4, unknown: 5, option: 6}
       assert {"stat", params} = serialize_packet(packet)
       assert is_list(params)
       assert length(params) == 6
@@ -107,7 +107,7 @@ defmodule ElvenPackets.Client.PlayerPacketsTest do
 
   describe "tit" do
     test "can be serialized" do
-      packet = tit()
+      packet = %Tit{class: :archer, name: "Fizo"}
       assert {"tit", params} = serialize_packet(packet)
       assert is_list(params)
       assert length(params) == 2
@@ -140,30 +140,6 @@ defmodule ElvenPackets.Client.PlayerPacketsTest do
     }
   end
 
-  defp fd() do
-    %Fd{
-      reputation: 1,
-      reputation_icon_id: 2,
-      dignity: 3,
-      dignity_icon_id: 4
-    }
-  end
-
-  defp fs() do
-    %Fs{faction: :angel}
-  end
-
-  defp stat() do
-    %Stat{
-      hp: 1,
-      hp_max: 2,
-      mp: 3,
-      mp_max: 4,
-      unknown: 5,
-      option: 6
-    }
-  end
-
   defp rsfi() do
     %Rsfi{
       act: 1,
@@ -189,13 +165,6 @@ defmodule ElvenPackets.Client.PlayerPacketsTest do
       hero_level: 10,
       hero_level_xp_max: 11,
       unknown: 12
-    }
-  end
-
-  defp tit() do
-    %Tit{
-      class: :archer,
-      name: "Fizo"
     }
   end
 end
