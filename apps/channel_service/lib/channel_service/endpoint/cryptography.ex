@@ -168,4 +168,17 @@ defmodule ChannelService.Endpoint.Cryptography do
       3 -> <<bxor(c + offset, 0xC3)>>
     end
   end
+
+  defp do_unpack_linear(packet, flag) do
+    len =
+      if flag < length(packet) do
+        flag
+      else
+        length(packet)
+      end
+
+    for <<c <- :binary.part(packet, {0, len})>>, into: <<>> do
+      <<bxor(c, 0xFF)>>
+    end
+  end
 end
