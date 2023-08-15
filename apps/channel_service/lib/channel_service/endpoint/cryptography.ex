@@ -108,18 +108,26 @@ defmodule ChannelService.Endpoint.Cryptography do
   end
 
   defp unpack_compact_payload(<<c>>, _len) do
+    bsr_permutation(c) <> band_permutation(c)
+  end
+
+  defp bsr_permutation(c) do
     h = bsr(c, 4)
+
+    if h != 0 and h != 0xF do
+      Map.get(@permutations, h - 1)
+    else
+      <<>>
+    end
+  end
+
+  defp band_permutation(c) do
     l = band(c, 0xF)
 
-    case {h != 0 and h != 0xF, l != 0 and l != 0xF} do
-      {true, false} ->
-        Map.get(@permutations, h - 1)
-
-      {true, true} ->
-        Map.get(@permutations, h - 1) <> Map.get(@permutations, l - 1)
-
-      {false, true} ->
-        Map.get(@permutations, l - 1)
+    if l != 0 and l != 0xF do
+      Map.get(@permutations, l - 1)
+    else
+      <<>>
     end
   end
 
