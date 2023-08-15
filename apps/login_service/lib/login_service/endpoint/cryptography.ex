@@ -77,25 +77,24 @@ defmodule LoginService.Endpoint.Cryptography do
 
   ## Examples
 
-    iex> LoginService.Endpoint.Cryptography.decrypt_pass("2EB6A196E4B60D96A9267E")
+    iex> LoginService.Endpoint.Cryptography.decrypt_password("2EB6A196E4B60D96A9267E")
     "admin"
-    iex> LoginService.Endpoint.Cryptography.decrypt_pass("1BE97B527A306B597A2")
+    iex> LoginService.Endpoint.Cryptography.decrypt_password("1BE97B527A306B597A2")
     "user"
   """
-  @spec decrypt_pass(String.t()) :: String.t()
-  def decrypt_pass(enc_password) do
-    tmp =
-      case enc_password |> String.length() |> rem(2) do
-        0 -> String.slice(enc_password, 3..-1)
-        1 -> String.slice(enc_password, 4..-1)
+  @spec decrypt_password(String.t()) :: String.t()
+  def decrypt_password(password) do
+    password
+    |> String.slice(
+      case password |> String.length() |> rem(2) do
+        0 -> 3..-1
+        1 -> 4..-1
       end
-
-    tmp
+    )
     |> String.codepoints()
-    |> Stream.chunk_every(2)
-    |> Stream.map(fn [x | _] -> x end)
-    |> Stream.chunk_every(2)
-    |> Stream.map(&Enum.join/1)
+    |> Enum.take_every(2)
+    |> Enum.chunk_every(2)
+    |> Enum.map(&Enum.join/1)
     |> Enum.map(&String.to_integer(&1, 16))
     |> to_string()
   end
