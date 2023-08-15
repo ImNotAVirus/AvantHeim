@@ -5,8 +5,6 @@ defmodule ChannelService.Endpoint.Cryptography do
 
   import Bitwise, only: [band: 2, bxor: 2, bsr: 2, bnot: 1]
 
-  @typep packet() :: String.t()
-
   ## Public API
 
   @doc """
@@ -86,7 +84,7 @@ defmodule ChannelService.Endpoint.Cryptography do
       iex> ChannelService.Endpoint.Cryptography.unpack(<<135, 141, 107, 177, 64>>)
       "49277 0"
   """
-  @spec unpack(binary(), binary()) :: packet()
+  @spec unpack(binary(), binary()) :: binary()
   def unpack(binary, acc \\ <<>>)
 
   def unpack(<<>>, acc) do
