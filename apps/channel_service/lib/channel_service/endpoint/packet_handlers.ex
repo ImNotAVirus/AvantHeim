@@ -29,7 +29,6 @@ defmodule ChannelService.Endpoint.PacketHandlers do
       |> assign(:offset, offset)
       |> assign(:mode, mode)
       |> assign(:delimiter, delimiter)
-      |> assign(:encryption_key, encryption_key)
 
     {:cont, socket}
   end
