@@ -10,8 +10,8 @@ defmodule ChannelService.Endpoint.Cryptography do
   @doc """
   Decrypt the delimiter from a key.
   """
-  @spec decrypt_delimiter(integer(), integer()) :: integer()
-  def decrypt_delimiter(offset, mode) do
+  @spec pack_delimiter(integer(), integer()) :: integer()
+  def pack_delimiter(offset, mode) do
     case mode do
       0 -> 0xFF + offset
       1 -> 0xFF - offset
@@ -23,16 +23,16 @@ defmodule ChannelService.Endpoint.Cryptography do
   @doc """
   Decrypt the offset from a key.
   """
-  @spec decrypt_offset(integer()) :: integer()
-  def decrypt_offset(key) do
+  @spec cipher_offset(integer()) :: integer()
+  def cipher_offset(key) do
     band(key, 0xFF)
   end
 
   @doc """
   Decrypt the mode from a key.
   """
-  @spec decrypt_mode(integer()) :: integer()
-  def decrypt_mode(key) do
+  @spec cipher_mode(integer()) :: integer()
+  def cipher_mode(key) do
     bsr(key, band(6, 3))
   end
 
@@ -93,50 +93,59 @@ defmodule ChannelService.Endpoint.Cryptography do
 
   def unpack(<<flag, rest::binary>>, acc) do
     if 0x7A > flag do
-      {packet, rest} = unpack_linear(rest, flag)
-      unpack(rest, <<packet::binary, acc::binary>>)
+      {pack, rest} = unpack_linear(rest, flag)
+      unpack(rest, <<pack::binary, acc::binary>>)
     else
-      {packet, rest} = unpack_compact(rest, band(flag, 0x7F))
-      unpack(rest, <<packet::binary, acc::binary>>)
+      {pack, rest} = unpack_compact(rest, band(flag, 0x7F))
+      unpack(rest, <<pack::binary, acc::binary>>)
     end
   end
 
-  defp unpack_compact(packet, flag) do
-    len = min(byte_size(packet), flag)
-
-    data =
-      for <<c <- :binary.part(packet, {0, len})>>, into: <<>> do
-        h = bsr(c, 4)
-        l = band(c, 0xF)
-
-        cond do
-          h != 0 and h != 0xF and (l == 0 or l == 0xF) ->
-            Map.get(@permutations, h - 1)
-
-          l != 0 and l != 0xF and (h == 0 or h == 0xF) ->
-            Map.get(@permutations, l - 1)
-
-          h != 0 and h != 0xF and l != 0 and l != 0xF ->
-            Map.get(@permutations, h - 1) <> Map.get(@permutations, l - 1)
-
-          true ->
-            <<>>
-        end
-      end
-
-    {data, :binary.part(packet, {len, byte_size(packet) - len})}
-    |> IO.inspect()
+  defp unpack_compact(pack, flag) do
+    len = min(byte_size(pack), flag)
+    data = unpack_compact_payload(pack, len)
+    {data, :binary.part(pack, {len, byte_size(pack) - len})}
   end
 
-  defp unpack_linear(packet, flag) do
-    len = min(byte_size(packet), flag)
+  defp unpack_compact_payload(<<c>>, _len) do
+    h = bsr(c, 4)
+    l = band(c, 0xF)
 
-    data =
-      for <<c <- :binary.part(packet, {0, len})>>, into: <<>> do
-        <<bxor(c, 0xFF)>>
-      end
+    cond do
+      h != 0 and h != 0xF and (l == 0 or l == 0xF) ->
+        Map.get(@permutations, h - 1)
 
-    {data, :binary.part(packet, {len, byte_size(packet) - len})}
+      l != 0 and l != 0xF and (h == 0 or h == 0xF) ->
+        Map.get(@permutations, l - 1)
+
+      h != 0 and h != 0xF and l != 0 and l != 0xF ->
+        Map.get(@permutations, h - 1) <> Map.get(@permutations, l - 1)
+
+      true ->
+        <<>>
+    end
+  end
+
+  defp unpack_compact_payload(payload, len) do
+    for <<c <- :binary.part(payload, {0, len})>>, into: <<>> do
+      unpack_compact_payload(<<c>>, len)
+    end
+  end
+
+  defp unpack_linear(pack, flag) do
+    len = min(byte_size(pack), flag)
+    data = unpack_linear_payload(pack, len)
+    {data, :binary.part(pack, {len, byte_size(pack) - len})}
+  end
+
+  defp unpack_linear_payload(<<c>>, len) do
+    <<bxor(c, 0xFF)>>
+  end
+
+  defp unpack_linear_payload(payload, len) do
+    for <<c <- :binary.part(payload, {0, len})>>, into: <<>> do
+      unpack_linear_payload(<<c>>, len)
+    end
   end
 
   @doc """

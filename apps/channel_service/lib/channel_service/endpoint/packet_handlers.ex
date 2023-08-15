@@ -20,9 +20,9 @@ defmodule ChannelService.Endpoint.PacketHandlers do
       Logger.warn("Encryption key is 0", socket_id: socket.id)
     end
 
-    offset = ChannelService.Endpoint.Cryptography.decrypt_offset(encryption_key)
-    mode = ChannelService.Endpoint.Cryptography.decrypt_mode(encryption_key)
-    delimiter = ChannelService.Endpoint.Cryptography.decrypt_delimiter(offset, mode)
+    offset = ChannelService.Endpoint.Cryptography.cipher_offset(encryption_key)
+    mode = ChannelService.Endpoint.Cryptography.cipher_mode(encryption_key)
+    delimiter = ChannelService.Endpoint.Cryptography.pack_delimiter(offset, mode)
 
     socket =
       socket
