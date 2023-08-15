@@ -37,7 +37,7 @@ defmodule LoginService.Endpoint.Cryptography do
       iex> LoginService.Endpoint.Cryptography.encrypt("fail Hello. This is a basic test")
       <<117, 112, 120, 123, 47, 87, 116, 123, 123, 126, 61, 47, 99, 119, 120, 130, 47, 120, 130, 47, 112, 47, 113, 112, 130, 120, 114, 47, 131, 116, 130, 131, 25>>
   """
-  @spec encrypt(String.t()) :: binary
+  @spec encrypt(binary) :: binary
   def encrypt(packet) do
     <<encrypt_payload(packet)::binary, 0x19>>
   end
