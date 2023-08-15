@@ -111,18 +111,15 @@ defmodule ChannelService.Endpoint.Cryptography do
     h = bsr(c, 4)
     l = band(c, 0xF)
 
-    cond do
-      h != 0 and h != 0xF and (l == 0 or l == 0xF) ->
+    case {h != 0 and h != 0xF, l != 0 and l != 0xF} do
+      {true, false} ->
         Map.get(@permutations, h - 1)
 
-      l != 0 and l != 0xF and (h == 0 or h == 0xF) ->
-        Map.get(@permutations, l - 1)
-
-      h != 0 and h != 0xF and l != 0 and l != 0xF ->
+      {true, true} ->
         Map.get(@permutations, h - 1) <> Map.get(@permutations, l - 1)
 
-      true ->
-        <<>>
+      {false, true} ->
+        Map.get(@permutations, l - 1)
     end
   end
 
