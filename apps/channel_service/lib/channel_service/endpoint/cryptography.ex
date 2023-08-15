@@ -9,8 +9,6 @@ defmodule ChannelService.Endpoint.Cryptography do
 
   import Bitwise, only: [band: 2, bxor: 2, bsr: 2, bnot: 1]
 
-  @table ["\0", " ", "-", ".", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "\n", "\0"]
-
   @typep packet() :: String.t()
 
   ## Public API
@@ -67,9 +65,84 @@ defmodule ChannelService.Endpoint.Cryptography do
     end
   end
 
-  @spec unpack(binary(), any()) :: packet()
-  def unpack(binary, _ \\ nil) do
-    do_unpack(binary, @table)
+  @permutations %{
+    0 => " ",
+    1 => "-",
+    2 => ".",
+    3 => "0",
+    4 => "1",
+    5 => "2",
+    6 => "3",
+    7 => "4",
+    8 => "5",
+    9 => "6",
+    10 => "7",
+    11 => "8",
+    12 => "9",
+    13 => "n"
+  }
+
+  @doc """
+  Unpack a world packet.
+
+  ## Examples
+
+      iex> ChannelService.Endpoint.Cryptography.unpack(<<135, 141, 107, 177, 64>>)
+      "49277 0"
+  """
+  @spec unpack(binary(), binary()) :: packet()
+  def unpack(binary, acc \\ <<>>)
+
+  def unpack(<<>>, acc) do
+    acc
+  end
+
+  def unpack(<<flag, rest::binary>>, acc) do
+    if 0x7A > flag do
+      {packet, rest} = unpack_linear(rest, flag)
+      unpack(rest, <<packet::binary, acc::binary>>)
+    else
+      {packet, rest} = unpack_compact(rest, band(flag, 0x7F))
+      unpack(rest, <<packet::binary, acc::binary>>)
+    end
+  end
+
+  defp unpack_compact(packet, flag) do
+    len = min(byte_size(packet), flag)
+
+    data =
+      for <<c <- :binary.part(packet, {0, len})>>, into: <<>> do
+        h = bsr(c, 4)
+        l = band(c, 0xF)
+
+        cond do
+          h != 0 and h != 0xF and (l == 0 or l == 0xF) ->
+            Map.get(@permutations, h - 1)
+
+          l != 0 and l != 0xF and (h == 0 or h == 0xF) ->
+            Map.get(@permutations, l - 1)
+
+          h != 0 and h != 0xF and l != 0 and l != 0xF ->
+            Map.get(@permutations, h - 1) <> Map.get(@permutations, l - 1)
+
+          true ->
+            <<>>
+        end
+      end
+
+    {data, :binary.part(packet, {len, byte_size(packet) - len})}
+    |> IO.inspect()
+  end
+
+  defp unpack_linear(packet, flag) do
+    len = min(byte_size(packet), flag)
+
+    data =
+      for <<c <- :binary.part(packet, {0, len})>>, into: <<>> do
+        <<bxor(c, 0xFF)>>
+      end
+
+    {data, :binary.part(packet, {len, byte_size(packet) - len})}
   end
 
   @doc """
@@ -82,24 +155,21 @@ defmodule ChannelService.Endpoint.Cryptography do
   """
   @spec encrypt(binary) :: binary
   def encrypt(packet) do
-    bytes =
-      packet
-      |> :binary.bin_to_list()
-      |> Enum.with_index()
+    <<encrypt_payload(packet)::binary, 0xFF>>
+  end
 
+  defp encrypt_payload(payload) do
+    bytes = payload |> :binary.bin_to_list() |> Enum.with_index()
     len = length(bytes)
 
-    data =
-      for {c, i} <- bytes, into: <<>> do
-        if rem(i, 0x7E) != 0 do
-          <<bnot(c)>>
-        else
-          remaining = if len - i > 0x7E, do: 0x7E, else: len - i
-          <<remaining, bnot(c)>>
-        end
+    for {c, i} <- bytes, into: <<>> do
+      if rem(i, 0x7E) != 0 do
+        <<bnot(c)>>
+      else
+        remaining = if len - i > 0x7E, do: 0x7E, else: len - i
+        <<remaining, bnot(c)>>
       end
-
-    <<data::binary, 0xFF>>
+    end
   end
 
   @doc """
@@ -114,58 +184,18 @@ defmodule ChannelService.Endpoint.Cryptography do
   """
   @spec decrypt(binary, map) :: binary
   def decrypt(binary, assigns) when is_map_key(assigns, :offset) and is_map_key(assigns, :mode) do
-    do_decrypt_channel(binary, assigns)
+    decrypt_channel(binary, assigns)
   end
 
   def decrypt(binary, assigns) do
-    do_decrypt_session(binary, assigns)
+    decrypt_session(binary, assigns)
   end
 
-  ## Private functions
-
-  @spec do_unpack(binary, [<<_::8>>, ...], [binary]) :: packet
-  defp do_unpack(binary, chars_to_unpack, result \\ [])
-
-  defp do_unpack("", _, result) do
-    result
-    |> Enum.reverse()
-    |> :unicode.characters_to_binary(:latin1)
-  end
-
-  defp do_unpack(<<byte::size(8), rest::binary>>, chars_to_unpack, result) do
-    is_packed = band(byte, 0x80) > 0
-    tmp_len = band(byte, 0x7F)
-    len = if is_packed, do: ceil(tmp_len / 2), else: tmp_len
-
-    <<chunk::bytes-size(len), next::binary>> = rest
-    chunk = decode_chunk(chunk, chars_to_unpack, is_packed)
-
-    do_unpack(next, chars_to_unpack, [chunk | result])
-  end
-
-  @doc false
-  @spec decode_chunk(
-          chunk :: binary,
-          chars_to_unpack :: [<<_::8>>, ...],
-          is_packed :: boolean
-        ) :: binary
-  defp decode_chunk(chunk, _, false) do
-    for <<c <- chunk>>, into: "", do: <<bxor(c, 0xFF)>>
-  end
-
-  defp decode_chunk(chunk, chars_to_unpack, true) do
-    for <<h::size(4), l::size(4) <- chunk>>, into: "" do
-      left_byte = Enum.at(chars_to_unpack, h)
-      right_byte = Enum.at(chars_to_unpack, l)
-      if l != 0, do: left_byte <> right_byte, else: left_byte
-    end
-  end
-
-  defp do_decrypt_session(<<>>, _assigns) do
+  defp decrypt_session(<<>>, _assigns) do
     <<>>
   end
 
-  defp do_decrypt_session(<<c>>, _assigns) do
+  defp decrypt_session(<<c>>, _assigns) do
     first_byte = c - 0xF
     second_byte = band(first_byte, 0xF0)
     first_key = first_byte - second_byte
@@ -182,29 +212,16 @@ defmodule ChannelService.Endpoint.Cryptography do
     end
   end
 
-  defp do_decrypt_session(packet, assigns) do
-    for <<c <- packet>>, into: <<>>, do: do_decrypt_session(<<c>>, assigns)
+  defp decrypt_session(packet, assigns) do
+    for <<c <- packet>>, into: <<>>, do: decrypt_session(<<c>>, assigns)
   end
 
-  defp do_decrypt_channel(c, assigns) do
+  defp decrypt_channel(c, assigns) do
     case assigns.mode do
       0 -> <<c - assigns.offset>>
       1 -> <<c + assigns.offset>>
       2 -> <<bxor(c - assigns.offset, 0xC3)>>
       3 -> <<bxor(c + assigns.offset, 0xC3)>>
-    end
-  end
-
-  defp do_unpack_linear(packet, flag) do
-    len =
-      if flag < length(packet) do
-        flag
-      else
-        length(packet)
-      end
-
-    for <<c <- :binary.part(packet, {0, len})>>, into: <<>> do
-      <<bxor(c, 0xFF)>>
     end
   end
 end
