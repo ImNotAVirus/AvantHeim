@@ -3,10 +3,6 @@ defmodule ChannelService.Endpoint.Cryptography do
   Cryptography for a NosTale channel endpoint.
   """
 
-  ###
-  ### TODO: THIS MODULE NEED REFACTORING !
-  ###
-
   import Bitwise, only: [band: 2, bxor: 2, bsr: 2, bnot: 1]
 
   @typep packet() :: String.t()
