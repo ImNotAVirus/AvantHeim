@@ -39,12 +39,13 @@ defmodule LoginService.Endpoint.Cryptography do
   """
   @spec encrypt(String.t()) :: binary
   def encrypt(packet) do
-    data =
-      for <<c <- packet>>, into: <<>> do
-        <<band(c + 15, 0xFF)::8>>
-      end
+    <<encrypt_payload(packet)::binary, 0x19>>
+  end
 
-    <<data::binary, 0x19>>
+  defp encrypt_payload(payload) do
+    for <<c <- payload>>, into: <<>> do
+      <<band(c + 15, 0xFF)::8>>
+    end
   end
 
   @doc """
