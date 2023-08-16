@@ -22,27 +22,33 @@ defmodule ElvenPackets.Client.PlayerPacketsTest do
       assert Enum.at(params, 7) == "1"
       assert Enum.at(params, 8) == "0"
       assert Enum.at(params, 9) == "2"
-      assert Enum.at(params, 10) == "123"
+      assert Enum.at(params, 10) == "23"
       assert Enum.at(params, 11) == "456"
-      assert Enum.at(params, 12) == "789"
+      assert Enum.at(params, 12) == "50"
       assert Enum.at(params, 13) == "0"
       assert Enum.at(params, 14) == "2"
       assert Enum.at(params, 15) == "3"
-      assert Enum.at(params, 16) == "4"
+      assert Enum.at(params, 16) == "0"
       assert Enum.at(params, 17) == "1"
     end
   end
 
   describe "fd" do
     test "can be serialized" do
-      packet = %Fd{reputation: 1, reputation_icon_id: 2, dignity: 3, dignity_icon_id: 4}
+      packet = %Fd{
+        reputation: 1,
+        reputation_icon_id: :blue_nos,
+        dignity: 3,
+        dignity_icon_id: :stupid_minded
+      }
+
       assert {"fd", params} = serialize_packet(packet)
       assert is_list(params)
       assert length(params) == 4
       assert Enum.at(params, 0) == "1"
-      assert Enum.at(params, 1) == "2"
+      assert Enum.at(params, 1) == "23"
       assert Enum.at(params, 2) == "3"
-      assert Enum.at(params, 3) == "4"
+      assert Enum.at(params, 3) == "6"
     end
   end
 
@@ -129,25 +135,13 @@ defmodule ElvenPackets.Client.PlayerPacketsTest do
       hair_style: :hair_style_b,
       hair_color: :dark_purple,
       class: :archer,
-      reputation_icon_id: 123,
+      reputation_icon_id: :blue_nos,
       compliment: 456,
-      morph: 789,
+      morph: :pet_trainer_skin,
       is_invisible: false,
       family_level: 2,
       morph_upgrade: 3,
-      morph_design: 4,
       is_arena_winner: true
-    }
-  end
-
-  defp rsfi() do
-    %Rsfi{
-      act: 1,
-      act_part: 2,
-      unknown: 3,
-      unknown2: 4,
-      ts: 5,
-      ts_max: 6
     }
   end
 

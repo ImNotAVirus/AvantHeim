@@ -12,7 +12,7 @@ defmodule ElvenPackets.Server.UiPackets do
   #######
   # Cancel skill
   # ---
-  # Example: "cancel 1 50 1"
+  # Example: "cancel 1 50 -1"
   #######
   @serializable true
   defpacket "cancel", as: Cancel do

@@ -12,7 +12,11 @@ defmodule ElvenPackets.Server.PlayerPackets do
       hair_style: 1,
       hair_color: 1,
       character_class: 1,
-      faction: 1
+      faction: 1,
+      dignity_icon: 1,
+      reputation_icon: 1,
+      morph: 1,
+      wings_design: 1
     ]
 
   alias ElvenPackets.SubPackets.Player.CInfo.Family
@@ -21,7 +25,7 @@ defmodule ElvenPackets.Server.PlayerPackets do
   #######
   # Reputation display
   # ---
-  # Example: "c_info Fizo - 1 1.915 family 12 1 1 1 1 1 1 1 1 1 1 1 1 0"
+  # Example: "c_info Fizo - 1 1.915 family 12 1 1 1 1 1 1 1 0 1 1 1 0 0"
   #######
   @serializable true
   defpacket "c_info", as: CInfo do
@@ -35,13 +39,13 @@ defmodule ElvenPackets.Server.PlayerPackets do
     field :hair_style, NsEnum, values: hair_style(:__enumerators__)
     field :hair_color, NsEnum, values: hair_color(:__enumerators__)
     field :class, NsEnum, values: character_class(:__enumerators__)
-    field :reputation_icon_id, NsInteger
+    field :reputation_icon_id, NsEnum, values: reputation_icon(:__enumerators__)
     field :compliment, NsInteger
-    field :morph, NsInteger
+    field :morph, NsEnum, default: :default, values: morph(:__enumerators__)
     field :is_invisible, NsBoolean
     field :family_level, NsInteger
     field :morph_upgrade, NsInteger
-    field :morph_design, NsInteger
+    field :wings_design, NsEnum, default: :default, values: wings_design(:__enumerators__)
     field :is_arena_winner, NsBoolean
   end
 
@@ -53,9 +57,9 @@ defmodule ElvenPackets.Server.PlayerPackets do
   @serializable true
   defpacket "fd", as: Fd do
     field :reputation, NsInteger
-    field :reputation_icon_id, NsInteger
+    field :reputation_icon_id, NsEnum, values: reputation_icon(:__enumerators__)
     field :dignity, NsInteger
-    field :dignity_icon_id, NsInteger
+    field :dignity_icon_id, NsEnum, values: dignity_icon(:__enumerators__)
   end
 
   #######
