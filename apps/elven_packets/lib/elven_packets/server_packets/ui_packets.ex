@@ -7,6 +7,7 @@ defmodule ElvenPackets.Server.UiPackets do
 
   import ElvenPackets.Enums.UIEnums
 
+  alias ElvenPackets.SubPackets.I18nSubPacket
   alias ElvenPackets.Types.{NsInteger, NsString, NsEnum, NsBoolean}
 
   #######
@@ -56,7 +57,28 @@ defmodule ElvenPackets.Server.UiPackets do
     field :message, NsString
   end
 
-  # FIXME: Add i18n packets
+  #######
+  # Display bank informations
+  # ---
+  # Example: "s_memoi 6 2 0 0 0"
+  #######
+  @serializable true
+  defpacket "s_memoi", as: Smemoi do
+    field :text_color, NsEnum, default: :white, values: text_color(:__enumerators__)
+    field :i18n_packet, I18nSubPacket
+  end
+
+
+  #######
+  # Display bank informations
+  # ---
+  # Example: "s_memoi2 6 2 0 0 0"
+  #######
+  @serializable true
+  defpacket "s_memoi2", as: Smemoi2 do
+    field :text_color, NsEnum, default: :white, values: text_color(:__enumerators__)
+    field :i18n_packet, I18nSubPacket
+  end
 
   #######
   # Display act cinematic

@@ -1,7 +1,8 @@
 defmodule ElvenPackets.Client.UiPacketsTest do
   use ElvenPackets.PacketCase, async: true
 
-  alias ElvenPackets.Server.UiPackets.{Cancel, Gb, Gold, Info, Scene}
+  alias ElvenPackets.SubPackets.I18nSubPacket
+  alias ElvenPackets.Server.UiPackets.{Cancel, Gb, Gold, Info, Scene, Smemoi, Smemoi2}
 
   # Tests
 
@@ -56,6 +57,28 @@ defmodule ElvenPackets.Client.UiPacketsTest do
       assert is_list(params)
       assert length(params) == 1
       assert Enum.at(params, 0) == "Some message"
+    end
+  end
+
+  describe "s_memoi" do
+    test "can be serialized" do
+      packet = %Smemoi{text_color: :red, i18n_packet: %I18nSubPacket{key: "SkillDisapeared"}}
+      assert {"s_memoi", params} = serialize_packet(packet)
+      assert is_list(params)
+      assert length(params) == 2
+      assert Enum.at(params, 0) == "5"
+      assert Enum.at(params, 1) == ["18", "0"]
+    end
+  end
+
+  describe "s_memoi2" do
+    test "can be serialized" do
+      packet = %Smemoi2{text_color: :white, i18n_packet: %I18nSubPacket{key: "NotEnoughKoarenTreasure"}}
+      assert {"s_memoi2", params} = serialize_packet(packet)
+      assert is_list(params)
+      assert length(params) == 2
+      assert Enum.at(params, 0) == "6"
+      assert Enum.at(params, 1) == ["20", "0"]
     end
   end
 
