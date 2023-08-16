@@ -37,9 +37,9 @@ defmodule ElvenPackets.Client.PlayerPacketsTest do
     test "can be serialized" do
       packet = %Fd{
         reputation: 1,
-        reputation_icon_id: :blue_nos,
+        reputation_icon: :blue_nos,
         dignity: 3,
-        dignity_icon_id: :stupid_minded
+        dignity_icon: :stupid_minded
       }
 
       assert {"fd", params} = serialize_packet(packet)
@@ -83,7 +83,7 @@ defmodule ElvenPackets.Client.PlayerPacketsTest do
 
   describe "rsfi" do
     test "can be serialized" do
-      packet = %Rsfi{act: 1, act_part: 2, unknown: 3, unknown2: 4, ts: 5, ts_max: 6}
+      packet = %Rsfi{act: 1, act_part: 2, ts: 5, ts_max: 6}
       assert {"rsfi", params} = serialize_packet(packet)
       assert is_list(params)
       assert length(params) == 6
@@ -98,7 +98,7 @@ defmodule ElvenPackets.Client.PlayerPacketsTest do
 
   describe "stat" do
     test "can be serialized" do
-      packet = %Stat{hp: 1, hp_max: 2, mp: 3, mp_max: 4, unknown: 5, option: 6}
+      packet = %Stat{hp: 1, hp_max: 2, mp: 3, mp_max: 4, option: 6}
       assert {"stat", params} = serialize_packet(packet)
       assert is_list(params)
       assert length(params) == 6
@@ -135,7 +135,7 @@ defmodule ElvenPackets.Client.PlayerPacketsTest do
       hair_style: :hair_style_b,
       hair_color: :dark_purple,
       class: :archer,
-      reputation_icon_id: :blue_nos,
+      reputation_icon: :blue_nos,
       compliment: 456,
       morph: :pet_trainer_skin,
       is_invisible: false,

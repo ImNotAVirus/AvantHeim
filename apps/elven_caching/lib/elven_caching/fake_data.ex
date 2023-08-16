@@ -44,11 +44,11 @@ defmodule FakeData do
   def hero_level_xp_max(character_id: _), do: 0
 
   def dignity(character_id: _), do: 100
-  def dignity_icon_id(character_id: _), do: :basic
+  def dignity_icon(character_id: _), do: :basic
   def reputation(character_id: 1), do: 10_000_000
   def reputation(character_id: _), do: 1_000
-  def reputation_icon_id(character_id: 1), do: :legendary_hero
-  def reputation_icon_id(character_id: _), do: :green_beginner
+  def reputation_icon(character_id: 1), do: :legendary_hero
+  def reputation_icon(character_id: _), do: :green_beginner
   def compliment(character_id: 1), do: 500
   def compliment(character_id: _), do: 500
   def title_id(character_id: 1), do: 10

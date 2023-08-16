@@ -39,7 +39,7 @@ defmodule ElvenPackets.Server.PlayerPackets do
     field :hair_style, NsEnum, values: hair_style(:__enumerators__)
     field :hair_color, NsEnum, values: hair_color(:__enumerators__)
     field :class, NsEnum, values: character_class(:__enumerators__)
-    field :reputation_icon_id, NsEnum, values: reputation_icon(:__enumerators__)
+    field :reputation_icon, NsEnum, values: reputation_icon(:__enumerators__)
     field :compliment, NsInteger
     field :morph, NsEnum, default: :default, values: morph(:__enumerators__)
     field :is_invisible, NsBoolean
@@ -57,7 +57,7 @@ defmodule ElvenPackets.Server.PlayerPackets do
   @serializable true
   defpacket "fd", as: Fd do
     field :reputation, NsInteger
-    field :reputation_icon_id, NsEnum, values: reputation_icon(:__enumerators__)
+    field :reputation_icon, NsEnum, values: reputation_icon(:__enumerators__)
     field :dignity, NsInteger
     field :dignity_icon_id, NsEnum, values: dignity_icon(:__enumerators__)
   end

@@ -32,7 +32,7 @@ defmodule ElvenPackets.Views.PlayerViews do
       hair_style: character.hair_style,
       hair_color: character.hair_color,
       class: character.class,
-      reputation_icon_id: FakeData.reputation_icon_id(character_id: character.id),
+      reputation_icon: FakeData.reputation_icon(character_id: character.id),
       compliment: FakeData.compliment(character_id: character.id),
       morph: FakeData.morph(character_id: character.id),
       is_invisible: FakeData.is_invisible(character_id: character.id),
@@ -48,9 +48,9 @@ defmodule ElvenPackets.Views.PlayerViews do
 
     %Fd{
       reputation: FakeData.reputation(character_id: character.id),
-      reputation_icon_id: FakeData.reputation_icon_id(character_id: character.id),
+      reputation_icon: FakeData.reputation_icon(character_id: character.id),
       dignity: FakeData.dignity(character_id: character.id),
-      dignity_icon_id: FakeData.dignity_icon_id(character_id: character.id)
+      dignity_icon: FakeData.dignity_icon(character_id: character.id)
     }
   end
 

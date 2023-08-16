@@ -8,7 +8,7 @@ defmodule ElvenPackets.Client.UiPacketsTest do
 
   describe "cancel" do
     test "can be serialized" do
-      packet = %Cancel{cancel_type: :skill, entity_id: 50, unknown: 1}
+      packet = %Cancel{cancel_type: :skill, entity_id: 50}
       assert {"cancel", params} = serialize_packet(packet)
       assert is_list(params)
       assert length(params) == 3
