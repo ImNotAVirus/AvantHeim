@@ -59,7 +59,7 @@ defmodule ElvenPackets.Server.PlayerPackets do
     field :reputation, NsInteger
     field :reputation_icon, NsEnum, values: reputation_icon(:__enumerators__)
     field :dignity, NsInteger
-    field :dignity_icon_id, NsEnum, values: dignity_icon(:__enumerators__)
+    field :dignity_icon, NsEnum, values: dignity_icon(:__enumerators__)
   end
 
   #######

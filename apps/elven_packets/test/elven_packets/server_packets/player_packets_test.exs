@@ -89,8 +89,8 @@ defmodule ElvenPackets.Client.PlayerPacketsTest do
       assert length(params) == 6
       assert Enum.at(params, 0) == "1"
       assert Enum.at(params, 1) == "2"
-      assert Enum.at(params, 2) == "3"
-      assert Enum.at(params, 3) == "4"
+      assert Enum.at(params, 2) == "0"
+      assert Enum.at(params, 3) == "0"
       assert Enum.at(params, 4) == "5"
       assert Enum.at(params, 5) == "6"
     end
@@ -106,7 +106,7 @@ defmodule ElvenPackets.Client.PlayerPacketsTest do
       assert Enum.at(params, 1) == "2"
       assert Enum.at(params, 2) == "3"
       assert Enum.at(params, 3) == "4"
-      assert Enum.at(params, 4) == "5"
+      assert Enum.at(params, 4) == "0"
       assert Enum.at(params, 5) == "6"
     end
   end

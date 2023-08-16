@@ -14,7 +14,7 @@ defmodule ElvenPackets.Client.UiPacketsTest do
       assert length(params) == 3
       assert Enum.at(params, 0) == "0"
       assert Enum.at(params, 1) == "50"
-      assert Enum.at(params, 2) == "1"
+      assert Enum.at(params, 2) == "-1"
     end
   end
 
