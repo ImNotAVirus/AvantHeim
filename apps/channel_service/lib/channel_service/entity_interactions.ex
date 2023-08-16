@@ -1,16 +1,16 @@
-defmodule ChannelService.Endpoint.EntityInteractions do
+defmodule ChannelService.EntityInteractions do
   @moduledoc """
   TODO: Break theses functions into another modules
   """
 
-  alias ElvenCore.Socket
+  alias ElvenGard.Network.Socket
   alias ElvenCaching.CharacterRegistry
   alias ElvenCaching.MapEntity
   alias ElvenCaching.Entity.EntityPosition
   alias ElvenCaching.Entity.Character
   alias ElvenEnums.EntityEnums
 
-  alias ElvenViews.{
+  alias ElvenPackets.Views.{
     EntityViews,
     MapViews,
     PlayerViews,

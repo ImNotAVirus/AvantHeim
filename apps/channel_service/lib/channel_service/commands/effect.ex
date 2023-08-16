@@ -1,13 +1,13 @@
-defmodule ChannelService.Endpoint.EffectCommand do
+defmodule ChannelService.EffectCommand do
   @moduledoc """
   TODO: Documentation
   """
 
   alias ElvenCaching.CharacterRegistry
-  alias ElvenCore.Socket
-  alias ElvenViews.ChatViews
+  alias ElvenGard.Network.Socket
+  alias ElvenPackets.Views.ChatViews
 
-  alias ChannelService.Endpoint.EntityInteractions
+  alias ChannelService.EntityInteractions
 
   ## Public API
 

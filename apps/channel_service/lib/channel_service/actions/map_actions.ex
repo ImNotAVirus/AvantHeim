@@ -1,4 +1,4 @@
-defmodule ChannelService.Endpoint.MapActions do
+defmodule ChannelService.MapActions do
   @moduledoc """
   TODO: Documentation
   """
@@ -6,10 +6,10 @@ defmodule ChannelService.Endpoint.MapActions do
   alias ElvenCaching.CharacterRegistry
   alias ElvenCaching.MapEntity
   alias ElvenCaching.Entity.EntityPosition
-  alias ElvenCore.Socket
-  alias ElvenViews.EntityViews
+  alias ElvenGard.Network.Socket
+  alias ElvenPackets.Views.EntityViews
 
-  alias ChannelService.Endpoint.EntityInteractions
+  alias ChannelService.EntityInteractions
 
   ## Packet handlers
 

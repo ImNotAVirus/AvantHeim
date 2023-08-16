@@ -10,7 +10,7 @@ defmodule ChannelService.PresenceManager do
   alias ElvenCaching.Account.Session
   alias ElvenCaching.{CharacterRegistry, SessionRegistry}
 
-  alias ChannelService.Endpoint.EntityInteractions
+  alias ChannelService.EntityInteractions
 
   @manager_name __MODULE__
 
@@ -55,7 +55,7 @@ defmodule ChannelService.PresenceManager do
     {:ok, session} = SessionRegistry.get(username)
 
     Logger.info("#{inspect(username)} is now disconnected (reason: #{inspect(reason)})")
-    Logger.info("Cleaning...")
+    Logger.info("Cleaning session...")
 
     cleanup_session(session)
     SessionRegistry.delete(username)

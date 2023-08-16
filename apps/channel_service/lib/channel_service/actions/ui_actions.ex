@@ -1,12 +1,12 @@
-defmodule ChannelService.Endpoint.UIActions do
+defmodule ChannelService.UIActions do
   @moduledoc """
   TODO: Documentation
   """
 
-  alias ElvenCore.Socket
-  alias ElvenViews.UIViews
+  alias ElvenGard.Network.Socket
+  alias ElvenPackets.Views.UIViews
 
-  alias ChannelService.Endpoint.EntityInteractions
+  alias ChannelService.EntityInteractions
 
   ## Packet handlers
 

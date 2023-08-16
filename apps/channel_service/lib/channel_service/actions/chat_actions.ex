@@ -1,10 +1,10 @@
-defmodule ChannelService.Endpoint.ChatActions do
+defmodule ChannelService.ChatActions do
   @moduledoc """
   TODO: Documentation
   """
 
-  alias ElvenCore.Socket
-  alias ChannelService.Endpoint.EntityInteractions
+  alias ElvenGard.Network.Socket
+  alias ChannelService.EntityInteractions
   alias ElvenCaching.CharacterRegistry
 
   ## Packet handlers

@@ -1,15 +1,15 @@
-defmodule ChannelService.Endpoint.LobbyActions do
+defmodule ChannelService.LobbyActions do
   @moduledoc """
   TODO: Documentation
   """
 
   require Logger
 
-  alias ElvenCore.Socket
+  alias ElvenGard.Network.Socket
   alias ElvenCaching.{CharacterRegistry, SessionRegistry}
   alias ElvenCaching.Account.Session
   alias ElvenDatabase.Players.{Account, Characters}
-  alias ElvenViews.LobbyViews
+  alias ElvenPackets.Views.LobbyViews
 
   ## Public API
 

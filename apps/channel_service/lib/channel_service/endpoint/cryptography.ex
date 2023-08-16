@@ -7,11 +7,26 @@ defmodule ChannelService.Endpoint.Cryptography do
   ### TODO: THIS MODULE NEED REFACTORING !
   ###
 
-  use Bitwise, only_operators: true
+  import Bitwise, only: [{:"^^^", 2}, {:&&&, 2}, {:>>>, 2}, {:"~~~", 1}]
 
   @table ["\0", " ", "-", ".", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "\n", "\0"]
 
+  @typep packet() :: String.t()
+
   ## Public API
+
+  @spec next(binary(), integer() | nil) :: {binary() | nil, binary()}
+  def next(raw, enc_key) do
+    case do_next(raw, enc_key) do
+      {packet, rest} -> {packet, rest}
+      nil -> {nil, raw}
+    end
+  end
+
+  @spec unpack(binary(), any()) :: packet()
+  def unpack(binary, _ \\ nil) do
+    do_unpack(binary, @table)
+  end
 
   @doc """
   Encrypt a world packet.
@@ -31,70 +46,39 @@ defmodule ChannelService.Endpoint.Cryptography do
     <<data::binary, 0xFF::size(8)>>
   end
 
-  @doc """
-  Decrypt a channel packet.
-  """
-  @spec decrypt(binary, map) :: [String.t()]
-  def decrypt(binary, %{encryption_key: encryption_key}) when not is_nil(encryption_key),
-    do: decrypt_channel(binary, encryption_key)
-
-  def decrypt(binary, _), do: decrypt_session(binary)
-
   ## Private functions
 
-  @typep packet() :: String.t()
+  defp do_next(raw, enc_key, acc \\ [])
+  defp do_next(<<>>, _enc_key, _acc), do: nil
 
-  @spec decrypt_session(binary) :: [String.t()]
-  defp decrypt_session(binary) do
-    binary
-    |> world_xor(-1, true)
-    |> unpack(@table)
-    |> split_keepalive(true)
-    |> Enum.at(0)
-    |> Kernel.elem(1)
+  defp do_next(<<byte::8, rest::binary>>, nil, acc) do
+    case do_world_xor(byte, -1, -1) do
+      0xFF -> {acc |> Enum.reverse() |> :erlang.list_to_binary(), rest}
+      byte -> do_next(rest, nil, [byte | acc])
+    end
   end
 
-  @spec decrypt_channel(binary, integer, boolean) :: [binary | {integer, binary}]
-  defp decrypt_channel(binary, encryption_key, _remove_keepalive? \\ true) do
-    binary
-    |> world_xor(encryption_key, false)
-    |> unpack(@table)
-    # |> split_keepalive(keepalive?)
-    |> remove_keepalive()
+  defp do_next(<<byte::8, rest::binary>>, enc_key, acc) do
+    offset = enc_key &&& 0xFF
+    decryption_type = enc_key >>> 6 &&& 3
+
+    case do_world_xor(byte, offset, decryption_type) do
+      0xFF -> {acc |> Enum.reverse() |> :erlang.list_to_binary(), rest}
+      byte -> do_next(rest, enc_key, [byte | acc])
+    end
   end
 
-  @spec world_xor(raw :: binary, encryption_key :: integer, is_key_packet :: boolean) :: binary
-  defp world_xor(binary, _, true) do
-    for <<c <- binary>>, into: "", do: do_world_xor(c, -1, -1)
-  end
+  defp do_world_xor(char, offset, 0), do: char - offset - 0x40 &&& 0xFF
+  defp do_world_xor(char, offset, 1), do: char + offset + 0x40 &&& 0xFF
+  defp do_world_xor(char, offset, 2), do: (char - offset - 0x40) ^^^ 0xC3 &&& 0xFF
+  defp do_world_xor(char, offset, 3), do: (char + offset + 0x40) ^^^ 0xC3 &&& 0xFF
+  defp do_world_xor(char, _, _), do: char - 0x0F &&& 0xFF
 
-  defp world_xor(binary, encryption_key, false) do
-    decryption_type = encryption_key >>> 6 &&& 3
-    offset = encryption_key &&& 0xFF
-    for <<c <- binary>>, into: "", do: do_world_xor(c, offset, decryption_type)
-  end
-
-  @spec do_world_xor(pos_integer, integer, integer) :: binary
-  defp do_world_xor(char, offset, 0), do: <<char - offset - 0x40 &&& 0xFF>>
-  defp do_world_xor(char, offset, 1), do: <<char + offset + 0x40 &&& 0xFF>>
-  defp do_world_xor(char, offset, 2), do: <<(char - offset - 0x40) ^^^ 0xC3 &&& 0xFF>>
-  defp do_world_xor(char, offset, 3), do: <<(char + offset + 0x40) ^^^ 0xC3 &&& 0xFF>>
-  defp do_world_xor(char, _, _), do: <<char - 0x0F &&& 0xFF>>
-
-  @spec unpack(binary, [<<_::8>>, ...]) :: [packet]
-  defp unpack(binary, chars_to_unpack) do
-    binary
-    |> :binary.split(<<0xFF>>, [:global, :trim_all])
-    |> Enum.map(&do_unpack(&1, chars_to_unpack))
-  end
-
-  @spec do_unpack(binary, [<<_::8>>, ...], [binary]) :: packet
   defp do_unpack(binary, chars_to_unpack, result \\ [])
 
   defp do_unpack("", _, result) do
     result
     |> Enum.reverse()
-    |> Enum.join()
     |> :unicode.characters_to_binary(:latin1)
   end
 
@@ -125,22 +109,6 @@ defmodule ChannelService.Endpoint.Cryptography do
       right_byte = Enum.at(chars_to_unpack, l)
       if l != 0, do: left_byte <> right_byte, else: left_byte
     end
-  end
-
-  @spec split_keepalive([packet], boolean) :: [packet] | [{integer, packet}]
-  defp split_keepalive(packet, false), do: packet
-
-  defp split_keepalive(packet, true) do
-    packet
-    |> Stream.map(&String.split(&1, " ", parts: 2))
-    |> Enum.map(fn [l, r] -> {String.to_integer(l), r} end)
-  end
-
-  @spec remove_keepalive([packet]) :: [packet]
-  defp remove_keepalive(packet) do
-    packet
-    |> Stream.map(&String.split(&1, " ", parts: 2))
-    |> Enum.map(fn [_, packet] -> packet end)
   end
 
   @spec do_encrypt(char, integer, integer) :: binary
