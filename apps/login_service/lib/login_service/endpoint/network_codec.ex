@@ -13,19 +13,19 @@ defmodule LoginService.Endpoint.NetworkCodec do
   def next(message, _socket), do: {message, ""}
 
   @impl true
-  def deserialize(raw, socket) do
+  def decode(raw, socket) do
     decrypted = raw |> Cryptography.decrypt(socket.assigns) |> String.trim_trailing("\n")
     [packet_id, rest] = String.split(decrypted, " ", parts: 2)
     LoginPackets.deserialize(packet_id, rest, socket)
   end
 
   @impl true
-  def serialize(struct, socket) when is_struct(struct) do
+  def encode(struct, socket) when is_struct(struct) do
     {packet_id, params} = struct.__struct__.serialize(struct)
-    serialize([packet_id, params], socket)
+    encode([packet_id, params], socket)
   end
 
-  def serialize(raw, _socket) when is_list(raw) do
+  def encode(raw, _socket) when is_list(raw) do
     raw
     |> List.flatten()
     |> Enum.intersperse(" ")

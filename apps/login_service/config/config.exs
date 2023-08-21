@@ -21,7 +21,7 @@ config :login_service, LoginService.Endpoint,
   protocol: LoginService.Endpoint.Protocol
 
 config :login_service, LoginService.Endpoint.Protocol,
-  packet_handler: LoginService.Endpoint.PacketHandlers,
+  packet_handler: LoginService.Endpoint.PacketHandler,
   network_codec: LoginService.Endpoint.NetworkCodec
 
 # Import global config

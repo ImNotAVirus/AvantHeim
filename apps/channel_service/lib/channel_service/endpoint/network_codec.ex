@@ -20,7 +20,7 @@ defmodule ChannelService.Endpoint.NetworkCodec do
   end
 
   @impl true
-  def deserialize(raw, socket) when has_state(socket, :handshake) do
+  def decode(raw, socket) when has_state(socket, :handshake) do
     packet =
       raw
       |> Cryptography.unpack()
@@ -31,7 +31,7 @@ defmodule ChannelService.Endpoint.NetworkCodec do
     {:handshake, packet}
   end
 
-  def deserialize(raw, _socket) do
+  def decode(raw, _socket) do
     _packet =
       raw
       |> Cryptography.unpack()
@@ -46,12 +46,12 @@ defmodule ChannelService.Endpoint.NetworkCodec do
   end
 
   @impl true
-  def serialize(struct, socket) when is_struct(struct) do
+  def encode(struct, socket) when is_struct(struct) do
     {packet_id, params} = struct.__struct__.serialize(struct)
-    serialize([packet_id, params], socket)
+    encode([packet_id, params], socket)
   end
 
-  def serialize(raw, _socket) when is_list(raw) do
+  def encode(raw, _socket) when is_list(raw) do
     raw
     |> List.flatten()
     |> Enum.intersperse(" ")

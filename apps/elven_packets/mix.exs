@@ -24,7 +24,7 @@ defmodule ElvenPackets.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:elvengard_network, github: "imnotavirus/elvengard_network", branch: "documentation"},
+      {:elvengard_network, "~> 0.1.0"},
       {:elven_i18n, path: "../elven_i18n"},
       {:elven_enums, path: "../elven_enums"},
       {:elven_caching, path: "../elven_caching"},
