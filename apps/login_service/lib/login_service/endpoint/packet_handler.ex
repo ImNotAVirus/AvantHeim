@@ -1,7 +1,9 @@
-defmodule LoginService.Endpoint.PacketHandlers do
+defmodule LoginService.Endpoint.PacketHandler do
   @moduledoc """
-  TODO: LoginService.Endpoint.PacketHandlers
+  TODO: LoginService.Endpoint.PacketHandler
   """
+
+  @behaviour ElvenGard.Network.PacketHandler
 
   alias ElvenPackets.Client.LoginPackets.NoS0575
 

@@ -1,11 +1,13 @@
-defmodule ChannelService.Endpoint.PacketHandlers do
+defmodule ChannelService.Endpoint.PacketHandler do
   @moduledoc """
-  TODO: ChannelService.Endpoint.PacketHandlers
+  TODO: ChannelService.Endpoint.PacketHandler
   """
 
   require Logger
 
   import ElvenGard.Network.Socket, only: [assign: 3]
+
+  @behaviour ElvenGard.Network.PacketHandler
 
   @mix_env Mix.env()
 

@@ -12,10 +12,10 @@ defmodule FakeData do
 
   def authority(character_id: 1), do: :game_master
   def authority(character_id: _), do: :player
-  def morph(character_id: 1), do: 0
-  def morph(character_id: _), do: 24
+  def morph(character_id: 1), do: :default
+  def morph(character_id: _), do: :demon_hunter
   def morph_upgrade(character_id: _), do: 15
-  def morph_design(character_id: _), do: 12
+  def wings_design(character_id: _), do: :tree
   def is_invisible(character_id: _), do: false
   def is_arena_winner(character_id: 1), do: true
   def is_arena_winner(character_id: _), do: false
@@ -44,11 +44,11 @@ defmodule FakeData do
   def hero_level_xp_max(character_id: _), do: 0
 
   def dignity(character_id: _), do: 100
-  def dignity_icon_id(character_id: _), do: 1
+  def dignity_icon(character_id: _), do: :basic
   def reputation(character_id: 1), do: 10_000_000
   def reputation(character_id: _), do: 1_000
-  def reputation_icon_id(character_id: 1), do: 32
-  def reputation_icon_id(character_id: _), do: 1
+  def reputation_icon(character_id: 1), do: :legendary_hero
+  def reputation_icon(character_id: _), do: :green_beginner
   def compliment(character_id: 1), do: 500
   def compliment(character_id: _), do: 500
   def title_id(character_id: 1), do: 10

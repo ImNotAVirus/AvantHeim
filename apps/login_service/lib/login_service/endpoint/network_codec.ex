@@ -21,12 +21,12 @@ defmodule LoginService.Endpoint.NetworkCodec do
   end
 
   @impl true
-  def serialize(struct, socket) when is_struct(struct) do
+  def encode(struct, socket) when is_struct(struct) do
     {packet_id, params} = struct.__struct__.serialize(struct)
-    serialize([packet_id, params], socket)
+    encode([packet_id, params], socket)
   end
 
-  def serialize(raw, _socket) when is_list(raw) do
+  def encode(raw, _socket) when is_list(raw) do
     raw
     |> List.flatten()
     |> Enum.intersperse(" ")

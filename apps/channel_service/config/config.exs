@@ -16,7 +16,7 @@ config :channel_service, ChannelService.Endpoint,
   protocol: ChannelService.Endpoint.Protocol
 
 config :channel_service, ChannelService.Endpoint.Protocol,
-  packet_handler: ChannelService.Endpoint.PacketHandlers,
+  packet_handler: ChannelService.Endpoint.PacketHandler,
   network_codec: ChannelService.Endpoint.NetworkCodec
 
 # Import global config
