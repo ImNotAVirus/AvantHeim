@@ -2,7 +2,8 @@
 name: tests
 
 on:
-  pull_request: {}
+  pull_request:
+    branches: [main]
   push:
     branches: [main]
 
@@ -15,7 +16,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - id: set-dirs
-        run: echo "::set-output name=dir::$(ls -d lib/*/ | sed 's,lib/,,' | sed 's/.$//' | jq -R -s -c 'split("\n")[:-1]')"
+        run: echo "::set-output name=dir::$(ls -d apps/*/ | sed 's,apps/,,' | sed 's/.$//' | jq -R -s -c 'split("\n")[:-1]')"
 
   # Run CI on each app
   tests:

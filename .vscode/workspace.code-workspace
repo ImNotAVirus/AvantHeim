@@ -1,15 +1,18 @@
 {
 	"folders": [
 		{"name": "root", "path": ".."},
-		{"path": "../lib/login_service"},
-		{"path": "../lib/channel_service"},
-		{"path": "../lib/elven_caching"},
-		{"path": "../lib/elven_core"},
-		{"path": "../lib/elven_database"},
-		{"path": "../lib/elven_enums"},
-		{"path": "../lib/elven_i18n"},
-		{"path": "../lib/elven_views"},
-		{"path": "../lib/elven_algorithms"}
+		{"path": "../apps/presence_service"},
+		{"path": "../apps/login_service"},
+		{"path": "../apps/channel_service"},
+		{"path": "../apps/elven_pubsub"},
+		{"path": "../apps/elven_caching"},
+		{"path": "../apps/elven_core"},
+		{"path": "../apps/elven_database"},
+		{"path": "../apps/elven_enums"},
+		{"path": "../apps/elven_i18n"},
+		{"path": "../apps/elven_views"},
+		{"path": "../apps/elven_packets"},
+		{"path": "../apps/elven_algorithms"}
 	],
 	"settings": {
 		"files.insertFinalNewline": true,

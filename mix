@@ -10,7 +10,7 @@ IGNORE_APPS=()
 if [[ $1 =~ "--app" ]]
 then
     [ -z $2 ] && echo "usage: ./mix [--app app_name] [--(s)name name] args" && exit
-    [ ! -d "lib/$2" ] && echo "app $2 doesn't exists" && exit
+    [ ! -d "apps/$2" ] && echo "app $2 doesn't exists" && exit
     [ -z $3 ] && echo "usage: ./mix [--app app_name] [--(s)name name] args" && exit
 
     APP="$2"
@@ -25,7 +25,7 @@ then
         shift 2
 
         echo "===== Running '$@' into '$APP' with sname '$SNAME' ====="
-        cd "lib/$APP"
+        cd "apps/$APP"
         elixir --sname $SNAME -S mix $@
     elif [[ $1 =~ "--name" ]]
     then
@@ -36,21 +36,21 @@ then
         shift 2
 
         echo "===== Running '$@' into '$APP' with name '$SNAME' ====="
-        cd "lib/$APP"
+        cd "apps/$APP"
         elixir --name $SNAME -S mix $@
     else
         echo "===== Running '$@' into '$APP' ====="
-        cd "lib/$APP"
+        cd "apps/$APP"
         mix $@
     fi
 else
-    for APP in $(ls -d lib/*/ | sed 's,lib/,,' | sed 's/.$//')
+    for APP in $(ls -d apps/*/ | sed 's,apps/,,' | sed 's/.$//')
     do
         [[ ${IGNORE_APPS[*]} =~ $APP ]] && continue;
-        [ ! -f "lib/$APP/mix.exs" ] && continue;
+        [ ! -f "apps/$APP/mix.exs" ] && continue;
 
         echo "===== Running '$@' into '$APP' ====="
-        cd "lib/$APP"
+        cd "apps/$APP"
         mix $@
         cd - >/dev/null
         echo
