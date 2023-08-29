@@ -1,6 +1,6 @@
-defmodule ElvenPackets.Server.ChatPackets do
+defmodule ElvenPackets.Server.MapPackets do
   @moduledoc """
-  TODO: ElvenPackets.Server.ChatPackets
+  TODO: ElvenPackets.Server.MapPackets
   """
 
   use ElvenGard.Network.PacketSerializer
@@ -34,7 +34,7 @@ defmodule ElvenPackets.Server.ChatPackets do
   defpacket "mapout", as: Mapout
 
   @serializable true
-  defpacket "mv" do
+  defpacket "mv", as: Mv do
     field :entity_type, NsEnum, values: entity_type(:__enumerators__)
     field :entity_id, NsInteger
     field :map_x, NsInteger

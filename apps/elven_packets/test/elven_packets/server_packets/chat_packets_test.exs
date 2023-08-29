@@ -1,7 +1,7 @@
 defmodule ElvenPackets.Server.ChatPacketsTest do
   use ElvenPackets.PacketCase, async: true
 
-  alias ElvenPackets.Server.LobbyPackets.{Bn, Say}
+  alias ElvenPackets.Server.ChatPackets.{Bn, Say}
 
   ## Tests
 
