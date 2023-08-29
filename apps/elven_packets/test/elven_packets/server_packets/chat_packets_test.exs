@@ -27,4 +27,5 @@ defmodule ElvenPackets.Server.ChatPacketsTest do
       assert Enum.at(params, 2) == "10"
       assert Enum.at(params, 3) == "This is a message for the SayPacket"
     end
+  end
 end
