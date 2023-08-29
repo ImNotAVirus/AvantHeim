@@ -20,7 +20,7 @@ defmodule ElvenPackets.Server.ChatPackets do
   defpacket "say", as: Say do
     field :entity_type, NsEnum, values: entity_type(:__enumerators__)
     field :entity_id, NsInteger
-    field :color, NsEnum, values: color_type(:__enumerators__), default: :default
+    field :color, NsEnum, default: :default, values: color_type(:__enumerators__)
     field :message, NsString
   end
 end
