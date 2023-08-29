@@ -7,11 +7,11 @@ defmodule ElvenPackets.Server.MapPackets do
 
   import ElvenEnums.EntityEnums, only: [direction_type: 1]
 
-  alias ElvenPackets.Types.{NsEnum, NsInteger, NsString}
+  alias ElvenPackets.Types.{NsEnum, NsInteger, NsString, NsBoolean}
 
   @serializable true
   defpacket "at", as: At do
-    field :character_id, NsInteger
+    field :id, NsInteger
     field :map_vnum, NsInteger
     field :map_x, NsInteger
     field :map_y, NsInteger
@@ -27,7 +27,7 @@ defmodule ElvenPackets.Server.MapPackets do
     # Always 0, idk
     field :type, :default: 0, NsInteger
     field :map_vnum, NsInteger
-    field :is_static_map, NsInteger
+    field :is_static_map, NsBoolean
   end
 
   @serializable true
