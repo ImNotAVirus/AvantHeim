@@ -3,24 +3,20 @@ defmodule GameService.PlayerComponents do
   TODO: Documentation for GameService.PlayerComponents
   """
 
-  defmodule PlayerComponent do
-    use ElvenGard.ECS.Component,
-      state: [
-        :account_id,
-        :name,
-        :gender,
-        :class,
-        :hair_color,
-        :hair_style
-      ]
+  defmodule AccountComponent do
+    use ElvenGard.ECS.Component, state: [:id, :username]
   end
 
-  defmodule EndpoindComponent do
+  defmodule EndpointComponent do
     use ElvenGard.ECS.Component, state: [:pid]
   end
 
+  defmodule PlayerComponent do
+    use ElvenGard.ECS.Component, state: [:name, :gender, :class, :hair_color, :hair_style]
+  end
+
   defmodule FactionComponent do
-    use ElvenGard.ECS.Component, state: [:value]
+    use ElvenGard.ECS.Component, state: [:faction]
   end
 
   defmodule JobLevelComponent do
