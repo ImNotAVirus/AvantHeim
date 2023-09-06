@@ -1,0 +1,4 @@
+%{
+  "elvengard_ecs": {:git, "https://github.com/imnotavirus/elvengard_ecs.git", "420572df5598e91a11a48f016c3d1ccd3473238f", []},
+  "gen_stage": {:hex, :gen_stage, "1.2.1", "19d8b5e9a5996d813b8245338a28246307fd8b9c99d1237de199d21efc4c76a1", [:mix], [], "hexpm", "83e8be657fa05b992ffa6ac1e3af6d57aa50aace8f691fcf696ff02f8335b001"},
+}
