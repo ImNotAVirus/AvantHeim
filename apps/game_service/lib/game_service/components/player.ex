@@ -4,7 +4,7 @@ defmodule GameService.PlayerComponents do
   """
 
   defmodule AccountComponent do
-    use ElvenGard.ECS.Component, state: [:id, :username]
+    use ElvenGard.ECS.Component, state: [:id, :username, :authority]
   end
 
   defmodule EndpointComponent do
@@ -20,14 +20,43 @@ defmodule GameService.PlayerComponents do
   end
 
   defmodule JobLevelComponent do
-    use ElvenGard.ECS.Component, state: [:level, :xp]
+    use ElvenGard.ECS.Component, state: [:level, :xp, :xp_max]
   end
 
   defmodule HeroLevelComponent do
-    use ElvenGard.ECS.Component, state: [:level, :xp]
+    use ElvenGard.ECS.Component, state: [:level, :xp, :xp_max]
   end
 
   defmodule CurrencyComponent do
     use ElvenGard.ECS.Component, state: [:gold, :bank_gold]
+  end
+
+  defmodule SpecialistComponent do
+    use ElvenGard.ECS.Component, state: [:type, :upgrade, :wings_design]
+  end
+
+  defmodule SizeComponent do
+    use ElvenGard.ECS.Component, state: [:value]
+  end
+
+  defmodule GroupComponent do
+    use ElvenGard.ECS.Component, state: [:id]
+  end
+
+  defmodule FamilyComponent do
+    use ElvenGard.ECS.Component, state: [:id, :name, :rank, :level, :icons]
+  end
+
+  defmodule ReputationComponent do
+    use ElvenGard.ECS.Component,
+      state: [:dignity, :dignity_icon, :reputation, :reputation_icon, :compliment]
+  end
+
+  defmodule TitleComponent do
+    use ElvenGard.ECS.Component, state: [:id]
+  end
+
+  defmodule FairyComponent do
+    use ElvenGard.ECS.Component, state: [:type, :move_type, :element]
   end
 end

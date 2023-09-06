@@ -12,7 +12,7 @@ defmodule GameService.EntityComponents do
   end
 
   defmodule LevelComponent do
-    use ElvenGard.ECS.Component, state: [:level, :xp]
+    use ElvenGard.ECS.Component, state: [:level, :xp, :xp_max]
   end
 
   defmodule SpeedComponent do
@@ -25,5 +25,31 @@ defmodule GameService.EntityComponents do
 
   defmodule SittingComponent do
     use ElvenGard.ECS.Component, state: [:value]
+  end
+
+  defmodule CombatComponent do
+    use ElvenGard.ECS.Component,
+      state: [
+        :hp,
+        :hp_max,
+        :mp,
+        :mp_max
+      ]
+  end
+
+  defmodule InvisibleComponent do
+    use ElvenGard.ECS.Component, state: []
+  end
+
+  defmodule ArenaWinnerComponent do
+    use ElvenGard.ECS.Component, state: []
+  end
+
+  defmodule CannotAttackComponent do
+    use ElvenGard.ECS.Component, state: []
+  end
+
+  defmodule CannotMoveComponent do
+    use ElvenGard.ECS.Component, state: []
   end
 end
