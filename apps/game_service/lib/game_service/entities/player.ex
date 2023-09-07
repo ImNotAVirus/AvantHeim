@@ -3,9 +3,19 @@ defmodule GameService.PlayerEntity do
   TODO: Documentation for GameService.PlayerEntity
   """
 
-  alias ElvenGard.ECS.Entity
+  alias __MODULE__
+  alias ElvenGard.ECS.{Component, Entity}
   alias GameService.EntityComponents, as: E
   alias GameService.PlayerComponents, as: P
+
+  ## PlayerEntity structures (for outside use)
+
+  @enforce_keys [:id, :components]
+  defstruct [:id, :components]
+
+  @type t :: %PlayerEntity{id: pos_integer(), components: [Component.t()]}
+
+  ## Public API
 
   @spec new(map(), map(), pid()) :: ElvenGard.ECS.Entity.spec()
   def new(attrs, account, frontend) do
