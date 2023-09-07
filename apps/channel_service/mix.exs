@@ -28,7 +28,8 @@ defmodule ChannelService.MixProject do
       {:elven_database, path: "../elven_database"},
       {:elven_caching, path: "../elven_caching"},
       {:elven_packets, path: "../elven_packets"},
-      {:elven_core, path: "../elven_core"}
+      {:elven_core, path: "../elven_core"},
+      {:game_service, path: "../game_service"}
     ]
   end
 end

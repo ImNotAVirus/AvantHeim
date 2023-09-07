@@ -9,7 +9,7 @@ defmodule ChannelService.Endpoint.Protocol do
 
   alias ElvenGard.Network.Socket
 
-  ## Callbacks
+  ## Endpoint.Protocol behaviour
 
   @impl true
   def handle_init(%Socket{} = socket) do
@@ -32,5 +32,13 @@ defmodule ChannelService.Endpoint.Protocol do
   def handle_halt(reason, %Socket{} = socket) do
     Logger.info("disconnected (reason: #{inspect(reason)})")
     {:ok, socket}
+  end
+
+  ## GenServer behaviour
+
+  @impl true
+  def handle_infos(msg, state) do
+    Logger.warn("unhandled message: #{inspect(msg)}")
+    {:noreply, state}
   end
 end

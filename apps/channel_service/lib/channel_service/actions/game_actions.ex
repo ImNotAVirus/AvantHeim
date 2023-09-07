@@ -9,6 +9,9 @@ defmodule ChannelService.GameActions do
 
   alias ChannelService.EntityInteractions
 
+  alias ElvenGard.ECS.Command
+  alias GameService.PlayerEntity
+
   ## Packet handlers
 
   @spec game_start(String.t(), map, Socket.t()) :: {:cont, Socket.t()}
@@ -16,6 +19,10 @@ defmodule ChannelService.GameActions do
     %{character_id: character_id} = socket.assigns
     {:ok, character} = CharacterRegistry.get(character_id)
 
+    account = socket.assigns.account
+    {:ok, _entity} = Command.spawn_entity(PlayerEntity.new(character, account, self()))
+
+    # ----------------
     Socket.send(socket, PlayerViews.render(:tit, %{character: character}))
     Socket.send(socket, PlayerViews.render(:fd, %{character: character}))
     # TODO: Socket.send(socket, PlayerViews.render(:ski, %{character: character}))

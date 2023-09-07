@@ -19,7 +19,7 @@ defmodule ElvenPackets.Views.PlayerViews do
     family = %Family{
       id: FakeData.family_id(character_id: character.id),
       rank: FakeData.family_rank(character_id: character.id),
-      name: FakeData.family_name(character_id: character.id),
+      name: FakeData.family_name(character_id: character.id)
     }
 
     %CInfo{
@@ -38,7 +38,7 @@ defmodule ElvenPackets.Views.PlayerViews do
       is_invisible: FakeData.is_invisible(character_id: character.id),
       family_level: FakeData.family_level(character_id: character.id),
       morph_upgrade: FakeData.morph_upgrade(character_id: character.id),
-      wings_design: FakeData.morph_design(character_id: character.id),
+      wings_design: FakeData.wings_design(character_id: character.id),
       is_arena_winner: FakeData.is_arena_winner(character_id: character.id)
     }
   end
