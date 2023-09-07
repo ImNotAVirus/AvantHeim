@@ -73,7 +73,11 @@ defmodule ElvenPackets.Client.UiPacketsTest do
 
   describe "s_memoi2" do
     test "can be serialized" do
-      packet = %Smemoi2{text_color: :white, i18n_packet: %I18nSubPacket{key: "NotEnoughKoarenTreasure"}}
+      packet = %Smemoi2{
+        text_color: :white,
+        i18n_packet: %I18nSubPacket{key: "NotEnoughKoarenTreasure"}
+      }
+
       assert {"s_memoi2", params} = serialize_packet(packet)
       assert is_list(params)
       assert length(params) == 2

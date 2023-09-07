@@ -29,24 +29,24 @@ defmodule ElvenPackets.Server.PlayerPackets do
   #######
   @serializable true
   defpacket "c_info", as: CInfo do
-    field :name, NsString
-    field :vnum, NsString, default: "-"
-    field :group_id, NsInteger
-    field :family, Family
-    field :character_id, NsInteger
-    field :authority, NsEnum, values: authority(:__enumerators__)
-    field :gender, NsEnum, values: gender(:__enumerators__)
-    field :hair_style, NsEnum, values: hair_style(:__enumerators__)
-    field :hair_color, NsEnum, values: hair_color(:__enumerators__)
-    field :class, NsEnum, values: character_class(:__enumerators__)
-    field :reputation_icon, NsEnum, values: reputation_icon(:__enumerators__)
-    field :compliment, NsInteger
-    field :morph, NsEnum, default: :default, values: morph(:__enumerators__)
-    field :is_invisible, NsBoolean
-    field :family_level, NsInteger
-    field :morph_upgrade, NsInteger
-    field :wings_design, NsEnum, default: :default, values: wings_design(:__enumerators__)
-    field :is_arena_winner, NsBoolean
+    field(:name, NsString)
+    field(:vnum, NsString, default: "-")
+    field(:group_id, NsInteger)
+    field(:family, Family)
+    field(:character_id, NsInteger)
+    field(:authority, NsEnum, values: authority(:__enumerators__))
+    field(:gender, NsEnum, values: gender(:__enumerators__))
+    field(:hair_style, NsEnum, values: hair_style(:__enumerators__))
+    field(:hair_color, NsEnum, values: hair_color(:__enumerators__))
+    field(:class, NsEnum, values: character_class(:__enumerators__))
+    field(:reputation_icon, NsEnum, values: reputation_icon(:__enumerators__))
+    field(:compliment, NsInteger)
+    field(:morph, NsEnum, default: :default, values: morph(:__enumerators__))
+    field(:is_invisible, NsBoolean)
+    field(:family_level, NsInteger)
+    field(:morph_upgrade, NsInteger)
+    field(:wings_design, NsEnum, default: :default, values: wings_design(:__enumerators__))
+    field(:is_arena_winner, NsBoolean)
   end
 
   #######
@@ -56,10 +56,10 @@ defmodule ElvenPackets.Server.PlayerPackets do
   #######
   @serializable true
   defpacket "fd", as: Fd do
-    field :reputation, NsInteger
-    field :reputation_icon, NsEnum, values: reputation_icon(:__enumerators__)
-    field :dignity, NsInteger
-    field :dignity_icon, NsEnum, values: dignity_icon(:__enumerators__)
+    field(:reputation, NsInteger)
+    field(:reputation_icon, NsEnum, values: reputation_icon(:__enumerators__))
+    field(:dignity, NsInteger)
+    field(:dignity_icon, NsEnum, values: dignity_icon(:__enumerators__))
   end
 
   #######
@@ -69,7 +69,7 @@ defmodule ElvenPackets.Server.PlayerPackets do
   #######
   @serializable true
   defpacket "fs", as: Fs do
-    field :faction, NsEnum, values: faction(:__enumerators__)
+    field(:faction, NsEnum, values: faction(:__enumerators__))
   end
 
   #######
@@ -79,18 +79,18 @@ defmodule ElvenPackets.Server.PlayerPackets do
   #######
   @serializable true
   defpacket "lev", as: Lev do
-    field :level, NsInteger
-    field :level_xp, NsInteger
-    field :job_level, NsInteger
-    field :job_level_xp, NsInteger
-    field :level_xp_max, NsInteger
-    field :job_level_xp_max, NsInteger
-    field :reputation, NsInteger
-    field :cp, NsInteger
-    field :hero_level_xp, NsInteger
-    field :hero_level, NsInteger
-    field :hero_level_xp_max, NsInteger
-    field :unknown, NsInteger, default: 0
+    field(:level, NsInteger)
+    field(:level_xp, NsInteger)
+    field(:job_level, NsInteger)
+    field(:job_level_xp, NsInteger)
+    field(:level_xp_max, NsInteger)
+    field(:job_level_xp_max, NsInteger)
+    field(:reputation, NsInteger)
+    field(:cp, NsInteger)
+    field(:hero_level_xp, NsInteger)
+    field(:hero_level, NsInteger)
+    field(:hero_level_xp_max, NsInteger)
+    field(:unknown, NsInteger, default: 0)
   end
 
   #######
@@ -100,12 +100,12 @@ defmodule ElvenPackets.Server.PlayerPackets do
   #######
   @serializable true
   defpacket "rsfi", as: Rsfi do
-    field :act, NsInteger
-    field :act_part, NsInteger
-    field :unknown, NsInteger, default: 0
-    field :unknown2, NsInteger, default: 0
-    field :ts, NsInteger
-    field :ts_max, NsInteger
+    field(:act, NsInteger)
+    field(:act_part, NsInteger)
+    field(:unknown, NsInteger, default: 0)
+    field(:unknown2, NsInteger, default: 0)
+    field(:ts, NsInteger)
+    field(:ts_max, NsInteger)
   end
 
   #######
@@ -115,12 +115,12 @@ defmodule ElvenPackets.Server.PlayerPackets do
   #######
   @serializable true
   defpacket "stat", as: Stat do
-    field :hp, NsInteger
-    field :hp_max, NsInteger
-    field :mp, NsInteger
-    field :mp_max, NsInteger
-    field :unknown, NsInteger, default: 0
-    field :option, NsInteger
+    field(:hp, NsInteger)
+    field(:hp_max, NsInteger)
+    field(:mp, NsInteger)
+    field(:mp_max, NsInteger)
+    field(:unknown, NsInteger, default: 0)
+    field(:option, NsInteger)
   end
 
   #######
@@ -130,8 +130,8 @@ defmodule ElvenPackets.Server.PlayerPackets do
   #######
   @serializable true
   defpacket "tit", as: Tit do
-    field :class, NsEnum, values: character_class(:__enumerators__), apply: &i18n/1
-    field :name, NsString
+    field(:class, NsEnum, values: character_class(:__enumerators__), apply: &i18n/1)
+    field(:name, NsString)
   end
 
   ## Private function

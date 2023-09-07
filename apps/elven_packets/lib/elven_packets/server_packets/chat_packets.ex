@@ -12,15 +12,15 @@ defmodule ElvenPackets.Server.ChatPackets do
 
   @serializable true
   defpacket "bn", as: Bn do
-    field :id, NsInteger
-    field :message, NsString, escape: true
+    field(:id, NsInteger)
+    field(:message, NsString, escape: true)
   end
 
   @serializable true
   defpacket "say", as: Say do
-    field :entity_type, NsEnum, values: entity_type(:__enumerators__)
-    field :entity_id, NsInteger
-    field :color, NsEnum, default: :default, values: color_type(:__enumerators__)
-    field :message, NsString
+    field(:entity_type, NsEnum, values: entity_type(:__enumerators__))
+    field(:entity_id, NsInteger)
+    field(:color, NsEnum, default: :default, values: color_type(:__enumerators__))
+    field(:message, NsString)
   end
 end

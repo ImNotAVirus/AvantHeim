@@ -19,7 +19,7 @@ defmodule ElvenPackets.Views.PlayerViews do
     family = %Family{
       id: FakeData.family_id(character_id: character.id),
       rank: FakeData.family_rank(character_id: character.id),
-      name: FakeData.family_name(character_id: character.id),
+      name: FakeData.family_name(character_id: character.id)
     }
 
     %CInfo{

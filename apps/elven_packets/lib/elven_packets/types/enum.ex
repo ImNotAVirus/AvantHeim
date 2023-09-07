@@ -32,7 +32,9 @@ defmodule ElvenPackets.Types.NsEnum do
   def encode(key, opts) when is_atom(key) do
     enumerators = Keyword.fetch!(opts, :values)
 
-    {_k, value} = Enum.find(enumerators, &match?({^key, _}, &1))
-    NsInteger.encode(value)
+    case Enum.find(enumerators, &match?({^key, _}, &1)) do
+      {_k, value} -> NsInteger.encode(value)
+      nil -> raise ArgumentError, "invalid key #{inspect(key)} in #{inspect(enumerators)}"
+    end
   end
 end

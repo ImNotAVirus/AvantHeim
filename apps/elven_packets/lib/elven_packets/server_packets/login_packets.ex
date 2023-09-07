@@ -22,24 +22,24 @@ defmodule ElvenPackets.Server.LoginPackets do
 
   @serializable true
   defpacket "failc", as: Failc do
-    field :error, NsEnum, default: :generic, values: failc_error(:__enumerators__)
+    field(:error, NsEnum, default: :generic, values: failc_error(:__enumerators__))
   end
 
   @serializable true
   defpacket "NsTeST", as: NsTeST do
-    field :region, NsEnum, values: login_region(:__enumerators__)
-    field :username, NsString
-    field :auth_type, NsEnum, default: :gf, values: auth_type(:__enumerators__)
-    field :server1, NsString, default: empty_server()
-    field :server2, NsString, default: empty_server()
-    field :server3, NsString, default: empty_server()
-    field :server4, NsString, default: empty_server()
-    field :server5, NsString, default: empty_server()
-    field :server6, NsString, default: empty_server()
-    field :unused_servers, NsList, joiner: " ", default: unused_servers()
-    field :unknown, NsInteger, default: 0
-    field :encryption_key, NsInteger
-    field :server_list, NsList, type: Channel, joiner: " "
-    field :terminator, NsString, default: "-1:-1:-1:10000.10000.1"
+    field(:region, NsEnum, values: login_region(:__enumerators__))
+    field(:username, NsString)
+    field(:auth_type, NsEnum, default: :gf, values: auth_type(:__enumerators__))
+    field(:server1, NsString, default: empty_server())
+    field(:server2, NsString, default: empty_server())
+    field(:server3, NsString, default: empty_server())
+    field(:server4, NsString, default: empty_server())
+    field(:server5, NsString, default: empty_server())
+    field(:server6, NsString, default: empty_server())
+    field(:unused_servers, NsList, joiner: " ", default: unused_servers())
+    field(:unknown, NsInteger, default: 0)
+    field(:encryption_key, NsInteger)
+    field(:server_list, NsList, type: Channel, joiner: " ")
+    field(:terminator, NsString, default: "-1:-1:-1:10000.10000.1")
   end
 end

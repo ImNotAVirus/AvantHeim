@@ -17,8 +17,14 @@ defmodule ElvenPackets.Server.ChatPacketsTest do
   end
 
   describe "say" do
-    test "can be serialized" do
-      packet = %Say{entity_type: :character, entity_id: 123, color: :special_gold, message: "This is a message for the SayPacket"}
+    test "can be serialized with color" do
+      packet = %Say{
+        entity_type: :character,
+        entity_id: 123,
+        color: :special_gold,
+        message: "This is a message for the SayPacket"
+      }
+
       assert {"say", params} = serialize_packet(packet)
       assert is_list(params)
       assert length(params) == 4
@@ -26,6 +32,17 @@ defmodule ElvenPackets.Server.ChatPacketsTest do
       assert Enum.at(params, 1) == "123"
       assert Enum.at(params, 2) == "10"
       assert Enum.at(params, 3) == "This is a message for the SayPacket"
+    end
+
+    test "can be serialized without color" do
+      packet = %Say{entity_type: :character, entity_id: 2, message: "This is a message"}
+      assert {"say", params} = serialize_packet(packet)
+      assert is_list(params)
+      assert length(params) == 4
+      assert Enum.at(params, 0) == "1"
+      assert Enum.at(params, 1) == "2"
+      assert Enum.at(params, 2) == "0"
+      assert Enum.at(params, 3) == "This is a message"
     end
   end
 end

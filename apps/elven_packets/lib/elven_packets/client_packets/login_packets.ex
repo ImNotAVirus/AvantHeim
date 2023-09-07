@@ -18,16 +18,16 @@ defmodule ElvenPackets.Client.LoginPackets do
   # if Mix.env() != :prod do
   @deserializable true
   defpacket "NoS0575", as: NoS0575 do
-    field :session_id, NsInteger
-    field :username, NsString
-    field :password, NsString
-    field :installation_guid, NsString
-    field :unknown, NsString
-    field :region, NsEnum, values: login_region(:__enumerators__)
-    field :client_version, NsString
+    field(:session_id, NsInteger)
+    field(:username, NsString)
+    field(:password, NsString)
+    field(:installation_guid, NsString)
+    field(:unknown, NsString)
+    field(:region, NsEnum, values: login_region(:__enumerators__))
+    field(:client_version, NsString)
     # , using: "0"
-    field :always_0, NsString
-    field :client_checksum, NsString
+    field(:always_0, NsString)
+    field(:client_checksum, NsString)
   end
 
   # end
@@ -39,15 +39,15 @@ defmodule ElvenPackets.Client.LoginPackets do
   #######
   @deserializable true
   defpacket "NoS0577", as: NoS0577 do
-    field :token, NsString
+    field(:token, NsString)
     # , using: ""
-    field :empty, NsString
-    field :installation_guid, NsString
-    field :unknown, NsString
-    field :region, NsEnum, values: login_region(:__enumerators__)
-    field :client_version, NsString
+    field(:empty, NsString)
+    field(:installation_guid, NsString)
+    field(:unknown, NsString)
+    field(:region, NsEnum, values: login_region(:__enumerators__))
+    field(:client_version, NsString)
     # , using: "0"
-    field :always_0, NsString
-    field :client_checksum, NsString
+    field(:always_0, NsString)
+    field(:client_checksum, NsString)
   end
 end

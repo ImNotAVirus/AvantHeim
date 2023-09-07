@@ -17,10 +17,10 @@ defmodule ElvenPackets.Client.AreaPackets do
   #######
   @deserializable true
   defpacket "walk", as: Walk do
-    field :pos_x, NsInteger
-    field :pos_y, NsInteger
-    field :checksum, NsInteger
-    field :speed, NsInteger
+    field(:pos_x, NsInteger)
+    field(:pos_y, NsInteger)
+    field(:checksum, NsInteger)
+    field(:speed, NsInteger)
   end
 
   #######
@@ -30,7 +30,7 @@ defmodule ElvenPackets.Client.AreaPackets do
   #######
   @deserializable true
   defpacket "say", as: Say do
-    field :message, NsString, fill: true
+    field(:message, NsString, fill: true)
   end
 
   #######
@@ -40,8 +40,8 @@ defmodule ElvenPackets.Client.AreaPackets do
   #######
   @deserializable true
   defpacket "ncif", as: Ncif do
-    field :entity_type, NsEnum, values: entity_type(:__enumerators__)
-    field :entity_id, NsInteger
+    field(:entity_type, NsEnum, values: entity_type(:__enumerators__))
+    field(:entity_id, NsInteger)
   end
 
   #######
@@ -51,10 +51,10 @@ defmodule ElvenPackets.Client.AreaPackets do
   #######
   @deserializable true
   defpacket "guri", as: Guri do
-    field :type, NsEnum, values: guri_type(:__enumerators__)
-    field :entity_type, NsEnum, values: entity_type(:__enumerators__)
-    field :entity_id, NsInteger
-    field :guri_data, NsInteger
+    field(:type, NsEnum, values: guri_type(:__enumerators__))
+    field(:entity_type, NsEnum, values: entity_type(:__enumerators__))
+    field(:entity_id, NsInteger)
+    field(:guri_data, NsInteger)
   end
 
   #######
@@ -64,8 +64,8 @@ defmodule ElvenPackets.Client.AreaPackets do
   #######
   @deserializable true
   defpacket "dir", as: Dir do
-    field :dir, NsEnum, values: direction_type(:__enumerators__)
-    field :entity_type, NsEnum, values: entity_type(:__enumerators__)
-    field :entity_id, NsInteger
+    field(:dir, NsEnum, values: direction_type(:__enumerators__))
+    field(:entity_type, NsEnum, values: entity_type(:__enumerators__))
+    field(:entity_id, NsInteger)
   end
 end

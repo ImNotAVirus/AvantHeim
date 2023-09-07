@@ -17,9 +17,9 @@ defmodule ElvenPackets.Server.UiPackets do
   #######
   @serializable true
   defpacket "cancel", as: Cancel do
-    field :cancel_type, NsEnum, values: cancel_type(:__enumerators__)
-    field :entity_id, NsInteger
-    field :unknown, NsInteger, default: -1
+    field(:cancel_type, NsEnum, values: cancel_type(:__enumerators__))
+    field(:entity_id, NsInteger)
+    field(:unknown, NsInteger, default: -1)
   end
 
   #######
@@ -29,11 +29,11 @@ defmodule ElvenPackets.Server.UiPackets do
   #######
   @serializable true
   defpacket "gb", as: Gb do
-    field :action_type, NsEnum, values: action_type(:__enumerators__)
-    field :bank_gold, NsInteger
-    field :gold, NsInteger
-    field :bank_rank, NsInteger
-    field :bank_tax, NsInteger
+    field(:action_type, NsEnum, values: action_type(:__enumerators__))
+    field(:bank_gold, NsInteger)
+    field(:gold, NsInteger)
+    field(:bank_rank, NsInteger)
+    field(:bank_tax, NsInteger)
   end
 
   #######
@@ -43,8 +43,8 @@ defmodule ElvenPackets.Server.UiPackets do
   #######
   @serializable true
   defpacket "gold", as: Gold do
-    field :gold, NsInteger
-    field :bank_gold, NsInteger
+    field(:gold, NsInteger)
+    field(:bank_gold, NsInteger)
   end
 
   #######
@@ -54,7 +54,7 @@ defmodule ElvenPackets.Server.UiPackets do
   #######
   @serializable true
   defpacket "info", as: Info do
-    field :message, NsString
+    field(:message, NsString)
   end
 
   #######
@@ -64,10 +64,9 @@ defmodule ElvenPackets.Server.UiPackets do
   #######
   @serializable true
   defpacket "s_memoi", as: Smemoi do
-    field :text_color, NsEnum, default: :white, values: text_color(:__enumerators__)
-    field :i18n_packet, I18nSubPacket
+    field(:text_color, NsEnum, default: :white, values: text_color(:__enumerators__))
+    field(:i18n_packet, I18nSubPacket)
   end
-
 
   #######
   # Display bank informations
@@ -76,8 +75,8 @@ defmodule ElvenPackets.Server.UiPackets do
   #######
   @serializable true
   defpacket "s_memoi2", as: Smemoi2 do
-    field :text_color, NsEnum, default: :white, values: text_color(:__enumerators__)
-    field :i18n_packet, I18nSubPacket
+    field(:text_color, NsEnum, default: :white, values: text_color(:__enumerators__))
+    field(:i18n_packet, I18nSubPacket)
   end
 
   #######
@@ -87,7 +86,7 @@ defmodule ElvenPackets.Server.UiPackets do
   #######
   @serializable true
   defpacket "scene", as: Scene do
-    field :scene_id, NsInteger
-    field :cancellable, NsBoolean
+    field(:scene_id, NsInteger)
+    field(:cancellable, NsBoolean)
   end
 end
