@@ -23,15 +23,10 @@ defmodule ChannelService.AuthActions do
     %{username: username, password: password} = params
 
     with {:ok, session} <- SessionRegistry.get(username),
-         _ <- IO.inspect(session, label: "session"),
          :ok <- validate_session(session, password),
-         _ <- IO.inspect(session, label: "1111111111"),
          :ok <- PresenceManager.register_username(username),
-         _ <- IO.inspect(session, label: "2222222222222"),
          {:ok, _} <- cache_session_as_logged(session),
-         _ <- IO.inspect(session, label: "33333333333333"),
          {:ok, account} <- get_account(session),
-         _ <- IO.inspect(session, label: "44444444444444444444"),
          :ok <- send_character_list(account, socket) do
       {:cont, assign(socket, :account, account)}
     else

@@ -41,6 +41,14 @@ defmodule ChannelService.Endpoint.PacketHandler do
 
   ## Normal handlers
 
+  # def handle_packet(packet, socket) do
+
+  # end
+
+  ## Default handler
+
+  def handle_packet(:ignore, socket), do: {:cont, socket}
+
   def handle_packet(packet, socket) do
     Logger.warn("unimplemented handler for #{inspect(packet)}")
     {:cont, socket}
