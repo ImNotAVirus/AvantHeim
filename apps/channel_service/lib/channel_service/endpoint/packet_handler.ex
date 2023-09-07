@@ -7,6 +7,8 @@ defmodule ChannelService.Endpoint.PacketHandler do
 
   import ElvenGard.Network.Socket, only: [assign: 3]
 
+  alias ElvenPackets.Client.LobbyPackets.{Select, GameStart}
+
   @behaviour ElvenGard.Network.PacketHandler
 
   @mix_env Mix.env()
@@ -41,9 +43,13 @@ defmodule ChannelService.Endpoint.PacketHandler do
 
   ## Normal handlers
 
-  # def handle_packet(packet, socket) do
+  def handle_packet(%Select{} = packet, socket) do
+    ChannelService.LobbyActions.select_character("select", packet, socket)
+  end
 
-  # end
+  def handle_packet(%GameStart{} = packet, socket) do
+    ChannelService.GameActions.game_start("game_start", packet, socket)
+  end
 
   ## Default handler
 

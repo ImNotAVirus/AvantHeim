@@ -8,9 +8,9 @@ defmodule ChannelService.PresenceManager do
   require Logger
 
   alias ElvenCaching.Account.Session
-  alias ElvenCaching.{CharacterRegistry, SessionRegistry}
+  alias ElvenCaching.SessionRegistry
 
-  alias ChannelService.EntityInteractions
+  # alias ChannelService.EntityInteractions
 
   @manager_name __MODULE__
 
@@ -71,15 +71,15 @@ defmodule ChannelService.PresenceManager do
 
   defp cleanup_session(%Session{state: :in_lobby}), do: :ok
 
-  defp cleanup_session(%Session{state: :in_game, account_id: account_id} = session) do
+  defp cleanup_session(%Session{state: :in_game, account_id: _account_id} = session) do
     # Set session state to "saving" to prevent player connection
     {:ok, %Session{}} = session |> Session.set_state(:saving) |> SessionRegistry.write()
 
     # Clean Character cache
-    {:ok, character} = CharacterRegistry.delete_by_account_id(account_id)
+    # {:ok, character} = CharacterRegistry.delete_by_account_id(account_id)
 
     # Clean map (out packet)
-    EntityInteractions.send_map_leave(character)
+    # EntityInteractions.send_map_leave(character)
 
     # TODO: Save character in db
     # ...

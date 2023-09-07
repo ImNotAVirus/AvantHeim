@@ -12,6 +12,9 @@ defmodule ElvenPackets.Views.PlayerViews do
 
   ## Public API
 
+  # FIXME: Move to ElvenGard.Network.View
+  def render(name), do: render(name, [])
+
   @impl true
   def render(:c_info, args) do
     character = required_param(args, :character)

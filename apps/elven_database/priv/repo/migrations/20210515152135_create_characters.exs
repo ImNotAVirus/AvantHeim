@@ -50,7 +50,7 @@ defmodule ElvenDatabase.Repo.Migrations.CreateCharacters do
       add :hair_color, :hair_color_enum, null: false
       add :hair_style, :hair_style_enum, null: false
 
-      add :map_vnum, :int2, null: false
+      add :map_id, :int2, null: false
       add :map_x, :int2, null: false
       add :map_y, :int2, null: false
 

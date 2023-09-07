@@ -19,7 +19,7 @@ defmodule GameService.PlayerEntity do
 
   @spec new(map(), map(), pid()) :: ElvenGard.ECS.Entity.spec()
   def new(attrs, account, frontend) do
-    id = attrs[:id] || raise ArgumentError, ":id attribute is required"
+    id = Map.fetch!(attrs, :id)
 
     Entity.entity_spec(
       id: {:player, id},
@@ -96,16 +96,17 @@ defmodule GameService.PlayerEntity do
     [gold: gold, bank_gold: bank_gold]
   end
 
-  defp speed_specs(%{speed: value}) do
-    [value: value]
+  defp speed_specs(attrs) do
+    # FIXME: Hardcoded value, now sure if it's the best place
+    [value: Map.get(attrs, :speed, 20)]
   end
 
-  defp direction_specs(%{direction: value}) do
-    [value: value]
+  defp direction_specs(attrs) do
+    [value: Map.get(attrs, :direction, :south)]
   end
 
-  defp sitting_specs(%{is_sitting: value}) do
-    [value: value]
+  defp sitting_specs(attrs) do
+    [value: Map.get(attrs, :is_sitting, false)]
   end
 
   # Hardcoded components specs
