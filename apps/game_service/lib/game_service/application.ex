@@ -7,9 +7,12 @@ defmodule GameService.Application do
 
   @impl true
   def start(_type, _args) do
+    # Just send all events to the map with id 1 (NosVille) for now
+    partition_hash = fn event -> {event, 1} end
+
     children = [
-      # Starts a worker by calling: GameService.Worker.start_link(arg)
-      # {GameService.Worker, arg}
+      {ElvenGard.ECS.Topology.EventSource, [hash: partition_hash]},
+      {GameService.StaticMapPartition, [id: 1]}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
