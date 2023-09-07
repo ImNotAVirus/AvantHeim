@@ -16,11 +16,11 @@ defmodule ElvenPackets.Client.LobbyPackets do
   #######
   @deserializable true
   defpacket "Char_NEW", as: CharNEW do
-    field(:name, NsString)
-    field(:slot, NsInteger)
-    field(:gender, NsEnum, values: gender(:__enumerators__))
-    field(:hair_style, NsEnum, values: hair_style(:__enumerators__))
-    field(:hair_color, NsEnum, values: hair_color(:__enumerators__))
+    field :name, NsString
+    field :slot, NsInteger
+    field :gender, NsEnum, values: gender(:__enumerators__)
+    field :hair_style, NsEnum, values: hair_style(:__enumerators__)
+    field :hair_color, NsEnum, values: hair_color(:__enumerators__)
   end
 
   #######
@@ -30,8 +30,8 @@ defmodule ElvenPackets.Client.LobbyPackets do
   #######
   @deserializable true
   defpacket "Char_DEL", as: CharDEL do
-    field(:slot, NsInteger)
-    field(:password, NsString)
+    field :slot, NsInteger
+    field :password, NsString
   end
 
   #######
@@ -41,7 +41,7 @@ defmodule ElvenPackets.Client.LobbyPackets do
   #######
   @deserializable true
   defpacket "select", as: Select do
-    field(:slot, NsInteger)
+    field :slot, NsInteger
   end
 
   #######
@@ -50,5 +50,5 @@ defmodule ElvenPackets.Client.LobbyPackets do
   # Example: "game_start"
   #######
   @deserializable true
-  defpacket("game_start", as: GameStart)
+  defpacket "game_start", as: GameStart
 end
