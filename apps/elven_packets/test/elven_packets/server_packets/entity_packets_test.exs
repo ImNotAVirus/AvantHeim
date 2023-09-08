@@ -82,7 +82,7 @@ defmodule ElvenPackets.Server.EntityPacketsTest do
     test "can serialize a packet structure" do
       assert {"st", params} = serialize_packet(st_mock())
       assert is_list(params)
-      assert length(params) == 9
+      assert length(params) == 8
       assert Enum.at(params, 0) == "1"
       assert Enum.at(params, 1) == "11"
       assert Enum.at(params, 2) == "22"
@@ -91,7 +91,6 @@ defmodule ElvenPackets.Server.EntityPacketsTest do
       assert Enum.at(params, 5) == "55"
       assert Enum.at(params, 6) == "66"
       assert Enum.at(params, 7) == "77"
-      assert Enum.at(params, 8) == "-1"
     end
 
     test "can serialize a packet with buffs" do

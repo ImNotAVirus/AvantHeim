@@ -8,7 +8,7 @@ defmodule ElvenPackets.Server.EntityPackets do
   import ElvenEnums.EntityEnums, only: [entity_type: 1, direction_type: 1]
   import ElvenEnums.PlayerEnums, only: [morph: 1, wings_design: 1]
 
-  alias ElvenPackets.Types.{NsEnum, NsInteger, NsString, NsBoolean, NsList}
+  alias ElvenPackets.Types.{NsEnum, NsInteger, NsBoolean, NsList}
 
   @serializable true
   defpacket "c_mode", as: CMode do

@@ -130,8 +130,8 @@ defmodule ElvenPackets.Server.PlayerPackets do
   #######
   @serializable true
   defpacket "tit", as: Tit do
-    field(:class, NsEnum, values: character_class(:__enumerators__), apply: &i18n/1)
-    field(:name, NsString)
+    field :class, NsEnum, values: character_class(:__enumerators__), apply: &i18n/1
+    field :name, NsString
   end
 
   ## Private function

@@ -37,7 +37,7 @@ defmodule ElvenPackets.SubPackets.Equipment do
   ## ElvenGard.Network.Type behaviour
 
   @impl true
-  @spec encode(t(), Keyword.t()) :: binary()
+  @spec encode(t(), Keyword.t()) :: iodata()
   def encode(%Equipment{} = struct, _) do
     NsList.encode(
       [

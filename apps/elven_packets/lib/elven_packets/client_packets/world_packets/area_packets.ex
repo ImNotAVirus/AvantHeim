@@ -51,10 +51,10 @@ defmodule ElvenPackets.Client.AreaPackets do
   #######
   @deserializable true
   defpacket "guri", as: Guri do
-    field(:type, NsEnum, values: guri_type(:__enumerators__))
-    field(:entity_type, NsEnum, values: entity_type(:__enumerators__))
-    field(:entity_id, NsInteger)
-    field(:guri_data, NsInteger)
+    field :type, NsEnum, values: guri_type(:__enumerators__)
+    field :entity_type, NsEnum, values: entity_type(:__enumerators__)
+    field :entity_id, NsInteger
+    field :guri_data, NsInteger
   end
 
   #######
@@ -64,8 +64,8 @@ defmodule ElvenPackets.Client.AreaPackets do
   #######
   @deserializable true
   defpacket "dir", as: Dir do
-    field(:dir, NsEnum, values: direction_type(:__enumerators__))
-    field(:entity_type, NsEnum, values: entity_type(:__enumerators__))
-    field(:entity_id, NsInteger)
+    field :dir, NsEnum, values: direction_type(:__enumerators__)
+    field :entity_type, NsEnum, values: entity_type(:__enumerators__)
+    field :entity_id, NsInteger
   end
 end

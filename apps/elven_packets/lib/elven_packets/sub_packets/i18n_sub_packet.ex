@@ -19,7 +19,7 @@ defmodule ElvenPackets.SubPackets.I18nSubPacket do
   ## SerializableStruct behaviour
 
   @impl true
-  @spec encode(t(), Keyword.t()) :: binary()
+  @spec encode(t(), Keyword.t()) :: iodata()
   def encode(%I18nSubPacket{key: key, args: args}, _) do
     i18n_data = PacketConstString.new!(key, args)
 
