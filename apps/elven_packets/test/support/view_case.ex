@@ -25,7 +25,7 @@ defmodule ElvenPackets.ViewCase do
       faction: faction_component(),
       position: position_component(),
       level: level_component(),
-      job_jevel: job_jevel_component(),
+      job_level: job_level_component(),
       hero_level: hero_level_component(),
       currency: currency_component(),
       speed: speed_component(),
@@ -78,7 +78,7 @@ defmodule ElvenPackets.ViewCase do
     %E.LevelComponent{value: 99, xp: 999_999, xp_max: 9_000_000}
   end
 
-  defp job_jevel_component() do
+  defp job_level_component() do
     %P.JobLevelComponent{value: 89, xp: 888_888, xp_max: 8_000_000}
   end
 
