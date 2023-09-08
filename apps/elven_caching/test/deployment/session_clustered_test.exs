@@ -3,7 +3,7 @@ defmodule ElvenCaching.SessionClusteredTest do
 
   import AccountCase, only: [random_string: 0, session_attrs_mock: 1]
 
-  alias ElvenCaching.MnesiaClusterManager
+  alias ElvenGard.ECS.MnesiaBackend.ClusterManager
   alias ElvenCaching.SessionRegistry
 
   @opts [
@@ -55,7 +55,7 @@ defmodule ElvenCaching.SessionClusteredTest do
   def config_node(_) do
     Application.ensure_started(:mnesia)
 
-    {:ok, manager} = GenServer.start(MnesiaClusterManager, nil, name: MnesiaClusterManager)
+    {:ok, manager} = GenServer.start(ClusterManager, nil, name: ClusterManager)
     RegistryTestHelpers.sync(manager)
     {:ok, registry} = GenServer.start(SessionRegistry, nil, name: SessionRegistry)
     RegistryTestHelpers.sync(registry)

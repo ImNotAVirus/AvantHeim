@@ -59,4 +59,8 @@ defmodule GameService.PlayerComponents do
   defmodule FairyComponent do
     use ElvenGard.ECS.Component, state: [:type, :move_type, :element]
   end
+
+  defmodule ArenaWinnerComponent do
+    use ElvenGard.ECS.Component, state: []
+  end
 end

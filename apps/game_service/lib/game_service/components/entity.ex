@@ -41,10 +41,6 @@ defmodule GameService.EntityComponents do
     use ElvenGard.ECS.Component, state: []
   end
 
-  defmodule ArenaWinnerComponent do
-    use ElvenGard.ECS.Component, state: []
-  end
-
   defmodule CannotAttackComponent do
     use ElvenGard.ECS.Component, state: []
   end

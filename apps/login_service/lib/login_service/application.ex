@@ -9,7 +9,7 @@ defmodule LoginService.Application do
 
     children = [
       {Cluster.Supervisor, [topologies, [name: LoginService.ClusterSupervisor]]},
-      {ElvenCaching.MnesiaClusterManager, []},
+      {ElvenGard.ECS.MnesiaBackend.ClusterManager, []},
       {ElvenCaching.SessionRegistry, []},
       {LoginService.Endpoint, name: LoginService.Endpoint}
     ]

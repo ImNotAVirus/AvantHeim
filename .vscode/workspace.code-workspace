@@ -2,7 +2,6 @@
 	"folders": [
 		{"name": "root", "path": ".."},
 		{"path": "../apps/game_service"},
-		{"path": "../apps/core_service"},
 		{"path": "../apps/login_service"},
 		{"path": "../apps/channel_service"},
 		{"path": "../apps/elven_pubsub"},
