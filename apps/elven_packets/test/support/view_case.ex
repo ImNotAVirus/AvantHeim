@@ -75,15 +75,15 @@ defmodule ElvenPackets.ViewCase do
   end
 
   defp level_component() do
-    %E.LevelComponent{level: 99, xp: 999_999, xp_max: 9_000_000}
+    %E.LevelComponent{value: 99, xp: 999_999, xp_max: 9_000_000}
   end
 
   defp job_jevel_component() do
-    %P.JobLevelComponent{level: 89, xp: 888_888, xp_max: 8_000_000}
+    %P.JobLevelComponent{value: 89, xp: 888_888, xp_max: 8_000_000}
   end
 
   defp hero_level_component() do
-    %P.HeroLevelComponent{level: 79, xp: 777_777, xp_max: 7_000_000}
+    %P.HeroLevelComponent{value: 79, xp: 777_777, xp_max: 7_000_000}
   end
 
   defp currency_component() do

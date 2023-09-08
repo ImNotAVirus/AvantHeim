@@ -12,7 +12,7 @@ defmodule GameService.EntityComponents do
   end
 
   defmodule LevelComponent do
-    use ElvenGard.ECS.Component, state: [:level, :xp, :xp_max]
+    use ElvenGard.ECS.Component, state: [:value, :xp, :xp_max]
   end
 
   defmodule SpeedComponent do

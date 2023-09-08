@@ -18,7 +18,7 @@ defmodule ElvenPackets.Views.ChatViewsTest do
   end
 
   describe "say" do
-    test "default serialization" do
+    test "default serialization for players" do
       args = %{entity: new_player(), message: "This is a message"}
       packet = ChatViews.render(:say, args)
 
@@ -29,7 +29,7 @@ defmodule ElvenPackets.Views.ChatViewsTest do
       assert packet.color == nil
     end
 
-    test "serialization with color" do
+    test "serialization for players with color" do
       args = %{entity: new_player(), message: "This is a message", color: :special_gold}
       packet = ChatViews.render(:say, args)
 

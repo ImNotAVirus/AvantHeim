@@ -20,11 +20,11 @@ defmodule GameService.PlayerComponents do
   end
 
   defmodule JobLevelComponent do
-    use ElvenGard.ECS.Component, state: [:level, :xp, :xp_max]
+    use ElvenGard.ECS.Component, state: [:value, :xp, :xp_max]
   end
 
   defmodule HeroLevelComponent do
-    use ElvenGard.ECS.Component, state: [:level, :xp, :xp_max]
+    use ElvenGard.ECS.Component, state: [:value, :xp, :xp_max]
   end
 
   defmodule CurrencyComponent do
