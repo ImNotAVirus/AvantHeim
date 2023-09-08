@@ -3,5 +3,8 @@ defmodule ElvenPackets.Client.WorldPackets do
   TODO: ElvenPackets.Client.WorldPackets
   """
 
-  ## Ignore this file for the moment
+  import ElvenGard.Network.PacketSerializer, only: [import_packets: 1]
+
+  import_packets ElvenPackets.Client.AreaPackets
+  import_packets ElvenPackets.Client.LobbyPackets
 end

@@ -13,6 +13,9 @@ defmodule ElvenPackets.Views.UIViews do
 
   ## Public API
 
+  # FIXME: Move to ElvenGard.Network.View
+  def render(name), do: render(name, [])
+
   @impl true
   def render(:cancel, args) do
     cancel_type = required_param(args, :cancel_type)

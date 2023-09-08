@@ -5,8 +5,13 @@ defmodule ChannelService.Endpoint.NetworkCodec do
 
   @behaviour ElvenGard.Network.NetworkCodec
 
-  # alias ElvenPackets.Client.ChannelPackets
+  require Logger
+  alias ElvenPackets.Client.WorldPackets
   alias ChannelService.Endpoint.Cryptography
+
+  ## Ignore some packet
+  ## FIXME: Clean this
+  @ignore ["0", "c_close", "f_stash_end", "lbs"]
 
   ## Helpers
 
@@ -31,18 +36,17 @@ defmodule ChannelService.Endpoint.NetworkCodec do
     {:handshake, packet}
   end
 
-  def decode(raw, _socket) do
-    _packet =
-      raw
-      |> Cryptography.unpack()
-      |> String.split(" ", parts: 3)
-      # Remove packet unique id
-      |> Enum.drop(1)
-
-    # case packet do
-    #   [packet_id] -> ChannelPackets.deserialize(packet_id, "", socket)
-    #   [packet_id, params] -> ChannelPackets.deserialize(packet_id, params, socket)
-    # end
+  def decode(raw, socket) do
+    case unpack_packet(raw) do
+      [packet_id | _] when packet_id in @ignore -> :ignore
+      [packet_id] -> WorldPackets.deserialize(packet_id, "", socket)
+      [packet_id, params] -> WorldPackets.deserialize(packet_id, params, socket)
+    end
+  catch
+    :error, :function_clause ->
+      packet = unpack_packet(raw)
+      Logger.warn("no serializer found for #{inspect(packet)}")
+      :ignore
   end
 
   @impl true
@@ -57,5 +61,15 @@ defmodule ChannelService.Endpoint.NetworkCodec do
     |> Enum.intersperse(" ")
     |> :erlang.list_to_binary()
     |> Cryptography.encrypt()
+  end
+
+  ## Private helpers
+
+  defp unpack_packet(packet) do
+    packet
+    |> Cryptography.unpack()
+    |> String.split(" ", parts: 3)
+    # Remove packet unique id
+    |> Enum.drop(1)
   end
 end
