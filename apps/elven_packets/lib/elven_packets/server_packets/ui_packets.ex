@@ -68,7 +68,6 @@ defmodule ElvenPackets.Server.UiPackets do
     field :i18n_packet, I18nSubPacket
   end
 
-
   #######
   # Display bank informations
   # ---
