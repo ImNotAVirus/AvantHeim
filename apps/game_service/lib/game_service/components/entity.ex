@@ -37,7 +37,7 @@ defmodule GameService.EntityComponents do
       ]
   end
 
-  defmodule InvisibleComponent do
+  defmodule InvisibilityComponent do
     use ElvenGard.ECS.Component, state: []
   end
 

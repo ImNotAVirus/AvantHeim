@@ -10,10 +10,64 @@ defmodule GameService.PlayerEntity do
 
   ## PlayerEntity structures (for outside use)
 
-  @enforce_keys [:id, :components]
-  defstruct [:id, :components]
+  @enforce_keys [
+    :id,
+    :account,
+    :endpoint,
+    :player,
+    :faction,
+    :position,
+    :level,
+    :job_jevel,
+    :hero_level,
+    :currency,
+    :speed,
+    :direction,
+    :sitting,
+    :combat,
+    :size,
+    :reputation,
+    :arena_winner,
+    :family,
+    :title,
+    :fairy,
+    :specialist,
+    :invisibility,
+    :cannot_attack,
+    :cannot_move
+  ]
+  defstruct @enforce_keys
 
-  @type t :: %PlayerEntity{id: pos_integer(), components: [Component.t()]}
+  @typep maybe(component) :: component | nil
+  @type t :: %PlayerEntity{
+          id: pos_integer(),
+          # Basics components
+          account: P.AccountComponent,
+          endpoint: P.EndpointComponent,
+          player: P.PlayerComponent,
+          faction: P.FactionComponent,
+          position: E.PositionComponent,
+          level: E.LevelComponent,
+          job_jevel: P.JobLevelComponent,
+          hero_level: P.HeroLevelComponent,
+          currency: P.CurrencyComponent,
+          speed: E.SpeedComponent,
+          direction: E.DirectionComponent,
+          sitting: E.SittingComponent,
+          # Hardcoded components
+          combat: E.CombatComponent,
+          size: P.SizeComponent,
+          reputation: P.ReputationComponent,
+          # Optional components
+          arena_winner: maybe(P.ArenaWinnerComponent),
+          family: maybe(P.FamilyComponent),
+          title: maybe(P.TitleComponent),
+          fairy: maybe(P.FairyComponent),
+          specialist: maybe(P.SpecialistComponent),
+          invisibility: maybe(E.InvisibilityComponent),
+          cannot_attack: maybe(E.CannotAttackComponent),
+          cannot_move: maybe(E.CannotMoveComponent)
+        }
 
   ## Public API
 
@@ -46,6 +100,47 @@ defmodule GameService.PlayerEntity do
     )
   end
 
+  @doc """
+  This function can be use to create a PlayerEntity from an Entity an a list of components
+
+  NOTE: This can produce an invalid PlayerEntity and you must verify that you have the required
+  components in your system.
+  """
+  @spec part_load(Entity.t(), [Component.t()]) :: t()
+  def part_load(%Entity{id: {:player, id}}, components) when is_list(components) do
+    mapping = Enum.group_by(components, & &1.__struct__)
+
+    %PlayerEntity{
+      id: id,
+      # Basics components
+      account: Map.get(mapping, P.AccountComponent),
+      endpoint: Map.get(mapping, P.EndpointComponent),
+      player: Map.get(mapping, P.PlayerComponent),
+      faction: Map.get(mapping, P.FactionComponent),
+      position: Map.get(mapping, E.PositionComponent),
+      level: Map.get(mapping, E.LevelComponent),
+      job_jevel: Map.get(mapping, P.JobLevelComponent),
+      hero_level: Map.get(mapping, P.HeroLevelComponent),
+      currency: Map.get(mapping, P.CurrencyComponent),
+      speed: Map.get(mapping, E.SpeedComponent),
+      direction: Map.get(mapping, E.DirectionComponent),
+      sitting: Map.get(mapping, E.SittingComponent),
+      # Hardcoded components
+      combat: Map.get(mapping, E.CombatComponent),
+      size: Map.get(mapping, P.SizeComponent),
+      reputation: Map.get(mapping, P.ReputationComponent),
+      # Optional components
+      arena_winner: Map.get(mapping, P.ArenaWinnerComponent),
+      family: Map.get(mapping, P.FamilyComponent),
+      title: Map.get(mapping, P.TitleComponent),
+      fairy: Map.get(mapping, P.FairyComponent),
+      specialist: Map.get(mapping, P.SpecialistComponent),
+      invisibility: Map.get(mapping, P.InvisibilityComponent),
+      cannot_attack: Map.get(mapping, E.CannotAttackComponent),
+      cannot_move: Map.get(mapping, E.CannotMoveComponent)
+    }
+  end
+
   ## Components specs
 
   defp account_specs(%{id: id, username: username, authority: authority}) do
@@ -68,8 +163,8 @@ defmodule GameService.PlayerEntity do
     [name: name, gender: gender, class: class, hair_color: hair_color, hair_style: hair_style]
   end
 
-  defp faction_specs(%{faction: faction}) do
-    [faction: faction]
+  defp faction_specs(%{faction: value}) do
+    [value: value]
   end
 
   defp position_specs(%{map_id: map_id, map_x: map_x, map_y: map_y} = attrs) do

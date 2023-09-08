@@ -16,7 +16,7 @@ defmodule GameService.PlayerComponents do
   end
 
   defmodule FactionComponent do
-    use ElvenGard.ECS.Component, state: [:faction]
+    use ElvenGard.ECS.Component, state: [:value]
   end
 
   defmodule JobLevelComponent do
