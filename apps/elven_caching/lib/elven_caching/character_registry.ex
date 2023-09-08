@@ -49,6 +49,7 @@ defmodule ElvenCaching.CharacterRegistry do
 
   @impl true
   def handle_continue(:init_mnesia, nil) do
+    ClusterManager.connect_node()
     ClusterManager.create_table!(ElvenCaching.Entity.Character)
 
     :ok = Memento.wait([ElvenCaching.Entity.Character])

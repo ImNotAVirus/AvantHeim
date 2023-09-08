@@ -45,6 +45,7 @@ defmodule ElvenCaching.SessionRegistry do
 
   @impl true
   def handle_continue(:init_mnesia, opts) do
+    ClusterManager.connect_node()
     ClusterManager.create_table!(ElvenCaching.Account.Session)
 
     :ok = Memento.wait([ElvenCaching.Account.Session])

@@ -9,11 +9,13 @@ defmodule ElvenGard.ECS.MnesiaBackend.ClusterManager do
 
   @type storage_type :: :ram_copies | :disc_copies | :disc_only_copies
 
+  @retry_after 1_000
+
   ## Public API
 
   @spec start_link(GenServer.options()) :: GenServer.on_start()
-  def start_link(_opts) do
-    GenServer.start_link(__MODULE__, nil, name: __MODULE__)
+  def start_link(opts) do
+    GenServer.start_link(__MODULE__, opts, name: __MODULE__)
   end
 
   @spec connect_node(storage_type()) :: :ok
@@ -33,22 +35,26 @@ defmodule ElvenGard.ECS.MnesiaBackend.ClusterManager do
   ## GenServer behaviour
 
   @impl true
-  def init(_) do
-    {:ok, nil, {:continue, :connect_node}}
+  def init(opts) do
+    state = %{retry: Keyword.get(opts, :retry, false)}
+
+    case Keyword.get(opts, :auto_connect, true) do
+      true -> {:ok, state, {:continue, :connect_node}}
+      false -> {:ok, state}
+    end
   end
 
   @impl true
-  def handle_continue(:connect_node, state) do
-    do_connect_node(:ram_copies)
+  def handle_continue(:connect_node, %{retry: retry} = state) do
+    do_connect_node(:ram_copies, retry)
     {:noreply, state}
   end
 
   @impl true
-  def handle_call({:connect_node, copy_type}, _from, state) do
-    {:reply, do_connect_node(copy_type), state}
+  def handle_call({:connect_node, copy_type}, _from, %{retry: retry} = state) do
+    {:reply, do_connect_node(copy_type, retry), state}
   end
 
-  @impl true
   def handle_call({:request_join, slave, copy_type}, _from, state) do
     Logger.info("request_join slave: #{inspect(slave)} - copy_type: #{inspect(copy_type)}")
 
@@ -63,16 +69,20 @@ defmodule ElvenGard.ECS.MnesiaBackend.ClusterManager do
 
   ## Helpers
 
-  defp do_connect_node(copy_type) do
+  defp do_connect_node(copy_type, retry) do
     case Node.list() do
       [] ->
-        Logger.info("connect_node no node found")
-        :ok
+        if not retry do
+          Logger.info("connect_node no node found, no retry")
+        else
+          Logger.info("connect_node no node found, retry in #{@retry_after}ms")
+          Process.sleep(@retry_after)
+          do_connect_node(copy_type, retry)
+        end
 
       [master | _] ->
         Logger.info("connect_node master: #{inspect(master)} - copy_type: #{inspect(copy_type)}")
-        result = GenServer.multi_call([master], __MODULE__, {:request_join, node(), copy_type})
-        Logger.info("connect_node #{inspect(result)}")
+        GenServer.multi_call([master], __MODULE__, {:request_join, node(), copy_type})
         :ok
     end
   end
