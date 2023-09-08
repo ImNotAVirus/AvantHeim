@@ -5,23 +5,28 @@ defmodule ElvenPackets.Views.EntityViews do
 
   use ElvenGard.Network.View
 
-  import ElvenPackets.View, only: [optional_param: 3, required_param: 2]
+  import ElvenPackets.View, only: [required_param: 2]
 
   alias ElvenPackets.Server.EntityPackets.{CMode, CharSc, Cond, Dir, Eff, St}
+  alias GameService.PlayerEntity
 
   @impl true
   def render(:c_mode, args) do
-    character = required_param(args, :character)
+    entity = required_param(args, :entity)
+
+    if entity.__struct__ != PlayerEntity do
+      raise ArgumentError, "c_mode can only be called on players, got: #{inspect(entity)}"
+    end
 
     %CMode{
       entity_type: :character,
-      entity_id: character.id,
-      morph: FakeData.morph(character_id: character.id),
-      morph_upgrade: FakeData.morph_upgrade(character_id: character.id),
-      wings_design: FakeData.wings_design(character_id: character.id),
-      is_arena_winner: FakeData.is_arena_winner(character_id: character.id),
-      size: FakeData.size(character_id: character.id),
-      item_morph: FakeData.item_morph(character_id: character.id)
+      entity_id: GameService.entity_id(entity),
+      morph: PlayerEntity.morph(entity),
+      morph_upgrade: PlayerEntity.morph_upgrade(entity),
+      wings_design: PlayerEntity.wings_design(entity),
+      is_arena_winner: PlayerEntity.arena_winner?(entity),
+      size: PlayerEntity.size(entity),
+      item_morph: PlayerEntity.item_morph(entity)
     }
   end
 
@@ -30,9 +35,9 @@ defmodule ElvenPackets.Views.EntityViews do
     entity = required_param(args, :entity)
 
     %CharSc{
-      entity_type: Entity.type(entity),
-      entity_id: Entity.id(entity),
-      size: MapEntity.size(entity)
+      entity_type: GameService.entity_type(entity),
+      entity_id: GameService.entity_id(entity),
+      size: entity.__struct__.size(entity)
     }
   end
 
@@ -40,11 +45,11 @@ defmodule ElvenPackets.Views.EntityViews do
     entity = required_param(args, :entity)
 
     %Cond{
-      entity_type: Entity.type(entity),
-      entity_id: Entity.id(entity),
-      no_attack: not BattleEntity.can_attack(entity),
-      no_move: not BattleEntity.can_move(entity),
-      speed: MapEntity.speed(entity)
+      entity_type: GameService.entity_type(entity),
+      entity_id: GameService.entity_id(entity),
+      no_attack: not entity.__struct__.can_attack(entity),
+      no_move: not entity.__struct__.can_move(entity),
+      speed: entity.__struct__.speed(entity)
     }
   end
 
@@ -52,9 +57,9 @@ defmodule ElvenPackets.Views.EntityViews do
     entity = required_param(args, :entity)
 
     %Dir{
-      entity_type: Entity.type(entity),
-      entity_id: Entity.id(entity),
-      direction: MapEntity.direction(entity)
+      entity_type: GameService.entity_type(entity),
+      entity_id: GameService.entity_id(entity),
+      direction: entity.__struct__.direction(entity)
     }
   end
 
@@ -63,26 +68,34 @@ defmodule ElvenPackets.Views.EntityViews do
     value = required_param(args, :value)
 
     %Eff{
-      entity_type: Entity.type(entity),
-      entity_id: Entity.id(entity),
+      entity_type: GameService.entity_type(entity),
+      entity_id: GameService.entity_id(entity),
       value: value
     }
   end
 
   def render(:st, args) do
     entity = required_param(args, :entity)
-    buffs = optional_param(args, :buffs, [])
+    buffs = required_param(args, :buffs)
+
+    if entity.__struct__ != PlayerEntity do
+      raise ArgumentError, "st can only be called on players currently, got: #{inspect(entity)}"
+    end
+
+    hp_percent = trunc(PlayerEntity.hp(entity) * 100 / PlayerEntity.hp_max(entity))
+    mp_percent = trunc(PlayerEntity.mp(entity) * 100 / PlayerEntity.mp_max(entity))
 
     %St{
-      entity_type: Entity.type(entity),
-      entity_id: Entity.id(entity),
-      level: LevelableEntity.level(entity),
-      hero_level: LevelableEntity.hero_level(entity),
-      hp: BattleEntity.hp(entity),
-      hp_percent: BattleEntityHelper.hp_percent(entity),
-      mp: BattleEntity.mp(entity),
-      mp_percent: BattleEntityHelper.mp_percent(entity),
+      entity_type: GameService.entity_type(entity),
+      entity_id: GameService.entity_id(entity),
+      level: PlayerEntity.level(entity),
+      hero_level: PlayerEntity.hero_level(entity),
+      hp: PlayerEntity.hp(entity),
+      hp_percent: hp_percent,
+      mp: PlayerEntity.mp(entity),
+      mp_percent: mp_percent,
       # TODO: Buff is a System. Not sure how to do it currently
+      # Update 08/09/2023 yes this is a system and I'm pretty sure how to do it :)
       buffs: buffs
     }
   end

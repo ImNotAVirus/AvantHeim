@@ -140,6 +140,86 @@ defmodule GameService.PlayerEntity do
     }
   end
 
+  ## Getters
+
+  def morph(%PlayerEntity{} = player) do
+    case player.specialist do
+      nil -> :default
+      specialist -> specialist.type
+    end
+  end
+
+  def morph_upgrade(%PlayerEntity{} = player) do
+    case player.specialist do
+      nil -> 0
+      specialist -> specialist.upgrade
+    end
+  end
+
+  def wings_design(%PlayerEntity{} = player) do
+    case player.specialist do
+      nil -> :default
+      specialist -> specialist.wings_design
+    end
+  end
+
+  def arena_winner?(%PlayerEntity{} = player) do
+    not is_nil(player.arena_winner)
+  end
+
+  def size(%PlayerEntity{} = player) do
+    player.size.value
+  end
+
+  def item_morph(%PlayerEntity{} = _player) do
+    # FIXME: Hardcoded value
+    0
+  end
+
+  def can_attack(%PlayerEntity{} = player) do
+    is_nil(player.cannot_attack)
+  end
+
+  def can_move(%PlayerEntity{} = player) do
+    is_nil(player.cannot_move)
+  end
+
+  def speed(%PlayerEntity{} = player) do
+    player.speed.value
+  end
+
+  def direction(%PlayerEntity{} = player) do
+    player.direction.value
+  end
+
+  def hp(%PlayerEntity{} = player) do
+    player.combat.hp
+  end
+
+  def hp_max(%PlayerEntity{} = player) do
+    player.combat.hp_max
+  end
+
+  def mp(%PlayerEntity{} = player) do
+    player.combat.mp
+  end
+
+  def mp_max(%PlayerEntity{} = player) do
+    player.combat.mp_max
+  end
+
+  def level(%PlayerEntity{} = player) do
+    player.level.value
+  end
+
+  def job_level(%PlayerEntity{} = player) do
+    player.job_level.value
+  end
+
+  def hero_level(%PlayerEntity{} = player) do
+    player.hero_level.value
+  end
+
   ## Components specs
 
   defp account_specs(%{id: id, username: username, authority: authority}) do
@@ -171,19 +251,19 @@ defmodule GameService.PlayerEntity do
     [map_id: map_id, map_ref: map_ref, map_x: map_x, map_y: map_y]
   end
 
-  defp level_specs(%{level: level, level_xp: xp}) do
+  defp level_specs(%{level: value, level_xp: xp}) do
     # FIXME: Harcoded value
-    [level: level, xp: xp, xp_max: 10_000]
+    [value: value, xp: xp, xp_max: 10_000]
   end
 
-  defp job_level_specs(%{job_level: level, job_level_xp: xp}) do
+  defp job_level_specs(%{job_level: value, job_level_xp: xp}) do
     # FIXME: Harcoded value
-    [level: level, xp: xp, xp_max: 10_000]
+    [value: value, xp: xp, xp_max: 10_000]
   end
 
-  defp hero_level_specs(%{hero_level: level, hero_level_xp: xp}) do
+  defp hero_level_specs(%{hero_level: value, hero_level_xp: xp}) do
     # FIXME: Harcoded value
-    [level: level, xp: xp, xp_max: 0]
+    [value: value, xp: xp, xp_max: 0]
   end
 
   defp currency_specs(%{gold: gold, bank_gold: bank_gold}) do
