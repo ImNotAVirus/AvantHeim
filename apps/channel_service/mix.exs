@@ -23,7 +23,7 @@ defmodule ChannelService.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:elvengard_network, "~> 0.1.0"},
+      {:elvengard_network, "~> 0.1.1"},
       {:libcluster, "~> 3.3"},
       {:elven_database, path: "../elven_database"},
       {:elven_caching, path: "../elven_caching"},
