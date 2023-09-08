@@ -9,12 +9,14 @@ defmodule GameService.Application do
   def start(_type, _args) do
     topologies = Application.get_env(:libcluster, :topologies, [])
 
-    # Just send all events to the map with id 1 (NosVille) for now
-    partition_hash = fn event -> {event, 1} end
+    # FIXME: Remove hash and use event.partition
+    partition_hash = fn event -> {event, event.partition} end
 
     children = [
       {Cluster.Supervisor, [topologies, [name: GameService.ClusterSupervisor]]},
       {ElvenGard.ECS.Topology.EventSource, [hash: partition_hash]},
+      # FIXME: Later rewrite partitions with a DynamicSupervisor
+      {GameService.SystemPartition, []},
       {GameService.StaticMapPartition, [id: 1]}
     ]
 
