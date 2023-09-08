@@ -22,8 +22,8 @@ defmodule GameService.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:libcluster, "~> 3.3"},
-      {:elvengard_ecs, github: "imnotavirus/elvengard_ecs"}
+      {:elvengard_ecs, github: "imnotavirus/elvengard_ecs"},
+      {:libcluster, "~> 3.3", optional: true}
     ]
   end
 end

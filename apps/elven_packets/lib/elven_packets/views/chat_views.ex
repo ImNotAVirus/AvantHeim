@@ -5,7 +5,7 @@ defmodule ElvenPackets.Views.ChatViews do
 
   use ElvenGard.Network.View
 
-  import ElvenPackets.View, only: [optional_param: 3, optional_param: 2, required_param: 2]
+  import ElvenPackets.View, only: [optional_param: 2, required_param: 2]
 
   alias ElvenPackets.Server.ChatPackets.{Bn, Say}
 

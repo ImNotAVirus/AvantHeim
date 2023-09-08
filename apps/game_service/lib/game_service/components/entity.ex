@@ -23,10 +23,6 @@ defmodule GameService.EntityComponents do
     use ElvenGard.ECS.Component, state: [:value]
   end
 
-  defmodule SittingComponent do
-    use ElvenGard.ECS.Component, state: [:value]
-  end
-
   defmodule CombatComponent do
     use ElvenGard.ECS.Component,
       state: [
@@ -35,6 +31,10 @@ defmodule GameService.EntityComponents do
         :mp,
         :mp_max
       ]
+  end
+
+  defmodule SittingComponent do
+    use ElvenGard.ECS.Component, state: []
   end
 
   defmodule InvisibilityComponent do

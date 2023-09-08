@@ -1,7 +1,7 @@
 defmodule ElvenPackets.Server.MapPacketsTest do
   use ElvenPackets.PacketCase, async: true
 
-  alias ElvenPackets.Server.MapPackets.{At, Cmap, Mapout, Mv}
+  alias ElvenPackets.Server.MapPackets.{At, CMap, Mapout, Mv}
 
   ## Tests
   describe "at" do
@@ -24,7 +24,7 @@ defmodule ElvenPackets.Server.MapPacketsTest do
 
   describe "c_map" do
     test "can be serialized" do
-      packet = %Cmap{map_vnum: 12, is_static_map: false}
+      packet = %CMap{map_vnum: 12, is_static_map: false}
       assert {"c_map", params} = serialize_packet(packet)
       assert is_list(params)
       assert length(params) == 3

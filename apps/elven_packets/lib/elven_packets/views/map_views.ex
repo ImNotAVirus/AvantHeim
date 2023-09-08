@@ -5,10 +5,10 @@ defmodule ElvenPackets.Views.MapViews do
 
   use ElvenGard.Network.View
 
-  import ElvenPackets.View, only: [optional_param: 3, required_param: 2]
+  import ElvenPackets.View, only: [required_param: 2]
 
   alias ElvenCaching.Entity.EntityPosition
-  alias ElvenPackets.Server.MapPackets.{At, Cmap, Mapout, Mv}
+  alias ElvenPackets.Server.MapPackets.{At, CMap, Mapout, Mv}
 
   @impl true
   def render(:at, args) do
@@ -39,7 +39,7 @@ defmodule ElvenPackets.Views.MapViews do
       is_instance: is_instance
     } = MapEntity.position(character)
 
-    %Cmap{
+    %CMap{
       map_vnum: map_vnum,
       is_static_map: not is_instance
     }

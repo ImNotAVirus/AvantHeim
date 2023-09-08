@@ -23,7 +23,7 @@ defmodule ElvenPackets.Server.MapPackets do
   end
 
   @serializable true
-  defpacket "c_map", as: Cmap do
+  defpacket "c_map", as: CMap do
     # Always 0, idk
     field :type, NsInteger, default: 0
     field :map_vnum, NsInteger

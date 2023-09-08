@@ -23,10 +23,10 @@ defmodule GameService.PlayerEntity do
     :currency,
     :speed,
     :direction,
-    :sitting,
     :combat,
     :size,
     :reputation,
+    :sitting,
     :arena_winner,
     :family,
     :title,
@@ -53,12 +53,12 @@ defmodule GameService.PlayerEntity do
           currency: P.CurrencyComponent,
           speed: E.SpeedComponent,
           direction: E.DirectionComponent,
-          sitting: E.SittingComponent,
           # Hardcoded components
           combat: E.CombatComponent,
           size: P.SizeComponent,
           reputation: P.ReputationComponent,
           # Optional components
+          sitting: maybe(E.SittingComponent),
           arena_winner: maybe(P.ArenaWinnerComponent),
           family: maybe(P.FamilyComponent),
           title: maybe(P.TitleComponent),
@@ -91,7 +91,6 @@ defmodule GameService.PlayerEntity do
           {P.CurrencyComponent, currency_specs(attrs)},
           {E.SpeedComponent, speed_specs(attrs)},
           {E.DirectionComponent, direction_specs(attrs)},
-          {E.SittingComponent, sitting_specs(attrs)},
           # Hardcoded components
           {E.CombatComponent, combat_specs(attrs)},
           {P.SizeComponent, size_specs(attrs)},
@@ -124,12 +123,12 @@ defmodule GameService.PlayerEntity do
       currency: Map.get(mapping, P.CurrencyComponent),
       speed: Map.get(mapping, E.SpeedComponent),
       direction: Map.get(mapping, E.DirectionComponent),
-      sitting: Map.get(mapping, E.SittingComponent),
       # Hardcoded components
       combat: Map.get(mapping, E.CombatComponent),
       size: Map.get(mapping, P.SizeComponent),
       reputation: Map.get(mapping, P.ReputationComponent),
       # Optional components
+      sitting: Map.get(mapping, E.SittingComponent),
       arena_winner: Map.get(mapping, P.ArenaWinnerComponent),
       family: Map.get(mapping, P.FamilyComponent),
       title: Map.get(mapping, P.TitleComponent),
@@ -198,10 +197,6 @@ defmodule GameService.PlayerEntity do
 
   defp direction_specs(attrs) do
     [value: Map.get(attrs, :direction, :south)]
-  end
-
-  defp sitting_specs(attrs) do
-    [value: Map.get(attrs, :is_sitting, false)]
   end
 
   # Hardcoded components specs
