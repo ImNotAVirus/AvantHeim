@@ -8,7 +8,6 @@ defmodule ChannelService.Endpoint.Protocol do
   import ElvenGard.Network.Socket, only: [assign: 2]
 
   alias ElvenPackets.Views.{ChatViews, PlayerViews, UIViews}
-  alias ChannelService.EntityInteractions
 
   alias ElvenGard.Network.Socket
   alias GameService.PlayerEntity
@@ -41,11 +40,13 @@ defmodule ChannelService.Endpoint.Protocol do
   ## GenServer behaviour
 
   @impl true
-  def handle_info({:on_map_enter, %PlayerEntity{} = player, _components}, socket) do
+  def handle_info({:entity_spawn, %PlayerEntity{} = player}, socket) do
+    IO.inspect(player, label: "bundle")
+
     case player.id == socket.assigns.character_id do
-      false ->
-        EntityInteractions.send_map_enter(player)
-        :ok
+      # false ->
+      #   EntityInteractions.send_map_enter(player)
+      #   :ok
 
       true ->
         Socket.send(socket, PlayerViews.render(:tit, %{character: player}))

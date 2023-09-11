@@ -23,6 +23,7 @@ defmodule GameService.SystemPartition.PlayerSpawnSystem do
   # defp maybe_broadcast_spawn(_entity, _components, nil), do: :ok
 
   defp maybe_broadcast_spawn(entity, components, %PositionComponent{map_ref: map_ref}) do
+    # Get all players on the current map
     players =
       Query.select(
         Entity,
@@ -31,7 +32,16 @@ defmodule GameService.SystemPartition.PlayerSpawnSystem do
       )
       |> Query.all()
 
-    IO.inspect(players, label: "players")
-    GameService.broadcast_to({:entity_spawn, entity, components}, players)
+    # Get EndpointComponent
+    endpoints =
+      Enum.map(players, fn {_entity, components} ->
+        Enum.find(components, &match?(%EndpointComponent{}, &1))
+      end)
+
+    # Transform the entity + components to a bundle
+    bundle = GameService.load_bundle(entity, components)
+
+    # Broadcast the entity spawn to players
+    GameService.broadcast_to({:entity_spawn, bundle}, endpoints)
   end
 end

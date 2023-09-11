@@ -38,35 +38,36 @@ defmodule GameService.PlayerEntity do
   ]
   defstruct @enforce_keys
 
-  @typep maybe(component) :: component | nil
+  @typep component(module) :: module | :unset
+  @typep maybe_component(module) :: component(module) | nil
   @type t :: %PlayerEntity{
           id: pos_integer(),
           # Basics components
-          account: P.AccountComponent,
-          endpoint: P.EndpointComponent,
-          player: P.PlayerComponent,
-          faction: P.FactionComponent,
-          position: E.PositionComponent,
-          level: E.LevelComponent,
-          job_level: P.JobLevelComponent,
-          hero_level: P.HeroLevelComponent,
-          currency: P.CurrencyComponent,
-          speed: E.SpeedComponent,
-          direction: E.DirectionComponent,
+          account: component(P.AccountComponent),
+          endpoint: component(P.EndpointComponent),
+          player: component(P.PlayerComponent),
+          faction: component(P.FactionComponent),
+          position: component(E.PositionComponent),
+          level: component(E.LevelComponent),
+          job_level: component(P.JobLevelComponent),
+          hero_level: component(P.HeroLevelComponent),
+          currency: component(P.CurrencyComponent),
+          speed: component(E.SpeedComponent),
+          direction: component(E.DirectionComponent),
           # Hardcoded components
-          combat: E.CombatComponent,
-          size: P.SizeComponent,
-          reputation: P.ReputationComponent,
+          combat: component(E.CombatComponent),
+          size: component(P.SizeComponent),
+          reputation: component(P.ReputationComponent),
           # Optional components
-          sitting: maybe(E.SittingComponent),
-          arena_winner: maybe(P.ArenaWinnerComponent),
-          family: maybe(P.FamilyComponent),
-          title: maybe(P.TitleComponent),
-          fairy: maybe(P.FairyComponent),
-          specialist: maybe(P.SpecialistComponent),
-          invisibility: maybe(E.InvisibilityComponent),
-          cannot_attack: maybe(E.CannotAttackComponent),
-          cannot_move: maybe(E.CannotMoveComponent)
+          sitting: maybe_component(E.SittingComponent),
+          arena_winner: maybe_component(P.ArenaWinnerComponent),
+          family: maybe_component(P.FamilyComponent),
+          title: maybe_component(P.TitleComponent),
+          fairy: maybe_component(P.FairyComponent),
+          specialist: maybe_component(P.SpecialistComponent),
+          invisibility: maybe_component(E.InvisibilityComponent),
+          cannot_attack: maybe_component(E.CannotAttackComponent),
+          cannot_move: maybe_component(E.CannotMoveComponent)
         }
 
   ## Public API
@@ -102,41 +103,41 @@ defmodule GameService.PlayerEntity do
   @doc """
   This function can be use to create a PlayerEntity from an Entity an a list of components
 
-  NOTE: This can produce an invalid PlayerEntity and you must verify that you have the required
-  components in your system.
+  NOTE: You must verify that you have the required components in your system.
+  Some components can be set set to `:unset`.
   """
-  @spec part_load(Entity.t(), [Component.t()]) :: t()
-  def part_load(%Entity{id: {:player, id}}, components) when is_list(components) do
+  @spec load(Entity.t(), [Component.t()]) :: t()
+  def load(%Entity{id: {:player, id}}, components) when is_list(components) do
     mapping = Enum.group_by(components, & &1.__struct__)
 
     %PlayerEntity{
       id: id,
       # Basics components
-      account: Map.get(mapping, P.AccountComponent),
-      endpoint: Map.get(mapping, P.EndpointComponent),
-      player: Map.get(mapping, P.PlayerComponent),
-      faction: Map.get(mapping, P.FactionComponent),
-      position: Map.get(mapping, E.PositionComponent),
-      level: Map.get(mapping, E.LevelComponent),
-      job_level: Map.get(mapping, P.JobLevelComponent),
-      hero_level: Map.get(mapping, P.HeroLevelComponent),
-      currency: Map.get(mapping, P.CurrencyComponent),
-      speed: Map.get(mapping, E.SpeedComponent),
-      direction: Map.get(mapping, E.DirectionComponent),
+      account: Map.get(mapping, P.AccountComponent, :unset),
+      endpoint: Map.get(mapping, P.EndpointComponent, :unset),
+      player: Map.get(mapping, P.PlayerComponent, :unset),
+      faction: Map.get(mapping, P.FactionComponent, :unset),
+      position: Map.get(mapping, E.PositionComponent, :unset),
+      level: Map.get(mapping, E.LevelComponent, :unset),
+      job_level: Map.get(mapping, P.JobLevelComponent, :unset),
+      hero_level: Map.get(mapping, P.HeroLevelComponent, :unset),
+      currency: Map.get(mapping, P.CurrencyComponent, :unset),
+      speed: Map.get(mapping, E.SpeedComponent, :unset),
+      direction: Map.get(mapping, E.DirectionComponent, :unset),
       # Hardcoded components
-      combat: Map.get(mapping, E.CombatComponent),
-      size: Map.get(mapping, P.SizeComponent),
-      reputation: Map.get(mapping, P.ReputationComponent),
+      combat: Map.get(mapping, E.CombatComponent, :unset),
+      size: Map.get(mapping, P.SizeComponent, :unset),
+      reputation: Map.get(mapping, P.ReputationComponent, :unset),
       # Optional components
-      sitting: Map.get(mapping, E.SittingComponent),
-      arena_winner: Map.get(mapping, P.ArenaWinnerComponent),
-      family: Map.get(mapping, P.FamilyComponent),
-      title: Map.get(mapping, P.TitleComponent),
-      fairy: Map.get(mapping, P.FairyComponent),
-      specialist: Map.get(mapping, P.SpecialistComponent),
-      invisibility: Map.get(mapping, P.InvisibilityComponent),
-      cannot_attack: Map.get(mapping, E.CannotAttackComponent),
-      cannot_move: Map.get(mapping, E.CannotMoveComponent)
+      sitting: Map.get(mapping, E.SittingComponent, :unset),
+      arena_winner: Map.get(mapping, P.ArenaWinnerComponent, :unset),
+      family: Map.get(mapping, P.FamilyComponent, :unset),
+      title: Map.get(mapping, P.TitleComponent, :unset),
+      fairy: Map.get(mapping, P.FairyComponent, :unset),
+      specialist: Map.get(mapping, P.SpecialistComponent, :unset),
+      invisibility: Map.get(mapping, P.InvisibilityComponent, :unset),
+      cannot_attack: Map.get(mapping, E.CannotAttackComponent, :unset),
+      cannot_move: Map.get(mapping, E.CannotMoveComponent, :unset)
     }
   end
 
@@ -144,6 +145,7 @@ defmodule GameService.PlayerEntity do
 
   def morph(%PlayerEntity{} = player) do
     case player.specialist do
+      :unset -> raise ArgumentError, "you must fetch the Player.SpecialistComponent first"
       nil -> :default
       specialist -> specialist.type
     end
@@ -151,6 +153,7 @@ defmodule GameService.PlayerEntity do
 
   def morph_upgrade(%PlayerEntity{} = player) do
     case player.specialist do
+      :unset -> raise ArgumentError, "you must fetch the Player.SpecialistComponent first"
       nil -> 0
       specialist -> specialist.upgrade
     end
@@ -158,17 +161,24 @@ defmodule GameService.PlayerEntity do
 
   def wings_design(%PlayerEntity{} = player) do
     case player.specialist do
+      :unset -> raise ArgumentError, "you must fetch the Player.SpecialistComponent first"
       nil -> :default
       specialist -> specialist.wings_design
     end
   end
 
   def arena_winner?(%PlayerEntity{} = player) do
-    not is_nil(player.arena_winner)
+    case player.arena_winner do
+      :unset -> raise ArgumentError, "you must fetch the Player.ArenaWinnerComponent first"
+      arena_winner -> not is_nil(arena_winner)
+    end
   end
 
   def size(%PlayerEntity{} = player) do
-    player.size.value
+    case player.size do
+      :unset -> raise ArgumentError, "you must fetch the Player.SizeComponent first"
+      size -> size.value
+    end
   end
 
   def item_morph(%PlayerEntity{} = _player) do
@@ -177,47 +187,80 @@ defmodule GameService.PlayerEntity do
   end
 
   def can_attack(%PlayerEntity{} = player) do
-    is_nil(player.cannot_attack)
+    case player.cannot_attack do
+      :unset -> raise ArgumentError, "you must fetch the Entity.CannotAttackComponent first"
+      cannot_attack -> is_nil(cannot_attack)
+    end
   end
 
   def can_move(%PlayerEntity{} = player) do
-    is_nil(player.cannot_move)
+    case player.cannot_move do
+      :unset -> raise ArgumentError, "you must fetch the Entity.CannotMoveComponent first"
+      cannot_move -> is_nil(cannot_move)
+    end
   end
 
   def speed(%PlayerEntity{} = player) do
-    player.speed.value
+    case player.speed do
+      :unset -> raise ArgumentError, "you must fetch the Entity.SpeedComponent first"
+      speed -> speed.value
+    end
   end
 
   def direction(%PlayerEntity{} = player) do
-    player.direction.value
+    case player.direction do
+      :unset -> raise ArgumentError, "you must fetch the Entity.DirectionComponent first"
+      direction -> direction.value
+    end
   end
 
   def hp(%PlayerEntity{} = player) do
-    player.combat.hp
+    case player.combat do
+      :unset -> raise ArgumentError, "you must fetch the Entity.CombatComponent first"
+      combat -> combat.hp
+    end
   end
 
   def hp_max(%PlayerEntity{} = player) do
-    player.combat.hp_max
+    case player.combat do
+      :unset -> raise ArgumentError, "you must fetch the Entity.CombatComponent first"
+      combat -> combat.hp_max
+    end
   end
 
   def mp(%PlayerEntity{} = player) do
-    player.combat.mp
+    case player.combat do
+      :unset -> raise ArgumentError, "you must fetch the Entity.CombatComponent first"
+      combat -> combat.mp
+    end
   end
 
   def mp_max(%PlayerEntity{} = player) do
-    player.combat.mp_max
+    case player.combat do
+      :unset -> raise ArgumentError, "you must fetch the Entity.CombatComponent first"
+      combat -> combat.mp_max
+    end
   end
 
   def level(%PlayerEntity{} = player) do
-    player.level.value
+    case player.level do
+      :unset -> raise ArgumentError, "you must fetch the Entity.LevelComponent first"
+      level -> level.value
+    end
   end
 
   def job_level(%PlayerEntity{} = player) do
-    player.job_level.value
+    case player.job_level do
+      :unset -> raise ArgumentError, "you must fetch the Player.JobLevelComponent first"
+      job_level -> job_level.value
+    end
   end
 
   def hero_level(%PlayerEntity{} = player) do
-    player.hero_level.value
+    case player.hero_level do
+      :unset -> raise ArgumentError, "you must fetch the Player.HeroLevelComponent first"
+      hero_level -> hero_level.value
+    end
   end
 
   ## Components specs

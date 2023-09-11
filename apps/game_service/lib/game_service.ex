@@ -3,16 +3,23 @@ defmodule GameService do
   Documentation for `GameService`.
   """
 
+  alias ElvenGard.ECS.Entity
+
   alias GameService.PlayerEntity
+  alias GameService.PlayerComponents.EndpointComponent
 
   def entity_type(%PlayerEntity{}), do: :character
   def entity_id(%PlayerEntity{id: id}), do: id
 
-  def broadcast_to(maybe_events, maybe_pids) do
-    events = List.wrap(maybe_events)
-    pids = List.wrap(maybe_pids)
+  def load_bundle(%Entity{id: {:player, _}} = entity, component) do
+    PlayerEntity.load(entity, component)
+  end
 
-    for pid <- pids, event <- events do
+  def broadcast_to(maybe_events, maybe_endpoints) do
+    events = List.wrap(maybe_events)
+    endpoints = List.wrap(maybe_endpoints)
+
+    for %EndpointComponent{pid: pid} <- endpoints, event <- events do
       send(pid, event)
     end
   end
