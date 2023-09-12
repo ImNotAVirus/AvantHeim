@@ -6,7 +6,15 @@ defmodule ElvenPackets.Server.MapPacketsTest do
   ## Tests
   describe "at" do
     test "can be serialized" do
-      packet = %At{id: 69, map_vnum: 1, map_x: 2, map_y: 3, direction: :north, map_music: 5}
+      packet = %At{
+        entity_id: 69,
+        map_vnum: 1,
+        map_x: 2,
+        map_y: 3,
+        direction: :north,
+        map_music: 5
+      }
+
       assert {"at", params} = serialize_packet(packet)
       assert is_list(params)
       assert length(params) == 9

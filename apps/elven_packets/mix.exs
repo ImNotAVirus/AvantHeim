@@ -27,7 +27,6 @@ defmodule ElvenPackets.MixProject do
       {:elvengard_network, "~> 0.1.1", runtime: false},
       {:elven_i18n, path: "../elven_i18n", runtime: false},
       {:elven_enums, path: "../elven_enums", runtime: false},
-      {:elven_caching, path: "../elven_caching", runtime: false},
       {:game_service, path: "../game_service", runtime: false},
       {:simple_enum, "~> 0.1", runtime: false}
     ]

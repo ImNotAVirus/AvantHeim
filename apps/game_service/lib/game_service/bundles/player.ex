@@ -263,6 +263,27 @@ defmodule GameService.PlayerBundle do
     end
   end
 
+  def map_id(%PlayerBundle{} = player) do
+    case player.position do
+      :unset -> raise ArgumentError, "you must fetch the Entity.PositionComponent first"
+      position -> position.map_id
+    end
+  end
+
+  def map_x(%PlayerBundle{} = player) do
+    case player.position do
+      :unset -> raise ArgumentError, "you must fetch the Entity.PositionComponent first"
+      position -> position.map_x
+    end
+  end
+
+  def map_y(%PlayerBundle{} = player) do
+    case player.position do
+      :unset -> raise ArgumentError, "you must fetch the Entity.PositionComponent first"
+      position -> position.map_y
+    end
+  end
+
   ## Components specs
 
   defp account_specs(%{id: id, username: username, authority: authority}) do

@@ -11,7 +11,7 @@ defmodule ElvenPackets.Server.MapPackets do
 
   @serializable true
   defpacket "at", as: At do
-    field :id, NsInteger
+    field :entity_id, NsInteger
     field :map_vnum, NsInteger
     field :map_x, NsInteger
     field :map_y, NsInteger

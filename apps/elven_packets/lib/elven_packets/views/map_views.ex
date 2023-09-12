@@ -7,41 +7,40 @@ defmodule ElvenPackets.Views.MapViews do
 
   import ElvenPackets.View, only: [required_param: 2]
 
-  alias ElvenCaching.Entity.EntityPosition
   alias ElvenPackets.Server.MapPackets.{At, CMap, Mapout, Mv}
+  alias GameService.PlayerBundle
+  alias GameService.EntityComponents.PositionComponent
 
   @impl true
   def render(:at, args) do
-    character = required_param(args, :character)
+    entity = required_param(args, :entity)
     map_music = required_param(args, :map_music)
 
-    %EntityPosition{
-      map_vnum: map_vnum,
-      map_x: map_x,
-      map_y: map_y
-    } = MapEntity.position(character)
+    if entity.__struct__ != PlayerBundle do
+      raise ArgumentError, "at can only be called on players currently, got: #{inspect(entity)}"
+    end
 
     %At{
-      id: Entity.id(character),
-      map_vnum: map_vnum,
-      map_x: map_x,
-      map_y: map_y,
-      direction: MapEntity.direction(character),
+      entity_id: GameService.entity_id(entity),
+      map_vnum: PlayerBundle.map_id(entity),
+      map_x: PlayerBundle.map_x(entity),
+      map_y: PlayerBundle.map_y(entity),
+      direction: PlayerBundle.direction(entity),
       map_music: map_music
     }
   end
 
   def render(:c_map, args) do
-    character = required_param(args, :character)
+    entity = required_param(args, :entity)
 
-    %EntityPosition{
-      map_vnum: map_vnum,
-      is_instance: is_instance
-    } = MapEntity.position(character)
+    if entity.__struct__ != PlayerBundle do
+      raise ArgumentError,
+            "c_map can only be called on players currently, got: #{inspect(entity)}"
+    end
 
     %CMap{
-      map_vnum: map_vnum,
-      is_static_map: not is_instance
+      map_vnum: PlayerBundle.map_id(entity),
+      is_static_map: not PositionComponent.map_instance?(entity.position)
     }
   end
 
@@ -52,17 +51,12 @@ defmodule ElvenPackets.Views.MapViews do
   def render(:mv, args) do
     entity = required_param(args, :entity)
 
-    %EntityPosition{
-      map_x: map_x,
-      map_y: map_y
-    } = MapEntity.position(entity)
-
     %Mv{
-      entity_type: Entity.type(entity),
-      entity_id: Entity.id(entity),
-      map_x: map_x,
-      map_y: map_y,
-      speed: MapEntity.speed(entity)
+      entity_type: GameService.entity_type(entity),
+      entity_id: GameService.entity_id(entity),
+      map_x: PlayerBundle.map_x(entity),
+      map_y: PlayerBundle.map_y(entity),
+      speed: PlayerBundle.speed(entity)
     }
   end
 end

@@ -24,7 +24,7 @@ defmodule ElvenPackets.Views.ChatViews do
 
     %Say{
       entity_type: GameService.entity_type(entity),
-      entity_id: entity.id,
+      entity_id: GameService.entity_id(entity),
       color: color,
       message: message
     }
