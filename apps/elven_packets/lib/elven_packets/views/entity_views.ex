@@ -8,25 +8,25 @@ defmodule ElvenPackets.Views.EntityViews do
   import ElvenPackets.View, only: [required_param: 2]
 
   alias ElvenPackets.Server.EntityPackets.{CMode, CharSc, Cond, Dir, Eff, St}
-  alias GameService.PlayerEntity
+  alias GameService.PlayerBundle
 
   @impl true
   def render(:c_mode, args) do
     entity = required_param(args, :entity)
 
-    if entity.__struct__ != PlayerEntity do
+    if entity.__struct__ != PlayerBundle do
       raise ArgumentError, "c_mode can only be called on players, got: #{inspect(entity)}"
     end
 
     %CMode{
       entity_type: :character,
       entity_id: GameService.entity_id(entity),
-      morph: PlayerEntity.morph(entity),
-      morph_upgrade: PlayerEntity.morph_upgrade(entity),
-      wings_design: PlayerEntity.wings_design(entity),
-      is_arena_winner: PlayerEntity.arena_winner?(entity),
-      size: PlayerEntity.size(entity),
-      item_morph: PlayerEntity.item_morph(entity)
+      morph: PlayerBundle.morph(entity),
+      morph_upgrade: PlayerBundle.morph_upgrade(entity),
+      wings_design: PlayerBundle.wings_design(entity),
+      is_arena_winner: PlayerBundle.arena_winner?(entity),
+      size: PlayerBundle.size(entity),
+      item_morph: PlayerBundle.item_morph(entity)
     }
   end
 
@@ -78,21 +78,21 @@ defmodule ElvenPackets.Views.EntityViews do
     entity = required_param(args, :entity)
     buffs = required_param(args, :buffs)
 
-    if entity.__struct__ != PlayerEntity do
+    if entity.__struct__ != PlayerBundle do
       raise ArgumentError, "st can only be called on players currently, got: #{inspect(entity)}"
     end
 
-    hp_percent = trunc(PlayerEntity.hp(entity) * 100 / PlayerEntity.hp_max(entity))
-    mp_percent = trunc(PlayerEntity.mp(entity) * 100 / PlayerEntity.mp_max(entity))
+    hp_percent = trunc(PlayerBundle.hp(entity) * 100 / PlayerBundle.hp_max(entity))
+    mp_percent = trunc(PlayerBundle.mp(entity) * 100 / PlayerBundle.mp_max(entity))
 
     %St{
       entity_type: GameService.entity_type(entity),
       entity_id: GameService.entity_id(entity),
-      level: PlayerEntity.level(entity),
-      hero_level: PlayerEntity.hero_level(entity),
-      hp: PlayerEntity.hp(entity),
+      level: PlayerBundle.level(entity),
+      hero_level: PlayerBundle.hero_level(entity),
+      hp: PlayerBundle.hp(entity),
       hp_percent: hp_percent,
-      mp: PlayerEntity.mp(entity),
+      mp: PlayerBundle.mp(entity),
       mp_percent: mp_percent,
       # TODO: Buff is a System. Not sure how to do it currently
       # Update 08/09/2023 yes this is a system and I'm pretty sure how to do it :)

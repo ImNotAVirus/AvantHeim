@@ -10,7 +10,7 @@ defmodule ChannelService.Endpoint.Protocol do
   alias ElvenPackets.Views.{ChatViews, PlayerViews, UIViews}
 
   alias ElvenGard.Network.Socket
-  alias GameService.PlayerEntity
+  alias GameService.PlayerBundle
 
   ## Endpoint.Protocol behaviour
 
@@ -40,7 +40,7 @@ defmodule ChannelService.Endpoint.Protocol do
   ## GenServer behaviour
 
   @impl true
-  def handle_info({:entity_spawn, %PlayerEntity{} = player}, socket) do
+  def handle_info({:entity_spawn, %PlayerBundle{} = player}, socket) do
     IO.inspect(player, label: "bundle")
 
     case player.id == socket.assigns.character_id do

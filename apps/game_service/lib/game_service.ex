@@ -5,14 +5,14 @@ defmodule GameService do
 
   alias ElvenGard.ECS.Entity
 
-  alias GameService.PlayerEntity
+  alias GameService.PlayerBundle
   alias GameService.PlayerComponents.EndpointComponent
 
-  def entity_type(%PlayerEntity{}), do: :character
-  def entity_id(%PlayerEntity{id: id}), do: id
+  def entity_type(%PlayerBundle{}), do: :character
+  def entity_id(%PlayerBundle{id: id}), do: id
 
   def load_bundle(%Entity{id: {:player, _}} = entity, component) do
-    PlayerEntity.load(entity, component)
+    PlayerBundle.load(entity, component)
   end
 
   def broadcast_to(maybe_events, maybe_endpoints) do

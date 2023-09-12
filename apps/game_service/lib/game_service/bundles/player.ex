@@ -1,6 +1,6 @@
-defmodule GameService.PlayerEntity do
+defmodule GameService.PlayerBundle do
   @moduledoc """
-  TODO: Documentation for GameService.PlayerEntity
+  TODO: Documentation for GameService.PlayerBundle
   """
 
   alias __MODULE__
@@ -8,7 +8,7 @@ defmodule GameService.PlayerEntity do
   alias GameService.EntityComponents, as: E
   alias GameService.PlayerComponents, as: P
 
-  ## PlayerEntity structures (for outside use)
+  ## PlayerBundle structures (for outside use)
 
   @enforce_keys [
     :id,
@@ -40,7 +40,7 @@ defmodule GameService.PlayerEntity do
 
   @typep component(module) :: module | :unset
   @typep maybe_component(module) :: component(module) | nil
-  @type t :: %PlayerEntity{
+  @type t :: %PlayerBundle{
           id: pos_integer(),
           # Basics components
           account: component(P.AccountComponent),
@@ -101,7 +101,7 @@ defmodule GameService.PlayerEntity do
   end
 
   @doc """
-  This function can be use to create a PlayerEntity from an Entity an a list of components
+  This function can be use to create a PlayerBundle from an Entity an a list of components
 
   NOTE: You must verify that you have the required components in your system.
   Some components can be set set to `:unset`.
@@ -110,7 +110,7 @@ defmodule GameService.PlayerEntity do
   def load(%Entity{id: {:player, id}}, components) when is_list(components) do
     mapping = Enum.group_by(components, & &1.__struct__)
 
-    %PlayerEntity{
+    %PlayerBundle{
       id: id,
       # Basics components
       account: Map.get(mapping, P.AccountComponent, :unset),
@@ -143,7 +143,7 @@ defmodule GameService.PlayerEntity do
 
   ## Getters
 
-  def morph(%PlayerEntity{} = player) do
+  def morph(%PlayerBundle{} = player) do
     case player.specialist do
       :unset -> raise ArgumentError, "you must fetch the Player.SpecialistComponent first"
       nil -> :default
@@ -151,7 +151,7 @@ defmodule GameService.PlayerEntity do
     end
   end
 
-  def morph_upgrade(%PlayerEntity{} = player) do
+  def morph_upgrade(%PlayerBundle{} = player) do
     case player.specialist do
       :unset -> raise ArgumentError, "you must fetch the Player.SpecialistComponent first"
       nil -> 0
@@ -159,7 +159,7 @@ defmodule GameService.PlayerEntity do
     end
   end
 
-  def wings_design(%PlayerEntity{} = player) do
+  def wings_design(%PlayerBundle{} = player) do
     case player.specialist do
       :unset -> raise ArgumentError, "you must fetch the Player.SpecialistComponent first"
       nil -> :default
@@ -167,96 +167,96 @@ defmodule GameService.PlayerEntity do
     end
   end
 
-  def arena_winner?(%PlayerEntity{} = player) do
+  def arena_winner?(%PlayerBundle{} = player) do
     case player.arena_winner do
       :unset -> raise ArgumentError, "you must fetch the Player.ArenaWinnerComponent first"
       arena_winner -> not is_nil(arena_winner)
     end
   end
 
-  def size(%PlayerEntity{} = player) do
+  def size(%PlayerBundle{} = player) do
     case player.size do
       :unset -> raise ArgumentError, "you must fetch the Player.SizeComponent first"
       size -> size.value
     end
   end
 
-  def item_morph(%PlayerEntity{} = _player) do
+  def item_morph(%PlayerBundle{} = _player) do
     # FIXME: Hardcoded value
     0
   end
 
-  def can_attack(%PlayerEntity{} = player) do
+  def can_attack(%PlayerBundle{} = player) do
     case player.cannot_attack do
       :unset -> raise ArgumentError, "you must fetch the Entity.CannotAttackComponent first"
       cannot_attack -> is_nil(cannot_attack)
     end
   end
 
-  def can_move(%PlayerEntity{} = player) do
+  def can_move(%PlayerBundle{} = player) do
     case player.cannot_move do
       :unset -> raise ArgumentError, "you must fetch the Entity.CannotMoveComponent first"
       cannot_move -> is_nil(cannot_move)
     end
   end
 
-  def speed(%PlayerEntity{} = player) do
+  def speed(%PlayerBundle{} = player) do
     case player.speed do
       :unset -> raise ArgumentError, "you must fetch the Entity.SpeedComponent first"
       speed -> speed.value
     end
   end
 
-  def direction(%PlayerEntity{} = player) do
+  def direction(%PlayerBundle{} = player) do
     case player.direction do
       :unset -> raise ArgumentError, "you must fetch the Entity.DirectionComponent first"
       direction -> direction.value
     end
   end
 
-  def hp(%PlayerEntity{} = player) do
+  def hp(%PlayerBundle{} = player) do
     case player.combat do
       :unset -> raise ArgumentError, "you must fetch the Entity.CombatComponent first"
       combat -> combat.hp
     end
   end
 
-  def hp_max(%PlayerEntity{} = player) do
+  def hp_max(%PlayerBundle{} = player) do
     case player.combat do
       :unset -> raise ArgumentError, "you must fetch the Entity.CombatComponent first"
       combat -> combat.hp_max
     end
   end
 
-  def mp(%PlayerEntity{} = player) do
+  def mp(%PlayerBundle{} = player) do
     case player.combat do
       :unset -> raise ArgumentError, "you must fetch the Entity.CombatComponent first"
       combat -> combat.mp
     end
   end
 
-  def mp_max(%PlayerEntity{} = player) do
+  def mp_max(%PlayerBundle{} = player) do
     case player.combat do
       :unset -> raise ArgumentError, "you must fetch the Entity.CombatComponent first"
       combat -> combat.mp_max
     end
   end
 
-  def level(%PlayerEntity{} = player) do
+  def level(%PlayerBundle{} = player) do
     case player.level do
       :unset -> raise ArgumentError, "you must fetch the Entity.LevelComponent first"
       level -> level.value
     end
   end
 
-  def job_level(%PlayerEntity{} = player) do
+  def job_level(%PlayerBundle{} = player) do
     case player.job_level do
       :unset -> raise ArgumentError, "you must fetch the Player.JobLevelComponent first"
       job_level -> job_level.value
     end
   end
 
-  def hero_level(%PlayerEntity{} = player) do
+  def hero_level(%PlayerBundle{} = player) do
     case player.hero_level do
       :unset -> raise ArgumentError, "you must fetch the Player.HeroLevelComponent first"
       hero_level -> hero_level.value

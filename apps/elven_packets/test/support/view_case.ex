@@ -1,7 +1,7 @@
 defmodule ElvenPackets.ViewCase do
   use ExUnit.CaseTemplate
 
-  alias GameService.PlayerEntity
+  alias GameService.PlayerBundle
   alias GameService.EntityComponents, as: E
   alias GameService.PlayerComponents, as: P
 
@@ -16,7 +16,7 @@ defmodule ElvenPackets.ViewCase do
   ## Helpers
 
   def new_player(attrs \\ %{}) do
-    %PlayerEntity{
+    %PlayerBundle{
       id: Enum.random(1..100_000),
       # Basics components
       account: account_component(),
