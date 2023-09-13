@@ -38,6 +38,7 @@ defmodule ElvenPackets.ViewCase do
       sitting: nil,
       arena_winner: nil,
       family: nil,
+      group: nil,
       title: nil,
       fairy: nil,
       specialist: nil,

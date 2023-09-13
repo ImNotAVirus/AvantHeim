@@ -29,6 +29,7 @@ defmodule GameService.PlayerBundle do
     :sitting,
     :arena_winner,
     :family,
+    :group,
     :title,
     :fairy,
     :specialist,
@@ -62,6 +63,7 @@ defmodule GameService.PlayerBundle do
           sitting: maybe_component(E.SittingComponent),
           arena_winner: maybe_component(P.ArenaWinnerComponent),
           family: maybe_component(P.FamilyComponent),
+          group: maybe_component(P.GroupComponent),
           title: maybe_component(P.TitleComponent),
           fairy: maybe_component(P.FairyComponent),
           specialist: maybe_component(P.SpecialistComponent),
@@ -132,6 +134,7 @@ defmodule GameService.PlayerBundle do
       sitting: Map.get(mapping, E.SittingComponent, :unset),
       arena_winner: Map.get(mapping, P.ArenaWinnerComponent, :unset),
       family: Map.get(mapping, P.FamilyComponent, :unset),
+      group: Map.get(mapping, P.GroupComponent, :unset),
       title: Map.get(mapping, P.TitleComponent, :unset),
       fairy: Map.get(mapping, P.FairyComponent, :unset),
       specialist: Map.get(mapping, P.SpecialistComponent, :unset),
@@ -174,6 +177,13 @@ defmodule GameService.PlayerBundle do
     end
   end
 
+  def invisible?(%PlayerBundle{} = player) do
+    case player.invisibility do
+      :unset -> raise ArgumentError, "you must fetch the Player.InvisibilityComponent first"
+      invisibility -> not is_nil(invisibility)
+    end
+  end
+
   def size(%PlayerBundle{} = player) do
     case player.size do
       :unset -> raise ArgumentError, "you must fetch the Player.SizeComponent first"
@@ -182,6 +192,11 @@ defmodule GameService.PlayerBundle do
   end
 
   def item_morph(%PlayerBundle{} = _player) do
+    # FIXME: Hardcoded value
+    0
+  end
+
+  def cp(%PlayerBundle{} = _player) do
     # FIXME: Hardcoded value
     0
   end
@@ -249,6 +264,20 @@ defmodule GameService.PlayerBundle do
     end
   end
 
+  def level_xp(%PlayerBundle{} = player) do
+    case player.level do
+      :unset -> raise ArgumentError, "you must fetch the Entity.LevelComponent first"
+      level -> level.xp
+    end
+  end
+
+  def level_xp_max(%PlayerBundle{} = player) do
+    case player.level do
+      :unset -> raise ArgumentError, "you must fetch the Entity.LevelComponent first"
+      level -> level.xp_max
+    end
+  end
+
   def job_level(%PlayerBundle{} = player) do
     case player.job_level do
       :unset -> raise ArgumentError, "you must fetch the Player.JobLevelComponent first"
@@ -256,10 +285,38 @@ defmodule GameService.PlayerBundle do
     end
   end
 
+  def job_level_xp(%PlayerBundle{} = player) do
+    case player.job_level do
+      :unset -> raise ArgumentError, "you must fetch the Player.JobLevelComponent first"
+      job_level -> job_level.xp
+    end
+  end
+
+  def job_level_xp_max(%PlayerBundle{} = player) do
+    case player.job_level do
+      :unset -> raise ArgumentError, "you must fetch the Player.JobLevelComponent first"
+      job_level -> job_level.xp_max
+    end
+  end
+
   def hero_level(%PlayerBundle{} = player) do
     case player.hero_level do
       :unset -> raise ArgumentError, "you must fetch the Player.HeroLevelComponent first"
       hero_level -> hero_level.value
+    end
+  end
+
+  def hero_level_xp(%PlayerBundle{} = player) do
+    case player.hero_level do
+      :unset -> raise ArgumentError, "you must fetch the Player.HeroLevelComponent first"
+      hero_level -> hero_level.xp
+    end
+  end
+
+  def hero_level_xp_max(%PlayerBundle{} = player) do
+    case player.hero_level do
+      :unset -> raise ArgumentError, "you must fetch the Player.HeroLevelComponent first"
+      hero_level -> hero_level.xp_max
     end
   end
 
@@ -281,6 +338,130 @@ defmodule GameService.PlayerBundle do
     case player.position do
       :unset -> raise ArgumentError, "you must fetch the Entity.PositionComponent first"
       position -> position.map_y
+    end
+  end
+
+  def family_id(%PlayerBundle{} = player) do
+    case player.family do
+      :unset -> raise ArgumentError, "you must fetch the Player.FamilyComponent first"
+      nil -> -1
+      family -> family.id
+    end
+  end
+
+  def family_rank(%PlayerBundle{} = player) do
+    case player.family do
+      :unset -> raise ArgumentError, "you must fetch the Player.FamilyComponent first"
+      nil -> nil
+      family -> family.rank
+    end
+  end
+
+  def family_name(%PlayerBundle{} = player) do
+    case player.family do
+      :unset -> raise ArgumentError, "you must fetch the Player.FamilyComponent first"
+      nil -> nil
+      family -> family.name
+    end
+  end
+
+  def family_level(%PlayerBundle{} = player) do
+    case player.family do
+      :unset -> raise ArgumentError, "you must fetch the Player.FamilyComponent first"
+      nil -> nil
+      family -> family.level
+    end
+  end
+
+  def name(%PlayerBundle{} = player) do
+    case player.player do
+      :unset -> raise ArgumentError, "you must fetch the Player.PlayerComponent first"
+      player -> player.name
+    end
+  end
+
+  def gender(%PlayerBundle{} = player) do
+    case player.player do
+      :unset -> raise ArgumentError, "you must fetch the Player.PlayerComponent first"
+      player -> player.gender
+    end
+  end
+
+  def hair_style(%PlayerBundle{} = player) do
+    case player.player do
+      :unset -> raise ArgumentError, "you must fetch the Player.PlayerComponent first"
+      player -> player.hair_style
+    end
+  end
+
+  def hair_color(%PlayerBundle{} = player) do
+    case player.player do
+      :unset -> raise ArgumentError, "you must fetch the Player.PlayerComponent first"
+      player -> player.hair_color
+    end
+  end
+
+  def class(%PlayerBundle{} = player) do
+    case player.player do
+      :unset -> raise ArgumentError, "you must fetch the Player.PlayerComponent first"
+      player -> player.class
+    end
+  end
+
+  def authority(%PlayerBundle{} = player) do
+    case player.account do
+      :unset -> raise ArgumentError, "you must fetch the Player.AccountComponent first"
+      account -> account.authority
+    end
+  end
+
+  def group_id(%PlayerBundle{} = player) do
+    case player.group do
+      :unset -> raise ArgumentError, "you must fetch the Player.GroupComponent first"
+      nil -> -1
+      group -> group.id
+    end
+  end
+
+  def reputation_icon(%PlayerBundle{} = player) do
+    case player.reputation do
+      :unset -> raise ArgumentError, "you must fetch the Player.ReputationComponent first"
+      reputation -> reputation.reputation_icon
+    end
+  end
+
+  def compliment(%PlayerBundle{} = player) do
+    case player.reputation do
+      :unset -> raise ArgumentError, "you must fetch the Player.ReputationComponent first"
+      reputation -> reputation.compliment
+    end
+  end
+
+  def reputation(%PlayerBundle{} = player) do
+    case player.reputation do
+      :unset -> raise ArgumentError, "you must fetch the Player.ReputationComponent first"
+      reputation -> reputation.reputation
+    end
+  end
+
+  def dignity(%PlayerBundle{} = player) do
+    case player.reputation do
+      :unset -> raise ArgumentError, "you must fetch the Player.ReputationComponent first"
+      reputation -> reputation.dignity
+    end
+  end
+
+  def dignity_icon(%PlayerBundle{} = player) do
+    case player.reputation do
+      :unset -> raise ArgumentError, "you must fetch the Player.ReputationComponent first"
+      reputation -> reputation.dignity_icon
+    end
+  end
+
+  def faction(%PlayerBundle{} = player) do
+    case player.faction do
+      :unset -> raise ArgumentError, "you must fetch the Player.FactionComponent first"
+      faction -> faction.value
     end
   end
 

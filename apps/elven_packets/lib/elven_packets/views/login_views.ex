@@ -13,7 +13,7 @@ defmodule ElvenPackets.Views.LoginViews do
   ## Public API
 
   # FIXME: Move to ElvenGard.Network.View
-  def render(name), do: render(name, [])
+  def render(name), do: render(name, %{})
 
   @impl true
   def render(:failc, args) do

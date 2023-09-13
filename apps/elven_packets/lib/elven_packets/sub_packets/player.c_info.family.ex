@@ -6,19 +6,14 @@ defmodule ElvenPackets.SubPackets.Player.CInfo.Family do
   alias __MODULE__
   alias ElvenI18n.PacketConstString
 
-  @enforce_keys [:id, :rank, :name]
-  defstruct @enforce_keys
+  @enforce_keys [:id]
+  defstruct [:id, :rank, :name]
 
   @type t :: %Family{
-          name: String.t() | nil,
-          rank: PlayerEnums.family_rank_keys(),
-          id: String.t()
+          id: integer(),
+          rank: PlayerEnums.family_rank_keys() | nil,
+          name: String.t() | nil
         }
-
-  @spec default() :: t()
-  def default() do
-    %Family{id: -1, rank: :member, name: nil}
-  end
 
   @impl true
   @spec encode(t(), Keyword.t()) :: binary()
