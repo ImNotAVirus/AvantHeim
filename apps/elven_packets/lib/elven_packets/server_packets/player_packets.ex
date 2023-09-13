@@ -22,6 +22,8 @@ defmodule ElvenPackets.Server.PlayerPackets do
   alias ElvenPackets.SubPackets.Player.CInfo.Family
   alias ElvenPackets.Types.{NsInteger, NsString, NsEnum, NsBoolean}
 
+  alias ElvenI18n.PacketConstString
+
   #######
   # Reputation display
   # ---
@@ -142,6 +144,7 @@ defmodule ElvenPackets.Server.PlayerPackets do
     |> enum_to_i18n_key()
     |> PacketConstString.new!()
     |> Map.fetch!(:value)
+    |> NsInteger.encode()
   end
 
   # i18n value: 35
