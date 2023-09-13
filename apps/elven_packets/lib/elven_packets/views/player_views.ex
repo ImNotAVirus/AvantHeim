@@ -7,7 +7,7 @@ defmodule ElvenPackets.Views.PlayerViews do
 
   import ElvenPackets.View, only: [optional_param: 3, required_param: 2]
 
-  alias ElvenPackets.SubPackets.Player.CInfo.Family
+  alias ElvenPackets.SubPackets.Player.Family
   alias ElvenPackets.Server.PlayerPackets.{Fd, Fs, Lev, Rsfi, Stat, Tit, CInfo}
   alias GameService.PlayerBundle
 

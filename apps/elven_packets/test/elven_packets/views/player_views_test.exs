@@ -2,7 +2,7 @@ defmodule ElvenPackets.Views.PlayerViewsTest do
   use ElvenPackets.ViewCase, async: true
 
   alias ElvenPackets.Views.PlayerViews
-  alias ElvenPackets.SubPackets.Player.CInfo.Family
+  alias ElvenPackets.SubPackets.Player.Family
   alias ElvenPackets.Server.PlayerPackets.{Fd, Fs, Lev, Rsfi, Stat, Tit, CInfo}
 
   ## Tests

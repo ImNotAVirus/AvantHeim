@@ -19,7 +19,7 @@ defmodule ElvenPackets.Server.PlayerPackets do
       wings_design: 1
     ]
 
-  alias ElvenPackets.SubPackets.Player.CInfo.Family
+  alias ElvenPackets.SubPackets.Player.Family
   alias ElvenPackets.Types.{NsInteger, NsString, NsEnum, NsBoolean}
 
   alias ElvenI18n.PacketConstString

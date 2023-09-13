@@ -1,4 +1,4 @@
-defmodule ElvenPackets.SubPackets.Player.CInfo.Family do
+defmodule ElvenPackets.SubPackets.Player.Family do
   @moduledoc false
 
   use ElvenGard.Network.Type
