@@ -7,9 +7,10 @@ defmodule ElvenPackets.Views.UIViews do
 
   import ElvenPackets.View, only: [optional_param: 2, optional_param: 3, required_param: 2]
 
+  alias GameService.PlayerBundle
   alias ElvenCaching.Entity
   alias ElvenPackets.SubPackets.I18nSubPacket
-  alias ElvenPackets.Server.UiPackets.{Cancel, Gb, Gold, Info, Scene, Smemoi, Smemoi2}
+  alias ElvenPackets.Server.UiPackets.{Cancel, Gb, Gold, Info, Scene, SMemoi, SMemoi2}
 
   ## Public API
 
@@ -18,43 +19,48 @@ defmodule ElvenPackets.Views.UIViews do
 
   @impl true
   def render(:cancel, args) do
-    cancel_type = required_param(args, :cancel_type)
     entity = required_param(args, :entity)
+    cancel_type = required_param(args, :cancel_type)
 
     %Cancel{
       cancel_type: cancel_type,
-      entity_id: Entity.id(entity)
+      entity_id: GameService.entity_id(entity)
     }
   end
 
   # TODO : Bank rank | tax | action_type
   def render(:gb, args) do
-    character = required_param(args, :character)
+    entity = required_param(args, :entity)
     action_type = required_param(args, :action_type)
-    bank_rank = required_param(args, :bank_rank)
-    bank_tax = required_param(args, :bank_tax)
+
+    if entity.__struct__ != PlayerBundle do
+      raise ArgumentError, "gb can only be called on players, got: #{inspect(entity)}"
+    end
 
     %Gb{
       action_type: action_type,
-      bank_gold: character.bank_gold,
-      gold: character.gold,
-      bank_rank: bank_rank,
-      bank_tax: bank_tax
+      gold: PlayerBundle.gold(entity),
+      bank_gold: PlayerBundle.bank_gold(entity),
+      bank_rank: PlayerBundle.bank_rank(entity),
+      bank_tax: PlayerBundle.bank_tax(entity)
     }
   end
 
   def render(:gold, args) do
-    character = required_param(args, :character)
+    entity = required_param(args, :entity)
+
+    if entity.__struct__ != PlayerBundle do
+      raise ArgumentError, "gold can only be called on players, got: #{inspect(entity)}"
+    end
 
     %Gold{
-      gold: character.gold,
-      bank_gold: character.bank_gold
+      gold: PlayerBundle.gold(entity),
+      bank_gold: PlayerBundle.bank_gold(entity)
     }
   end
 
   def render(:info, args) do
     message = required_param(args, :message)
-
     %Info{message: message}
   end
 
@@ -62,26 +68,30 @@ defmodule ElvenPackets.Views.UIViews do
     i18n_key = required_param(args, :i18n_key)
     text_color = optional_param(args, :text_color)
 
-    %Smemoi{
+    %SMemoi{
       text_color: text_color,
       i18n_packet: %I18nSubPacket{key: i18n_key}
     }
   end
 
   def render(:s_memoi2, args) do
-    character = required_param(args, :character)
+    entity = required_param(args, :entity)
     i18n_key = required_param(args, :i18n_key)
     text_color = optional_param(args, :text_color)
 
+    if entity.__struct__ != PlayerBundle do
+      raise ArgumentError, "s_memoi2 can only be called on players, got: #{inspect(entity)}"
+    end
+
     bank_gold =
-      character.bank_gold
+      PlayerBundle.bank_gold(entity)
       |> Kernel./(1000)
       |> Kernel.trunc()
-      |> ElvenCore.format_number()
+      |> ElvenPackets.format_number()
 
-    gold = ElvenCore.format_number(character.gold)
+    gold = ElvenPackets.format_number(PlayerBundle.gold(entity))
 
-    %Smemoi2{
+    %SMemoi2{
       text_color: text_color,
       i18n_packet: %I18nSubPacket{
         key: i18n_key,

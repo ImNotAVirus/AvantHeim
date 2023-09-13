@@ -27,8 +27,12 @@ defmodule GameService.PlayerComponents do
     use ElvenGard.ECS.Component, state: [:value, :xp, :xp_max]
   end
 
-  defmodule CurrencyComponent do
-    use ElvenGard.ECS.Component, state: [:gold, :bank_gold]
+  defmodule GoldComponent do
+    use ElvenGard.ECS.Component, state: [:value]
+  end
+
+  defmodule BankComponent do
+    use ElvenGard.ECS.Component, state: [:gold, :rank, :tax]
   end
 
   defmodule SpecialistComponent do

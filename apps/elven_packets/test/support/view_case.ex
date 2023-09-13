@@ -27,7 +27,8 @@ defmodule ElvenPackets.ViewCase do
       level: level_component(),
       job_level: job_level_component(),
       hero_level: hero_level_component(),
-      currency: currency_component(),
+      gold: gold_component(),
+      bank: bank_component(),
       speed: speed_component(),
       direction: direction_component(),
       # Hardcoded components
@@ -87,8 +88,12 @@ defmodule ElvenPackets.ViewCase do
     %P.HeroLevelComponent{value: 79, xp: 777_777, xp_max: 7_000_000}
   end
 
-  defp currency_component() do
-    %P.CurrencyComponent{gold: 666, bank_gold: 555}
+  defp gold_component() do
+    %P.GoldComponent{value: 666}
+  end
+
+  defp bank_component() do
+    %P.BankComponent{gold: 123_456_789, rank: 10, tax: 20}
   end
 
   defp speed_component() do

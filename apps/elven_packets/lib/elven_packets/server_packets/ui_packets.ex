@@ -63,7 +63,7 @@ defmodule ElvenPackets.Server.UiPackets do
   # Example: "s_memoi 6 2 0 0 0"
   #######
   @serializable true
-  defpacket "s_memoi", as: Smemoi do
+  defpacket "s_memoi", as: SMemoi do
     field :text_color, NsEnum, default: :white, values: text_color(:__enumerators__)
     field :i18n_packet, I18nSubPacket
   end
@@ -74,7 +74,7 @@ defmodule ElvenPackets.Server.UiPackets do
   # Example: "s_memoi2 6 2 0 0 0"
   #######
   @serializable true
-  defpacket "s_memoi2", as: Smemoi2 do
+  defpacket "s_memoi2", as: SMemoi2 do
     field :text_color, NsEnum, default: :white, values: text_color(:__enumerators__)
     field :i18n_packet, I18nSubPacket
   end

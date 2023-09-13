@@ -20,7 +20,8 @@ defmodule GameService.PlayerBundle do
     :level,
     :job_level,
     :hero_level,
-    :currency,
+    :gold,
+    :bank,
     :speed,
     :direction,
     :combat,
@@ -52,7 +53,8 @@ defmodule GameService.PlayerBundle do
           level: component(E.LevelComponent),
           job_level: component(P.JobLevelComponent),
           hero_level: component(P.HeroLevelComponent),
-          currency: component(P.CurrencyComponent),
+          gold: component(P.GoldComponent),
+          bank: component(P.BankComponent),
           speed: component(E.SpeedComponent),
           direction: component(E.DirectionComponent),
           # Hardcoded components
@@ -91,7 +93,8 @@ defmodule GameService.PlayerBundle do
           {E.LevelComponent, level_specs(attrs)},
           {P.JobLevelComponent, job_level_specs(attrs)},
           {P.HeroLevelComponent, hero_level_specs(attrs)},
-          {P.CurrencyComponent, currency_specs(attrs)},
+          {P.GoldComponent, gold_specs(attrs)},
+          {P.BankComponent, bank_specs(attrs)},
           {E.SpeedComponent, speed_specs(attrs)},
           {E.DirectionComponent, direction_specs(attrs)},
           # Hardcoded components
@@ -123,7 +126,8 @@ defmodule GameService.PlayerBundle do
       level: Map.get(mapping, E.LevelComponent, :unset),
       job_level: Map.get(mapping, P.JobLevelComponent, :unset),
       hero_level: Map.get(mapping, P.HeroLevelComponent, :unset),
-      currency: Map.get(mapping, P.CurrencyComponent, :unset),
+      gold: Map.get(mapping, P.GoldComponent, :unset),
+      bank: Map.get(mapping, P.BankComponent, :unset),
       speed: Map.get(mapping, E.SpeedComponent, :unset),
       direction: Map.get(mapping, E.DirectionComponent, :unset),
       # Hardcoded components
@@ -465,6 +469,34 @@ defmodule GameService.PlayerBundle do
     end
   end
 
+  def gold(%PlayerBundle{} = player) do
+    case player.gold do
+      :unset -> raise ArgumentError, "you must fetch the Player.GoldComponent first"
+      gold -> gold.value
+    end
+  end
+
+  def bank_gold(%PlayerBundle{} = player) do
+    case player.bank do
+      :unset -> raise ArgumentError, "you must fetch the Player.BankComponent first"
+      bank -> bank.gold
+    end
+  end
+
+  def bank_rank(%PlayerBundle{} = player) do
+    case player.bank do
+      :unset -> raise ArgumentError, "you must fetch the Player.BankComponent first"
+      bank -> bank.rank
+    end
+  end
+
+  def bank_tax(%PlayerBundle{} = player) do
+    case player.bank do
+      :unset -> raise ArgumentError, "you must fetch the Player.BankComponent first"
+      bank -> bank.tax
+    end
+  end
+
   ## Components specs
 
   defp account_specs(%{id: id, username: username, authority: authority}) do
@@ -511,8 +543,16 @@ defmodule GameService.PlayerBundle do
     [value: value, xp: xp, xp_max: 0]
   end
 
-  defp currency_specs(%{gold: gold, bank_gold: bank_gold}) do
-    [gold: gold, bank_gold: bank_gold]
+  defp gold_specs(%{gold: value}) do
+    [value: value]
+  end
+
+  defp bank_specs(%{bank_gold: gold} = attrs) do
+    # FIXME: Hardcoded value, now sure if it's the best place
+    rank = Map.get(attrs, :rank, 1)
+    tax = Map.get(attrs, :tax, 0)
+
+    [gold: gold, rank: rank, tax: tax]
   end
 
   defp speed_specs(attrs) do
