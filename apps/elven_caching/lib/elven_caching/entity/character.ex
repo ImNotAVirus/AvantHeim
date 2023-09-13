@@ -39,7 +39,7 @@ defmodule ElvenCaching.Entity.Character do
     attributes: @required_attributes ++ Map.keys(@virtual_attributes)
 
   alias __MODULE__
-  alias ElvenCore.Socket
+  alias ElvenGard.Network.Socket
   alias ElvenEnums.{EntityEnums, PlayerEnums}
   alias ElvenCaching.Entity.EntityPosition
 

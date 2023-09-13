@@ -11,7 +11,7 @@ defmodule LoginService.PacketSchemasTest do
     test "can be parsed" do
       sha512_hash = :crypto.hash(:sha512, "data") |> Base.encode16()
       md5_hash = :crypto.hash(:md5, "data") |> Base.encode16()
-      guid = ElvenCore.UUID.uuid4()
+      guid = ElvenGard.Network.UUID.uuid4()
 
       parsed =
         "NoS0575 4745632 admin #{sha512_hash} #{guid} 0047BA11 0\v0.9.3.3086 0 #{md5_hash}"
@@ -39,7 +39,7 @@ defmodule LoginService.PacketSchemasTest do
   describe "packet NoS0577" do
     test "can be parsed" do
       md5_hash = :crypto.hash(:md5, "data") |> Base.encode16()
-      guid = ElvenCore.UUID.uuid4()
+      guid = ElvenGard.Network.UUID.uuid4()
 
       parsed =
         "NoS0577 6465616462656566  #{guid} 006C993A 2\v0.9.3.3147 0 #{md5_hash}"

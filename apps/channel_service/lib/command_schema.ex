@@ -37,7 +37,7 @@ defmodule ElvenCore.CommandSchema do
 
         # FIXME: Why the fck Core depend on ChannelService
         render = ElvenPackets.Views.ChatViews.render(:say, say_attrs)
-        :ok = ElvenCore.Socket.send(socket, render)
+        :ok = ElvenGard.Network.Socket.send(socket, render)
 
         args = String.split(bin_args, " ")
         unquote(module).handle_command(unquote(cmdname), args, socket)

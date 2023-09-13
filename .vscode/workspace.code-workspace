@@ -6,7 +6,6 @@
 		{"path": "../apps/channel_service"},
 		{"path": "../apps/elven_pubsub"},
 		{"path": "../apps/elven_caching"},
-		{"path": "../apps/elven_core"},
 		{"path": "../apps/elven_database"},
 		{"path": "../apps/elven_enums"},
 		{"path": "../apps/elven_i18n"},
