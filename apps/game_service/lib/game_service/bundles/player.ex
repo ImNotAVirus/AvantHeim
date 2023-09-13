@@ -181,6 +181,13 @@ defmodule GameService.PlayerBundle do
     end
   end
 
+  def sitting?(%PlayerBundle{} = player) do
+    case player.sitting do
+      :unset -> raise ArgumentError, "you must fetch the Player.SittingComponent first"
+      sitting -> not is_nil(sitting)
+    end
+  end
+
   def invisible?(%PlayerBundle{} = player) do
     case player.invisibility do
       :unset -> raise ArgumentError, "you must fetch the Player.InvisibilityComponent first"
@@ -203,6 +210,11 @@ defmodule GameService.PlayerBundle do
   def cp(%PlayerBundle{} = _player) do
     # FIXME: Hardcoded value
     0
+  end
+
+  def title_id(%PlayerBundle{} = _player) do
+    # FIXME: Hardcoded value
+    10
   end
 
   def can_attack(%PlayerBundle{} = player) do
@@ -377,6 +389,14 @@ defmodule GameService.PlayerBundle do
     end
   end
 
+  def family_icons(%PlayerBundle{} = player) do
+    case player.family do
+      :unset -> raise ArgumentError, "you must fetch the Player.FamilyComponent first"
+      nil -> []
+      family -> family.icons
+    end
+  end
+
   def name(%PlayerBundle{} = player) do
     case player.player do
       :unset -> raise ArgumentError, "you must fetch the Player.PlayerComponent first"
@@ -424,6 +444,32 @@ defmodule GameService.PlayerBundle do
       :unset -> raise ArgumentError, "you must fetch the Player.GroupComponent first"
       nil -> -1
       group -> group.id
+    end
+  end
+
+  def fairy_element(%PlayerBundle{} = player) do
+    case player.fairy do
+      :unset -> raise ArgumentError, "you must fetch the Player.FairyComponent first"
+      nil -> :neutral
+      fairy -> fairy.element
+    end
+  end
+
+  def fairy_morph(%PlayerBundle{} = player) do
+    case player.fairy do
+      :unset -> raise ArgumentError, "you must fetch the Player.FairyComponent first"
+      # FIXME: Not sure about the default value
+      nil -> -1
+      fairy -> fairy.morph
+    end
+  end
+
+  def fairy_move_type_id(%PlayerBundle{} = player) do
+    case player.fairy do
+      :unset -> raise ArgumentError, "you must fetch the Player.FairyComponent first"
+      # FIXME: Not sure about the default value
+      nil -> -1
+      fairy -> fairy.move_type_id
     end
   end
 
