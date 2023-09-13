@@ -8,7 +8,6 @@ defmodule ElvenPackets.Views.UIViews do
   import ElvenPackets.View, only: [optional_param: 2, optional_param: 3, required_param: 2]
 
   alias GameService.PlayerBundle
-  alias ElvenCaching.Entity
   alias ElvenPackets.SubPackets.I18nSubPacket
   alias ElvenPackets.Server.UiPackets.{Cancel, Gb, Gold, Info, Scene, SMemoi, SMemoi2}
 

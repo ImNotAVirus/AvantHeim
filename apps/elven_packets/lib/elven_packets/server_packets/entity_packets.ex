@@ -62,6 +62,6 @@ defmodule ElvenPackets.Server.EntityPackets do
     field :mp_percent, NsInteger
     field :hp, NsInteger
     field :mp, NsInteger
-    field :buffs, NsList, type: NsInteger, default: :drop, joiner: " "
+    field :buffs, NsList, type: NsInteger, joiner: " ", if: not match?([], packet.buffs)
   end
 end

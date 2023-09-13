@@ -7,7 +7,8 @@ defmodule ElvenPackets.MixProject do
       version: "0.1.0",
       elixir: "~> 1.13",
       deps: deps(),
-      elixirc_paths: elixirc_paths(Mix.env())
+      elixirc_paths: elixirc_paths(Mix.env()),
+      elixirc_options: [warnings_as_errors: true]
     ]
   end
 
@@ -24,7 +25,9 @@ defmodule ElvenPackets.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:elvengard_network, "~> 0.1.1", runtime: false},
+      # {:elvengard_network, "~> 0.1.1", runtime: false},
+      # FIXME: Need to release a new version for the :if serializer 
+      {:elvengard_network, github: "elvengard-mmo/elvengard_network", runtime: false},
       {:elven_i18n, path: "../elven_i18n", runtime: false},
       {:elven_enums, path: "../elven_enums", runtime: false},
       {:game_service, path: "../game_service", runtime: false},
