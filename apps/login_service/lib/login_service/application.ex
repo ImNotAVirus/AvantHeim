@@ -7,9 +7,13 @@ defmodule LoginService.Application do
   def start(_type, _args) do
     topologies = Application.get_env(:libcluster, :topologies, [])
 
+    # FIXME: Hardcoded, move to config
+    {:ok, hostname} = :inet.gethostname()
+    mnesia_cluster_opts = [auto_connect: true, master: :"channel@#{hostname}"]
+
     children = [
       {Cluster.Supervisor, [topologies, [name: LoginService.ClusterSupervisor]]},
-      {ElvenGard.ECS.MnesiaBackend.ClusterManager, [auto_connect: false]},
+      {ElvenGard.Cluster.MnesiaClusterManager, mnesia_cluster_opts},
       {ElvenCaching.SessionRegistry, []},
       {LoginService.Endpoint, name: LoginService.Endpoint}
     ]

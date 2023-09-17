@@ -11,8 +11,8 @@ defmodule GameService do
   def entity_type(%PlayerBundle{}), do: :character
   def entity_id(%PlayerBundle{id: id}), do: id
 
-  def load_bundle(%Entity{id: {:player, _}} = entity, component) do
-    PlayerBundle.load(entity, component)
+  def load_bundle(%Entity{id: {:player, _}} = entity, components) do
+    PlayerBundle.load(entity, components)
   end
 
   def broadcast_to(maybe_events, maybe_endpoints) do

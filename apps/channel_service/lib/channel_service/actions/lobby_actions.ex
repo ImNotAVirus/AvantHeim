@@ -6,7 +6,7 @@ defmodule ChannelService.LobbyActions do
   require Logger
 
   alias ElvenGard.Network.Socket
-  alias ElvenCaching.{CharacterRegistry, SessionRegistry}
+  alias ElvenCaching.SessionRegistry
   alias ElvenCaching.Account.Session
   alias ElvenDatabase.Players.{Account, Characters}
   alias ElvenPackets.Views.LobbyViews

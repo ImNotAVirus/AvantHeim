@@ -22,4 +22,15 @@ defmodule ElvenCaching do
       _ -> {:error, :unknown_entity_type}
     end
   end
+
+  ## Internal API
+
+  @doc false
+  def create_table!(table, opts \\ []) do
+    case Memento.Table.create(table, opts) do
+      :ok -> :ok
+      {:error, {:already_exists, ^table}} -> :ok
+      error -> raise "can't create table: #{inspect(error)}"
+    end
+  end
 end

@@ -22,6 +22,7 @@ defmodule GameService.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
+      {:elvengard_cluster, github: "elvengard-mmo/elvengard_cluster"},
       {:elvengard_ecs, path: "../../../elvengard_ecs"},
       {:libcluster, "~> 3.3", optional: true}
     ]
