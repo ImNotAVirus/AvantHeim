@@ -107,12 +107,55 @@ defmodule GameService.PlayerBundle do
 
   @doc """
   This function can be use to create a PlayerBundle from an Entity an a list of components
-
-  NOTE: You must verify that you have the required components in your system.
-  Some components can be set set to `:unset`.
   """
   @spec load(Entity.t(), [Component.t()]) :: t()
   def load(%Entity{id: {:player, id}}, components) when is_list(components) do
+    # mapping = Enum.group_by(components, & &1.__struct__)
+    mapping = Map.new(components, &{&1.__struct__, &1})
+
+    %PlayerBundle{
+      id: id,
+      # Basics components
+      account: Map.fetch!(mapping, P.AccountComponent),
+      endpoint: Map.fetch!(mapping, P.EndpointComponent),
+      player: Map.fetch!(mapping, P.PlayerComponent),
+      faction: Map.fetch!(mapping, P.FactionComponent),
+      position: Map.fetch!(mapping, E.PositionComponent),
+      level: Map.fetch!(mapping, E.LevelComponent),
+      job_level: Map.fetch!(mapping, P.JobLevelComponent),
+      hero_level: Map.fetch!(mapping, P.HeroLevelComponent),
+      gold: Map.fetch!(mapping, P.GoldComponent),
+      bank: Map.fetch!(mapping, P.BankComponent),
+      speed: Map.fetch!(mapping, E.SpeedComponent),
+      direction: Map.fetch!(mapping, E.DirectionComponent),
+      # Hardcoded components
+      combat: Map.fetch!(mapping, E.CombatComponent),
+      size: Map.fetch!(mapping, P.SizeComponent),
+      reputation: Map.fetch!(mapping, P.ReputationComponent),
+      # Optional components
+      sitting: Map.get(mapping, E.SittingComponent),
+      arena_winner: Map.get(mapping, P.ArenaWinnerComponent),
+      family: Map.get(mapping, P.FamilyComponent),
+      group: Map.get(mapping, P.GroupComponent),
+      title: Map.get(mapping, P.TitleComponent),
+      fairy: Map.get(mapping, P.FairyComponent),
+      specialist: Map.get(mapping, P.SpecialistComponent),
+      invisibility: Map.get(mapping, P.InvisibilityComponent),
+      cannot_attack: Map.get(mapping, E.CannotAttackComponent),
+      cannot_move: Map.get(mapping, E.CannotMoveComponent)
+    }
+  end
+
+  @doc """
+  This function can be use to create a PlayerBundle from an Entity an a list of components
+
+  Unlike `load/2`, you don't have to provide all components.  
+  Components not found will have the value `:unset`
+
+  NOTE: You must verify that you have the required components in your system.
+  """
+  @spec preload(Entity.t(), [Component.t()]) :: t()
+  def preload(%Entity{id: {:player, id}}, components) when is_list(components) do
     # mapping = Enum.group_by(components, & &1.__struct__)
     mapping = Map.new(components, &{&1.__struct__, &1})
 

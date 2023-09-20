@@ -42,16 +42,6 @@ defmodule ChannelService.Endpoint.Protocol do
 
   @impl true
   def handle_info({:entity_spawn, %PlayerBundle{} = player}, socket) do
-    IO.inspect(player, label: "bundle")
-
-    player =
-      player
-      |> Map.to_list()
-      |> Map.new(fn
-        {key, :unset} -> {key, nil}
-        {key, value} -> {key, value}
-      end)
-
     case player.id == socket.assigns.character_id do
       false ->
         EntityInteractions.send_map_enter(player, socket)
@@ -105,7 +95,7 @@ defmodule ChannelService.Endpoint.Protocol do
 
     messages = [
       {:special_green, "#{prefix} [ ElvenGard ] #{prefix}"},
-      {:special_red, "Github: https://github.com/ImNotAVirus/Flugel-NostaleEmu"},
+      {:special_red, "Github: https://github.com/ImNotAVirus/AvantHeim"},
       {:special_red, "Author: DarkyZ aka. ImNotAVirus"},
       {:special_green, suffix}
     ]

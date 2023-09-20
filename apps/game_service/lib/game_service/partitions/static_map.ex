@@ -20,6 +20,8 @@ defmodule GameService.StaticMapPartition do
   # Private functions
 
   defp systems() do
-    []
+    [
+      GameService.PlayerSpawnSystem
+    ]
   end
 end

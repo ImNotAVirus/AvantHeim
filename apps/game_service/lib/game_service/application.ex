@@ -17,7 +17,6 @@ defmodule GameService.Application do
       {ElvenGard.Cluster.MnesiaClusterManager, []},
       {ElvenGard.ECS.Topology.EventSource, [hash: partition_hash]},
       # FIXME: Later rewrite partitions with a DynamicSupervisor
-      {GameService.SystemPartition, []},
       {GameService.StaticMapPartition, [id: 1]}
     ]
 

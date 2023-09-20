@@ -15,6 +15,10 @@ defmodule GameService do
     PlayerBundle.load(entity, components)
   end
 
+  def preload_bundle(%Entity{id: {:player, _}} = entity, components) do
+    PlayerBundle.preload(entity, components)
+  end
+
   def broadcast_to(maybe_events, maybe_endpoints) do
     events = List.wrap(maybe_events)
     endpoints = List.wrap(maybe_endpoints)
