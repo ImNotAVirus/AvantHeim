@@ -19,32 +19,24 @@ defmodule ChannelService.EntityInteractions do
     ChatViews
   }
 
-  @spec send_map_enter(Character.t()) :: :ok
-  def send_map_enter(%Character{} = character) do
-    character_args = %{character: character}
-    entity_args = %{entity: character}
-    stat_args = %{character: character, option: 0}
-    at_args = %{character: character, map_music: 1}
+  alias GameService.PlayerBundle
+
+  @spec send_map_enter(PlayerBundle.t(), Socket.t()) :: :ok
+  def send_map_enter(%PlayerBundle{} = entity, socket) do
+    entity_args = %{entity: entity}
+    stat_args = %{entity: entity, option: 0}
+    at_args = %{entity: entity, map_music: 1}
 
     ## Self packets
-    Socket.send(character.socket, PlayerViews.render(:c_info, character_args))
-    Socket.send(character.socket, PlayerViews.render(:lev, character_args))
-    Socket.send(character.socket, PlayerViews.render(:stat, stat_args))
-    Socket.send(character.socket, MapViews.render(:at, at_args))
-    Socket.send(character.socket, MapViews.render(:c_map, character_args))
-    # TODO: Socket.send(character.socket, PlayerViews.render(:sc, character_args))
-    Socket.send(character.socket, EntityViews.render(:c_mode, character_args))
-    Socket.send(character.socket, EntityViews.render(:char_sc, entity_args))
-    Socket.send(character.socket, EntityViews.render(:cond, entity_args))
-
-    ## Other players packets
-    %EntityPosition{map_id: map_id} = MapEntity.position(character)
-
-    {:ok, players} = CharacterRegistry.get_by_map_id(map_id, [{:!==, :id, character.id}])
-    Enum.each(players, &send_entity_enter_packets(character, &1))
-
-    # {:ok, monster} = CachingService.get_monsters_by_map_id(map_id)
-    # Enum.each(monster, &send_entity_enter_packets(character, &1))
+    Socket.send(socket, PlayerViews.render(:c_info, entity_args))
+    Socket.send(socket, PlayerViews.render(:lev, entity_args))
+    Socket.send(socket, PlayerViews.render(:stat, stat_args))
+    Socket.send(socket, MapViews.render(:at, at_args))
+    Socket.send(socket, MapViews.render(:c_map, entity_args))
+    # TODO: Socket.send(socket, PlayerViews.render(:sc, entity_args))
+    Socket.send(socket, EntityViews.render(:c_mode, entity_args))
+    Socket.send(socket, EntityViews.render(:char_sc, entity_args))
+    Socket.send(socket, EntityViews.render(:cond, entity_args))
   end
 
   @spec send_map_leave(Character.t()) :: :ok

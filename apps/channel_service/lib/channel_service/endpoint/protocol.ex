@@ -9,6 +9,7 @@ defmodule ChannelService.Endpoint.Protocol do
 
   alias ElvenPackets.Views.{ChatViews, PlayerViews, UIViews}
 
+  alias ChannelService.EntityInteractions
   alias ElvenGard.Network.Socket
   alias GameService.PlayerBundle
 
@@ -43,23 +44,33 @@ defmodule ChannelService.Endpoint.Protocol do
   def handle_info({:entity_spawn, %PlayerBundle{} = player}, socket) do
     IO.inspect(player, label: "bundle")
 
+    player =
+      player
+      |> Map.to_list()
+      |> Map.new(fn
+        {key, :unset} -> {key, nil}
+        {key, value} -> {key, value}
+      end)
+
     case player.id == socket.assigns.character_id do
-      # false ->
-      #   EntityInteractions.send_map_enter(player)
-      #   :ok
+      false ->
+        EntityInteractions.send_map_enter(player, socket)
+        :ok
 
       true ->
-        Socket.send(socket, PlayerViews.render(:tit, %{character: player}))
-        Socket.send(socket, PlayerViews.render(:fd, %{character: player}))
-        # TODO: Socket.send(socket, PlayerViews.render(:ski, %{character: player}))
+        Socket.send(socket, PlayerViews.render(:tit, %{entity: player}))
+        Socket.send(socket, PlayerViews.render(:fd, %{entity: player}))
+        # TODO: Socket.send(socket, PlayerViews.render(:ski, %{entity: player}))
+
+        EntityInteractions.send_map_enter(player, socket)
 
         Socket.send(socket, PlayerViews.render(:rsfi))
-        Socket.send(socket, PlayerViews.render(:fs, %{character: player}))
+        Socket.send(socket, PlayerViews.render(:fs, %{entity: player}))
 
-        Socket.send(socket, UIViews.render(:gold, %{character: player}))
+        Socket.send(socket, UIViews.render(:gold, %{entity: player}))
 
-        # TODO: Socket.send(socket, InventoryViews.render(:qslot, %{slot_id: 0, character: player}))
-        # TODO: Socket.send(socket, InventoryViews.render(:qslot, %{slot_id: 1, character: player}))
+        # TODO: Socket.send(socket, InventoryViews.render(:qslot, %{slot_id: 0, entity: player}))
+        # TODO: Socket.send(socket, InventoryViews.render(:qslot, %{slot_id: 1, entity: player}))
 
         Socket.send(socket, UIViews.render(:info, %{message: "Welcome to my World!"}))
 

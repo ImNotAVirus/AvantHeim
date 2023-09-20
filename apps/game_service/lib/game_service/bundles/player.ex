@@ -113,7 +113,8 @@ defmodule GameService.PlayerBundle do
   """
   @spec load(Entity.t(), [Component.t()]) :: t()
   def load(%Entity{id: {:player, id}}, components) when is_list(components) do
-    mapping = Enum.group_by(components, & &1.__struct__)
+    # mapping = Enum.group_by(components, & &1.__struct__)
+    mapping = Map.new(components, &{&1.__struct__, &1})
 
     %PlayerBundle{
       id: id,

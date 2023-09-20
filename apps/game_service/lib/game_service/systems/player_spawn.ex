@@ -1,4 +1,4 @@
-defmodule GameService.SystemPartition.PlayerSpawnSystem do
+defmodule GameService.PlayerSpawnSystem do
   use ElvenGard.ECS.System,
     lock_components: :sync,
     event_subscriptions: [GameService.Events.EntitySpawned]
