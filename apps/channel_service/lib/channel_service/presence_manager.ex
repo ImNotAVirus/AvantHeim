@@ -10,6 +10,11 @@ defmodule ChannelService.PresenceManager do
   alias ElvenCaching.Account.Session
   alias ElvenCaching.SessionRegistry
 
+  alias ElvenGard.ECS.{Command, Entity, Query}
+  alias GameService.Events.EntityDespawn
+  alias GameService.EntityComponents.PositionComponent
+  alias GameService.PlayerComponents.AccountComponent
+
   # alias ChannelService.EntityInteractions
 
   @manager_name __MODULE__
@@ -29,7 +34,7 @@ defmodule ChannelService.PresenceManager do
   ## GenServer behaviour
 
   @impl true
-  @spec init(any) :: {:ok, nil}
+  @spec init(any) :: {:ok, %{}}
   def init(_) do
     Logger.info("PresenceManager started")
     # Map %{reference => username}
@@ -71,15 +76,26 @@ defmodule ChannelService.PresenceManager do
 
   defp cleanup_session(%Session{state: :in_lobby}), do: :ok
 
-  defp cleanup_session(%Session{state: :in_game, account_id: _account_id} = session) do
-    # Set session state to "saving" to prevent player connection
-    {:ok, %Session{}} = session |> Session.set_state(:saving) |> SessionRegistry.write()
+  defp cleanup_session(%Session{state: :in_game, account_id: account_id}) do
+    # Not so clean but I'll rewrite this part later
+    [{entity, components}] =
+      Entity
+      |> Query.select(
+        with: [{AccountComponent, [{:==, :id, account_id}]}],
+        preload: [PositionComponent]
+      )
+      |> Query.all()
 
-    # Clean Character cache
-    # {:ok, character} = CharacterRegistry.delete_by_account_id(account_id)
+    %PositionComponent{map_ref: map_ref} =
+      Enum.find(components, &(&1.__struct__ == PositionComponent))
 
-    # Clean map (out packet)
-    # EntityInteractions.send_map_leave(character)
+    {:ok, _tuple} = Command.despawn_entity(entity)
+
+    {:ok, _events} =
+      ElvenGard.ECS.push(
+        %EntityDespawn{entity: entity},
+        partition: map_ref
+      )
 
     # TODO: Save character in db
     # ...
