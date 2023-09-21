@@ -9,7 +9,12 @@ defmodule GameService do
   alias GameService.PlayerComponents.EndpointComponent
 
   def entity_type(%PlayerBundle{}), do: :character
+  def entity_type(%Entity{id: {:player, _}}), do: :character
+
   def entity_id(%PlayerBundle{id: id}), do: id
+  def entity_id(%Entity{id: {_, id}}), do: id
+
+  def entity_type_to_prefix(:character), do: :player
 
   def load_bundle(%Entity{id: {:player, _}} = entity, components) do
     PlayerBundle.load(entity, components)
