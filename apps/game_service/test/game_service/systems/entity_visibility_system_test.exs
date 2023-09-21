@@ -2,23 +2,23 @@ defmodule GameService.EntityVisibilitySystemTest do
   use GameService.EntityCase, async: true
 
   alias GameService.PlayerBundle
-  alias GameService.Events.{EntitySpawned, EntityDespawned}
-  alias GameService.PlayerComponents.EndpointComponent
-  alias GameService.EntityComponents.PositionComponent
   alias GameService.EntityVisibilitySystem
+  alias GameService.Events, as: Evt
+  alias GameService.EntityComponents, as: E
+  alias GameService.PlayerComponents, as: P
 
   ## Tests
 
   test "system notify on Entity spawn" do
     # Register our process to receive message
     ref = make_ref()
-    position = %PositionComponent{map_ref: ref}
-    endpoint = %EndpointComponent{pid: self()}
+    position = %E.PositionComponent{map_ref: ref}
+    endpoint = %P.EndpointComponent{pid: self()}
     _ = spawn_player(components: [endpoint, position])
 
     # Call our System with a EntitySpawned event
     entity = spawn_player(components: [position])
-    event = %EntitySpawned{entity: entity, components: [position]}
+    event = %Evt.EntitySpawned{entity: entity, components: [position]}
     _ = EntityVisibilitySystem.run(event, 0)
 
     # We should receive an event
@@ -30,13 +30,13 @@ defmodule GameService.EntityVisibilitySystemTest do
   test "system notify on Entity despawn" do
     # Register our process to receive message
     ref = make_ref()
-    position = %PositionComponent{map_ref: ref}
-    endpoint = %EndpointComponent{pid: self()}
+    position = %E.PositionComponent{map_ref: ref}
+    endpoint = %P.EndpointComponent{pid: self()}
     _ = spawn_player(components: [endpoint, position])
 
     # Call our System with a EntitySpawned event
     entity = spawn_player(components: [position])
-    event = %EntityDespawned{entity: entity, components: [position]}
+    event = %Evt.EntityDespawned{entity: entity, components: [position]}
     _ = EntityVisibilitySystem.run(event, 0)
 
     # We should receive an event

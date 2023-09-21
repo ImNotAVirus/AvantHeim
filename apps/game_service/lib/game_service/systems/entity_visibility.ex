@@ -12,41 +12,31 @@ defmodule GameService.EntityVisibilitySystem do
       GameService.Events.EntityDespawned
     ]
 
-  alias ElvenGard.ECS.Query
   alias GameService.Events.{EntitySpawned, EntityDespawned}
-  alias GameService.PlayerComponents.EndpointComponent
-  alias GameService.EntityComponents.PositionComponent
+  alias GameService.EntityComponents, as: E
 
   # System behaviour
 
   @impl true
   def run(%EntitySpawned{entity: entity, components: components}, _delta) do
     components
-    |> Enum.find(&match?(%PositionComponent{}, &1))
+    |> Enum.find(&match?(%E.PositionComponent{}, &1))
     |> then(&broadcast_event(:entity_spawn, entity, components, &1))
   end
 
   def run(%EntityDespawned{entity: entity, components: components}, _delta) do
     components
-    |> Enum.find(&match?(%PositionComponent{}, &1))
+    |> Enum.find(&match?(%E.PositionComponent{}, &1))
     |> then(&broadcast_event(:entity_despawn, entity, components, &1))
   end
 
   ## Helpers
 
-  defp broadcast_event(event, entity, components, %PositionComponent{map_ref: map_ref}) do
-    # Get all endpoints on the current map
-    endpoints =
-      Query.select(
-        EndpointComponent,
-        with: [{PositionComponent, [{:==, :map_ref, map_ref}]}]
-      )
-      |> Query.all()
-
+  defp broadcast_event(event_name, entity, components, %E.PositionComponent{} = position) do
     # Transform the entity + components to a bundle
     bundle = GameService.preload_bundle(entity, components)
 
-    # Broadcast the entity spawn to players
-    GameService.broadcast_to({event, bundle}, endpoints)
+    # Send Events
+    GameService.System.map_event({event_name, bundle}, position)
   end
 end
