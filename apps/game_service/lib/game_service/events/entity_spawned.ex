@@ -4,6 +4,7 @@ defmodule GameService.Events.EntitySpawned do
 
   Contains the entity struct and his specs.
   """
+
   use ElvenGard.ECS.Event, fields: [entity: nil, components: [], children: [], parent: nil]
 
   alias ElvenGard.ECS.{Component, Entity}
