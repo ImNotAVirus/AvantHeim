@@ -9,11 +9,11 @@ defmodule GameService.EntityVisibilitySystem do
     lock_components: :sync,
     event_subscriptions: [
       GameService.Events.EntitySpawned,
-      GameService.Events.EntityDespawn
+      GameService.Events.EntityDespawned
     ]
 
   alias ElvenGard.ECS.Query
-  alias GameService.Events.{EntitySpawned, EntityDespawn}
+  alias GameService.Events.{EntitySpawned, EntityDespawned}
   alias GameService.PlayerComponents.EndpointComponent
   alias GameService.EntityComponents.PositionComponent
 
@@ -26,7 +26,7 @@ defmodule GameService.EntityVisibilitySystem do
     |> then(&broadcast_event(:entity_spawn, entity, components, &1))
   end
 
-  def run(%EntityDespawn{entity: entity, components: components}, _delta) do
+  def run(%EntityDespawned{entity: entity, components: components}, _delta) do
     components
     |> Enum.find(&match?(%PositionComponent{}, &1))
     |> then(&broadcast_event(:entity_despawn, entity, components, &1))
@@ -44,7 +44,7 @@ defmodule GameService.EntityVisibilitySystem do
       |> Query.all()
 
     # Transform the entity + components to a bundle
-    bundle = GameService.load_bundle(entity, components)
+    bundle = GameService.preload_bundle(entity, components)
 
     # Broadcast the entity spawn to players
     GameService.broadcast_to({event, bundle}, endpoints)

@@ -1,4 +1,4 @@
-defmodule GameService.Events.EntityDespawn do
+defmodule GameService.Events.EntityDespawned do
   @moduledoc """
   Event triggered when a new entity is despawned.
 

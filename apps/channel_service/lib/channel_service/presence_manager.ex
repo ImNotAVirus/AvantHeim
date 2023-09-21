@@ -11,7 +11,7 @@ defmodule ChannelService.PresenceManager do
   alias ElvenCaching.SessionRegistry
 
   alias ElvenGard.ECS.{Command, Entity, Query}
-  alias GameService.Events.EntityDespawn
+  alias GameService.Events.EntityDespawned
   alias GameService.EntityComponents.PositionComponent
   alias GameService.PlayerComponents.AccountComponent
 
@@ -92,7 +92,7 @@ defmodule ChannelService.PresenceManager do
     {:ok, _events} =
       ElvenGard.ECS.push(
         # Here we only need the position component for the despawn event
-        %EntityDespawn{entity: entity, components: [position]},
+        %EntityDespawned{entity: entity, components: [position]},
         partition: map_ref
       )
 
