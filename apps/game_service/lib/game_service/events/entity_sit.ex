@@ -1,4 +1,4 @@
-defmodule GameService.Events.Sitting do
+defmodule GameService.Events.EntitySit do
   @moduledoc """
   Event triggered when an Entity sitting down or standing up.
   """

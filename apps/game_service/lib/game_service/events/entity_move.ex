@@ -1,4 +1,4 @@
-defmodule GameService.Events.Movement do
+defmodule GameService.Events.EntityMove do
   @moduledoc """
   Event triggered when an Entity move.
   """

@@ -1,4 +1,4 @@
-defmodule GameService.Events.DirectionChanged do
+defmodule GameService.Events.ChangeDirection do
   @moduledoc """
   Event triggered when an Entity change his direction.
   """
