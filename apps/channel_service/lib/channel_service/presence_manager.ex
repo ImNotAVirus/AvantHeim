@@ -78,13 +78,13 @@ defmodule ChannelService.PresenceManager do
 
   defp cleanup_session(%Session{state: :in_game, account_id: account_id}) do
     # Not so clean but I'll rewrite this part later
-    [{entity, components}] =
+    {entity, components} =
       Entity
       |> Query.select(
         with: [{AccountComponent, [{:==, :id, account_id}]}],
         preload: [PositionComponent]
       )
-      |> Query.all()
+      |> Query.one()
 
     %PositionComponent{map_ref: map_ref} =
       Enum.find(components, &(&1.__struct__ == PositionComponent))
