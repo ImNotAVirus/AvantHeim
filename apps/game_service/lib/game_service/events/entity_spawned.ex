@@ -10,7 +10,7 @@ defmodule GameService.Events.EntitySpawned do
 
   @type t :: %__MODULE__{
           entity: Entity.t(),
-          components: [Component.spec()],
+          components: [Component.t()],
           children: [Entity.t()],
           parent: Entity.t() | nil
         }

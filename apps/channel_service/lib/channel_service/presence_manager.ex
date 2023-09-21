@@ -87,15 +87,16 @@ defmodule ChannelService.PresenceManager do
       |> Query.one()
 
     %PositionComponent{map_ref: map_ref} =
-      Enum.find(components, &(&1.__struct__ == PositionComponent))
-
-    {:ok, _tuple} = Command.despawn_entity(entity)
+      position = Enum.find(components, &(&1.__struct__ == PositionComponent))
 
     {:ok, _events} =
       ElvenGard.ECS.push(
-        %EntityDespawn{entity: entity},
+        # Here we only need the position component for the despawn event
+        %EntityDespawn{entity: entity, components: [position]},
         partition: map_ref
       )
+
+    {:ok, _tuple} = Command.despawn_entity(entity)
 
     # TODO: Save character in db
     # ...

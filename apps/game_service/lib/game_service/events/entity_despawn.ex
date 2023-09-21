@@ -4,9 +4,9 @@ defmodule GameService.Events.EntityDespawn do
 
   Contains the entity struct.
   """
-  use ElvenGard.ECS.Event, fields: [:entity]
+  use ElvenGard.ECS.Event, fields: [entity: nil, components: []]
 
   alias ElvenGard.ECS.Entity
 
-  @type t :: %__MODULE__{entity: Entity.t()}
+  @type t :: %__MODULE__{entity: Entity.t(), components: [Component.t()]}
 end
