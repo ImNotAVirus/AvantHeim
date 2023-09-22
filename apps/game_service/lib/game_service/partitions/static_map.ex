@@ -13,7 +13,7 @@ defmodule GameService.StaticMapPartition do
   def setup(opts) do
     id = opts[:id] || raise ArgumentError, ":id option is require for a map"
 
-    Logger.debug("StaticMapPartition id: #{id} Starting...")
+    Logger.debug("StaticMapPartition id: #{id} is starting...")
 
     # Run system 60 per seconds (60Hz)
     interval = trunc(1 / 60 * 1000)

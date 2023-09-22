@@ -11,7 +11,7 @@ defmodule ChannelService.PresenceManager do
   alias ElvenCaching.SessionRegistry
 
   alias ElvenGard.ECS.{Command, Entity, Query}
-  alias GameService.Events.EntityDespawned
+  alias GameService.Events.PlayerDisconnected
   alias GameService.EntityComponents.PositionComponent
   alias GameService.PlayerComponents.AccountComponent
 
@@ -77,26 +77,13 @@ defmodule ChannelService.PresenceManager do
   defp cleanup_session(%Session{state: :in_lobby}), do: :ok
 
   defp cleanup_session(%Session{state: :in_game, account_id: account_id}) do
-    # Not so clean but I'll rewrite this part later
-    {entity, components} =
-      Entity
-      |> Query.select(
-        with: [{AccountComponent, [{:==, :id, account_id}]}],
-        preload: [PositionComponent]
-      )
-      |> Query.one()
-
-    %PositionComponent{map_ref: map_ref} =
-      position = Enum.find(components, &(&1.__struct__ == PositionComponent))
-
+    # Remove Entity from ECS and notify all Frontends
     {:ok, _events} =
       ElvenGard.ECS.push(
-        # Here we only need the position component for the despawn event
-        %EntityDespawned{entity: entity, components: [position]},
-        partition: map_ref
+        %PlayerDisconnected{account_id: account_id},
+        # Here we don't know the map_ref so we will send the event to a special partition
+        partition: :system
       )
-
-    {:ok, _tuple} = Command.despawn_entity(entity)
 
     # TODO: Save character in db
     # ...

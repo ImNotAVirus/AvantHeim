@@ -15,7 +15,7 @@ defmodule GameService.EntityMapActionsSystem do
       GameService.EntityComponents.SittingComponent
     ],
     event_subscriptions: [
-      GameService.Events.ChangeDirection,
+      GameService.Events.EntityChangeDirection,
       GameService.Events.EntityInfoRequest,
       GameService.Events.EntityMove,
       GameService.Events.EntitySit
@@ -28,7 +28,7 @@ defmodule GameService.EntityMapActionsSystem do
   alias GameService.EntityComponents, as: E
 
   alias GameService.Events.{
-    ChangeDirection
+    EntityChangeDirection
     # EntityInfoRequest,
     # Movement,
     # Sitting
@@ -37,8 +37,8 @@ defmodule GameService.EntityMapActionsSystem do
   # System behaviour
 
   @impl true
-  def run(%ChangeDirection{} = event, _delta) do
-    %ChangeDirection{
+  def run(%EntityChangeDirection{} = event, _delta) do
+    %EntityChangeDirection{
       entity_type: entity_type,
       entity_id: entity_id,
       value: value

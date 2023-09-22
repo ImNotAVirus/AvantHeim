@@ -21,8 +21,8 @@ defmodule GameService.EntityMapActionsSystemTest do
     direction = %E.DirectionComponent{value: :south}
     entity = spawn_player(components: [position, direction])
 
-    # Call our System with a ChangeDirection event
-    event = %Evt.ChangeDirection{
+    # Call our System with a EntityChangeDirection event
+    event = %Evt.EntityChangeDirection{
       entity_type: :player,
       entity_id: GameService.entity_id(entity),
       value: :north
