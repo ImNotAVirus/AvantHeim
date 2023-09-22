@@ -29,7 +29,7 @@ defmodule ElvenCore.CommandSchema do
 
       def resolve(unquote(cmdname), bin_args, socket) do
         say_attrs = %{
-          entity_type: :character,
+          entity_type: :player,
           entity_id: socket.assigns.character_id,
           color: :special_gold,
           message: "#{unquote(@console_prefix)} #{unquote(cmdname)} #{bin_args}"

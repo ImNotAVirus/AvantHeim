@@ -23,7 +23,7 @@ defmodule GameService.EntityMapActionsSystemTest do
 
     # Call our System with a ChangeDirection event
     event = %Evt.ChangeDirection{
-      entity_type: :character,
+      entity_type: :player,
       entity_id: GameService.entity_id(entity),
       value: :north
     }

@@ -47,7 +47,7 @@ defmodule ElvenPackets.Views.MapViewsTest do
       packet = MapViews.render(:mv, args)
 
       assert %Mv{} = packet
-      assert packet.entity_type == :character
+      assert packet.entity_type == :player
       assert packet.entity_id == args.entity.id
       assert packet.map_x == 12
       assert packet.map_y == 34

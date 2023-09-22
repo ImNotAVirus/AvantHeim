@@ -23,7 +23,7 @@ defmodule ElvenPackets.Server.EntityPacketsTest do
 
   describe "char_sc" do
     test "can be serialized" do
-      packet = %CharSc{entity_type: :character, entity_id: 11, size: 22}
+      packet = %CharSc{entity_type: :player, entity_id: 11, size: 22}
       assert {"char_sc", params} = serialize_packet(packet)
       assert is_list(params)
       assert length(params) == 3
@@ -56,7 +56,7 @@ defmodule ElvenPackets.Server.EntityPacketsTest do
 
   describe "dir" do
     test "can be serialized" do
-      packet = %Dir{entity_type: :character, entity_id: 22, direction: :north}
+      packet = %Dir{entity_type: :player, entity_id: 22, direction: :north}
       assert {"dir", params} = serialize_packet(packet)
       assert is_list(params)
       assert length(params) == 3
@@ -68,7 +68,7 @@ defmodule ElvenPackets.Server.EntityPacketsTest do
 
   describe "eff" do
     test "can be serialized" do
-      packet = %Eff{entity_type: :character, entity_id: 11, value: 22}
+      packet = %Eff{entity_type: :player, entity_id: 11, value: 22}
       assert {"eff", params} = serialize_packet(packet)
       assert is_list(params)
       assert length(params) == 3
@@ -112,7 +112,7 @@ defmodule ElvenPackets.Server.EntityPacketsTest do
 
   defp c_mode_mock() do
     %CMode{
-      entity_type: :character,
+      entity_type: :player,
       entity_id: 111,
       morph: :volcano,
       morph_upgrade: 333,
@@ -126,7 +126,7 @@ defmodule ElvenPackets.Server.EntityPacketsTest do
   defp st_mock(attrs \\ %{}) do
     Map.merge(
       %St{
-        entity_type: :character,
+        entity_type: :player,
         entity_id: 11,
         level: 22,
         hero_level: 33,

@@ -44,8 +44,8 @@ defmodule GameService.EntityMapActionsSystem do
       value: value
     } = event
 
-    ecs_type = GameService.entity_type_to_prefix(entity_type)
-    ecs_id = {ecs_type, entity_id}
+    # In the GameService, Entity's id is a combination of it's type and it's id 
+    ecs_id = GameService.real_entity_id(entity_type, entity_id)
 
     # Check if the Entity exists
     with {:ok, entity} <- Query.fetch_entity(ecs_id),

@@ -50,7 +50,7 @@ defmodule ElvenPackets.Server.MapPacketsTest do
 
   describe "mv" do
     test "can be serialized" do
-      packet = %Mv{entity_type: :character, entity_id: 2, map_x: 30, map_y: 60, speed: 69}
+      packet = %Mv{entity_type: :player, entity_id: 2, map_x: 30, map_y: 60, speed: 69}
       assert {"mv", params} = serialize_packet(packet)
       assert is_list(params)
       assert length(params) == 5

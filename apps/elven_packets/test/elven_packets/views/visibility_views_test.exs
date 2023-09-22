@@ -73,7 +73,7 @@ defmodule ElvenPackets.Views.VisibilityViewsTest do
       packet = VisibilityViews.render(:out, args)
 
       assert %Out{} = packet
-      assert packet.entity_type == :character
+      assert packet.entity_type == :player
       assert packet.entity_id == args.entity.id
     end
   end

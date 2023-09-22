@@ -100,7 +100,7 @@ defmodule ElvenCaching.Entity.Character do
   ## Implement protocols
 
   defimpl ElvenCaching.Entity do
-    def type(_), do: :character
+    def type(_), do: :player
     def id(%Character{id: id}), do: id
   end
 

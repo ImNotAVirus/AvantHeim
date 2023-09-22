@@ -12,7 +12,7 @@ defmodule ElvenPackets.Views.EntityViewsTest do
       packet = EntityViews.render(:c_mode, args)
 
       assert %CMode{} = packet
-      assert packet.entity_type == :character
+      assert packet.entity_type == :player
       assert packet.entity_id == args.entity.id
       assert packet.morph == :default
       assert packet.morph_upgrade == 0
@@ -29,7 +29,7 @@ defmodule ElvenPackets.Views.EntityViewsTest do
       packet = EntityViews.render(:char_sc, args)
 
       assert %CharSc{} = packet
-      assert packet.entity_type == :character
+      assert packet.entity_type == :player
       assert packet.entity_id == args.entity.id
       assert packet.size == 20
     end
@@ -41,7 +41,7 @@ defmodule ElvenPackets.Views.EntityViewsTest do
       packet = EntityViews.render(:cond, args)
 
       assert %Cond{} = packet
-      assert packet.entity_type == :character
+      assert packet.entity_type == :player
       assert packet.entity_id == args.entity.id
       assert packet.no_attack == false
       assert packet.no_move == false
@@ -55,7 +55,7 @@ defmodule ElvenPackets.Views.EntityViewsTest do
       packet = EntityViews.render(:dir, args)
 
       assert %Dir{} = packet
-      assert packet.entity_type == :character
+      assert packet.entity_type == :player
       assert packet.entity_id == args.entity.id
       assert packet.direction == :south
     end
@@ -67,7 +67,7 @@ defmodule ElvenPackets.Views.EntityViewsTest do
       packet = EntityViews.render(:eff, args)
 
       assert %Eff{} = packet
-      assert packet.entity_type == :character
+      assert packet.entity_type == :player
       assert packet.entity_id == args.entity.id
       assert packet.value == 1337
     end
@@ -79,7 +79,7 @@ defmodule ElvenPackets.Views.EntityViewsTest do
       packet = EntityViews.render(:st, args)
 
       assert %St{} = packet
-      assert packet.entity_type == :character
+      assert packet.entity_type == :player
       assert packet.entity_id == args.entity.id
       assert packet.level == 99
       assert packet.hero_level == 79

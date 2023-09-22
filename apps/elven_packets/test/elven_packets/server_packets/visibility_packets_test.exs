@@ -99,7 +99,7 @@ defmodule ElvenPackets.ServerPackets.VisibilityPacketsTest do
   describe "out" do
     test "can be serialized" do
       packet = %Out{
-        entity_type: :character,
+        entity_type: :player,
         entity_id: 111
       }
 

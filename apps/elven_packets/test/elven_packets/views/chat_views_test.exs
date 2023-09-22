@@ -23,7 +23,7 @@ defmodule ElvenPackets.Views.ChatViewsTest do
       packet = ChatViews.render(:say, args)
 
       assert %Say{} = packet
-      assert packet.entity_type == :character
+      assert packet.entity_type == :player
       assert packet.entity_id == args.entity.id
       assert packet.message == args.message
       assert packet.color == nil
@@ -34,7 +34,7 @@ defmodule ElvenPackets.Views.ChatViewsTest do
       packet = ChatViews.render(:say, args)
 
       assert %Say{} = packet
-      assert packet.entity_type == :character
+      assert packet.entity_type == :player
       assert packet.entity_id == args.entity.id
       assert packet.message == args.message
       assert packet.color == args.color

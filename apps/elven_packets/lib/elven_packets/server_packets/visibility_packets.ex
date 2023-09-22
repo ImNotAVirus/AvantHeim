@@ -37,7 +37,7 @@ defmodule ElvenPackets.Server.VisibilityPackets do
 
   @serializable true
   defpacket "in", as: InPlayer do
-    field :entity_type, NsEnum, values: entity_type(:__enumerators__), default: :character
+    field :entity_type, NsEnum, values: entity_type(:__enumerators__), default: :player
     field :name, NsString
     field :vnum, NsString, default: "-"
     field :entity_id, NsInteger

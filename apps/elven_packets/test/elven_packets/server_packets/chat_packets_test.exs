@@ -19,7 +19,7 @@ defmodule ElvenPackets.Server.ChatPacketsTest do
   describe "say" do
     test "can be serialized with color" do
       packet = %Say{
-        entity_type: :character,
+        entity_type: :player,
         entity_id: 123,
         color: :special_gold,
         message: "This is a message for the SayPacket"
@@ -35,7 +35,7 @@ defmodule ElvenPackets.Server.ChatPacketsTest do
     end
 
     test "can be serialized without color" do
-      packet = %Say{entity_type: :character, entity_id: 2, message: "This is a message"}
+      packet = %Say{entity_type: :player, entity_id: 2, message: "This is a message"}
       assert {"say", params} = serialize_packet(packet)
       assert is_list(params)
       assert length(params) == 4

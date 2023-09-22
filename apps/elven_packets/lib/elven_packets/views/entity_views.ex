@@ -19,7 +19,7 @@ defmodule ElvenPackets.Views.EntityViews do
     end
 
     %CMode{
-      entity_type: :character,
+      entity_type: :player,
       entity_id: GameService.entity_id(entity),
       morph: PlayerBundle.morph(entity),
       morph_upgrade: PlayerBundle.morph_upgrade(entity),

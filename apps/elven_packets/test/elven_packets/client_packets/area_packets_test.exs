@@ -33,7 +33,7 @@ defmodule ElvenPackets.Client.AreaPacketsTest do
     test "can be deserialized" do
       params = "1 123"
       assert %Ncif{} = packet = Ncif.deserialize("ncif", params, %Socket{})
-      assert packet.entity_type == :character
+      assert packet.entity_type == :player
       assert packet.entity_id == 123
     end
   end
