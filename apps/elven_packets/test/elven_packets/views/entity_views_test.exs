@@ -51,13 +51,13 @@ defmodule ElvenPackets.Views.EntityViewsTest do
 
   describe "dir" do
     test "default serialization for players" do
-      args = %{entity: new_player()}
+      args = %{entity_type: :player, entity_id: 123, direction: :south}
       packet = EntityViews.render(:dir, args)
 
       assert %Dir{} = packet
-      assert packet.entity_type == :player
-      assert packet.entity_id == args.entity.id
-      assert packet.direction == :south
+      assert packet.entity_type == args.entity_type
+      assert packet.entity_id == args.entity_id
+      assert packet.direction == args.direction
     end
   end
 

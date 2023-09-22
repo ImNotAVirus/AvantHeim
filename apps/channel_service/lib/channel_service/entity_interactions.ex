@@ -50,22 +50,6 @@ defmodule ChannelService.EntityInteractions do
     Enum.each(players, &send_entity_leave_packets(&1, character))
   end
 
-  @spec set_dir(Character.t(), EntityEnums.direction_type_keys()) ::
-          {:ok, new_char :: Character.t()} | {:error, atom}
-  def set_dir(%Character{} = character, new_dir) do
-    new_char = %Character{character | direction: new_dir}
-
-    case CharacterRegistry.write(new_char) do
-      {:ok, new_char} ->
-        render = EntityViews.render(:dir, %{entity: new_char})
-        broadcast_on_map(new_char, render, false)
-        {:ok, new_char}
-
-      {:error, _} = x ->
-        x
-    end
-  end
-
   @spec say_to_map(Character.t(), String.t()) :: :ok
   def say_to_map(%Character{} = character, message) do
     broadcast_on_map(

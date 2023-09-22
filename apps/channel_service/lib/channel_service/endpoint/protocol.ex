@@ -73,6 +73,16 @@ defmodule ChannelService.Endpoint.Protocol do
     {:noreply, socket}
   end
 
+  def handle_info({:direction_changed, entity_type, entity_id, value}, socket) do
+    # Ignore the event if the target is ourself
+    if entity_id != socket.assigns.character_id do
+      attrs = %{entity_type: entity_type, entity_id: entity_id, direction: value}
+      Socket.send(socket, EntityViews.render(:dir, attrs))
+    end
+
+    {:noreply, socket}
+  end
+
   def handle_info(msg, socket) do
     Logger.warn("unhandled message: #{inspect(msg)}")
     {:noreply, socket}

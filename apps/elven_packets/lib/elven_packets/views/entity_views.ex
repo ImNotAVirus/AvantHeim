@@ -54,12 +54,10 @@ defmodule ElvenPackets.Views.EntityViews do
   end
 
   def render(:dir, args) do
-    entity = required_param(args, :entity)
-
     %Dir{
-      entity_type: GameService.entity_type(entity),
-      entity_id: GameService.entity_id(entity),
-      direction: entity.__struct__.direction(entity)
+      entity_type: required_param(args, :entity_type),
+      entity_id: required_param(args, :entity_id),
+      direction: required_param(args, :direction)
     }
   end
 

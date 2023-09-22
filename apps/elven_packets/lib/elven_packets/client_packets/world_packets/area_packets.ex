@@ -64,7 +64,7 @@ defmodule ElvenPackets.Client.AreaPackets do
   #######
   @deserializable true
   defpacket "dir", as: Dir do
-    field :dir, NsEnum, values: direction_type(:__enumerators__)
+    field :direction, NsEnum, values: direction_type(:__enumerators__)
     field :entity_type, NsEnum, values: entity_type(:__enumerators__)
     field :entity_id, NsInteger
   end
