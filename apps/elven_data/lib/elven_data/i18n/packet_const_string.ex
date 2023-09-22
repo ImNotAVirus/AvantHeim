@@ -1,10 +1,10 @@
-defmodule ElvenI18n.PacketConstString do
+defmodule ElvenData.I18n.PacketConstString do
   @moduledoc """
   TODO: Documentation
   """
 
-  @priv_dir :code.priv_dir(:elven_i18n)
-  @path Path.join(@priv_dir, "Game18NConstString.yaml")
+  @priv_dir :code.priv_dir(:elven_data)
+  @path Path.join(@priv_dir, "i18n/Game18NConstString.yaml")
   @external_resource @path
 
   def new!(key, args \\ []) do

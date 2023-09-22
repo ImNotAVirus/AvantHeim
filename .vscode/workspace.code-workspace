@@ -7,7 +7,6 @@
 		{"path": "../apps/elven_caching"},
 		{"path": "../apps/elven_database"},
 		{"path": "../apps/elven_data"},
-		{"path": "../apps/elven_i18n"},
 		{"path": "../apps/elven_packets"},
 		{"path": "../apps/elven_algorithms"}
 	],

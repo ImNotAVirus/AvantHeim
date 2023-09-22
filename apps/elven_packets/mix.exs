@@ -28,7 +28,6 @@ defmodule ElvenPackets.MixProject do
       # {:elvengard_network, "~> 0.1.1", runtime: false},
       # FIXME: Need to release a new version for the :if serializer 
       {:elvengard_network, github: "elvengard-mmo/elvengard_network", runtime: false},
-      {:elven_i18n, path: "../elven_i18n", runtime: false},
       {:elven_data, path: "../elven_data", runtime: false},
       {:game_service, path: "../game_service", runtime: false},
       {:simple_enum, "~> 0.1", runtime: false}

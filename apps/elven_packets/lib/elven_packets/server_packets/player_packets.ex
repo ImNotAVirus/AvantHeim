@@ -22,7 +22,7 @@ defmodule ElvenPackets.Server.PlayerPackets do
   alias ElvenPackets.SubPackets.Player.Family
   alias ElvenPackets.Types.{NsInteger, NsString, NsEnum, NsBoolean}
 
-  alias ElvenI18n.PacketConstString
+  alias ElvenData.I18n.PacketConstString
 
   #######
   # Reputation display

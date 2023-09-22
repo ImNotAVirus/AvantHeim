@@ -19,14 +19,15 @@ defmodule ElvenData.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      extra_applications: [:logger]
+      extra_applications: [:logger, :inets, :ssl]
     ]
   end
 
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:simple_enum, "~> 0.1"}
+      {:simple_enum, "~> 0.1"},
+      {:yaml_elixir, "~> 2.8", runtime: false}
     ]
   end
 end

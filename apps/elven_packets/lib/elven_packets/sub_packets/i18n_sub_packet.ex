@@ -7,7 +7,7 @@ defmodule ElvenPackets.SubPackets.I18nSubPacket do
   use ElvenGard.Network.Type
 
   alias __MODULE__
-  alias ElvenI18n.PacketConstString
+  alias ElvenData.I18n.PacketConstString
   alias ElvenPackets.Types.{NsString, NsList, NsInteger}
 
   @enforce_keys [:key]

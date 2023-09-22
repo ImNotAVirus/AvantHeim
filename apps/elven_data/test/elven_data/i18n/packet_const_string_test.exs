@@ -1,7 +1,7 @@
-defmodule ElvenI18n.PacketConstStringTest do
+defmodule ElvenData.I18n.PacketConstStringTest do
   use ExUnit.Case, async: true
 
-  alias ElvenI18n.PacketConstString
+  alias ElvenData.I18n.PacketConstString
 
   ## Tests
 

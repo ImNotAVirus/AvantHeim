@@ -2,7 +2,7 @@ defmodule Mix.Tasks.I18n.Fetch.Noscore do
   use Mix.Task
 
   @url "https://raw.githubusercontent.com/NosCoreIO/NosCore.Packets/master/src/NosCore.Packets/Enumerations/Game18NConstString.cs"
-  @target_folder :code.priv_dir(:elven_i18n)
+  @target_folder "#{:code.priv_dir(:elven_data)}/i18n"
   @filename "Game18NConstString.yaml"
   @match_type ~r/\(([[:alpha:]]+)\)/
 
