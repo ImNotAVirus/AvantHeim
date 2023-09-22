@@ -42,8 +42,6 @@ defmodule ChannelService.Endpoint.Protocol do
 
   @impl true
   def handle_info({:entity_spawn, %PlayerBundle{} = player}, socket) do
-    IO.inspect(player)
-
     case player.id == socket.assigns.character_id do
       false ->
         EntityInteractions.send_map_enter(player, socket)

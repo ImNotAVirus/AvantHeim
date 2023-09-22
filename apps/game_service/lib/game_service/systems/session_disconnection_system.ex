@@ -15,6 +15,7 @@ defmodule GameService.SessionDisconnectionSystem do
 
   alias ElvenGard.ECS.{Command, Query}
 
+  alias GameService.PlayerComponents, as: P
   alias GameService.EntityComponents, as: E
   alias GameService.Events.{EntityDespawned, PlayerDisconnected}
 
@@ -24,10 +25,10 @@ defmodule GameService.SessionDisconnectionSystem do
   def run(%PlayerDisconnected{account_id: account_id}, _delta) do
     # Get the disconnected Entity and his PositionComponent
     {entity, components} =
-      Entity
+      ElvenGard.ECS.Entity
       |> Query.select(
-        with: [{AccountComponent, [{:==, :id, account_id}]}],
-        preload: [PositionComponent]
+        with: [{P.AccountComponent, [{:==, :id, account_id}]}],
+        preload: [E.PositionComponent]
       )
       |> Query.one()
 
