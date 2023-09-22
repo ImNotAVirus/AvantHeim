@@ -21,8 +21,6 @@ defmodule PresenceService.MixProject do
 
   # Run "mix help deps" to learn about dependencies.
   defp deps do
-    [
-      {:elven_pubsub, path: "../elven_pubsub"}
-    ]
+    []
   end
 end
