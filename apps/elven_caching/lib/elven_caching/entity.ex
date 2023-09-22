@@ -3,7 +3,7 @@ defprotocol ElvenCaching.Entity do
   TODO: Documentation
   """
 
-  alias ElvenEnums.EntityEnums
+  alias ElvenData.Enums.EntityEnums
 
   @type entity_type :: EntityEnums.entity_type_keys()
   @type entity_id :: pos_integer()

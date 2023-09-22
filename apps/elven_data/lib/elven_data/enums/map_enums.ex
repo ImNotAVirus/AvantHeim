@@ -1,4 +1,4 @@
-defmodule ElvenEnums.MapEnums do
+defmodule ElvenData.Enums.MapEnums do
   @moduledoc """
   TODO: Documentation
   """

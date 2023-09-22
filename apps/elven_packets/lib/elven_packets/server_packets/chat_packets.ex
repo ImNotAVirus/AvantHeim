@@ -6,7 +6,7 @@ defmodule ElvenPackets.Server.ChatPackets do
   use ElvenGard.Network.PacketSerializer
 
   import ElvenPackets.Enums.ChatEnums, only: [color_type: 1]
-  import ElvenEnums.EntityEnums, only: [entity_type: 1]
+  import ElvenData.Enums.EntityEnums, only: [entity_type: 1]
 
   alias ElvenPackets.Types.{NsEnum, NsInteger, NsString}
 

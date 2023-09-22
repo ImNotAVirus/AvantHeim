@@ -1,14 +1,14 @@
-defmodule ElvenEnums.MixProject do
+defmodule ElvenData.MixProject do
   use Mix.Project
 
   def project do
     [
-      app: :elven_enums,
+      app: :elven_data,
       version: "0.1.0",
       elixir: "~> 1.13",
       elixirc_paths: elixirc_paths(Mix.env()),
-      start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+      elixirc_options: [warnings_as_errors: true]
     ]
   end
 

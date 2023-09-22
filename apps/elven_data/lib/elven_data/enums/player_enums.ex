@@ -1,4 +1,4 @@
-defmodule ElvenEnums.PlayerEnums do
+defmodule ElvenData.Enums.PlayerEnums do
   @moduledoc """
   TODO: Documentation
   """

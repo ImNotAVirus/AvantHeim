@@ -3,9 +3,9 @@ defmodule ElvenCaching do
   Documentation for `ElvenCaching`.
   """
 
-  require ElvenEnums.EntityEnums
+  require ElvenData.Enums.EntityEnums
 
-  alias ElvenEnums.EntityEnums
+  alias ElvenData.Enums.EntityEnums
   alias ElvenCaching.CharacterRegistry
 
   @type entity :: Character.t()

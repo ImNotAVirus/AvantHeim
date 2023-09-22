@@ -5,7 +5,7 @@ defmodule GameService.Events.ChangeDirection do
 
   use ElvenGard.ECS.Event, fields: [:entity_type, :entity_id, :value]
 
-  alias ElvenEnums.EntityEnums
+  alias ElvenData.Enums.EntityEnums
 
   @type t :: %__MODULE__{
           entity_type: EntityEnums.entity_type_keys(),

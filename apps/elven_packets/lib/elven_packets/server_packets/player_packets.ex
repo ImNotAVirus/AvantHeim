@@ -5,7 +5,7 @@ defmodule ElvenPackets.Server.PlayerPackets do
 
   use ElvenGard.Network.PacketSerializer
 
-  import ElvenEnums.PlayerEnums,
+  import ElvenData.Enums.PlayerEnums,
     only: [
       authority: 1,
       gender: 1,

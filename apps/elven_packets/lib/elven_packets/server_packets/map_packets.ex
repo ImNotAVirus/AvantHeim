@@ -5,7 +5,7 @@ defmodule ElvenPackets.Server.MapPackets do
 
   use ElvenGard.Network.PacketSerializer
 
-  import ElvenEnums.EntityEnums, only: [direction_type: 1, entity_type: 1]
+  import ElvenData.Enums.EntityEnums, only: [direction_type: 1, entity_type: 1]
 
   alias ElvenPackets.Types.{NsEnum, NsInteger, NsBoolean}
 

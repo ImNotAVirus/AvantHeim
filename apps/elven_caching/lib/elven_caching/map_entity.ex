@@ -4,7 +4,7 @@ defprotocol ElvenCaching.MapEntity do
   """
 
   alias ElvenCaching.Entity.EntityPosition
-  alias ElvenEnums.EntityEnums
+  alias ElvenData.Enums.EntityEnums
 
   @type position :: EntityPosition.t()
   @type direction :: EntityEnums.direction_type_keys()

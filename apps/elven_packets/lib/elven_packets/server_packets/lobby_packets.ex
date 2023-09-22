@@ -5,7 +5,7 @@ defmodule ElvenPackets.Server.LobbyPackets do
 
   use ElvenGard.Network.PacketSerializer
 
-  import ElvenEnums.PlayerEnums,
+  import ElvenData.Enums.PlayerEnums,
     only: [gender: 1, hair_style: 1, hair_color: 1, character_class: 1]
 
   alias ElvenPackets.SubPackets.Equipment

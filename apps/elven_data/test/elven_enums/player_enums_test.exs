@@ -1,8 +1,8 @@
 defmodule ElvenViews.PlayerEnumsTest do
   use EnumCase, async: true
 
-  require ElvenEnums.PlayerEnums
-  alias ElvenEnums.PlayerEnums
+  require ElvenData.Enums.PlayerEnums
+  alias ElvenData.Enums.PlayerEnums
 
   ## Account enums
   test_enum PlayerEnums, :language

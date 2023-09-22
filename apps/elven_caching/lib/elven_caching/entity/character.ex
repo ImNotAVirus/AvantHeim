@@ -40,7 +40,7 @@ defmodule ElvenCaching.Entity.Character do
 
   alias __MODULE__
   alias ElvenGard.Network.Socket
-  alias ElvenEnums.{EntityEnums, PlayerEnums}
+  alias ElvenData.Enums.{EntityEnums, PlayerEnums}
   alias ElvenCaching.Entity.EntityPosition
 
   # Protocols

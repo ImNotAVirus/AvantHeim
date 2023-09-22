@@ -5,16 +5,16 @@ defmodule ElvenPackets.Server.VisibilityPackets do
 
   use ElvenGard.Network.PacketSerializer
 
-  import ElvenEnums.EntityEnums,
+  import ElvenData.Enums.EntityEnums,
     only: [
       entity_type: 1,
       element_type: 1,
       direction_type: 1
     ]
 
-  import ElvenEnums.MapEnums, only: [spawn_effect_type: 1]
+  import ElvenData.Enums.MapEnums, only: [spawn_effect_type: 1]
 
-  import ElvenEnums.PlayerEnums,
+  import ElvenData.Enums.PlayerEnums,
     only: [
       authority: 1,
       character_class: 1,

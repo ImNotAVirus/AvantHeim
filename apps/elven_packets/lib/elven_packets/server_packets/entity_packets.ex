@@ -5,8 +5,8 @@ defmodule ElvenPackets.Server.EntityPackets do
 
   use ElvenGard.Network.PacketSerializer
 
-  import ElvenEnums.EntityEnums, only: [entity_type: 1, direction_type: 1]
-  import ElvenEnums.PlayerEnums, only: [morph: 1, wings_design: 1]
+  import ElvenData.Enums.EntityEnums, only: [entity_type: 1, direction_type: 1]
+  import ElvenData.Enums.PlayerEnums, only: [morph: 1, wings_design: 1]
 
   alias ElvenPackets.Types.{NsEnum, NsInteger, NsBoolean, NsList}
 

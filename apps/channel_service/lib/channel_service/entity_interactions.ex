@@ -8,7 +8,7 @@ defmodule ChannelService.EntityInteractions do
   alias ElvenCaching.MapEntity
   alias ElvenCaching.Entity.EntityPosition
   alias ElvenCaching.Entity.Character
-  alias ElvenEnums.EntityEnums
+  alias ElvenData.Enums.EntityEnums
 
   alias ElvenPackets.Views.{
     EntityViews,

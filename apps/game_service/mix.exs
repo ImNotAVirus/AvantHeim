@@ -30,7 +30,7 @@ defmodule GameService.MixProject do
       {:elvengard_cluster, github: "elvengard-mmo/elvengard_cluster", optional: true},
       {:elvengard_ecs, github: "elvengard-mmo/elvengard_ecs"},
       {:libcluster, "~> 3.3", optional: true},
-      {:elven_enums, path: "../elven_enums"}
+      {:elven_data, path: "../elven_data"}
     ]
   end
 end

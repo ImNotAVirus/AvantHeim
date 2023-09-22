@@ -12,7 +12,7 @@
     resolve: 2,
     defcommand: 2,
 
-    # elven_enums
+    # elven_data
     test_enum: 2,
 
     # elven_views
