@@ -45,8 +45,8 @@ jobs:
         uses: erlef/setup-beam@v1
         id: setup_beam
         with:
-          otp-version: '24'
-          elixir-version: 'v1.13'
+          otp-version: '25.3'
+          elixir-version: 'v1.14.4'
 
       - name: Create caching key
         id: caching_vars
