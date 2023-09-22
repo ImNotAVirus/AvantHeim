@@ -28,7 +28,7 @@ defmodule GameService.MixProject do
   defp deps do
     [
       {:elvengard_cluster, github: "elvengard-mmo/elvengard_cluster", optional: true},
-      {:elvengard_ecs, github: "elvengard-mmo/elvengard_ecs", optional: true},
+      {:elvengard_ecs, github: "elvengard-mmo/elvengard_ecs"},
       {:libcluster, "~> 3.3", optional: true},
       {:elven_data, path: "../elven_data", optional: true}
     ]
