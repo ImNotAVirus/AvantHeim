@@ -46,6 +46,7 @@ jobs:
         id: setup_beam
         with:
           version-file: .tool-versions
+          version-type: strict
 
       - name: Create caching key
         id: caching_vars
