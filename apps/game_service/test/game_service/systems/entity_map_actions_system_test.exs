@@ -1,12 +1,7 @@
 defmodule GameService.EntityMapActionsSystemTest do
-  use GameService.EntityCase, async: true
+  use GameService.SystemCase, async: true
 
-  alias ElvenGard.ECS.Query
-
-  alias GameService.Events, as: Evt
   alias GameService.EntityMapActionsSystem
-  alias GameService.EntityComponents, as: E
-  alias GameService.PlayerComponents, as: P
 
   ## Tests
 

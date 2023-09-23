@@ -1,11 +1,8 @@
 defmodule GameService.EntityVisibilitySystemTest do
-  use GameService.EntityCase, async: true
+  use GameService.SystemCase, async: true
 
   alias GameService.PlayerBundle
   alias GameService.EntityVisibilitySystem
-  alias GameService.Events, as: Evt
-  alias GameService.EntityComponents, as: E
-  alias GameService.PlayerComponents, as: P
 
   ## Tests
 
