@@ -5,7 +5,7 @@ defmodule GameService.SessionDisconnectionSystem do
   FIXME: Test this system
   """
 
-  use ElvenGard.ECS.System,
+  use GameService.System,
     lock_components: :sync,
     event_subscriptions: [
       GameService.Events.PlayerDisconnected
@@ -13,10 +13,6 @@ defmodule GameService.SessionDisconnectionSystem do
 
   require Logger
 
-  alias ElvenGard.ECS.{Command, Query}
-
-  alias GameService.PlayerComponents, as: P
-  alias GameService.EntityComponents, as: E
   alias GameService.Events.{EntityDespawned, PlayerDisconnected}
 
   # System behaviour

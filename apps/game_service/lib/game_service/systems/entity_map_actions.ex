@@ -3,7 +3,7 @@ defmodule GameService.EntityMapActionsSystem do
   TODO: Documentation for GameService.EntityMapActionsSystem
   """
 
-  use ElvenGard.ECS.System,
+  use GameService.System,
     lock_components: [
       GameService.EntityComponents.PositionComponent,
       GameService.EntityComponents.DirectionComponent,
@@ -22,10 +22,6 @@ defmodule GameService.EntityMapActionsSystem do
     ]
 
   require Logger
-
-  alias ElvenGard.ECS.{Command, Query}
-
-  alias GameService.EntityComponents, as: E
 
   alias GameService.Events.{
     EntityChangeDirection

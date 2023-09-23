@@ -10,6 +10,18 @@ defmodule GameService.System do
 
   ## Public API
 
+  @doc false
+  defmacro __using__(opts) do
+    quote location: :keep do
+      use ElvenGard.ECS.System, unquote(opts)
+
+      alias ElvenGard.ECS.{Query, Command}
+
+      alias GameService.EntityComponents, as: E
+      alias GameService.PlayerComponents, as: P
+    end
+  end
+
   @spec map_event(any(), PositionComponent.t(), [Entity.t()]) :: any()
   def map_event(event, %PositionComponent{map_ref: map_ref}, ignore_entities \\ []) do
     # Broadcast the entity spawn to players
