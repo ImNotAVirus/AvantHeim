@@ -55,7 +55,9 @@ defmodule GameService.EntityMapActionsSystem do
          {:ok, position} <- Query.fetch_component(entity, E.PositionComponent) do
       # Finally, notify all players on map
       event = {:direction_changed, entity_type, entity_id, value}
-      GameService.System.map_event(event, position)
+
+      # Here, the 3rd component means that we don't want to send the event to ourself
+      GameService.System.map_event(event, position, [entity])
     else
       e ->
         Logger.error(
