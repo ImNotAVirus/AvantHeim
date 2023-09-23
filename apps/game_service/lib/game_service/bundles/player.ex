@@ -504,7 +504,7 @@ defmodule GameService.PlayerBundle do
       :unset -> raise ArgumentError, "you must fetch the Player.FairyComponent first"
       # FIXME: Not sure about the default value
       nil -> -1
-      fairy -> fairy.morph
+      fairy -> fairy.type
     end
   end
 
@@ -513,7 +513,7 @@ defmodule GameService.PlayerBundle do
       :unset -> raise ArgumentError, "you must fetch the Player.FairyComponent first"
       # FIXME: Not sure about the default value
       nil -> -1
-      fairy -> fairy.move_type_id
+      fairy -> fairy.move_type
     end
   end
 
@@ -709,7 +709,7 @@ defmodule GameService.PlayerBundle do
   end
 
   defp specialist_specs(_attrs) do
-    [type: :demon_hunter, upgrade: 15, wings_design: :tree]
+    [type: :demon_hunter, upgrade: 15, wings_design: :onyx]
   end
 
   defp family_specs(_attrs) do

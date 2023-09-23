@@ -21,7 +21,7 @@ defmodule ElvenPackets.SubPackets.Player.Family do
     %Family{id: id, rank: rank, name: name} = struct
 
     case id < 0 do
-      true -> "-1"
+      true -> "-1 -"
       false -> "#{id}.#{i18n(rank)} #{name}"
     end
   end
