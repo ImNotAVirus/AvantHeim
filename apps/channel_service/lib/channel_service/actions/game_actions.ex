@@ -16,7 +16,7 @@ defmodule ChannelService.GameActions do
 
   ## Packet handlers
 
-  @spec game_start(String.t(), map, Socket.t()) :: {:cont, Socket.t()}
+  @spec game_start(String.t(), map, Socket.t()) :: {:ok, PlayerBundle.t()}
   def game_start("game_start", _, %Socket{} = socket) do
     %{character: player, account: account} = socket.assigns
 
@@ -45,7 +45,7 @@ defmodule ChannelService.GameActions do
         partition: PlayerBundle.map_ref(bundle)
       )
 
-    {:cont, Map.update!(socket, :assigns, &Map.delete(&1, :character))}
+    {:ok, bundle}
   end
 
   ## Helpers
