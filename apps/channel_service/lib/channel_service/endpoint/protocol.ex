@@ -45,27 +45,27 @@ defmodule ChannelService.Endpoint.Protocol do
   ## GenServer behaviour
 
   @impl true
+  def handle_info({:map_change, %PlayerBundle{} = entity}, socket) do
+    entity_args = %{entity: entity}
+    stat_args = %{entity: entity, option: 0}
+    at_args = %{entity: entity, map_music: 1}
+
+    Socket.send(socket, PlayerViews.render(:c_info, entity_args))
+    Socket.send(socket, PlayerViews.render(:lev, entity_args))
+    Socket.send(socket, PlayerViews.render(:stat, stat_args))
+    Socket.send(socket, MapViews.render(:at, at_args))
+    Socket.send(socket, MapViews.render(:c_map, entity_args))
+    # TODO: Socket.send(socket, PlayerViews.render(:sc, entity_args))
+    Socket.send(socket, EntityViews.render(:c_mode, entity_args))
+    Socket.send(socket, EntityViews.render(:char_sc, entity_args))
+    Socket.send(socket, EntityViews.render(:cond, entity_args))
+
+    {:noreply, socket}
+  end
+
   def handle_info({:entity_map_enter, %PlayerBundle{} = entity}, socket) do
-    case entity.id == socket.assigns.character_id do
-      false ->
-        Socket.send(socket, VisibilityViews.render(:in, %{entity: entity}))
-        Socket.send(socket, EntityViews.render(:c_mode, %{entity: entity}))
-
-      true ->
-        entity_args = %{entity: entity}
-        stat_args = %{entity: entity, option: 0}
-        at_args = %{entity: entity, map_music: 1}
-
-        Socket.send(socket, PlayerViews.render(:c_info, entity_args))
-        Socket.send(socket, PlayerViews.render(:lev, entity_args))
-        Socket.send(socket, PlayerViews.render(:stat, stat_args))
-        Socket.send(socket, MapViews.render(:at, at_args))
-        Socket.send(socket, MapViews.render(:c_map, entity_args))
-        # TODO: Socket.send(socket, PlayerViews.render(:sc, entity_args))
-        Socket.send(socket, EntityViews.render(:c_mode, entity_args))
-        Socket.send(socket, EntityViews.render(:char_sc, entity_args))
-        Socket.send(socket, EntityViews.render(:cond, entity_args))
-    end
+    Socket.send(socket, VisibilityViews.render(:in, %{entity: entity}))
+    Socket.send(socket, EntityViews.render(:c_mode, %{entity: entity}))
 
     {:noreply, socket}
   end

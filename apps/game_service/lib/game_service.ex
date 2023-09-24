@@ -24,6 +24,14 @@ defmodule GameService do
     PlayerBundle.preload(entity, components)
   end
 
+  def send_to(maybe_events, %EndpointComponent{pid: pid}) do
+    events = List.wrap(maybe_events)
+
+    for event <- events do
+      send(pid, event)
+    end
+  end
+
   def broadcast_to(maybe_events, maybe_endpoints) do
     events = List.wrap(maybe_events)
     endpoints = List.wrap(maybe_endpoints)

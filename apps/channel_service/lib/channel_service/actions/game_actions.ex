@@ -36,7 +36,7 @@ defmodule ChannelService.GameActions do
     # TODO: Socket.send(socket, InventoryViews.render(:qslot, %{slot_id: 1, entity: bundle}))
     Socket.send(socket, UIViews.render(:info, %{message: "Welcome to my World!"}))
     send_bns(socket)
-    send_hello(socket, player)
+    send_hello(socket, bundle)
 
     # Send an entity map enter event to the map partition
     {:ok, _events} =

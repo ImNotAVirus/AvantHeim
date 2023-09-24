@@ -23,19 +23,24 @@ defmodule GameService.EntityVisibilitySystem do
     {:ok, entity} = Query.fetch_entity(ecs_id)
     {:ok, position} = Query.fetch_component(entity, E.PositionComponent)
 
-    # Get all Entities with all Components on the map
-    entities =
-      ElvenGard.ECS.Entity
-      |> Query.select(
-        with: [{E.PositionComponent, [{:==, :map_ref, position.map_ref}]}],
-        preload: :all
-      )
-      |> Query.all()
+    # Create the bundle
+    {:ok, components} = ElvenGard.ECS.Query.list_components(entity)
+    bundle = GameService.load_bundle(entity, components)
 
-    # Send Events
-    Enum.each(entities, fn {entity, components} ->
-      _ = broadcast_event(:entity_map_enter, entity, components, position)
-    end)
+    # Notify all Endpoint on the same map except ourself
+    GameService.System.map_event({:entity_map_enter, bundle}, position, [entity])
+
+    # If the Entity has an EndpointComponent, notify the map change and
+    # send him all entities on the map
+    with {:ok, endpoint} <- Query.fetch_component(entity, P.EndpointComponent) do
+      _ = GameService.send_to({:map_change, bundle}, endpoint)
+
+      position
+      |> list_map_bundles()
+      |> Enum.reject(&(&1.id == entity_id))
+      |> Enum.map(&{:entity_map_enter, &1})
+      |> GameService.send_to(endpoint)
+    end
   end
 
   def run(%EntityDespawned{entity: entity, components: components}, _delta) do
@@ -46,14 +51,6 @@ defmodule GameService.EntityVisibilitySystem do
 
   ## Helpers
 
-  defp broadcast_event(event_name, entity, components, %E.PositionComponent{} = position) do
-    # Transform the entity + components to a bundle
-    bundle = GameService.load_bundle(entity, components)
-
-    # Send Events
-    GameService.System.map_event({event_name, bundle}, position)
-  end
-
   # FIXME: Remove the EntityDespawned
   defp broadcast_event2(event_name, entity, components, %E.PositionComponent{} = position) do
     # Transform the entity + components to a bundle
@@ -61,5 +58,16 @@ defmodule GameService.EntityVisibilitySystem do
 
     # Send Events
     GameService.System.map_event({event_name, bundle}, position)
+  end
+
+  defp list_map_bundles(position) do
+    # Get all Entities with all Components on the map
+    ElvenGard.ECS.Entity
+    |> Query.select(
+      with: [{E.PositionComponent, [{:==, :map_ref, position.map_ref}]}],
+      preload: :all
+    )
+    |> Query.all()
+    |> Enum.map(&GameService.load_bundle(elem(&1, 0), elem(&1, 1)))
   end
 end

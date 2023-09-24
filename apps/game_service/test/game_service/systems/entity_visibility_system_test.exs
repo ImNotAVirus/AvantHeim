@@ -24,6 +24,22 @@ defmodule GameService.EntityVisibilitySystemTest do
       assert bundle.position == position
     end
 
+    test "system notify on map change" do
+      # Register our process to receive message
+      ref = make_ref()
+      position = %E.PositionComponent{map_ref: ref}
+      endpoint = %P.EndpointComponent{pid: self()}
+      %Entity{id: {type, id}} = spawn_player(components: [endpoint, position])
+
+      # Call our System with a EntityMapEnter event
+      event = %Evt.EntityMapEnter{entity_type: type, entity_id: id}
+      _ = EntityVisibilitySystem.run(event, 0)
+
+      # We should receive an event with a bundle
+      assert_receive {:map_change, %PlayerBundle{id: ^id} = bundle}
+      assert bundle.position == position
+    end
+
     test "send to the new Entity others that are on the map" do
       # Register some dummies
       ref = make_ref()
@@ -38,7 +54,7 @@ defmodule GameService.EntityVisibilitySystemTest do
       _ = EntityVisibilitySystem.run(event, 0)
 
       # We should receive events with our old Entities
-      assert_receive {:entity_map_enter, %PlayerBundle{id: ^id}}
+      refute_receive {:entity_map_enter, %PlayerBundle{id: ^id}}
       assert_receive {:entity_map_enter, %PlayerBundle{id: ^id1}}
       assert_receive {:entity_map_enter, %PlayerBundle{id: ^id2}}
     end
