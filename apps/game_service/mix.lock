@@ -1,6 +1,6 @@
 %{
   "elvengard_cluster": {:git, "https://github.com/elvengard-mmo/elvengard_cluster.git", "554d498c39de5e422620025b87d18804c1c83637", []},
-  "elvengard_ecs": {:git, "https://github.com/elvengard-mmo/elvengard_ecs.git", "ec091acd4850af4fee32d1011e4d7022836e3e4e", []},
+  "elvengard_ecs": {:git, "https://github.com/elvengard-mmo/elvengard_ecs.git", "113658dcf01054ce0828588b5168dfb010c99b9d", []},
   "jason": {:hex, :jason, "1.4.1", "af1504e35f629ddcdd6addb3513c3853991f694921b1b9368b0bd32beb9f1b63", [:mix], [{:decimal, "~> 1.0 or ~> 2.0", [hex: :decimal, repo: "hexpm", optional: true]}], "hexpm", "fbb01ecdfd565b56261302f7e1fcc27c4fb8f32d56eab74db621fc154604a7a1"},
   "libcluster": {:hex, :libcluster, "3.3.3", "a4f17721a19004cfc4467268e17cff8b1f951befe428975dd4f6f7b84d927fe0", [:mix], [{:jason, "~> 1.1", [hex: :jason, repo: "hexpm", optional: false]}], "hexpm", "7c0a2275a0bb83c07acd17dab3c3bfb4897b145106750eeccc62d302e3bdfee5"},
   "simple_enum": {:hex, :simple_enum, "0.1.0", "51d20e3687481d83f1bde467c4dac67be1bc411d4ade3d1fcac4a25c4e8f4343", [:mix], [], "hexpm", "888029af35eb17abea0e23cd0355a2afef2c2bc6cbc75126a917d25e7aa710a7"},

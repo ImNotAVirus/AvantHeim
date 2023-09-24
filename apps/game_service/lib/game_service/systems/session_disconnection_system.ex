@@ -2,7 +2,8 @@ defmodule GameService.SessionDisconnectionSystem do
   @moduledoc """
   TODO: Documentation for GameService.SessionDisconnectionSystem
 
-  FIXME: Test this system
+  This System is responsible of cleaning the System and notify all Endpoints
+  in case of player disconnection
   """
 
   use GameService.System,
@@ -13,7 +14,7 @@ defmodule GameService.SessionDisconnectionSystem do
 
   require Logger
 
-  alias GameService.Events.{EntityDespawned, PlayerDisconnected}
+  alias GameService.Events.PlayerDisconnected
 
   # System behaviour
 
@@ -25,18 +26,13 @@ defmodule GameService.SessionDisconnectionSystem do
       |> Query.select(with: [{P.AccountComponent, [{:==, :id, account_id}]}])
       |> Query.one()
 
-    # Send the EntityDespawned event to notify player
-    # FIXME: Later rewrite this part:
-    #   - EntityDespawned should be renamed EntityLeaveMap
-    #   - attrs must be only entity_id and map_ref
-    {:ok, _events} =
-      ElvenGard.ECS.push(
-        # Here we only need the position component for the despawn event
-        %EntityDespawned{entity: entity, components: [position]},
-        partition: position.map_ref
-      )
-
     # Remove the Entity from our systems
     {:ok, _tuple} = Command.despawn_entity(entity)
+
+    # Notify all Endpoint on the map except ourself
+    event = {:entity_map_leave, :player, GameService.entity_id(entity)}
+    GameService.System.map_event(event, position, [entity])
+
+    # TODO: Later, also remove from group, update friendlist, ...
   end
 end
