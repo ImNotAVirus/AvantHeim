@@ -41,6 +41,16 @@ defmodule ElvenPackets.Views.EntityViews do
     }
   end
 
+  def render(:cond, %{entity: entity}) do
+    render(:cond, %{
+      entity_type: GameService.entity_type(entity),
+      entity_id: GameService.entity_id(entity),
+      no_attack: not entity.__struct__.can_attack(entity),
+      no_move: not entity.__struct__.can_move(entity),
+      speed: entity.__struct__.speed(entity)
+    })
+  end
+
   def render(:cond, args) do
     %Cond{
       entity_type: required_param(args, :entity_type),

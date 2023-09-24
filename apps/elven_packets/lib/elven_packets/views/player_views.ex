@@ -52,28 +52,16 @@ defmodule ElvenPackets.Views.PlayerViews do
   end
 
   def render(:fd, args) do
-    entity = required_param(args, :entity)
-
-    if entity.__struct__ != PlayerBundle do
-      raise ArgumentError, "fd can only be called on players, got: #{inspect(entity)}"
-    end
-
     %Fd{
-      reputation: PlayerBundle.reputation(entity),
-      reputation_icon: PlayerBundle.reputation_icon(entity),
-      dignity: PlayerBundle.dignity(entity),
-      dignity_icon: PlayerBundle.dignity_icon(entity)
+      reputation: required_param(args, :reputation),
+      reputation_icon: required_param(args, :reputation_icon),
+      dignity: required_param(args, :dignity),
+      dignity_icon: required_param(args, :dignity_icon)
     }
   end
 
   def render(:fs, args) do
-    entity = required_param(args, :entity)
-
-    if entity.__struct__ != PlayerBundle do
-      raise ArgumentError, "fs can only be called on players, got: #{inspect(entity)}"
-    end
-
-    %Fs{faction: PlayerBundle.faction(entity)}
+    %Fs{faction: required_param(args, :faction)}
   end
 
   def render(:lev, args) do
@@ -125,15 +113,9 @@ defmodule ElvenPackets.Views.PlayerViews do
   end
 
   def render(:tit, args) do
-    entity = required_param(args, :entity)
-
-    if entity.__struct__ != PlayerBundle do
-      raise ArgumentError, "tit can only be called on players, got: #{inspect(entity)}"
-    end
-
     %Tit{
-      class: PlayerBundle.class(entity),
-      name: PlayerBundle.name(entity)
+      class: required_param(args, :class),
+      name: required_param(args, :name)
     }
   end
 end

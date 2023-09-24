@@ -35,7 +35,15 @@ defmodule ElvenPackets.Views.PlayerViewsTest do
 
   describe "fd" do
     test "default serialization for players" do
-      args = %{entity: new_player()}
+      entity = new_player()
+
+      args = %{
+        reputation: entity.reputation.reputation,
+        reputation_icon: entity.reputation.reputation_icon,
+        dignity: entity.reputation.dignity,
+        dignity_icon: entity.reputation.dignity_icon
+      }
+
       packet = PlayerViews.render(:fd, args)
 
       assert %Fd{} = packet
@@ -48,7 +56,8 @@ defmodule ElvenPackets.Views.PlayerViewsTest do
 
   describe "fs" do
     test "default serialization for players" do
-      args = %{entity: new_player()}
+      entity = new_player()
+      args = %{faction: entity.faction.value}
       packet = PlayerViews.render(:fs, args)
 
       assert %Fs{} = packet
@@ -105,7 +114,13 @@ defmodule ElvenPackets.Views.PlayerViewsTest do
 
   describe "tit" do
     test "default serialization for players" do
-      args = %{entity: new_player()}
+      entity = new_player()
+
+      args = %{
+        class: entity.player.class,
+        name: entity.player.name
+      }
+
       packet = PlayerViews.render(:tit, args)
 
       assert %Tit{} = packet

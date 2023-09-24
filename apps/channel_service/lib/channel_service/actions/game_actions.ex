@@ -26,17 +26,17 @@ defmodule ChannelService.GameActions do
     bundle = GameService.load_bundle(entity, components)
 
     # Send game start packets
-    Socket.send(socket, PlayerViews.render(:tit, %{entity: bundle}))
-    Socket.send(socket, PlayerViews.render(:fd, %{entity: bundle}))
+    _ = send_tit(socket, bundle)
+    _ = send_fd(socket, bundle)
     # TODO: Socket.send(socket, PlayerViews.render(:ski, %{entity: bundle}))
-    Socket.send(socket, PlayerViews.render(:rsfi))
-    Socket.send(socket, PlayerViews.render(:fs, %{entity: bundle}))
-    Socket.send(socket, UIViews.render(:gold, %{entity: bundle}))
+    _ = Socket.send(socket, PlayerViews.render(:rsfi))
+    _ = send_fs(socket, bundle)
+    _ = send_gold(socket, bundle)
     # TODO: Socket.send(socket, InventoryViews.render(:qslot, %{slot_id: 0, entity: bundle}))
     # TODO: Socket.send(socket, InventoryViews.render(:qslot, %{slot_id: 1, entity: bundle}))
     Socket.send(socket, UIViews.render(:info, %{message: "Welcome to my World!"}))
-    send_bns(socket)
-    send_hello(socket, bundle)
+    _ = send_bns(socket)
+    _ = send_hello(socket, bundle)
 
     # Send an entity map enter event to the map partition
     {:ok, _events} =
@@ -49,6 +49,40 @@ defmodule ChannelService.GameActions do
   end
 
   ## Helpers
+
+  defp send_tit(socket, bundle) do
+    attrs = %{
+      class: PlayerBundle.class(bundle),
+      name: PlayerBundle.name(bundle)
+    }
+
+    Socket.send(socket, PlayerViews.render(:tit, attrs))
+  end
+
+  defp send_fd(socket, bundle) do
+    attrs = %{
+      reputation: PlayerBundle.reputation(bundle),
+      reputation_icon: PlayerBundle.reputation_icon(bundle),
+      dignity: PlayerBundle.dignity(bundle),
+      dignity_icon: PlayerBundle.dignity_icon(bundle)
+    }
+
+    Socket.send(socket, PlayerViews.render(:fd, attrs))
+  end
+
+  defp send_fs(socket, bundle) do
+    attrs = %{faction: PlayerBundle.faction(bundle)}
+    Socket.send(socket, PlayerViews.render(:fs, attrs))
+  end
+
+  defp send_gold(socket, bundle) do
+    attrs = %{
+      gold: PlayerBundle.gold(bundle),
+      bank_gold: PlayerBundle.bank_gold(bundle)
+    }
+
+    Socket.send(socket, UIViews.render(:gold, attrs))
+  end
 
   defp send_bns(socket) do
     messages = Enum.map(1..10, fn x -> "ElvenGard ##{x}" end)
