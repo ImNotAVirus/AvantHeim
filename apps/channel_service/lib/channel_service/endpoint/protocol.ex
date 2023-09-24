@@ -7,9 +7,13 @@ defmodule ChannelService.Endpoint.Protocol do
 
   import ElvenGard.Network.Socket, only: [assign: 2]
 
-  alias ElvenPackets.Views.{ChatViews, PlayerViews, UIViews}
+  alias ElvenPackets.Views.{
+    EntityViews,
+    PlayerViews,
+    MapViews,
+    VisibilityViews
+  }
 
-  alias ChannelService.EntityInteractions
   alias ElvenGard.Network.Socket
   alias GameService.PlayerBundle
 
@@ -41,78 +45,39 @@ defmodule ChannelService.Endpoint.Protocol do
   ## GenServer behaviour
 
   @impl true
-  def handle_info({:entity_spawn, %PlayerBundle{} = player}, socket) do
-    case player.id == socket.assigns.character_id do
+  def handle_info({:entity_map_enter, %PlayerBundle{} = entity}, socket) do
+    case entity.id == socket.assigns.character_id do
       false ->
-        EntityInteractions.send_map_enter(player, socket)
-        :ok
+        Socket.send(socket, VisibilityViews.render(:in, %{entity: entity}))
+        Socket.send(socket, EntityViews.render(:c_mode, %{entity: entity}))
 
       true ->
-        Socket.send(socket, PlayerViews.render(:tit, %{entity: player}))
-        Socket.send(socket, PlayerViews.render(:fd, %{entity: player}))
-        # TODO: Socket.send(socket, PlayerViews.render(:ski, %{entity: player}))
+        entity_args = %{entity: entity}
+        stat_args = %{entity: entity, option: 0}
+        at_args = %{entity: entity, map_music: 1}
 
-        EntityInteractions.send_map_enter(player, socket)
-
-        Socket.send(socket, PlayerViews.render(:rsfi))
-        Socket.send(socket, PlayerViews.render(:fs, %{entity: player}))
-
-        Socket.send(socket, UIViews.render(:gold, %{entity: player}))
-
-        # TODO: Socket.send(socket, InventoryViews.render(:qslot, %{slot_id: 0, entity: player}))
-        # TODO: Socket.send(socket, InventoryViews.render(:qslot, %{slot_id: 1, entity: player}))
-
-        Socket.send(socket, UIViews.render(:info, %{message: "Welcome to my World!"}))
-
-        send_bns(socket)
-        send_hello(socket, player)
+        Socket.send(socket, PlayerViews.render(:c_info, entity_args))
+        Socket.send(socket, PlayerViews.render(:lev, entity_args))
+        Socket.send(socket, PlayerViews.render(:stat, stat_args))
+        Socket.send(socket, MapViews.render(:at, at_args))
+        Socket.send(socket, MapViews.render(:c_map, entity_args))
+        # TODO: Socket.send(socket, PlayerViews.render(:sc, entity_args))
+        Socket.send(socket, EntityViews.render(:c_mode, entity_args))
+        Socket.send(socket, EntityViews.render(:char_sc, entity_args))
+        Socket.send(socket, EntityViews.render(:cond, entity_args))
     end
 
     {:noreply, socket}
   end
 
   def handle_info({:direction_changed, entity_type, entity_id, value}, socket) do
-    # Ignore the event if the target is ourself
-    if entity_id != socket.assigns.character_id do
-      attrs = %{entity_type: entity_type, entity_id: entity_id, direction: value}
-      Socket.send(socket, EntityViews.render(:dir, attrs))
-    end
-
+    attrs = %{entity_type: entity_type, entity_id: entity_id, direction: value}
+    Socket.send(socket, EntityViews.render(:dir, attrs))
     {:noreply, socket}
   end
 
   def handle_info(msg, socket) do
     Logger.warn("unhandled message: #{inspect(msg)}")
     {:noreply, socket}
-  end
-
-  ## Private functions
-
-  ### In Game
-
-  defp send_bns(socket) do
-    messages = Enum.map(1..10, fn x -> "ElvenGard ##{x}" end)
-
-    messages
-    |> Enum.with_index()
-    |> Stream.map(fn {val, i} -> %{id: i, message: val} end)
-    |> Enum.each(&Socket.send(socket, ChatViews.render(:bn, &1)))
-  end
-
-  defp send_hello(socket, character) do
-    prefix = String.duplicate("-", 31)
-    suffix = String.duplicate("-", 82)
-
-    messages = [
-      {:special_green, "#{prefix} [ ElvenGard ] #{prefix}"},
-      {:special_red, "Github: https://github.com/ImNotAVirus/AvantHeim"},
-      {:special_red, "Author: DarkyZ aka. ImNotAVirus"},
-      {:special_green, suffix}
-    ]
-
-    Enum.each(messages, fn {color, message} ->
-      attrs = %{entity: character, color: color, message: message}
-      Socket.send(socket, ChatViews.render(:say, attrs))
-    end)
   end
 end
