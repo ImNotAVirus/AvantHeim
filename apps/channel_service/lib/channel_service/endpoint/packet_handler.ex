@@ -73,12 +73,33 @@ defmodule ChannelService.Endpoint.PacketHandler do
       direction: direction
     } = packet
 
-    _ =
+    # Send dir to the game engine
+    {:ok, _events} =
       ElvenGard.ECS.push(
         %Evt.EntityChangeDirection{
           entity_type: entity_type,
           entity_id: entity_id,
           value: direction
+        },
+        partition: socket.assigns.map_ref
+      )
+
+    {:cont, socket}
+  end
+
+  def handle_packet(%AreaPackets.Walk{} = packet, socket) do
+    %AreaPackets.Walk{pos_x: pos_x, pos_y: pos_y, speed: speed, checksum: checksum} = packet
+
+    # Send walk to the game engine
+    {:ok, _events} =
+      ElvenGard.ECS.push(
+        %Evt.EntityMove{
+          entity_type: :player,
+          entity_id: socket.assigns.character_id,
+          pos_x: pos_x,
+          pos_y: pos_y,
+          speed: speed,
+          checksum: checksum
         },
         partition: socket.assigns.map_ref
       )
