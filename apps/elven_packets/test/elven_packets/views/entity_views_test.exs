@@ -37,12 +37,21 @@ defmodule ElvenPackets.Views.EntityViewsTest do
 
   describe "cond" do
     test "default serialization for players" do
-      args = %{entity: new_player()}
+      entity = new_player()
+
+      args = %{
+        entity_type: :player,
+        entity_id: entity.id,
+        no_attack: not is_nil(entity.cannot_attack),
+        no_move: not is_nil(entity.cannot_move),
+        speed: entity.speed.value
+      }
+
       packet = EntityViews.render(:cond, args)
 
       assert %Cond{} = packet
-      assert packet.entity_type == :player
-      assert packet.entity_id == args.entity.id
+      assert packet.entity_type == args.entity_type
+      assert packet.entity_id == args.entity_id
       assert packet.no_attack == false
       assert packet.no_move == false
       assert packet.speed == 40
@@ -63,12 +72,13 @@ defmodule ElvenPackets.Views.EntityViewsTest do
 
   describe "eff" do
     test "default serialization for players" do
-      args = %{entity: new_player(), value: 1337}
+      entity = new_player()
+      args = %{entity_type: :player, entity_id: entity.id, value: 1337}
       packet = EntityViews.render(:eff, args)
 
       assert %Eff{} = packet
       assert packet.entity_type == :player
-      assert packet.entity_id == args.entity.id
+      assert packet.entity_id == args.entity_id
       assert packet.value == 1337
     end
   end

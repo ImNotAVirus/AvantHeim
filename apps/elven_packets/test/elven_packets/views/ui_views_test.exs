@@ -20,7 +20,16 @@ defmodule ElvenPackets.Views.UIViewsTest do
 
   describe "gb" do
     test "default serialization for players" do
-      args = %{entity: new_player(), action_type: :open_from_savings_book}
+      entity = new_player()
+
+      args = %{
+        action_type: :open_from_savings_book,
+        gold: entity.gold.value,
+        bank_gold: entity.bank.gold,
+        bank_rank: entity.bank.rank,
+        bank_tax: entity.bank.tax
+      }
+
       packet = UIViews.render(:gb, args)
 
       assert %Gb{} = packet
@@ -34,7 +43,8 @@ defmodule ElvenPackets.Views.UIViewsTest do
 
   describe "gold" do
     test "default serialization for players" do
-      args = %{entity: new_player()}
+      entity = new_player()
+      args = %{gold: entity.gold.value, bank_gold: entity.bank.gold}
       packet = UIViews.render(:gold, args)
 
       assert %Gold{} = packet
@@ -66,7 +76,8 @@ defmodule ElvenPackets.Views.UIViewsTest do
 
   describe "s_memoi2" do
     test "default serialization for players" do
-      args = %{entity: new_player(), i18n_key: "BalanceBank"}
+      entity = new_player()
+      args = %{i18n_key: "BalanceBank", gold: entity.gold.value, bank_gold: entity.bank.gold}
       packet = UIViews.render(:s_memoi2, args)
 
       assert %SMemoi2{} = packet

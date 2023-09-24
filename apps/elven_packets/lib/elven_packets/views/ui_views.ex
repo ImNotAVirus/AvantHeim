@@ -7,7 +7,6 @@ defmodule ElvenPackets.Views.UIViews do
 
   import ElvenPackets.View, only: [optional_param: 2, optional_param: 3, required_param: 2]
 
-  alias GameService.PlayerBundle
   alias ElvenPackets.SubPackets.I18nSubPacket
   alias ElvenPackets.Server.UiPackets.{Cancel, Gb, Gold, Info, Scene, SMemoi, SMemoi2}
 
@@ -27,34 +26,20 @@ defmodule ElvenPackets.Views.UIViews do
     }
   end
 
-  # TODO : Bank rank | tax | action_type
   def render(:gb, args) do
-    entity = required_param(args, :entity)
-    action_type = required_param(args, :action_type)
-
-    if entity.__struct__ != PlayerBundle do
-      raise ArgumentError, "gb can only be called on players, got: #{inspect(entity)}"
-    end
-
     %Gb{
-      action_type: action_type,
-      gold: PlayerBundle.gold(entity),
-      bank_gold: PlayerBundle.bank_gold(entity),
-      bank_rank: PlayerBundle.bank_rank(entity),
-      bank_tax: PlayerBundle.bank_tax(entity)
+      action_type: required_param(args, :action_type),
+      gold: required_param(args, :gold),
+      bank_gold: required_param(args, :bank_gold),
+      bank_rank: required_param(args, :bank_rank),
+      bank_tax: required_param(args, :bank_tax)
     }
   end
 
   def render(:gold, args) do
-    entity = required_param(args, :entity)
-
-    if entity.__struct__ != PlayerBundle do
-      raise ArgumentError, "gold can only be called on players, got: #{inspect(entity)}"
-    end
-
     %Gold{
-      gold: PlayerBundle.gold(entity),
-      bank_gold: PlayerBundle.bank_gold(entity)
+      gold: required_param(args, :gold),
+      bank_gold: required_param(args, :bank_gold)
     }
   end
 
@@ -74,21 +59,20 @@ defmodule ElvenPackets.Views.UIViews do
   end
 
   def render(:s_memoi2, args) do
-    entity = required_param(args, :entity)
     i18n_key = required_param(args, :i18n_key)
     text_color = optional_param(args, :text_color)
 
-    if entity.__struct__ != PlayerBundle do
-      raise ArgumentError, "s_memoi2 can only be called on players, got: #{inspect(entity)}"
-    end
-
     bank_gold =
-      PlayerBundle.bank_gold(entity)
+      args
+      |> required_param(:bank_gold)
       |> Kernel./(1000)
       |> Kernel.trunc()
       |> ElvenPackets.format_number()
 
-    gold = ElvenPackets.format_number(PlayerBundle.gold(entity))
+    gold =
+      args
+      |> required_param(:gold)
+      |> ElvenPackets.format_number()
 
     %SMemoi2{
       text_color: text_color,

@@ -42,14 +42,12 @@ defmodule ElvenPackets.Views.EntityViews do
   end
 
   def render(:cond, args) do
-    entity = required_param(args, :entity)
-
     %Cond{
-      entity_type: GameService.entity_type(entity),
-      entity_id: GameService.entity_id(entity),
-      no_attack: not entity.__struct__.can_attack(entity),
-      no_move: not entity.__struct__.can_move(entity),
-      speed: entity.__struct__.speed(entity)
+      entity_type: required_param(args, :entity_type),
+      entity_id: required_param(args, :entity_id),
+      no_attack: required_param(args, :no_attack),
+      no_move: required_param(args, :no_move),
+      speed: required_param(args, :speed)
     }
   end
 
@@ -62,13 +60,10 @@ defmodule ElvenPackets.Views.EntityViews do
   end
 
   def render(:eff, args) do
-    entity = required_param(args, :entity)
-    value = required_param(args, :value)
-
     %Eff{
-      entity_type: GameService.entity_type(entity),
-      entity_id: GameService.entity_id(entity),
-      value: value
+      entity_type: required_param(args, :entity_type),
+      entity_id: required_param(args, :entity_id),
+      value: required_param(args, :value)
     }
   end
 

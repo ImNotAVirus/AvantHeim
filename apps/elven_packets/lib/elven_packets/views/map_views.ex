@@ -52,14 +52,12 @@ defmodule ElvenPackets.Views.MapViews do
   end
 
   def render(:mv, args) do
-    entity = required_param(args, :entity)
-
     %Mv{
-      entity_type: GameService.entity_type(entity),
-      entity_id: GameService.entity_id(entity),
-      map_x: PlayerBundle.map_x(entity),
-      map_y: PlayerBundle.map_y(entity),
-      speed: PlayerBundle.speed(entity)
+      entity_type: required_param(args, :entity_type),
+      entity_id: required_param(args, :entity_id),
+      map_x: required_param(args, :map_x),
+      map_y: required_param(args, :map_y),
+      speed: required_param(args, :speed)
     }
   end
 end

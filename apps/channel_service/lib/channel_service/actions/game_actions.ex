@@ -71,7 +71,7 @@ defmodule ChannelService.GameActions do
     ]
 
     Enum.each(messages, fn {color, message} ->
-      attrs = %{entity: player, color: color, message: message}
+      attrs = %{entity_type: :player, entity_id: player.id, color: color, message: message}
       Socket.send(socket, ChatViews.render(:say, attrs))
     end)
   end

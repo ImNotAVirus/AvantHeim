@@ -43,12 +43,21 @@ defmodule ElvenPackets.Views.MapViewsTest do
 
   describe "mv" do
     test "default serialization for players" do
-      args = %{entity: new_player()}
+      entity = new_player()
+
+      args = %{
+        entity_type: :player,
+        entity_id: entity.id,
+        map_x: entity.position.map_x,
+        map_y: entity.position.map_y,
+        speed: entity.speed.value
+      }
+
       packet = MapViews.render(:mv, args)
 
       assert %Mv{} = packet
       assert packet.entity_type == :player
-      assert packet.entity_id == args.entity.id
+      assert packet.entity_id == args.entity_id
       assert packet.map_x == 12
       assert packet.map_y == 34
       assert packet.speed == 40
