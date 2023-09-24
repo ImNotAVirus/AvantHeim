@@ -5,23 +5,37 @@ defmodule GameService.EntityVisibilitySystem do
   Note: All Entities must have a PositionComponent or this system will raise
   """
 
-  use ElvenGard.ECS.System,
+  use GameService.System,
     lock_components: :sync,
     event_subscriptions: [
-      GameService.Events.EntitySpawned,
+      GameService.Events.EntityMapEnter,
       GameService.Events.EntityDespawned
     ]
 
-  alias GameService.Events.{EntitySpawned, EntityDespawned}
-  alias GameService.EntityComponents, as: E
+  alias GameService.Events.{EntityMapEnter, EntityDespawned}
 
   # System behaviour
 
   @impl true
-  def run(%EntitySpawned{entity: entity, components: components}, _delta) do
-    components
-    |> Enum.find(&match?(%E.PositionComponent{}, &1))
-    |> then(&broadcast_event(:entity_spawn, entity, components, &1))
+  def run(%EntityMapEnter{entity_type: entity_type, entity_id: entity_id}, _delta) do
+    # Get Entity PositionComponent
+    ecs_id = GameService.real_entity_id(entity_type, entity_id)
+    {:ok, entity} = Query.fetch_entity(ecs_id)
+    {:ok, position} = Query.fetch_component(entity, E.PositionComponent)
+
+    # Get all Entities with all Components on the map
+    entities =
+      ElvenGard.ECS.Entity
+      |> Query.select(
+        with: [{E.PositionComponent, [{:==, :map_ref, position.map_ref}]}],
+        preload: :all
+      )
+      |> Query.all()
+
+    # Send Events
+    Enum.each(entities, fn {entity, components} ->
+      _ = broadcast_event(:entity_map_enter, entity, components, position)
+    end)
   end
 
   def run(%EntityDespawned{entity: entity, components: components}, _delta) do

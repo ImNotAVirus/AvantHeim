@@ -76,8 +76,8 @@ defmodule GameService.PlayerBundle do
 
   ## Public API
 
-  @spec new(map(), map(), pid()) :: ElvenGard.ECS.Entity.spec()
-  def new(attrs, account, frontend) do
+  @spec specs(map(), map(), pid()) :: ElvenGard.ECS.Entity.spec()
+  def specs(attrs, account, frontend) do
     id = Map.fetch!(attrs, :id)
 
     Entity.entity_spec(
@@ -384,6 +384,13 @@ defmodule GameService.PlayerBundle do
     case player.position do
       :unset -> raise ArgumentError, "you must fetch the Entity.PositionComponent first"
       position -> position.map_id
+    end
+  end
+
+  def map_ref(%PlayerBundle{} = player) do
+    case player.position do
+      :unset -> raise ArgumentError, "you must fetch the Entity.PositionComponent first"
+      position -> position.map_ref
     end
   end
 

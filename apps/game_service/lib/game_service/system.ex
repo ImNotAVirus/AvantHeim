@@ -40,8 +40,7 @@ defmodule GameService.System do
     # Get all Entities with an endpoints on the current map
     entities =
       Query.select(
-        # TODO: Later support the syntax {ElvenGard.ECS.Entity, EndpointComponent}
-        ElvenGard.ECS.Entity,
+        {ElvenGard.ECS.Entity, EndpointComponent},
         with: [{PositionComponent, [{:==, :map_ref, map_ref}]}],
         preload: [EndpointComponent]
       )
@@ -50,8 +49,6 @@ defmodule GameService.System do
     # Get Endpoints
     entities
     |> Enum.reject(&(elem(&1, 0) in ignore_entities))
-    |> Enum.map(fn {_entity, components} ->
-      Enum.find(components, &(&1.__struct__ == EndpointComponent))
-    end)
+    |> Enum.map(&elem(&1, 1))
   end
 end

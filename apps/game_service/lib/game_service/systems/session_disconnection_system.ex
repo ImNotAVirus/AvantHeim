@@ -20,17 +20,10 @@ defmodule GameService.SessionDisconnectionSystem do
   @impl true
   def run(%PlayerDisconnected{account_id: account_id}, _delta) do
     # Get the disconnected Entity and his PositionComponent
-    {entity, components} =
-      ElvenGard.ECS.Entity
-      |> Query.select(
-        with: [{P.AccountComponent, [{:==, :id, account_id}]}],
-        preload: [E.PositionComponent]
-      )
+    {entity, position} =
+      {ElvenGard.ECS.Entity, E.PositionComponent}
+      |> Query.select(with: [{P.AccountComponent, [{:==, :id, account_id}]}])
       |> Query.one()
-
-    # Find the PositionComponent
-    %E.PositionComponent{map_ref: map_ref} =
-      position = Enum.find(components, &(&1.__struct__ == E.PositionComponent))
 
     # Send the EntityDespawned event to notify player
     # FIXME: Later rewrite this part:
@@ -40,7 +33,7 @@ defmodule GameService.SessionDisconnectionSystem do
       ElvenGard.ECS.push(
         # Here we only need the position component for the despawn event
         %EntityDespawned{entity: entity, components: [position]},
-        partition: map_ref
+        partition: position.map_ref
       )
 
     # Remove the Entity from our systems

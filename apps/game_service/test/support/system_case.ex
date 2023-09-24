@@ -48,7 +48,7 @@ defmodule GameService.SystemCase do
   defp default_components() do
     [
       %P.AccountComponent{id: 123, username: "username", authority: :player},
-      %P.EndpointComponent{pid: self()},
+      %P.EndpointComponent{pid: elem(Task.start(fn -> :ok end), 1)},
       %P.PlayerComponent{
         name: "PlayerName",
         gender: :male,
