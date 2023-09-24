@@ -60,21 +60,36 @@ defmodule GameService.EntityVisibilitySystemTest do
     end
   end
 
-  test "system notify on Entity despawn" do
-    # Register our process to receive message
-    ref = make_ref()
-    position = %E.PositionComponent{map_ref: ref}
-    endpoint = %P.EndpointComponent{pid: self()}
-    _ = spawn_player(components: [endpoint, position])
+  describe "EntityMapLeave" do
+    test "system notify other on Entity leave" do
+      # Register our process to receive message
+      ref = make_ref()
+      position = %E.PositionComponent{map_ref: ref}
+      endpoint = %P.EndpointComponent{pid: self()}
+      _ = spawn_player(components: [endpoint, position])
 
-    # Call our System with a EntityDespawned event
-    entity = spawn_player(components: [position])
-    event = %Evt.EntityDespawned{entity: entity, components: [position]}
-    _ = EntityVisibilitySystem.run(event, 0)
+      # Call our System with a EntityMapLeave event
+      %Entity{id: {type, id}} = spawn_player(components: [position])
+      event = %Evt.EntityMapLeave{entity_type: type, entity_id: id}
+      _ = EntityVisibilitySystem.run(event, 0)
 
-    # We should receive an event
-    assert_receive {:entity_despawn, bundle}
-    assert %PlayerBundle{} = bundle
-    assert bundle.position == position
+      # We should receive an event
+      assert_receive {:entity_map_leave, ^type, ^id}
+    end
+
+    test "system notify ourself on Entity leave" do
+      # Register our process to receive message
+      ref = make_ref()
+      position = %E.PositionComponent{map_ref: ref}
+      endpoint = %P.EndpointComponent{pid: self()}
+      %Entity{id: {type, id}} = spawn_player(components: [endpoint, position])
+
+      # Call our System with a EntityMapLeave event
+      event = %Evt.EntityMapLeave{entity_type: type, entity_id: id}
+      _ = EntityVisibilitySystem.run(event, 0)
+
+      # We should receive an event
+      assert_receive :map_leave
+    end
   end
 end
