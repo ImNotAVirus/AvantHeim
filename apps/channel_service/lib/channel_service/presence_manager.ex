@@ -10,10 +10,7 @@ defmodule ChannelService.PresenceManager do
   alias ElvenCaching.Account.Session
   alias ElvenCaching.SessionRegistry
 
-  alias ElvenGard.ECS.{Command, Entity, Query}
   alias GameService.Events.PlayerDisconnected
-  alias GameService.EntityComponents.PositionComponent
-  alias GameService.PlayerComponents.AccountComponent
 
   @manager_name __MODULE__
 

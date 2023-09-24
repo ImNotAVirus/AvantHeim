@@ -1,4 +1,4 @@
-defmodule ElvenCore.CommandSchema do
+defmodule ChannelService.CommandSchema do
   @moduledoc """
   TODO: Documentation
   TODO: Clean this module

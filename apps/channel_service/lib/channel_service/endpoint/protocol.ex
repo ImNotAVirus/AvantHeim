@@ -8,9 +8,11 @@ defmodule ChannelService.Endpoint.Protocol do
   import ElvenGard.Network.Socket, only: [assign: 2]
 
   alias ElvenPackets.Views.{
+    ChatViews,
     EntityViews,
     PlayerViews,
     MapViews,
+    UIViews,
     VisibilityViews
   }
 
@@ -137,8 +139,8 @@ defmodule ChannelService.Endpoint.Protocol do
       action_type: :open_from_savings_book,
       gold: gold,
       bank_gold: bank_gold,
-      bank_rank: 1,
-      bank_tax: 0
+      bank_rank: bank_rank,
+      bank_tax: bank_tax
     }
 
     Socket.send(socket, UIViews.render(:gb, attrs))
@@ -160,7 +162,7 @@ defmodule ChannelService.Endpoint.Protocol do
   end
 
   def handle_info({:update_gold, gold, bank_gold}, socket) do
-    attrs = %{update_gold: update_gold, bank_gold: bank_gold}
+    attrs = %{gold: gold, bank_gold: bank_gold}
     Socket.send(socket, UIViews.render(:gold, attrs))
     {:noreply, socket}
   end

@@ -3,7 +3,7 @@ defmodule ChannelService.PacketSchemas do
   TODO: Documentation
   """
 
-  use ElvenCore.CommandSchema
+  use ChannelService.CommandSchema
 
   ## Commands
 

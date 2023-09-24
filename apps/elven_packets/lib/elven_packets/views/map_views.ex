@@ -11,6 +11,9 @@ defmodule ElvenPackets.Views.MapViews do
   alias GameService.PlayerBundle
   alias GameService.EntityComponents.PositionComponent
 
+  # FIXME: Move to ElvenGard.Network.View
+  def render(name), do: render(name, %{})
+
   @impl true
   def render(:at, args) do
     entity = required_param(args, :entity)
