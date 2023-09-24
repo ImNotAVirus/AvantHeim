@@ -11,22 +11,18 @@ defmodule ElvenPackets.Views.ChatViews do
 
   @impl true
   def render(:bn, args) do
-    id = required_param(args, :id)
-    message = required_param(args, :message)
-
-    %Bn{id: id, message: message}
+    %Bn{
+      id: required_param(args, :id),
+      message: required_param(args, :message)
+    }
   end
 
   def render(:say, args) do
-    entity = required_param(args, :entity)
-    message = required_param(args, :message)
-    color = optional_param(args, :color)
-
     %Say{
-      entity_type: GameService.entity_type(entity),
-      entity_id: GameService.entity_id(entity),
-      color: color,
-      message: message
+      entity_type: required_param(args, :entity_type),
+      entity_id: required_param(args, :entity_id),
+      color: optional_param(args, :color),
+      message: required_param(args, :message)
     }
   end
 end

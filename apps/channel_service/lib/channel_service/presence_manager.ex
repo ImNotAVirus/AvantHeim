@@ -15,8 +15,6 @@ defmodule ChannelService.PresenceManager do
   alias GameService.EntityComponents.PositionComponent
   alias GameService.PlayerComponents.AccountComponent
 
-  # alias ChannelService.EntityInteractions
-
   @manager_name __MODULE__
 
   ## Public API

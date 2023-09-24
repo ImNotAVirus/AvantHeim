@@ -69,12 +69,12 @@ defmodule ElvenPackets.Views.VisibilityViewsTest do
 
   describe "out" do
     test "default serialization for players" do
-      args = %{entity: new_player()}
+      args = %{entity_type: :player, entity_id: 123}
       packet = VisibilityViews.render(:out, args)
 
       assert %Out{} = packet
-      assert packet.entity_type == :player
-      assert packet.entity_id == args.entity.id
+      assert packet.entity_type == args.entity_type
+      assert packet.entity_id == args.entity_id
     end
   end
 end

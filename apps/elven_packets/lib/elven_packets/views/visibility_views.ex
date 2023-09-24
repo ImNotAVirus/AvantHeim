@@ -25,11 +25,9 @@ defmodule ElvenPackets.Views.VisibilityViews do
   end
 
   def render(:out, args) do
-    entity = required_param(args, :entity)
-
     %Out{
-      entity_type: GameService.entity_type(entity),
-      entity_id: GameService.entity_id(entity)
+      entity_type: required_param(args, :entity_type),
+      entity_id: required_param(args, :entity_id)
     }
   end
 
