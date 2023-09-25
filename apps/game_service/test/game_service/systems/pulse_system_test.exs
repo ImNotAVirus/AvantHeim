@@ -8,6 +8,27 @@ defmodule GameService.PulseSystemTest do
   ## Tests
 
   describe "System" do
+    test "automatically notify on invalid pulse" do
+      # Register our process to receive message
+      endpoint = %P.EndpointComponent{pid: self()}
+      pulse = %P.PulseComponent{last_time: last_time(), value: 0}
+      entity = spawn_player(components: [endpoint, pulse])
+
+      # Call our System
+      _ = PulseSystem.run(0)
+
+      # Nothing happened, the PulseComponent is valid
+      refute_received {:invalid_pulse, _}
+
+      # Now break the PulseComponent: last_time
+      _ = Command.update_component(entity, P.PulseComponent, last_time: last_time() - 6_000)
+
+      # Call our System
+      PulseSystem.run(0)
+
+      # We should received a message
+      assert_received {:invalid_pulse, :expired}
+    end
   end
 
   describe "PlayerPulse event" do

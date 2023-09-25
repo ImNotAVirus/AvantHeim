@@ -4,22 +4,38 @@ defmodule GameService.PulseSystem do
 
   TL;DR; Update the PulseComponent for a Player and send a disconnection 
   event to everyone who doesn't send his pulse
+
+  TODO: Maybe later optimize this System to run only once per second if taking too much CPU 
   """
 
   use GameService.System,
     lock_components: [GameService.PlayerComponents.PulseComponent],
-    event_subscriptions: [
-      GameService.Events.PlayerPulse
-    ]
+    event_subscriptions: [GameService.Events.PlayerPulse]
 
   require Logger
 
   alias GameService.Events.PlayerPulse
 
-  @inc 60
+  @inc_sec 60
+  @inc_ms :timer.seconds(@inc_sec)
   @delta :timer.seconds(5)
 
   # System behaviour
+
+  @impl true
+  def run(_delta) do
+    expire = ElvenGard.ECS.now() - @inc_ms - @delta
+
+    endpoints =
+      P.EndpointComponent
+      |> Query.select(with: [{P.PulseComponent, [{:<, :last_time, expire}]}])
+      |> Query.all()
+
+    case endpoints do
+      [] -> :ok
+      _ -> GameService.broadcast_to({:invalid_pulse, :expired}, endpoints)
+    end
+  end
 
   @impl true
   def run(%PlayerPulse{} = event, _delta) do
@@ -63,14 +79,14 @@ defmodule GameService.PulseSystem do
   ## Helpers
 
   def validate_value(old_pulse, value) do
-    case value == old_pulse.value + @inc do
+    case value == old_pulse.value + @inc_sec do
       true -> :ok
       false -> {:error, {:invalid_pulse, :value}}
     end
   end
 
   def validate_time(old_pulse, inserted_at) do
-    new_time = old_pulse.last_time + :timer.seconds(@inc)
+    new_time = old_pulse.last_time + @inc_ms
     min_time = new_time - @delta
     max_time = new_time + @delta
 
