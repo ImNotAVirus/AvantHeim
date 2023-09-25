@@ -23,7 +23,8 @@ defmodule GameService.SystemPartition do
 
   defp systems() do
     [
-      GameService.SessionDisconnectionSystem
+      GameService.SessionDisconnectionSystem,
+      GameService.PulseSystem
     ]
   end
 end

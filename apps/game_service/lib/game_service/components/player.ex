@@ -67,4 +67,8 @@ defmodule GameService.PlayerComponents do
   defmodule ArenaWinnerComponent do
     use ElvenGard.ECS.Component, state: []
   end
+
+  defmodule PulseComponent do
+    use ElvenGard.ECS.Component, state: [:last_time, :value]
+  end
 end
