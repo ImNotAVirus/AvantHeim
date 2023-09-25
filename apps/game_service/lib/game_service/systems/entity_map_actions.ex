@@ -111,10 +111,7 @@ defmodule GameService.EntityMapActionsSystem do
   end
 
   defp maybe_print_error({:error, _} = error, event) do
-    Logger.error(
-      "[#{inspect(__MODULE__)}] #{inspect(event.__struct__)} event failed " <>
-        "with value #{inspect(error)} - #{inspect(event, limit: :infinity)}"
-    )
+    System.error(__MODULE__, error, event)
   end
 
   defp maybe_print_error(_, _), do: :ok

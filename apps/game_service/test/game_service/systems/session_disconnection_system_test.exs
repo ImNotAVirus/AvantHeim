@@ -23,7 +23,7 @@ defmodule GameService.SessionDisconnectionSystemTest do
       _ = SessionDisconnectionSystem.run(event, 0)
 
       # We should receive an event
-      assert_receive {:entity_map_leave, ^type, ^id}
+      assert_received {:entity_map_leave, ^type, ^id}
     end
 
     test "remove Player from engine" do

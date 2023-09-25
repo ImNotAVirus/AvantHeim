@@ -3,6 +3,8 @@ defmodule GameService.System do
   TODO: Documentation for GameService.System
   """
 
+  require Logger
+
   alias ElvenGard.ECS.{Entity, Query}
 
   alias GameService.EntityComponents.PositionComponent
@@ -19,6 +21,7 @@ defmodule GameService.System do
 
       alias GameService.EntityComponents, as: E
       alias GameService.PlayerComponents, as: P
+      alias GameService.System
     end
   end
 
@@ -26,6 +29,13 @@ defmodule GameService.System do
   def map_event(event, %PositionComponent{map_ref: map_ref}, ignore_entities \\ []) do
     # Broadcast the entity spawn to players
     GameService.broadcast_to(event, get_endpoints(map_ref, ignore_entities))
+  end
+
+  def error(mod, error, event) do
+    Logger.error(
+      "[#{inspect(mod)}] #{inspect(event.__struct__)} event failed " <>
+        "with value #{inspect(error)} - #{inspect(event, limit: :infinity)}"
+    )
   end
 
   ## Helpers

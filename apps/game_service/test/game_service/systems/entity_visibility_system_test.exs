@@ -20,7 +20,7 @@ defmodule GameService.EntityVisibilitySystemTest do
       _ = EntityVisibilitySystem.run(event, 0)
 
       # We should receive an event with a bundle
-      assert_receive {:entity_map_enter, %PlayerBundle{id: ^id} = bundle}
+      assert_received {:entity_map_enter, %PlayerBundle{id: ^id} = bundle}
       assert bundle.position == position
     end
 
@@ -36,7 +36,7 @@ defmodule GameService.EntityVisibilitySystemTest do
       _ = EntityVisibilitySystem.run(event, 0)
 
       # We should receive an event with a bundle
-      assert_receive {:map_change, %PlayerBundle{id: ^id} = bundle}
+      assert_received {:map_change, %PlayerBundle{id: ^id} = bundle}
       assert bundle.position == position
     end
 
@@ -54,9 +54,9 @@ defmodule GameService.EntityVisibilitySystemTest do
       _ = EntityVisibilitySystem.run(event, 0)
 
       # We should receive events with our old Entities
-      refute_receive {:entity_map_enter, %PlayerBundle{id: ^id}}
-      assert_receive {:entity_map_enter, %PlayerBundle{id: ^id1}}
-      assert_receive {:entity_map_enter, %PlayerBundle{id: ^id2}}
+      refute_received {:entity_map_enter, %PlayerBundle{id: ^id}}
+      assert_received {:entity_map_enter, %PlayerBundle{id: ^id1}}
+      assert_received {:entity_map_enter, %PlayerBundle{id: ^id2}}
     end
   end
 
@@ -74,7 +74,7 @@ defmodule GameService.EntityVisibilitySystemTest do
       _ = EntityVisibilitySystem.run(event, 0)
 
       # We should receive an event
-      assert_receive {:entity_map_leave, ^type, ^id}
+      assert_received {:entity_map_leave, ^type, ^id}
     end
 
     test "system notify ourself on Entity leave" do
@@ -89,7 +89,7 @@ defmodule GameService.EntityVisibilitySystemTest do
       _ = EntityVisibilitySystem.run(event, 0)
 
       # We should receive an event
-      assert_receive :map_leave
+      assert_received :map_leave
     end
   end
 end

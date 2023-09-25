@@ -33,7 +33,7 @@ defmodule GameService.EntityMapActionsSystemTest do
       assert %E.DirectionComponent{value: :north} = component
 
       # # We should receive an event
-      assert_receive {:direction_changed, entity_type, entity_id, value}
+      assert_received {:direction_changed, entity_type, entity_id, value}
       assert entity_type == event.entity_type
       assert entity_id == event.entity_id
       assert value == event.value
@@ -61,7 +61,7 @@ defmodule GameService.EntityMapActionsSystemTest do
       assert %E.DirectionComponent{value: :north} = component
 
       # # We shouldn't receive an event
-      refute_receive {:direction_changed, _, _, _}
+      refute_received {:direction_changed, _, _, _}
     end
   end
 
@@ -95,7 +95,7 @@ defmodule GameService.EntityMapActionsSystemTest do
       assert %E.PositionComponent{map_x: 76, map_y: 122} = component
 
       # # We should receive an event
-      assert_receive {:entity_move, entity_type, entity_id, 76, 122, 20}
+      assert_received {:entity_move, entity_type, entity_id, 76, 122, 20}
       assert entity_type == event.entity_type
       assert entity_id == event.entity_id
     end
@@ -122,11 +122,8 @@ defmodule GameService.EntityMapActionsSystemTest do
         checksum: 1
       }
 
-      fun = fn ->
-        _ = EntityMapActionsSystem.run(event, 0)
-      end
-
       # We should have an error message
+      fun = fn -> _ = EntityMapActionsSystem.run(event, 0) end
       assert capture_log(fun) =~ "failed with value {:error, :bad_checksum}"
 
       # Check that the PositionComponent was updated
@@ -134,7 +131,7 @@ defmodule GameService.EntityMapActionsSystemTest do
       refute %E.PositionComponent{map_x: 76, map_y: 122} == component
 
       # # We should receive an event
-      refute_receive {:entity_move, _, _, _, _, _}
+      refute_received {:entity_move, _, _, _, _, _}
     end
 
     test "system check for invalid speed" do
@@ -171,7 +168,7 @@ defmodule GameService.EntityMapActionsSystemTest do
       refute %E.PositionComponent{map_x: 76, map_y: 122} == component
 
       # # We should receive an event
-      refute_receive {:entity_move, _, _, _, _, _}
+      refute_received {:entity_move, _, _, _, _, _}
     end
   end
 end
