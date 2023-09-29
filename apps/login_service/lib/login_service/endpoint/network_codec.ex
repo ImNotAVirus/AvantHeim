@@ -14,7 +14,7 @@ defmodule LoginService.Endpoint.NetworkCodec do
   end
 
   @impl true
-  def deserialize(raw, socket) do
+  def decode(raw, socket) do
     decrypted = Cryptography.decrypt(raw, socket.assigns)
     [packet_id, rest] = String.split(decrypted, " ", parts: 2)
     LoginPackets.deserialize(packet_id, rest, socket)
