@@ -1,3 +1,0 @@
-%{
-  "simple_enum": {:hex, :simple_enum, "0.1.0", "51d20e3687481d83f1bde467c4dac67be1bc411d4ade3d1fcac4a25c4e8f4343", [:mix], [], "hexpm", "888029af35eb17abea0e23cd0355a2afef2c2bc6cbc75126a917d25e7aa710a7"},
-}

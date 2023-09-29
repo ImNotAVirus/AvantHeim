@@ -14,7 +14,7 @@ jobs:
     outputs:
       apps: ${{ steps.set-dirs.outputs.dir }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - id: set-dirs
         run: echo "::set-output name=dir::$(ls -d apps/*/ | sed 's,apps/,,' | sed 's/.$//' | jq -R -s -c 'split("\n")[:-1]')"
 
@@ -40,13 +40,13 @@ jobs:
     #       --health-timeout 5s
     #       --health-retries 5
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Set up Elixir
         uses: erlef/setup-beam@v1
         id: setup_beam
         with:
-          otp-version: '24'
-          elixir-version: 'v1.13'
+          version-file: .tool-versions
+          version-type: strict
 
       - name: Create caching key
         id: caching_vars
@@ -62,7 +62,7 @@ jobs:
 
       # Force Action to always save the cache by always using a different key
       - name: Restore deps
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         id: mix_cache
         with:
           path: |

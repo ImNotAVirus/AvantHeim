@@ -1,7 +1,7 @@
 defmodule ElvenPackets.Client.PlayerPacketsTest do
   use ElvenPackets.PacketCase, async: true
 
-  alias ElvenPackets.SubPackets.Player.CInfo.Family
+  alias ElvenPackets.SubPackets.Player.Family
   alias ElvenPackets.Server.PlayerPackets.{Fd, Fs, Lev, Rsfi, Stat, Tit, CInfo}
 
   ## Tests

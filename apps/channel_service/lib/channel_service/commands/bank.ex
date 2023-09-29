@@ -122,7 +122,7 @@ defmodule ChannelService.BankCommand do
     send_message(
       socket,
       character,
-      "Current #{target.name}'s bank gold: #{ElvenCore.format_number(target.bank_gold)} golds",
+      "Current #{target.name}'s bank gold: #{ElvenPackets.format_number(target.bank_gold)} golds",
       :special_green
     )
   end
@@ -138,7 +138,7 @@ defmodule ChannelService.BankCommand do
         send_message(
           socket,
           new_char,
-          "#{new_char.name} has now #{ElvenCore.format_number(new_char.bank_gold)} golds in bank",
+          "#{new_char.name} has now #{ElvenPackets.format_number(new_char.bank_gold)} golds in bank",
           :special_green
         )
 

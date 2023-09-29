@@ -8,9 +8,9 @@ defmodule ChannelService.PresenceManager do
   require Logger
 
   alias ElvenCaching.Account.Session
-  alias ElvenCaching.{CharacterRegistry, SessionRegistry}
+  alias ElvenCaching.SessionRegistry
 
-  alias ChannelService.EntityInteractions
+  alias GameService.Events.PlayerDisconnected
 
   @manager_name __MODULE__
 
@@ -29,7 +29,7 @@ defmodule ChannelService.PresenceManager do
   ## GenServer behaviour
 
   @impl true
-  @spec init(any) :: {:ok, nil}
+  @spec init(any) :: {:ok, %{}}
   def init(_) do
     Logger.info("PresenceManager started")
     # Map %{reference => username}
@@ -71,15 +71,14 @@ defmodule ChannelService.PresenceManager do
 
   defp cleanup_session(%Session{state: :in_lobby}), do: :ok
 
-  defp cleanup_session(%Session{state: :in_game, account_id: account_id} = session) do
-    # Set session state to "saving" to prevent player connection
-    {:ok, %Session{}} = session |> Session.set_state(:saving) |> SessionRegistry.write()
-
-    # Clean Character cache
-    {:ok, character} = CharacterRegistry.delete_by_account_id(account_id)
-
-    # Clean map (out packet)
-    EntityInteractions.send_map_leave(character)
+  defp cleanup_session(%Session{state: :in_game, account_id: account_id}) do
+    # Remove Entity from ECS and notify all Frontends
+    {:ok, _events} =
+      ElvenGard.ECS.push(
+        %PlayerDisconnected{account_id: account_id},
+        # Here we don't know the map_ref so we will send the event to a special partition
+        partition: :system
+      )
 
     # TODO: Save character in db
     # ...

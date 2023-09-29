@@ -7,11 +7,14 @@ defmodule ChannelService.Application do
   def start(_type, _args) do
     topologies = Application.get_env(:libcluster, :topologies, [])
 
+    # FIXME: Hardcoded, move to config
+    {:ok, hostname} = :inet.gethostname()
+    mnesia_cluster_opts = [auto_connect: true, master: :"game@#{hostname}"]
+
     children = [
       {Cluster.Supervisor, [topologies, [name: LoginService.ClusterSupervisor]]},
-      {ElvenCaching.MnesiaClusterManager, []},
+      {ElvenGard.Cluster.MnesiaClusterManager, mnesia_cluster_opts},
       {ElvenCaching.SessionRegistry, [disable_clean: true]},
-      {ElvenCaching.CharacterRegistry, []},
       {ChannelService.PresenceManager, []},
       {ChannelService.Endpoint, name: ChannelService.Endpoint}
     ]

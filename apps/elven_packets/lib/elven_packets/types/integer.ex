@@ -19,7 +19,11 @@ defmodule ElvenPackets.Types.NsInteger do
   end
 
   @impl true
-  @spec encode(t(), Keyword.t()) :: binary()
+  @spec encode(t() | nil, Keyword.t()) :: binary()
+  def encode(nil, _opts) do
+    "-1"
+  end
+
   def encode(data, _opts) when is_integer(data) do
     Integer.to_string(data)
   end

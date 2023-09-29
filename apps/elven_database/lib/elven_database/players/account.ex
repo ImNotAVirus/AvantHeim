@@ -7,9 +7,9 @@ defmodule ElvenDatabase.Players.Account do
 
   import Ecto.Changeset
 
-  require ElvenEnums.PlayerEnums
+  require ElvenData.Enums.PlayerEnums
 
-  alias ElvenEnums.PlayerEnums
+  alias ElvenData.Enums.PlayerEnums
 
   ## Schema
 

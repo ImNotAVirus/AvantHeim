@@ -10,6 +10,9 @@ defmodule ElvenPackets.View do
 
   @spec required_param(map(), atom()) :: any()
   def required_param(args, key) do
-    Map.get(args, key) || raise ArgumentError, "args must define #{key}"
+    case Map.get(args, key) do
+      nil -> raise ArgumentError, "args must define #{key}"
+      value -> value
+    end
   end
 end

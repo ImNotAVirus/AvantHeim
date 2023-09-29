@@ -23,7 +23,7 @@ defmodule ElvenDatabase.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:elven_enums, path: "../elven_enums"},
+      {:elven_data, path: "../elven_data"},
       {:ecto_sql, "~> 3.6"},
       {:postgrex, "~> 0.15"}
     ]

@@ -114,7 +114,7 @@ defmodule ChannelService.GoldCommand do
     send_message(
       socket,
       character,
-      "Current #{target.name}'s gold: #{ElvenCore.format_number(target.gold)} golds",
+      "Current #{target.name}'s gold: #{ElvenPackets.format_number(target.gold)} golds",
       :special_green
     )
   end
@@ -130,7 +130,7 @@ defmodule ChannelService.GoldCommand do
         send_message(
           socket,
           new_char,
-          "#{new_char.name} has now #{ElvenCore.format_number(new_char.gold)} golds",
+          "#{new_char.name} has now #{ElvenPackets.format_number(new_char.gold)} golds",
           :special_green
         )
 

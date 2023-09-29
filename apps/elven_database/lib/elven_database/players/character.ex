@@ -6,9 +6,9 @@ defmodule ElvenDatabase.Players.Character do
   import Ecto.Changeset
   # import EctoBitfield
 
-  require ElvenEnums.PlayerEnums
+  require ElvenData.Enums.PlayerEnums
 
-  alias ElvenEnums.PlayerEnums
+  alias ElvenData.Enums.PlayerEnums
 
   # defbitfield GameOptions,
   #   exchange_blocked: round(:math.pow(2, 1)),
@@ -38,7 +38,7 @@ defmodule ElvenDatabase.Players.Character do
     field :hair_color, Ecto.Enum, values: PlayerEnums.hair_color(:__keys__)
     field :hair_style, Ecto.Enum, values: PlayerEnums.hair_style(:__keys__)
 
-    field :map_vnum, :integer
+    field :map_id, :integer
     field :map_x, :integer
     field :map_y, :integer
 
@@ -90,7 +90,7 @@ defmodule ElvenDatabase.Players.Character do
     :gender,
     :hair_color,
     :hair_style,
-    :map_vnum,
+    :map_id,
     :map_x,
     :map_y
   ]

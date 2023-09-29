@@ -39,8 +39,8 @@ defmodule ElvenCaching.Entity.Character do
     attributes: @required_attributes ++ Map.keys(@virtual_attributes)
 
   alias __MODULE__
-  alias ElvenCore.Socket
-  alias ElvenEnums.{EntityEnums, PlayerEnums}
+  alias ElvenGard.Network.Socket
+  alias ElvenData.Enums.{EntityEnums, PlayerEnums}
   alias ElvenCaching.Entity.EntityPosition
 
   # Protocols
@@ -100,7 +100,7 @@ defmodule ElvenCaching.Entity.Character do
   ## Implement protocols
 
   defimpl ElvenCaching.Entity do
-    def type(_), do: :character
+    def type(_), do: :player
     def id(%Character{id: id}), do: id
   end
 

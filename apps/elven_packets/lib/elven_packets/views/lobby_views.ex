@@ -12,6 +12,9 @@ defmodule ElvenPackets.Views.LobbyViews do
 
   ## Public API
 
+  # FIXME: Move to ElvenGard.Network.View
+  def render(name), do: render(name, %{})
+
   @impl true
   def render(:clist_start, _args), do: %CListStart{}
   def render(:clist_end, _args), do: %CListEnd{}

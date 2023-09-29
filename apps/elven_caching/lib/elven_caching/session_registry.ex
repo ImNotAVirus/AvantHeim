@@ -10,7 +10,7 @@ defmodule ElvenCaching.SessionRegistry do
   import ElvenCaching.Account.Session, only: [is_logged: 1]
 
   alias ElvenCaching.Account.Session
-  alias ElvenCaching.MnesiaClusterManager
+  alias ElvenGard.Cluster.MnesiaClusterManager
 
   @clean_every Application.get_env(:elven_caching, :session_clean_every, 30_000)
 
@@ -45,8 +45,8 @@ defmodule ElvenCaching.SessionRegistry do
 
   @impl true
   def handle_continue(:init_mnesia, opts) do
-    MnesiaClusterManager.connect_node()
-    MnesiaClusterManager.create_table!(ElvenCaching.Account.Session)
+    :ok = MnesiaClusterManager.wait_connected()
+    ElvenCaching.create_table!(ElvenCaching.Account.Session)
 
     :ok = Memento.wait([ElvenCaching.Account.Session])
 

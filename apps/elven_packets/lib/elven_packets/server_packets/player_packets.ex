@@ -5,7 +5,7 @@ defmodule ElvenPackets.Server.PlayerPackets do
 
   use ElvenGard.Network.PacketSerializer
 
-  import ElvenEnums.PlayerEnums,
+  import ElvenData.Enums.PlayerEnums,
     only: [
       authority: 1,
       gender: 1,
@@ -19,8 +19,10 @@ defmodule ElvenPackets.Server.PlayerPackets do
       wings_design: 1
     ]
 
-  alias ElvenPackets.SubPackets.Player.CInfo.Family
+  alias ElvenPackets.SubPackets.Player.Family
   alias ElvenPackets.Types.{NsInteger, NsString, NsEnum, NsBoolean}
+
+  alias ElvenData.I18n.PacketConstString
 
   #######
   # Reputation display
@@ -142,6 +144,7 @@ defmodule ElvenPackets.Server.PlayerPackets do
     |> enum_to_i18n_key()
     |> PacketConstString.new!()
     |> Map.fetch!(:value)
+    |> NsInteger.encode()
   end
 
   # i18n value: 35

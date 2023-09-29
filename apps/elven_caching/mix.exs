@@ -26,8 +26,8 @@ defmodule ElvenCaching.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:elven_core, path: "../elven_core"},
-      {:elven_enums, path: "../elven_enums"},
+      {:elvengard_cluster, github: "elvengard-mmo/elvengard_cluster"},
+      {:elven_data, path: "../elven_data"},
       {:memento, "~> 0.3"},
       {:ex_unit_clustered_case, "~> 0.4", only: :test}
     ]

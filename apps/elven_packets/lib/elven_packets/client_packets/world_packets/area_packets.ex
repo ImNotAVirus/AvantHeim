@@ -6,7 +6,7 @@ defmodule ElvenPackets.Client.AreaPackets do
   use ElvenGard.Network.PacketSerializer
 
   import ElvenPackets.Enums.AreaEnums, only: [guri_type: 1]
-  import ElvenEnums.EntityEnums, only: [entity_type: 1, direction_type: 1]
+  import ElvenData.Enums.EntityEnums, only: [entity_type: 1, direction_type: 1]
 
   alias ElvenPackets.Types.{NsInteger, NsString, NsEnum}
 
@@ -64,7 +64,7 @@ defmodule ElvenPackets.Client.AreaPackets do
   #######
   @deserializable true
   defpacket "dir", as: Dir do
-    field :dir, NsEnum, values: direction_type(:__enumerators__)
+    field :direction, NsEnum, values: direction_type(:__enumerators__)
     field :entity_type, NsEnum, values: entity_type(:__enumerators__)
     field :entity_id, NsInteger
   end
