@@ -12,7 +12,7 @@ defmodule ElvenCaching.SessionRegistry do
   alias ElvenCaching.Account.Session
   alias ElvenCaching.MnesiaClusterManager
 
-  @clean_every Application.get_env(:elven_caching, :session_clean_every, 30_000)
+  @clean_every Application.compile_env(:elven_caching, :session_clean_every, 30_000)
 
   ## Interfaces
 

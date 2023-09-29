@@ -8,7 +8,7 @@ defmodule ElvenCaching.Account.Session do
   @required_attributes [:username, :password, :account_id, :encryption_key]
   @virtual_attributes %{expire: nil, state: :authenticated}
   @states [:authenticated, :in_lobby, :in_game, :saving]
-  @default_ttl Application.get_env(:elven_caching, :session_ttl, 120)
+  @default_ttl Application.compile_env(:elven_caching, :session_ttl, 120)
 
   use Memento.Table,
     attributes: @required_attributes ++ Map.keys(@virtual_attributes),
