@@ -44,19 +44,11 @@ defmodule ChannelService.Endpoint.Cryptography do
       iex> ChannelService.Endpoint.Cryptography.next(<<198, 228, 203, 145, 70, 205, 214, 220, 208, 217, 208, 196, 7, 212, 73, 255, 208, 203, 222, 209, 215, 208, 210, 218, 193, 112, 67, 220, 208, 210, 63, 199, 228, 203, 161, 16, 72, 215, 214, 221, 200, 214, 200, 214, 248, 193, 160, 65, 218, 193, 224, 66, 241, 205, 199, 228, 203, 161, 16, 72, 215, 214, 221, 200, 214, 200, 214, 248, 193, 160, 65, 218, 193, 224, 66, 241, 205>>, %{delimiter: 0xFF})
       {<<198, 228, 203, 145, 70, 205, 214, 220, 208, 217, 208, 196, 7, 212, 73>>, <<208, 203, 222, 209, 215, 208, 210, 218, 193, 112, 67, 220, 208, 210, 63, 199, 228, 203, 161, 16, 72, 215, 214, 221, 200, 214, 200, 214, 248, 193, 160, 65, 218, 193, 224, 66, 241, 205, 199, 228, 203, 161, 16, 72, 215, 214, 221, 200, 214, 200, 214, 248, 193, 160, 65, 218, 193, 224, 66, 241, 205>>}
   """
-  @spec next(binary(), map(), binary()) :: {binary() | nil, binary()}
-  def next(raw, assigns, acc \\ <<>>)
-
-  def next(<<>>, assigns, acc) do
-    {acc, <<>>}
-  end
-
-  def next(<<c, rest::binary>>, assigns, acc) do
-    if c == assigns.delimiter do
-      {acc, rest}
-    else
-      next(rest, assigns, <<acc::binary, c>>)
-    end
+  @spec next(binary(), map()) :: {binary(), binary()}
+  def next(raw, assigns) do
+    raw
+    |> :binary.split([<<assigns.delimiter>>])
+    |> List.to_tuple()
   end
 
   @permutations %{
@@ -107,10 +99,6 @@ defmodule ChannelService.Endpoint.Cryptography do
     {data, :binary.part(pack, {len, byte_size(pack) - len})}
   end
 
-  defp unpack_compact_payload(<<c>>, _len) do
-    bsr_permutation(c) <> band_permutation(c)
-  end
-
   defp bsr_permutation(c) do
     h = bsr(c, 4)
 
@@ -131,6 +119,10 @@ defmodule ChannelService.Endpoint.Cryptography do
     end
   end
 
+  defp unpack_compact_payload(<<c>>, _len) do
+    bsr_permutation(c) <> band_permutation(c)
+  end
+
   defp unpack_compact_payload(payload, len) do
     for <<c <- :binary.part(payload, {0, len})>>, into: <<>> do
       unpack_compact_payload(<<c>>, len)
@@ -143,7 +135,7 @@ defmodule ChannelService.Endpoint.Cryptography do
     {data, :binary.part(pack, {len, byte_size(pack) - len})}
   end
 
-  defp unpack_linear_payload(<<c>>, len) do
+  defp unpack_linear_payload(<<c>>, _len) do
     <<bxor(c, 0xFF)>>
   end
 
@@ -192,18 +184,18 @@ defmodule ChannelService.Endpoint.Cryptography do
   """
   @spec decrypt(binary, map) :: binary
   def decrypt(binary, assigns) when is_map_key(assigns, :offset) and is_map_key(assigns, :mode) do
-    decrypt_channel(binary, assigns)
+    decrypt_channel(binary, assigns.offset, assigns.mode)
   end
 
-  def decrypt(binary, assigns) do
-    decrypt_session(binary, assigns)
+  def decrypt(binary, _assigns) do
+    decrypt_session(binary)
   end
 
-  defp decrypt_session(<<>>, _assigns) do
+  defp decrypt_session(<<>>) do
     <<>>
   end
 
-  defp decrypt_session(<<c>>, _assigns) do
+  defp decrypt_session(<<c>>) do
     first_byte = c - 0xF
     second_byte = band(first_byte, 0xF0)
     first_key = first_byte - second_byte
@@ -220,16 +212,16 @@ defmodule ChannelService.Endpoint.Cryptography do
     end
   end
 
-  defp decrypt_session(packet, assigns) do
-    for <<c <- packet>>, into: <<>>, do: decrypt_session(<<c>>, assigns)
+  defp decrypt_session(packet) do
+    for <<c <- packet>>, into: <<>>, do: decrypt_session(<<c>>)
   end
 
-  defp decrypt_channel(c, assigns) do
-    case assigns.mode do
-      0 -> <<c - assigns.offset>>
-      1 -> <<c + assigns.offset>>
-      2 -> <<bxor(c - assigns.offset, 0xC3)>>
-      3 -> <<bxor(c + assigns.offset, 0xC3)>>
+  defp decrypt_channel(c, offset, mode) do
+    case mode do
+      0 -> <<c - offset>>
+      1 -> <<c + offset>>
+      2 -> <<bxor(c - offset, 0xC3)>>
+      3 -> <<bxor(c + offset, 0xC3)>>
     end
   end
 end
