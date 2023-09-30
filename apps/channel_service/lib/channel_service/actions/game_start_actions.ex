@@ -1,4 +1,4 @@
-defmodule ChannelService.GameActions do
+defmodule ChannelService.GameStartActions do
   @moduledoc """
   TODO: Documentation
   """

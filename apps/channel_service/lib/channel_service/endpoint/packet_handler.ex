@@ -54,7 +54,7 @@ defmodule ChannelService.Endpoint.PacketHandler do
   end
 
   def handle_packet(%LobbyPackets.GameStart{} = packet, socket) do
-    {:ok, bundle} = ChannelService.GameActions.game_start("game_start", packet, socket)
+    {:ok, bundle} = ChannelService.GameStartActions.game_start("game_start", packet, socket)
 
     new_socket =
       socket
@@ -107,6 +107,66 @@ defmodule ChannelService.Endpoint.PacketHandler do
     {:cont, socket}
   end
 
+  def handle_packet(%AreaPackets.Say{} = packet, socket) do
+    %AreaPackets.Say{message: message} = packet
+
+    {:ok, _events} =
+      ElvenGard.ECS.push(
+        %Evt.EntityMessage{
+          entity_type: :player,
+          entity_id: socket.assigns.character_id,
+          scope: :map,
+          message: message
+        },
+        partition: socket.assigns.map_ref
+      )
+
+    {:cont, socket}
+  end
+
+  def handle_packet(%AreaPackets.Ncif{} = packet, socket) do
+    %AreaPackets.Ncif{entity_type: entity_type, entity_id: entity_id} = packet
+
+    {:ok, _events} =
+      ElvenGard.ECS.push(
+        %Evt.EntityInfoRequest{
+          entity_type: :player,
+          entity_id: socket.assigns.character_id,
+          target_type: entity_type,
+          target_id: entity_id
+        },
+        partition: socket.assigns.map_ref
+      )
+
+    {:cont, socket}
+  end
+
+  # Display the emote on the map
+  # FIXME: Emote for other than the current player is not supported yet
+  def handle_packet(
+        %AreaPackets.Guri{type: :emoji, entity_type: :player, entity_id: entity_id} = packet,
+        socket
+      )
+      when entity_id == socket.assigns.character_id do
+    %AreaPackets.Guri{guri_data: emote_id} = packet
+
+    with {:ok, effect_id} <- emote_to_effect_id(emote_id) do
+      {:ok, _events} =
+        ElvenGard.ECS.push(
+          %Evt.MapEffect{
+            entity_type: :player,
+            entity_id: entity_id,
+            effect_id: effect_id
+          },
+          partition: socket.assigns.map_ref
+        )
+    else
+      _ -> Logger.warn("invalid emote id: #{inspect(emote_id)}")
+    end
+
+    {:cont, socket}
+  end
+
   ## Default handler
 
   def handle_packet(:ignore, socket), do: {:cont, socket}
@@ -114,5 +174,18 @@ defmodule ChannelService.Endpoint.PacketHandler do
   def handle_packet(packet, socket) do
     Logger.warn("unimplemented handler for #{inspect(packet)}")
     {:cont, socket}
+  end
+
+  ## Helpers
+
+  @emote_offset 4099
+  @rainbow_vomit_vnum 5116
+
+  defp emote_to_effect_id(emote_id) do
+    case emote_id do
+      value when value in 973..999 -> {:ok, value + @emote_offset}
+      1000 -> {:ok, @rainbow_vomit_vnum}
+      _ -> {:error, :invalid_emote}
+    end
   end
 end
