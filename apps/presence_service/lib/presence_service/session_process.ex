@@ -21,41 +21,43 @@ defmodule PresenceService.SessionProcess do
   def child_spec(opts) do
     %{
       id: __MODULE__,
-      start: {__MODULE__, :start_link, List.wrap(opts)},
-      type: :worker,
-      restart: :temporary,
-      shutdown: 500
+      start: {__MODULE__, :start_link, [opts]},
+      restart: :temporary
     }
   end
 
-  def start_link(%Session{} = session, opts \\ []) do
+  def start_link(%Session{} = session) do
+    start_link({session, []})
+  end
+
+  def start_link({%Session{} = session, opts}) do
     :gen_statem.start_link(__MODULE__, {session, opts}, [])
   end
 
-  def authenticate(pid) do
-    :gen_statem.cast(pid, :authenticate)
+  def link(process, pid) do
+    :gen_statem.cast(process, {:link, pid})
   end
 
   ## gen_statem behaviour
 
   @impl true
+  def callback_mode(), do: :state_functions
+
+  @impl true
   def init({session, opts}) do
     init_timeout = Keyword.get(opts, :init_timeout, default_init_timeout())
-    {:ok, :init, session, {:state_timeout, init_timeout, :init_timeout}}
+    {:ok, :init, {session, nil}, {:state_timeout, init_timeout, :init_timeout}}
   end
 
-  @impl true
-  def callback_mode(), do: :handle_event_function
-
-  @impl true
   # init -> init_timeout
-  def handle_event(:state_timeout, :init_timeout, :init, _data) do
+  def init(:state_timeout, :init_timeout, _session) do
     {:stop, :normal}
   end
 
-  # init -> authenticate
-  def handle_event(:cast, :authenticate, :init, data) do
-    {:next_state, :authenticated, data}
+  # init -> linked
+  def init(:cast, {:link, pid}, session) do
+    Process.link(pid)
+    {:next_state, :linked, session}
   end
 
   ## Helpers

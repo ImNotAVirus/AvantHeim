@@ -27,9 +27,7 @@ defmodule ElvenCaching.MixProject do
   defp deps do
     [
       {:elvengard_cluster, github: "elvengard-mmo/elvengard_cluster"},
-      {:elven_data, path: "../elven_data"},
-      {:memento, "~> 0.3"},
-      {:ex_unit_clustered_case, "~> 0.4", only: :test}
+      {:memento, "~> 0.3"}
     ]
   end
 end

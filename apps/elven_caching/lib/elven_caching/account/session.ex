@@ -8,7 +8,6 @@ defmodule ElvenCaching.Account.Session do
   @required_attributes [:username, :password, :account_id, :encryption_key]
   @virtual_attributes %{expire: nil, state: :authenticated}
   @states [:authenticated, :in_lobby, :in_game, :saving]
-  @default_ttl Application.get_env(:elven_caching, :session_ttl, 120)
 
   use Memento.Table,
     attributes: @required_attributes ++ Map.keys(@virtual_attributes),
@@ -31,7 +30,7 @@ defmodule ElvenCaching.Account.Session do
 
   @spec new(map) :: t()
   def new(attrs) do
-    default = %{expire: ttl_to_expire(@default_ttl)}
+    default = %{expire: ttl_to_expire(default_ttl())}
 
     attrs
     |> extract_attributes!(@required_attributes)
@@ -61,6 +60,8 @@ defmodule ElvenCaching.Account.Session do
   end
 
   ## Private functions
+
+  defp default_ttl(), do: Application.get_env(:elven_caching, :session_ttl, 120)
 
   defp extract_attributes!(attrs, required_attributes) do
     case required_attributes -- Map.keys(attrs) do

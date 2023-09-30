@@ -7,20 +7,20 @@ defmodule PresenceService.SessionProcessTest do
   ## Tests
 
   test "exits after init_timeout" do
-    childspec = SessionProcess.child_spec([mock_session(), [init_timeout: 0]])
+    childspec = SessionProcess.child_spec({mock_session(), [init_timeout: 10]})
     pid = start_supervised!(childspec)
     ref = Process.monitor(pid)
 
-    assert_receive {:DOWN, ^ref, :process, ^pid, :noproc}
+    assert_receive {:DOWN, ^ref, :process, ^pid, :normal}
   end
 
   test "doesn't exits when entering in authenticated state" do
-    childspec = SessionProcess.child_spec([mock_session(), [init_timeout: 100]])
+    childspec = SessionProcess.child_spec({mock_session(), [init_timeout: 10]})
     pid = start_supervised!(childspec)
     ref = Process.monitor(pid)
 
     assert :ok = SessionProcess.authenticate(pid)
-    refute_receive {:DOWN, ^ref, :process, ^pid, :noproc}
+    refute_receive {:DOWN, ^ref, :process, ^pid, _}
   end
 
   ## Helpers
@@ -30,8 +30,8 @@ defmodule PresenceService.SessionProcessTest do
 
   defp mock_session() do
     Session.new(%{
-      username: rand_str(),
       account_id: rand_int(),
+      username: rand_str(),
       password: "",
       encryption_key: 0
     })

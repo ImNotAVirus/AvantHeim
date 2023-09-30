@@ -1,8 +1,0 @@
-# Do not push client and data files
-/priv/client_files/maps/*
-/priv/**/*.csv
-
-# Allow some extensions
-!.gitkeep
-!*.ex
-!*.exs
