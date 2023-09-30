@@ -21,7 +21,7 @@ defmodule ChannelService.Endpoint.NetworkCodec do
 
   @impl true
   def next(raw, socket) do
-    Cryptography.next(raw, socket.assigns)
+    Cryptography.next(raw, socket.assigns.delimiter)
   end
 
   @impl true

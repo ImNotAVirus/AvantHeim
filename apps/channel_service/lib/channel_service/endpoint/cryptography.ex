@@ -10,7 +10,7 @@ defmodule ChannelService.Endpoint.Cryptography do
   @doc """
   Decrypt the delimiter from a key.
   """
-  @spec pack_delimiter(integer(), integer()) :: integer()
+  @spec pack_delimiter(byte(), byte()) :: byte()
   def pack_delimiter(offset, mode) do
     case mode do
       0 -> 0xFF + offset
@@ -23,7 +23,7 @@ defmodule ChannelService.Endpoint.Cryptography do
   @doc """
   Decrypt the offset from a key.
   """
-  @spec cipher_offset(integer()) :: integer()
+  @spec cipher_offset(byte()) :: integer()
   def cipher_offset(key) do
     band(key, 0xFF)
   end
@@ -31,7 +31,7 @@ defmodule ChannelService.Endpoint.Cryptography do
   @doc """
   Decrypt the mode from a key.
   """
-  @spec cipher_mode(integer()) :: integer()
+  @spec cipher_mode(byte()) :: integer()
   def cipher_mode(key) do
     bsr(key, band(6, 3))
   end
@@ -41,14 +41,15 @@ defmodule ChannelService.Endpoint.Cryptography do
 
   ## Examples
 
-      iex> ChannelService.Endpoint.Cryptography.next(<<198, 228, 203, 145, 70, 205, 214, 220, 208, 217, 208, 196, 7, 212, 73, 255, 208, 203, 222, 209, 215, 208, 210, 218, 193, 112, 67, 220, 208, 210, 63, 199, 228, 203, 161, 16, 72, 215, 214, 221, 200, 214, 200, 214, 248, 193, 160, 65, 218, 193, 224, 66, 241, 205, 199, 228, 203, 161, 16, 72, 215, 214, 221, 200, 214, 200, 214, 248, 193, 160, 65, 218, 193, 224, 66, 241, 205>>, %{delimiter: 0xFF})
+      iex> ChannelService.Endpoint.Cryptography.next(<<198, 228, 203, 145, 70, 205, 214, 220, 208, 217, 208, 196, 7, 212, 73, 255, 208, 203, 222, 209, 215, 208, 210, 218, 193, 112, 67, 220, 208, 210, 63, 199, 228, 203, 161, 16, 72, 215, 214, 221, 200, 214, 200, 214, 248, 193, 160, 65, 218, 193, 224, 66, 241, 205, 199, 228, 203, 161, 16, 72, 215, 214, 221, 200, 214, 200, 214, 248, 193, 160, 65, 218, 193, 224, 66, 241, 205>>, 0xFF)
       {<<198, 228, 203, 145, 70, 205, 214, 220, 208, 217, 208, 196, 7, 212, 73>>, <<208, 203, 222, 209, 215, 208, 210, 218, 193, 112, 67, 220, 208, 210, 63, 199, 228, 203, 161, 16, 72, 215, 214, 221, 200, 214, 200, 214, 248, 193, 160, 65, 218, 193, 224, 66, 241, 205, 199, 228, 203, 161, 16, 72, 215, 214, 221, 200, 214, 200, 214, 248, 193, 160, 65, 218, 193, 224, 66, 241, 205>>}
   """
-  @spec next(binary(), map()) :: {binary(), binary()}
-  def next(raw, assigns) do
-    raw
-    |> :binary.split([<<assigns.delimiter>>])
-    |> List.to_tuple()
+  @spec next(binary(), byte()) :: {binary() | nil, binary()}
+  def next(raw, delimiter) do
+    case :binary.split(raw, [<<delimiter>>]) do
+      [raw] -> {nil, raw}
+      [packet, rest] -> {packet, rest}
+    end
   end
 
   @permutations %{
@@ -76,21 +77,25 @@ defmodule ChannelService.Endpoint.Cryptography do
       iex> ChannelService.Endpoint.Cryptography.unpack(<<135, 141, 107, 177, 64>>)
       "49277 0"
   """
-  @spec unpack(binary(), binary()) :: binary()
-  def unpack(binary, acc \\ <<>>)
+  @spec unpack(binary()) :: binary()
+  def unpack(binary) do
+    do_unpack(binary)
+  end
 
-  def unpack(<<>>, acc) do
+  defp do_unpack(binary, acc \\ <<>>)
+
+  defp do_unpack(<<>>, acc) do
     acc
   end
 
-  def unpack(<<flag, rest::binary>>, acc) do
-    if 0x7A > flag do
-      {pack, rest} = unpack_linear(rest, flag)
-      unpack(rest, <<pack::binary, acc::binary>>)
-    else
-      {pack, rest} = unpack_compact(rest, band(flag, 0x7F))
-      unpack(rest, <<pack::binary, acc::binary>>)
-    end
+  defp do_unpack(<<flag, rest::binary>>, acc) when 0x7A > flag do
+    {pack, rest} = unpack_linear(rest, flag)
+    do_unpack(rest, <<pack::binary, acc::binary>>)
+  end
+
+  defp do_unpack(<<flag, rest::binary>>, acc) do
+    {pack, rest} = unpack_compact(rest, band(flag, 0x7F))
+    do_unpack(rest, <<pack::binary, acc::binary>>)
   end
 
   defp unpack_compact(pack, flag) do
