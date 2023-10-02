@@ -1,4 +1,0 @@
-%{
-  "elvengard_cluster": {:git, "https://github.com/elvengard-mmo/elvengard_cluster.git", "554d498c39de5e422620025b87d18804c1c83637", []},
-  "memento": {:hex, :memento, "0.3.2", "38cfc8ff9bcb1adff7cbd0f3b78a762636b86dff764729d1c82d0464c539bdd0", [:mix], [], "hexpm", "25cf691a98a0cb70262f4a7543c04bab24648cb2041d937eb64154a8d6f8012b"},
-}

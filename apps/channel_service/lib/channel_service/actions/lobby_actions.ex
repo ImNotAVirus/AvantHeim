@@ -6,8 +6,6 @@ defmodule ChannelService.LobbyActions do
   require Logger
 
   alias ElvenGard.Network.Socket
-  alias ElvenCaching.SessionRegistry
-  alias ElvenCaching.Account.Session
   alias ElvenDatabase.Players.{Account, Characters}
   alias ElvenPackets.Views.LobbyViews
 
@@ -28,7 +26,7 @@ defmodule ChannelService.LobbyActions do
   @spec select_character(String.t(), map, Socket.t()) :: {:cont, Socket.t()}
   def select_character("select", %{slot: slot}, socket) do
     account = socket.assigns.account
-    %Account{id: account_id, username: username} = account
+    %Account{id: account_id} = account
 
     new_socket =
       case Characters.get_by_account_id_and_slot(account_id, slot) do
@@ -37,7 +35,6 @@ defmodule ChannelService.LobbyActions do
           socket
 
         character ->
-          {:ok, _} = update_cache_session(username)
           Socket.send(socket, LobbyViews.render(:ok))
 
           # Temporary store the character (deleted when you enter in game)
@@ -45,15 +42,5 @@ defmodule ChannelService.LobbyActions do
       end
 
     {:cont, new_socket}
-  end
-
-  ## Private functions
-
-  defp update_cache_session(username) do
-    username
-    |> SessionRegistry.get()
-    |> then(fn {:ok, session} -> session end)
-    |> Session.set_state(:in_game)
-    |> SessionRegistry.write()
   end
 end

@@ -5,10 +5,11 @@ defmodule LoginService.AuthActions do
 
   require Logger
 
+  alias LoginService.SessionManager
+  alias LoginService.SessionManager.Session
+
   alias ElvenGard.Network.Socket
 
-  alias ElvenCaching.Account.Session
-  alias ElvenCaching.SessionRegistry
   alias ElvenDatabase.Players.{Account, Accounts}
   alias ElvenPackets.Views.LoginViews
 
@@ -106,7 +107,7 @@ defmodule LoginService.AuthActions do
       encryption_key: gen_encryption_key()
     }
 
-    case SessionRegistry.create(attrs) do
+    case SessionManager.create_session(attrs) do
       {:ok, %Session{encryption_key: key}} -> {:ok, key}
       {:error, :already_exists} -> {:error, :already_connected}
     end

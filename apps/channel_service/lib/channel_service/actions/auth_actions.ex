@@ -4,28 +4,26 @@ defmodule ChannelService.AuthActions do
   """
 
   require Logger
-  require ElvenCaching.Account.Session
 
   import ElvenGard.Network.Socket, only: [assign: 3]
 
   alias ElvenGard.Network.Socket
-
-  alias ElvenCaching.Account.Session
-  alias ElvenCaching.SessionRegistry
   alias ElvenDatabase.Players.{Account, Accounts, Characters}
   alias ElvenPackets.Views.LobbyViews
 
   alias ChannelService.PresenceManager
+
+  # FIXME: Currently the session manager name is hardcoded
+  # Move it somewhere else
+  @session_manager {:global, LoginService.SessionManager}
 
   ## Public API
 
   def handshake(:handshake, params, socket) do
     %{username: username, password: password} = params
 
-    with {:ok, session} <- SessionRegistry.get(username),
-         :ok <- validate_session(session, password),
-         :ok <- PresenceManager.register_username(username),
-         {:ok, _} <- cache_session_as_logged(session),
+    with {:ok, session} <- authenticate(username, password),
+         :ok <- PresenceManager.register(username, session.account_id),
          {:ok, account} <- get_account(session),
          :ok <- send_character_list(account, socket) do
       {:cont, assign(socket, :account, account)}
@@ -38,24 +36,13 @@ defmodule ChannelService.AuthActions do
 
   ## Helpers
 
-  defp validate_session(session, password) do
-    hash = :crypto.hash(:sha512, password) |> Base.encode16()
-
-    case session do
-      %Session{password: ^hash} = s when not Session.is_logged(s) -> :ok
-      _ -> {:error, :invalid_session}
-    end
+  defp authenticate(username, password) do
+    GenServer.call(@session_manager, {:authenticate, username, password})
   end
 
-  defp cache_session_as_logged(session) do
-    session
-    |> Session.set_ttl(:infinity)
-    |> Session.set_state(:in_lobby)
-    |> SessionRegistry.write()
-  end
-
-  defp get_account(%Session{} = session) do
-    %Session{username: username, password: password} = session
+  defp get_account(session) do
+    # FIXME: maybe use the Session struct here
+    %{username: username, password: password} = session
 
     case Accounts.log_in(username, password) do
       %Account{} = acc -> {:ok, acc}

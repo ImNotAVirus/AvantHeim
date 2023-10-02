@@ -28,7 +28,6 @@ defmodule LoginService.MixProject do
       {:elvengard_network, github: "elvengard-mmo/elvengard_network"},
       {:libcluster, "~> 3.3"},
       {:elven_database, path: "../elven_database"},
-      {:elven_caching, path: "../elven_caching"},
       {:elven_packets, path: "../elven_packets"}
     ]
   end

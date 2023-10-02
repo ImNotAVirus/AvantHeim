@@ -14,7 +14,7 @@ defmodule LoginService.Application do
     children = [
       {Cluster.Supervisor, [topologies, [name: LoginService.ClusterSupervisor]]},
       {ElvenGard.Cluster.MnesiaClusterManager, mnesia_cluster_opts},
-      {ElvenCaching.SessionRegistry, []},
+      {LoginService.SessionManager, []},
       {LoginService.Endpoint, name: LoginService.Endpoint}
     ]
 
