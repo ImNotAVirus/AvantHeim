@@ -23,7 +23,6 @@ defmodule ChannelService.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:elvengard_cluster, github: "elvengard-mmo/elvengard_cluster"},
       # {:elvengard_network, "~> 0.1.1"},
       {:elvengard_network, github: "elvengard-mmo/elvengard_network"},
       {:libcluster, "~> 3.3"},

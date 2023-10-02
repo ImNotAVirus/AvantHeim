@@ -14,7 +14,6 @@ defmodule GameService.Application do
 
     children = [
       {Cluster.Supervisor, [topologies, [name: GameService.ClusterSupervisor]]},
-      {ElvenGard.Cluster.MnesiaClusterManager, []},
       {ElvenGard.ECS.Topology.EventSource, [hash: partition_hash]},
       # FIXME: Later rewrite partitions with a DynamicSupervisor
       {GameService.SystemPartition, []},

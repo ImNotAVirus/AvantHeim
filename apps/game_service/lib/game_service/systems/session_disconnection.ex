@@ -20,6 +20,8 @@ defmodule GameService.SessionDisconnectionSystem do
 
   @impl true
   def run(%PlayerDisconnected{account_id: account_id}, _delta) do
+    # FIXME: Disconnect on lobby
+
     # Get the disconnected Entity and his PositionComponent
     {entity, position} =
       {ElvenGard.ECS.Entity, E.PositionComponent}
