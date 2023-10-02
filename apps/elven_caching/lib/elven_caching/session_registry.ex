@@ -12,8 +12,6 @@ defmodule ElvenCaching.SessionRegistry do
   alias ElvenCaching.Account.Session
   alias ElvenGard.Cluster.MnesiaClusterManager
 
-  @clean_every Application.get_env(:elven_caching, :session_clean_every, 30_000)
-
   ## Interfaces
 
   @spec create(map) :: {:ok, Session.t()} | {:error, :already_exists}
@@ -52,7 +50,7 @@ defmodule ElvenCaching.SessionRegistry do
 
     if opts[:disable_clean] != true do
       # Autoclean expired keys
-      :timer.send_interval(@clean_every, :clean_expired_keys)
+      :timer.send_interval(clean_every(), :clean_expired_keys)
     end
 
     Logger.info("SessionRegistry started")
@@ -63,7 +61,7 @@ defmodule ElvenCaching.SessionRegistry do
   def handle_info(:clean_expired_keys, state) do
     now = Session.ttl_to_expire(0)
 
-    :ok =
+    _ =
       Memento.transaction(fn ->
         Session
         |> Memento.Query.select({:<, :expire, now})
@@ -117,7 +115,9 @@ defmodule ElvenCaching.SessionRegistry do
 
   ## Private functions
 
-  defp one(query) do
+  defp clean_every(), do: Application.get_env(:elven_caching, :session_clean_every, 30_000)
+
+  defp(one(query)) do
     case Memento.transaction(query) do
       {:ok, value} when is_struct(value) -> {:ok, value}
       {:ok, [value]} -> {:ok, value}
