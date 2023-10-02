@@ -40,11 +40,11 @@ defmodule LoginService.SessionManager do
     new_state =
       state
       |> Map.to_list()
-      |> Enum.filter(fn {_key, inserted_at} -> is_integer(inserted_at) end)
-      |> Enum.filter(fn {_key, inserted_at} -> inserted_at + ttl <= now end)
+      |> Enum.filter(fn {_key, session} -> is_nil(session.monitor) end)
+      |> Enum.filter(fn {_key, session} -> session.inserted_at + ttl <= now end)
       |> Enum.reduce(state, &Map.delete(&2, elem(&1, 0)))
 
-    Logger.debug("Auto purge sessions: cleared #{map_size(state) - original_size} session(s)")
+    Logger.debug("Auto purge sessions: cleared #{original_size - map_size(new_state)} session(s)")
     _ = schedule_clean()
 
     {:noreply, new_state}
@@ -78,7 +78,7 @@ defmodule LoginService.SessionManager do
         {:reply, {:error, :already_exists}, state}
 
       _ ->
-        session = Session.new(attrs)
+        session = attrs |> Map.put(:inserted_at, now()) |> Session.new()
         {:reply, {:ok, session}, Map.put(state, username, session)}
     end
   end
