@@ -140,7 +140,7 @@ defmodule GameService.PlayerBundle do
       title: Map.get(mapping, P.TitleComponent),
       fairy: Map.get(mapping, P.FairyComponent),
       specialist: Map.get(mapping, P.SpecialistComponent),
-      invisibility: Map.get(mapping, P.InvisibilityComponent),
+      invisibility: Map.get(mapping, E.InvisibilityComponent),
       cannot_attack: Map.get(mapping, E.CannotAttackComponent),
       cannot_move: Map.get(mapping, E.CannotMoveComponent)
     }
@@ -186,7 +186,7 @@ defmodule GameService.PlayerBundle do
       title: Map.get(mapping, P.TitleComponent, :unset),
       fairy: Map.get(mapping, P.FairyComponent, :unset),
       specialist: Map.get(mapping, P.SpecialistComponent, :unset),
-      invisibility: Map.get(mapping, P.InvisibilityComponent, :unset),
+      invisibility: Map.get(mapping, E.InvisibilityComponent, :unset),
       cannot_attack: Map.get(mapping, E.CannotAttackComponent, :unset),
       cannot_move: Map.get(mapping, E.CannotMoveComponent, :unset)
     }

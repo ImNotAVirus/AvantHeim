@@ -7,11 +7,11 @@ defmodule ElvenPackets.Views.VisibilityViews do
 
   import ElvenPackets.View, only: [required_param: 2, optional_param: 3]
 
-  alias ElvenPackets.Server.VisibilityPackets.{InPlayer, Out}
+  alias ElvenPackets.Server.VisibilityPackets.{InPlayer, InNpcOrMonster, Out}
   alias ElvenPackets.SubPackets.Equipment
   alias ElvenPackets.SubPackets.Item.UpgradeRarity
   alias ElvenPackets.SubPackets.Player.Family
-  alias GameService.PlayerBundle
+  alias GameService.{MonsterBundle, PlayerBundle}
 
   ## Renders
 
@@ -21,6 +21,7 @@ defmodule ElvenPackets.Views.VisibilityViews do
 
     case entity.__struct__ do
       PlayerBundle -> in_player_packet(entity, args)
+      MonsterBundle -> in_monster_packet(entity, args)
     end
   end
 
@@ -87,6 +88,26 @@ defmodule ElvenPackets.Views.VisibilityViews do
       size: PlayerBundle.size(entity),
       hero_level: PlayerBundle.hero_level(entity),
       title_id: PlayerBundle.title_id(entity)
+    }
+  end
+
+  defp in_monster_packet(entity, args) do
+    hp_percent = trunc(MonsterBundle.hp(entity) * 100 / MonsterBundle.hp_max(entity))
+    mp_percent = trunc(MonsterBundle.mp(entity) * 100 / MonsterBundle.mp_max(entity))
+
+    %InNpcOrMonster{
+      entity_type: :monster,
+      entity_id: GameService.entity_id(entity),
+      vnum: MonsterBundle.vnum(entity),
+      map_x: MonsterBundle.map_x(entity),
+      map_y: MonsterBundle.map_y(entity),
+      direction: MonsterBundle.map_y(direction),
+      hp_percent: hp_percent,
+      mp_percent: mp_percent,
+      is_sitting: MonsterBundle.sitting?(entity),
+      is_invisible: MonsterBundle.invisible?(entity),
+      name: MonsterBundle.name(entity),
+      spawn_effect: MonsterBundle.spawn_effect(entity)
     }
   end
 end

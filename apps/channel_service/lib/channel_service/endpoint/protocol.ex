@@ -17,7 +17,7 @@ defmodule ChannelService.Endpoint.Protocol do
   }
 
   alias ElvenGard.Network.Socket
-  alias GameService.PlayerBundle
+  alias GameService.{MonsterBundle, PlayerBundle}
 
   ## Endpoint.Protocol behaviour
 
@@ -73,6 +73,11 @@ defmodule ChannelService.Endpoint.Protocol do
   def handle_info({:entity_map_enter, %PlayerBundle{} = entity}, socket) do
     Socket.send(socket, VisibilityViews.render(:in, %{entity: entity}))
     Socket.send(socket, EntityViews.render(:c_mode, %{entity: entity}))
+    {:noreply, socket}
+  end
+
+  def handle_info({:entity_map_enter, %MonsterBundle{} = entity}, socket) do
+    Socket.send(socket, VisibilityViews.render(:in, %{entity: entity}))
     {:noreply, socket}
   end
 

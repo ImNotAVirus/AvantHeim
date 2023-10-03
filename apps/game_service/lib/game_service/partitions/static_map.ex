@@ -18,10 +18,16 @@ defmodule GameService.StaticMapPartition do
     # Run system 60 per seconds (60Hz)
     interval = trunc(1 / 60 * 1000)
 
-    {id, systems: systems(), interval: interval}
+    {id, startup_systems: startup_systems(), systems: systems(), interval: interval}
   end
 
   # Private functions
+
+  defp startup_systems() do
+    [
+      GameService.InitStaticMapSystem
+    ]
+  end
 
   defp systems() do
     [
