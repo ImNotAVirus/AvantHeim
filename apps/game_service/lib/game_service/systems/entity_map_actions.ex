@@ -33,7 +33,7 @@ defmodule GameService.EntityMapActionsSystem do
   # System behaviour
 
   @impl true
-  def run(%EntityChangeDirection{} = event, _delta) do
+  def run(%EntityChangeDirection{} = event, _context) do
     %EntityChangeDirection{
       entity_type: entity_type,
       entity_id: entity_id,
@@ -58,7 +58,7 @@ defmodule GameService.EntityMapActionsSystem do
     |> maybe_print_error(event)
   end
 
-  def run(%EntityMove{} = event, _delta) do
+  def run(%EntityMove{} = event, _context) do
     %EntityMove{
       entity_type: entity_type,
       entity_id: entity_id,
@@ -90,7 +90,7 @@ defmodule GameService.EntityMapActionsSystem do
     |> maybe_print_error(event)
   end
 
-  def run(event, _delta) do
+  def run(event, _context) do
     Logger.warn("#{inspect(__MODULE__)} unhandled event #{inspect(event)}")
   end
 

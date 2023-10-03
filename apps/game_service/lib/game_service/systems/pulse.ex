@@ -23,7 +23,7 @@ defmodule GameService.PulseSystem do
   # System behaviour
 
   @impl true
-  def run(_delta) do
+  def run(_context) do
     expire = ElvenGard.ECS.now() - @inc_ms - @delta
 
     endpoints =
@@ -38,7 +38,7 @@ defmodule GameService.PulseSystem do
   end
 
   @impl true
-  def run(%PlayerPulse{} = event, _delta) do
+  def run(%PlayerPulse{} = event, _context) do
     %PlayerPulse{
       entity_type: entity_type,
       entity_id: entity_id,

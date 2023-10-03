@@ -19,8 +19,8 @@ defmodule GameService.SessionDisconnectionSystem do
   # System behaviour
 
   @impl true
-  def run(%PlayerDisconnected{account_id: account_id}, _delta) do
-    # FIXME: Disconnect on lobby
+  def run(%PlayerDisconnected{account_id: account_id}, _context) do
+    # FIXME: Disconnect on lobby crash the system
 
     # Get the disconnected Entity and his PositionComponent
     {entity, position} =

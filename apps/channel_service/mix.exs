@@ -15,7 +15,7 @@ defmodule ChannelService.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      extra_applications: [:logger],
+      extra_applications: [:logger, :mnesia],
       mod: {ChannelService.Application, []}
     ]
   end
@@ -23,6 +23,7 @@ defmodule ChannelService.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
+      {:elvengard_cluster, github: "elvengard-mmo/elvengard_cluster", optional: true},
       # {:elvengard_network, "~> 0.1.1"},
       {:elvengard_network, github: "elvengard-mmo/elvengard_network"},
       {:libcluster, "~> 3.3"},

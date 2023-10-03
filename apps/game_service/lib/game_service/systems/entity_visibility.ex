@@ -17,7 +17,7 @@ defmodule GameService.EntityVisibilitySystem do
   # System behaviour
 
   @impl true
-  def run(%EntityMapEnter{entity_type: entity_type, entity_id: entity_id}, _delta) do
+  def run(%EntityMapEnter{entity_type: entity_type, entity_id: entity_id}, _context) do
     # Get Entity PositionComponent
     ecs_id = GameService.real_entity_id(entity_type, entity_id)
     {:ok, entity} = Query.fetch_entity(ecs_id)
@@ -43,7 +43,7 @@ defmodule GameService.EntityVisibilitySystem do
     end
   end
 
-  def run(%EntityMapLeave{entity_type: entity_type, entity_id: entity_id}, _delta) do
+  def run(%EntityMapLeave{entity_type: entity_type, entity_id: entity_id}, _context) do
     # Get Entity PositionComponent
     ecs_id = GameService.real_entity_id(entity_type, entity_id)
     {:ok, entity} = Query.fetch_entity(ecs_id)
