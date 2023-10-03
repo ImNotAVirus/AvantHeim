@@ -11,8 +11,8 @@ import Config
 
 config :logger, :console,
   level: :debug,
-  format: "[$time] [$level] $metadata$message\n",
-  metadata: [:application, :socket_id],
+  format: "[$date $time] [$node] [$level] $metadata| $message\n",
+  metadata: [:module, :socket_id],
   colors: [info: :green]
 
 ## Database configs
