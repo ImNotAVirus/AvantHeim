@@ -91,7 +91,7 @@ defmodule ElvenPackets.Views.VisibilityViews do
     }
   end
 
-  defp in_monster_packet(entity, args) do
+  defp in_monster_packet(entity, _args) do
     hp_percent = trunc(MonsterBundle.hp(entity) * 100 / MonsterBundle.hp_max(entity))
     mp_percent = trunc(MonsterBundle.mp(entity) * 100 / MonsterBundle.mp_max(entity))
 
@@ -101,7 +101,7 @@ defmodule ElvenPackets.Views.VisibilityViews do
       vnum: MonsterBundle.vnum(entity),
       map_x: MonsterBundle.map_x(entity),
       map_y: MonsterBundle.map_y(entity),
-      direction: MonsterBundle.map_y(direction),
+      direction: MonsterBundle.direction(entity),
       hp_percent: hp_percent,
       mp_percent: mp_percent,
       is_sitting: MonsterBundle.sitting?(entity),

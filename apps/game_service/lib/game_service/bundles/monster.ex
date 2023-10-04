@@ -209,6 +209,13 @@ defmodule GameService.MonsterBundle do
     end
   end
 
+  def direction(%MonsterBundle{} = monster) do
+    case monster.direction do
+      :unset -> raise ArgumentError, "you must fetch the Entity.DirectionComponent first"
+      direction -> direction.value
+    end
+  end
+
   ## Components specs
 
   defp monster_specs(%{vnum: vnum}) do
