@@ -36,7 +36,7 @@ defmodule GameService.InitStaticMapSystem do
     Path.join(priv_dir(), "map_monster_placement/map_#{id}_monsters.yaml")
   end
 
-  defp normalize_monsters(%{"map_id" => ^map_id, "monsters" => monsters}, map_id) do
+  defp normalize_monsters(%{"map_id" => m, "monsters" => monsters}, map_id) when m == map_id do
     monsters
     |> Enum.map(&Map.take(&1, ~w(id vnum map_x map_y)))
     |> Enum.map(&Map.new(&1, fn {k, v} -> {String.to_atom(k), v} end))
