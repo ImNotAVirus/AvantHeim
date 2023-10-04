@@ -80,6 +80,39 @@ defmodule ElvenPackets.Server.VisibilityPackets do
   end
 
   @serializable true
+  defpacket "in", as: InNpcOrMonster do
+    field :entity_type, NsEnum, values: entity_type(:__enumerators__)
+    field :vnum, NsString
+    field :entity_id, NsInteger
+    field :map_x, NsInteger
+    field :map_y, NsInteger
+    field :direction, NsEnum, values: direction_type(:__enumerators__)
+    field :hp_percent, NsInteger
+    field :mp_percent, NsInteger
+    field :dialog, NsInteger, default: -1
+    field :unknown1, NsInteger, default: 0
+    field :unknown2, NsInteger, default: 0
+    field :unknown3, NsInteger, default: -1
+    field :spawn_effect, NsEnum, values: spawn_effect_type(:__enumerators__), default: :no_effect
+    field :is_sitting, NsBoolean
+    field :unknown4, NsInteger, default: -1
+    field :name, NsString, default: "-"
+    field :unknown5, NsInteger, default: 0
+    field :unknown6, NsInteger, default: -1
+    field :unknown7, NsInteger, default: 0
+    field :unknown8, NsInteger, default: 0
+    field :unknown9, NsInteger, default: 0
+    field :unknown10, NsInteger, default: 0
+    field :unknown11, NsInteger, default: 0
+    field :unknown12, NsInteger, default: 0
+    field :unknown13, NsInteger, default: 0
+    field :is_invisible, NsBoolean
+    field :unknown14, NsInteger, default: 0
+    field :unknown15, NsInteger, default: 0
+    field :unknown16, NsInteger, default: 0
+  end
+
+  @serializable true
   defpacket "out", as: Out do
     field :entity_type, NsEnum, values: entity_type(:__enumerators__)
     field :entity_id, NsInteger

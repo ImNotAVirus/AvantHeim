@@ -125,11 +125,94 @@ defmodule GameService.MonsterBundle do
 
   ## Getters
 
+  def hp(%MonsterBundle{} = monster) do
+    case monster.combat do
+      :unset -> raise ArgumentError, "you must fetch the Entity.CombatComponent first"
+      combat -> combat.hp
+    end
+  end
+
+  def hp_max(%MonsterBundle{} = monster) do
+    case monster.combat do
+      :unset -> raise ArgumentError, "you must fetch the Entity.CombatComponent first"
+      combat -> combat.hp_max
+    end
+  end
+
+  def mp(%MonsterBundle{} = monster) do
+    case monster.combat do
+      :unset -> raise ArgumentError, "you must fetch the Entity.CombatComponent first"
+      combat -> combat.mp
+    end
+  end
+
+  def mp_max(%MonsterBundle{} = monster) do
+    case monster.combat do
+      :unset -> raise ArgumentError, "you must fetch the Entity.CombatComponent first"
+      combat -> combat.mp_max
+    end
+  end
+
+  def vnum(%MonsterBundle{} = monster) do
+    case monster.monster do
+      :unset -> raise ArgumentError, "you must fetch the Monster.MonsterComponent first"
+      monster -> monster.vnum
+    end
+  end
+
+  def map_ref(%MonsterBundle{} = monster) do
+    case monster.position do
+      :unset -> raise ArgumentError, "you must fetch the Entity.PositionComponent first"
+      position -> position.map_ref
+    end
+  end
+
+  def map_x(%MonsterBundle{} = monster) do
+    case monster.position do
+      :unset -> raise ArgumentError, "you must fetch the Entity.PositionComponent first"
+      position -> position.map_x
+    end
+  end
+
+  def map_y(%MonsterBundle{} = monster) do
+    case monster.position do
+      :unset -> raise ArgumentError, "you must fetch the Entity.PositionComponent first"
+      position -> position.map_y
+    end
+  end
+
+  def sitting?(%MonsterBundle{} = monster) do
+    case monster.sitting do
+      :unset -> raise ArgumentError, "you must fetch the Entity.SittingComponent first"
+      sitting -> not is_nil(sitting)
+    end
+  end
+
+  def invisible?(%MonsterBundle{} = monster) do
+    case monster.invisibility do
+      :unset -> raise ArgumentError, "you must fetch the Entity.InvisibilityComponent first"
+      invisibility -> not is_nil(invisibility)
+    end
+  end
+
+  def name(%MonsterBundle{} = monster) do
+    case monster.monster do
+      :unset -> raise ArgumentError, "you must fetch the Monster.MonsterComponent first"
+      monster -> monster.name
+    end
+  end
+
+  def spawn_effect(%MonsterBundle{} = monster) do
+    case monster.monster do
+      :unset -> raise ArgumentError, "you must fetch the Monster.MonsterComponent first"
+      monster -> monster.spawn_effect
+    end
+  end
+
   ## Components specs
 
-  defp monster_specs(attrs) do
-    %{id: id} = attrs
-    [name: "Monster##{id}", spawn_effect: :falling]
+  defp monster_specs(%{vnum: vnum}) do
+    [vnum: vnum, spawn_effect: :falling]
   end
 
   defp position_specs(%{map_id: map_id, map_x: map_x, map_y: map_y} = attrs) do

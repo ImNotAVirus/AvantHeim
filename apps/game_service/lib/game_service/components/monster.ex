@@ -4,6 +4,6 @@ defmodule GameService.MonsterComponents do
   """
 
   defmodule MonsterComponent do
-    use ElvenGard.ECS.Component, state: [:name, :spawn_effect]
+    use ElvenGard.ECS.Component, state: [:name, :vnum, :spawn_effect]
   end
 end

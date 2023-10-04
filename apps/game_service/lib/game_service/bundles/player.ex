@@ -227,14 +227,14 @@ defmodule GameService.PlayerBundle do
 
   def sitting?(%PlayerBundle{} = player) do
     case player.sitting do
-      :unset -> raise ArgumentError, "you must fetch the Player.SittingComponent first"
+      :unset -> raise ArgumentError, "you must fetch the Entity.SittingComponent first"
       sitting -> not is_nil(sitting)
     end
   end
 
   def invisible?(%PlayerBundle{} = player) do
     case player.invisibility do
-      :unset -> raise ArgumentError, "you must fetch the Player.InvisibilityComponent first"
+      :unset -> raise ArgumentError, "you must fetch the Entity.InvisibilityComponent first"
       invisibility -> not is_nil(invisibility)
     end
   end
