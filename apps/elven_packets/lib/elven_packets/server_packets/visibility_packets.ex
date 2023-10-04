@@ -82,7 +82,7 @@ defmodule ElvenPackets.Server.VisibilityPackets do
   @serializable true
   defpacket "in", as: InNpcOrMonster do
     field :entity_type, NsEnum, values: entity_type(:__enumerators__)
-    field :vnum, NsString
+    field :vnum, NsInteger
     field :entity_id, NsInteger
     field :map_x, NsInteger
     field :map_y, NsInteger
