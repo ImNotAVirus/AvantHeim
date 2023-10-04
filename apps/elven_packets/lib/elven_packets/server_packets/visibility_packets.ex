@@ -110,6 +110,7 @@ defmodule ElvenPackets.Server.VisibilityPackets do
     field :unknown14, NsInteger, default: 0
     field :unknown15, NsInteger, default: 0
     field :unknown16, NsInteger, default: 0
+    field :stars, NsInteger, default: 0
   end
 
   @serializable true
