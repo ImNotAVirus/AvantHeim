@@ -18,8 +18,7 @@ defmodule GameService.EntityMapActionsSystem do
       GameService.Events.EntityChangeDirection,
       GameService.Events.EntityInfoRequest,
       GameService.Events.EntityMove,
-      GameService.Events.EntitySit,
-      GameService.Events.EntityMessage
+      GameService.Events.EntitySit
     ]
 
   require Logger
@@ -27,9 +26,8 @@ defmodule GameService.EntityMapActionsSystem do
   alias GameService.Events.{
     EntityChangeDirection,
     # EntityInfoRequest,
-    EntityMove,
+    EntityMove
     # EntitySit
-    EntityMessage
   }
 
   # System behaviour
@@ -42,7 +40,7 @@ defmodule GameService.EntityMapActionsSystem do
       value: value
     } = event
 
-    # In the GameService, Entity's id is a combination of it's type and it's id 
+    # In the GameService, Entity's id is a combination of it's type and it's id
     ecs_id = GameService.real_entity_id(entity_type, entity_id)
 
     # Check if the Entity exists
@@ -70,7 +68,7 @@ defmodule GameService.EntityMapActionsSystem do
       checksum: checksum
     } = event
 
-    # In the GameService, Entity's id is a combination of it's type and it's id 
+    # In the GameService, Entity's id is a combination of it's type and it's id
     ecs_id = GameService.real_entity_id(entity_type, entity_id)
 
     # Check if the Entity exists
