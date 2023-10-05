@@ -18,7 +18,8 @@ defmodule GameService.EntityMapActionsSystem do
       GameService.Events.EntityChangeDirection,
       GameService.Events.EntityInfoRequest,
       GameService.Events.EntityMove,
-      GameService.Events.EntitySit
+      GameService.Events.EntitySit,
+      GameService.Events.EntitySay
     ]
 
   require Logger
@@ -26,8 +27,9 @@ defmodule GameService.EntityMapActionsSystem do
   alias GameService.Events.{
     EntityChangeDirection,
     # EntityInfoRequest,
-    EntityMove
+    EntityMove,
     # EntitySit
+    EntitySay
   }
 
   # System behaviour
@@ -86,6 +88,27 @@ defmodule GameService.EntityMapActionsSystem do
 
       # Here, the 3rd component means that we don't want to send the event to ourself
       GameService.System.map_event(event, position, [entity])
+    end
+    |> maybe_print_error(event)
+  end
+
+  def run(%EntitySay{} = event, _context) do
+    %EntitySay{
+      entity_type: entity_type,
+      entity_id: entity_id,
+      message: message
+    } = event
+
+    # In the GameService, Entity's id is a combination of it's type and it's id
+    ecs_id = GameService.real_entity_id(entity_type, entity_id)
+
+    # Check if the Entity exists
+    with {:ok, entity} <- Query.fetch_entity(ecs_id),
+         {:ok, position} <- Query.fetch_component(entity, E.PositionComponent) do
+      # Notify all players on map
+      event = {:chat_message, entity_type, entity_id, message}
+
+      GameService.System.map_event(event, position)
     end
     |> maybe_print_error(event)
   end
