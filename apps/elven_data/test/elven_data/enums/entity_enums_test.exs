@@ -7,4 +7,6 @@ defmodule ElvenViews.EntityEnumsTest do
   test_enum EntityEnums, :entity_type
   test_enum EntityEnums, :element_type
   test_enum EntityEnums, :direction_type
+  test_enum EntityEnums, :fairy_move_type
+  test_enum EntityEnums, :fairy_morph_type
 end

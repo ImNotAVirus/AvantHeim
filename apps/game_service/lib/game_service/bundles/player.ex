@@ -149,7 +149,7 @@ defmodule GameService.PlayerBundle do
   @doc """
   This function can be use to create a PlayerBundle from an Entity an a list of components
 
-  Unlike `load/2`, you don't have to provide all components.  
+  Unlike `load/2`, you don't have to provide all components.
   Components not found will have the value `:unset`
 
   NOTE: You must verify that you have the required components in your system.
@@ -511,16 +511,16 @@ defmodule GameService.PlayerBundle do
       :unset -> raise ArgumentError, "you must fetch the Player.FairyComponent first"
       # FIXME: Not sure about the default value
       nil -> -1
-      fairy -> fairy.type
+      fairy -> fairy.morph
     end
   end
 
-  def fairy_move_type_id(%PlayerBundle{} = player) do
+  def fairy_move(%PlayerBundle{} = player) do
     case player.fairy do
       :unset -> raise ArgumentError, "you must fetch the Player.FairyComponent first"
       # FIXME: Not sure about the default value
       nil -> -1
-      fairy -> fairy.move_type
+      fairy -> fairy.move
     end
   end
 

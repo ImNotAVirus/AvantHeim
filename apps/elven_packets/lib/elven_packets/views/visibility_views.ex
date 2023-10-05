@@ -67,7 +67,7 @@ defmodule ElvenPackets.Views.VisibilityViews do
       mp_percent: mp_percent,
       is_sitting: PlayerBundle.sitting?(entity),
       group_id: PlayerBundle.group_id(entity),
-      fairy_move_type_id: PlayerBundle.fairy_move_type_id(entity),
+      fairy_move: PlayerBundle.fairy_move(entity),
       fairy_element: PlayerBundle.fairy_element(entity),
       fairy_morph: PlayerBundle.fairy_morph(entity),
       spawn_effect: spawn_effect,
