@@ -13,8 +13,7 @@ defmodule GameService.EntityMessageSystemTest do
       ref = make_ref()
       position = %E.PositionComponent{map_ref: ref}
       endpoint = %P.EndpointComponent{pid: self()}
-      direction = %E.DirectionComponent{value: :south}
-      entity = spawn_player(components: [endpoint, position, direction])
+      entity = spawn_player(components: [endpoint, position])
 
       # Call our System with a EntityMessage event
       event = %Evt.EntityMessage{
