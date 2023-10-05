@@ -1,13 +1,13 @@
 {
 	"folders": [
-		{"name": "root", "path": ".."},
-		{"path": "../apps/game_service"},
-		{"path": "../apps/login_service"},
-		{"path": "../apps/channel_service"},
-		{"path": "../apps/elven_packets"},
-		{"path": "../apps/elven_data"},
-		{"path": "../apps/elven_algorithms"},
-		{"path": "../apps/elven_database"},
+		{ "name": "AvantHeim", "path": ".." },
+		{ "name": "GameService", "path": "../apps/game_service" },
+		{ "name": "LoginService", "path": "../apps/login_service" },
+		{ "name": "ChannelService", "path": "../apps/channel_service" },
+		{ "name": "ElventPackets", "path": "../apps/elven_packets" },
+		{ "name": "ElvenData", "path": "../apps/elven_data" },
+		{ "name": "ElvenAlgorithms", "path": "../apps/elven_algorithms" },
+		{ "name": "ElvenDatabase", "path": "../apps/elven_database" }
 	],
 	"settings": {
 		"files.insertFinalNewline": true,
@@ -17,7 +17,7 @@
 		"files.exclude": {
 			"**/.elixir_ls/": true,
 			"**/_build/": true,
-			"**/deps/": true,
+			"**/deps/": true
 		},
 		"[elixir]": {
 			"editor.insertSpaces": true,
@@ -40,11 +40,11 @@
 				"problemMatcher": [],
 				"group": "none",
 				"presentation": {
-				  "echo": true,
-				  "reveal": "always",
-				  "focus": false,
-				  "panel": "shared",
-				  "clear": true
+					"echo": true,
+					"reveal": "always",
+					"focus": false,
+					"panel": "shared",
+					"clear": true
 				}
 			},
 			{
@@ -57,11 +57,11 @@
 					"isDefault": true
 				},
 				"presentation": {
-				  "echo": true,
-				  "reveal": "always",
-				  "focus": false,
-				  "panel": "shared",
-				  "clear": true
+					"echo": true,
+					"reveal": "always",
+					"focus": false,
+					"panel": "shared",
+					"clear": true
 				}
 			},
 			{
@@ -71,12 +71,46 @@
 				"problemMatcher": [],
 				"group": "none",
 				"presentation": {
-				  "echo": true,
-				  "reveal": "always",
-				  "focus": false,
-				  "panel": "shared",
-				  "clear": true
+					"echo": true,
+					"reveal": "always",
+					"focus": false,
+					"panel": "shared",
+					"clear": true
 				}
+			}
+		]
+	},
+	"launch": {
+		"version": "0.2.0",
+		"configurations": [
+			{
+				"type": "mix_task",
+				"name": "Launch ChannelService",
+				"request": "launch",
+				"projectDir": "${workspaceRoot:ChannelService}"
+			},
+			{
+				"type": "mix_task",
+				"name": "Launch GameService",
+				"request": "launch",
+				"projectDir": "${workspaceRoot:GameService}"
+			},
+			{
+				"type": "mix_task",
+				"name": "Launch LoginService",
+				"request": "launch",
+				"projectDir": "${workspaceRoot:LoginService}"
+			}
+		],
+		"compounds": [
+			{
+				"name": "Launch AvantHeim",
+				"configurations": [
+					"Launch ChannelService",
+					"Launch GameService",
+					"Launch LoginService"
+				],
+				"stopAll": true
 			}
 		]
 	},
