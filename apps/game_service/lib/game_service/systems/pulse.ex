@@ -57,7 +57,7 @@ defmodule GameService.PulseSystem do
          :ok <- validate_time(old_pulse, inserted_at) do
       # Then update the PulseComponent
       {:ok, _} =
-        ElvenGard.ECS.Command.update_component(entity, P.PulseComponent,
+        Command.update_component(entity, P.PulseComponent,
           last_time: inserted_at,
           value: value
         )

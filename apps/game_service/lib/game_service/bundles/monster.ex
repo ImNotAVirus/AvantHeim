@@ -21,7 +21,8 @@ defmodule GameService.MonsterBundle do
     :sitting,
     :invisibility,
     :cannot_attack,
-    :cannot_move
+    :cannot_move,
+    :ai_movement
   ]
   defstruct @enforce_keys
 
@@ -42,7 +43,8 @@ defmodule GameService.MonsterBundle do
           sitting: maybe_component(E.SittingComponent),
           invisibility: maybe_component(E.InvisibilityComponent),
           cannot_attack: maybe_component(E.CannotAttackComponent),
-          cannot_move: maybe_component(E.CannotMoveComponent)
+          cannot_move: maybe_component(E.CannotMoveComponent),
+          ai_movement: maybe_component(M.AIMovementComponent)
         }
 
   ## Public API
@@ -61,7 +63,8 @@ defmodule GameService.MonsterBundle do
         {E.SpeedComponent, speed_specs(attrs)},
         {E.DirectionComponent, direction_specs(attrs)},
         # Hardcoded components
-        {E.CombatComponent, combat_specs(attrs)}
+        {E.CombatComponent, combat_specs(attrs)},
+        {M.AIMovementComponent, ai_movement_specs(attrs)}
       ]
     )
   end
@@ -88,7 +91,8 @@ defmodule GameService.MonsterBundle do
       sitting: Map.get(mapping, E.SittingComponent),
       invisibility: Map.get(mapping, E.InvisibilityComponent),
       cannot_attack: Map.get(mapping, E.CannotAttackComponent),
-      cannot_move: Map.get(mapping, E.CannotMoveComponent)
+      cannot_move: Map.get(mapping, E.CannotMoveComponent),
+      ai_movement: Map.get(mapping, M.AIMovementComponent)
     }
   end
 
@@ -119,7 +123,8 @@ defmodule GameService.MonsterBundle do
       sitting: Map.get(mapping, E.SittingComponent, :unset),
       invisibility: Map.get(mapping, E.InvisibilityComponent, :unset),
       cannot_attack: Map.get(mapping, E.CannotAttackComponent, :unset),
-      cannot_move: Map.get(mapping, E.CannotMoveComponent, :unset)
+      cannot_move: Map.get(mapping, E.CannotMoveComponent, :unset),
+      ai_movement: Map.get(mapping, M.AIMovementComponent, :unset)
     }
   end
 
@@ -234,7 +239,7 @@ defmodule GameService.MonsterBundle do
 
   defp speed_specs(attrs) do
     # FIXME: Hardcoded value, now sure if it's the best place
-    [value: Map.get(attrs, :speed, 15)]
+    [value: Map.get(attrs, :speed, 10)]
   end
 
   defp direction_specs(attrs) do
@@ -250,5 +255,9 @@ defmodule GameService.MonsterBundle do
       mp: 300,
       mp_max: 400
     ]
+  end
+
+  defp ai_movement_specs(%{map_x: map_x, map_y: map_y}) do
+    [orig_x: map_x, orig_y: map_y, next_move: ElvenGard.ECS.now()]
   end
 end
