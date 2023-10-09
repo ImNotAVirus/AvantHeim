@@ -15,6 +15,29 @@ defmodule GameService.InitStaticMapSystem do
 
   @impl true
   def run(%{partition: map_id}) do
+    _ = load_map_tiles(map_id)
+    _ = load_monsters(map_id)
+  end
+
+  ## Helpers
+
+  defp max_concurrency(), do: Elixir.System.schedulers_online()
+  defp priv_dir(), do: :code.priv_dir(:game_service)
+
+  defp load_map_tiles(map_id) do
+    <<width::16-little, height::16-little, map_grid::binary>> = File.read!(map_cells_file(map_id))
+    total_size = width * height
+    <<_::bytes-size(total_size)>> = map_grid
+
+    # TODO: Maybe create a module for the map grid put/get
+    :ok = :persistent_term.put({:map_grid, map_id}, {width, height, map_grid})
+  end
+
+  defp map_cells_file(id) do
+    Path.join(priv_dir(), "map_cells/#{id}")
+  end
+
+  defp load_monsters(map_id) do
     case YamlElixir.read_from_file(map_monsters_file(map_id)) do
       {:ok, data} ->
         data
@@ -26,11 +49,6 @@ defmodule GameService.InitStaticMapSystem do
         Logger.warn("no monster found for map #{map_id}")
     end
   end
-
-  ## Helpers
-
-  defp max_concurrency(), do: Elixir.System.schedulers_online()
-  defp priv_dir(), do: :code.priv_dir(:game_service)
 
   defp map_monsters_file(id) do
     Path.join(priv_dir(), "map_monster_placement/map_#{id}_monsters.yaml")
