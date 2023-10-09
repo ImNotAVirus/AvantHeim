@@ -6,7 +6,6 @@
 		{"path": "../apps/channel_service"},
 		{"path": "../apps/elven_packets"},
 		{"path": "../apps/elven_data"},
-		{"path": "../apps/elven_algorithms"},
 		{"path": "../apps/elven_database"},
 	],
 	"settings": {
