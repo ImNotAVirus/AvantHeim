@@ -32,7 +32,8 @@ defmodule GameService.StaticMapPartition do
   defp systems() do
     [
       GameService.EntityVisibilitySystem,
-      GameService.EntityMapActionsSystem
+      GameService.EntityMapActionsSystem,
+      GameService.EntityMessageSystem
     ]
   end
 end
