@@ -40,7 +40,7 @@ defmodule GameService.EntityMapActionsSystem do
       value: value
     } = event
 
-    # In the GameService, Entity's id is a combination of it's type and it's id  
+    # In the GameService, Entity's id is a combination of it's type and it's id 
     ecs_id = GameService.real_entity_id(entity_type, entity_id)
 
     # Check if the Entity exists
@@ -68,7 +68,7 @@ defmodule GameService.EntityMapActionsSystem do
       checksum: checksum
     } = event
 
-    # In the GameService, Entity's id is a combination of it's type and it's id  
+    # In the GameService, Entity's id is a combination of it's type and it's id 
     ecs_id = GameService.real_entity_id(entity_type, entity_id)
 
     # Check if the Entity exists
