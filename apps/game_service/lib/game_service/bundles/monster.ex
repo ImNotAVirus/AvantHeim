@@ -95,7 +95,7 @@ defmodule GameService.MonsterBundle do
   @doc """
   This function can be use to create a MonsterBundle from an Entity an a list of components
 
-  Unlike `load/2`, you don't have to provide all components.  
+  Unlike `load/2`, you don't have to provide all components.
   Components not found will have the value `:unset`
 
   NOTE: You must verify that you have the required components in your system.

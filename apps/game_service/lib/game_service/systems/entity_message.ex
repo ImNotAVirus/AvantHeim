@@ -36,18 +36,5 @@ defmodule GameService.EntityMessageSystem do
       # Here, the 3rd component means that we don't want to send the event to ourself
       GameService.System.map_event(event, position, [entity])
     end
-    |> maybe_print_error(event)
   end
-
-  def run(event, _context) do
-    Logger.warn("#{inspect(__MODULE__)} unhandled event #{inspect(event)}")
-  end
-
-  ## Helpers
-
-  defp maybe_print_error({:error, _} = error, event) do
-    System.error(__MODULE__, error, event)
-  end
-
-  defp maybe_print_error(_, _), do: :ok
 end
