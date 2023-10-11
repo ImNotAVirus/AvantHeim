@@ -1,6 +1,10 @@
 defmodule GameService.AIMovementSystem do
   @moduledoc """
   TODO: Documentation for GameService.AIMovementSystem
+
+  TODO: Write tests for AIMovementSystem lol
+  TODO: Listen on EntityMapEnter and EntityMapLeave to know when there
+  is no more player on the map
   """
 
   use GameService.System,
