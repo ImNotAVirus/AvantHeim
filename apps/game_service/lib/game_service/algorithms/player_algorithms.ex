@@ -1,11 +1,9 @@
-defmodule ElvenAlgorithms.PlayerAlgorithms do
+defmodule GameService.Algorithms.PlayerAlgorithms do
   @moduledoc """
   TODO: Documentation
   """
 
-  import ElvenAlgorithms
-
-  @max_level Application.compile_env(:elven_algorithms, :player_max_level, 99)
+  @max_level Application.compile_env(:game_service, :player_max_level, 99)
 
   ## HP Max Algorithm
 
@@ -41,7 +39,7 @@ defmodule ElvenAlgorithms.PlayerAlgorithms do
 
     mp =
       floor(9.25 * mpx + 50.75) +
-        trunc((mpx - 2) / 4) * 2 * (modulus(mpx - 2, 4) + 1 + trunc((mpx - 6) / 4) * 2)
+        trunc((mpx - 2) / 4) * 2 * (rem(mpx - 2, 4) + 1 + trunc((mpx - 6) / 4) * 2)
 
     mp_trunc = trunc(mp)
 

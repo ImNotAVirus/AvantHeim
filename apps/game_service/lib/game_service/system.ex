@@ -21,6 +21,7 @@ defmodule GameService.System do
 
       alias GameService.EntityComponents, as: E
       alias GameService.PlayerComponents, as: P
+      alias GameService.MonsterComponents, as: M
       alias GameService.System
     end
   end

@@ -1,4 +1,4 @@
-defmodule ElvenAlgorithms.ExperienceAlgorithms do
+defmodule GameService.Algorithms.ExperienceAlgorithms do
   @moduledoc """
   TODO: Documentation
   """
@@ -100,7 +100,7 @@ defmodule ElvenAlgorithms.ExperienceAlgorithms do
 
   ## Fairy Experience Algorithm
 
-  @fairy_max_level Application.compile_env(:elven_algorithms, :fairy_max_level, 80)
+  @fairy_max_level Application.compile_env(:game_service, :fairy_max_level, 80)
 
   for level <- 0..@fairy_max_level do
     fairy_xp = if level < 40, do: level * level + 50, else: (level * level + 50) * 3
