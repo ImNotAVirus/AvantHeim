@@ -17,7 +17,6 @@ defmodule GameService.EntityMessageSystem do
 
   @impl true
   def run(%EntityMessage{scope: :map} = event, _context) do
-    # Creating our event message, to send map message
     %EntityMessage{
       entity_type: entity_type,
       entity_id: entity_id,
@@ -39,30 +38,28 @@ defmodule GameService.EntityMessageSystem do
   end
 
   @impl true
-  def run(%EntityMessage{scope: :private, target_type: :player} = event, _context) do
-    # Creating our event message, to send map message
+  def run(%EntityMessage{scope: :private} = event, _context) do
     %EntityMessage{
       entity_type: entity_type,
       entity_id: entity_id,
-      message: message,
-      target_id: target_id
+      target_name: target_name,
+      message: message
     } = event
 
     # In the GameService, Entity's id is a combination of it's type and it's id
     ecs_id = GameService.real_entity_id(entity_type, entity_id)
 
-    endpoints =
+    endpoint =
       P.EndpointComponent
-      |> Query.select(with: [{P.PlayerComponent, [{:==, :id, target_id}]}])
-      |> Query.all()
+      |> Query.select(with: [{P.PlayerComponent, [{:==, :name, target_name}]}])
+      |> Query.one()
 
     # Check if the Entity exists
-    with :ok <- Query.fetch_entity(ecs_id),
-         :ok do
-      # Finally, notify player with target_id
+    with :ok <- Query.fetch_entity(ecs_id) do
+      # Finally, notify player with target_name
       event = {:chat_message, entity_type, entity_id, message}
 
-      GameService.broadcast_to(event, endpoints)
+      GameService.send_to(event, endpoint)
     end
   end
 end

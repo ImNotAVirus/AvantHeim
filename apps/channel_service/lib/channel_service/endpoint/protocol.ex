@@ -124,13 +124,13 @@ defmodule ChannelService.Endpoint.Protocol do
 
   ## Chat messages
 
-  def handle_info({:chat_message, entity_type, entity_id, message}, socket) do
+  def handle_info({:entity_message, entity_type, entity_id, message}, socket) do
     attrs = %{entity_type: entity_type, entity_id: entity_id, message: message}
     Socket.send(socket, ChatViews.render(:say, attrs))
     {:noreply, socket}
   end
 
-  def handle_info({:chat_message, entity_type, entity_id, color, message}, socket) do
+  def handle_info({:entity_message, entity_type, entity_id, color, message}, socket) do
     attrs = %{entity_type: entity_type, entity_id: entity_id, color: color, message: message}
     Socket.send(socket, ChatViews.render(:say, attrs))
     {:noreply, socket}

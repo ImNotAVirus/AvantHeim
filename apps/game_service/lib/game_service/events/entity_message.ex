@@ -8,9 +8,8 @@ defmodule GameService.Events.EntityMessage do
       entity_type: nil,
       entity_id: nil,
       scope: nil,
-      # Target is only for the private scope
-      target_type: :player,
-      target_id: nil,
+      # player_name is only for the private scope
+      player_name: nil,
       message: nil
     ]
 
@@ -22,8 +21,7 @@ defmodule GameService.Events.EntityMessage do
           entity_type: EntityEnums.entity_type_keys(),
           entity_id: non_neg_integer(),
           scope: scope(),
-          target_type: EntityEnums.entity_type_keys(),
-          target_id: non_neg_integer(),
+          player_name: String.t(),
           message: String.t()
         }
 end

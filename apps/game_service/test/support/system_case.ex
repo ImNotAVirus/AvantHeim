@@ -52,7 +52,7 @@ defmodule GameService.SystemCase do
       |> Keyword.get(:components, [])
       |> Enum.group_by(& &1.__struct__, & &1)
 
-    map_default = Enum.group_by(default_monster_component(), & &1.__struct__, & &1)
+    map_default = Enum.group_by(default_monster_components(), & &1.__struct__, & &1)
 
     components =
       map_default
@@ -72,7 +72,7 @@ defmodule GameService.SystemCase do
 
   ## Private function
 
-  defp default_monster_component() do
+  defp default_monster_components() do
     [
       %M.MonsterComponent{name: "Danderito", vnum: 1, spawn_effect: :falling},
       %E.PositionComponent{map_id: 123, map_ref: make_ref(), map_x: 50, map_y: 12},
