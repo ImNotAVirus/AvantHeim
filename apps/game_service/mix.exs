@@ -32,7 +32,8 @@ defmodule GameService.MixProject do
       {:libcluster, "~> 3.3", optional: true},
       {:yaml_elixir, "~> 2.9", optional: true},
       {:astar, "~> 0.1.0", optional: true},
-      {:elven_data, path: "../elven_data", optional: true}
+      {:elven_data, path: "../elven_data", optional: true},
+      {:patch, "~> 0.12.0", only: :test, optional: true}
     ]
   end
 end
