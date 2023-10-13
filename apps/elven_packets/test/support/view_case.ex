@@ -9,13 +9,16 @@ defmodule ElvenPackets.ViewCase do
 
   using do
     quote do
-      import unquote(__MODULE__), only: [new_player: 0]
+      import unquote(__MODULE__), only: [new_player: 0, new_player: 1]
+
+      alias GameService.EntityComponents, as: E
+      alias GameService.PlayerComponents, as: P
     end
   end
 
   ## Helpers
 
-  def new_player(attrs \\ %{}) do
+  def new_player(attrs \\ []) do
     %PlayerBundle{
       id: Enum.random(1..100_000),
       # Basics components
@@ -47,7 +50,7 @@ defmodule ElvenPackets.ViewCase do
       cannot_attack: nil,
       cannot_move: nil
     }
-    |> Map.merge(attrs)
+    |> Map.merge(Map.new(attrs))
   end
 
   defp account_component() do

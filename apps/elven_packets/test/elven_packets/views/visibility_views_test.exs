@@ -43,9 +43,9 @@ defmodule ElvenPackets.Views.VisibilityViewsTest do
       assert packet.mp_percent == 90
       assert packet.is_sitting == false
       assert packet.group_id == -1
-      assert packet.fairy_move_type_id == -1
+      assert packet.fairy_move == nil
       assert packet.fairy_element == :neutral
-      assert packet.fairy_morph == -1
+      assert packet.fairy_morph == nil
       assert packet.spawn_effect == :summon
       assert packet.morph == :default
       assert packet.weapon_upgrade == %UpgradeRarity{upgrade: 0, rarity: 0}
@@ -64,6 +64,21 @@ defmodule ElvenPackets.Views.VisibilityViewsTest do
       assert packet.size == 20
       assert packet.hero_level == 79
       assert packet.title_id == 10
+    end
+
+    test "serialization for players with a fairy" do
+      fairy = %P.FairyComponent{
+        type: :rumial,
+        move_type: :static,
+        element: :fire
+      }
+
+      args = %{entity: new_player(fairy: fairy)}
+      packet = VisibilityViews.render(:in, args)
+
+      assert packet.fairy_move == :static
+      assert packet.fairy_element == :fire
+      assert packet.fairy_morph == :rumial
     end
   end
 

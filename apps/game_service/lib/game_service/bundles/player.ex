@@ -509,17 +509,15 @@ defmodule GameService.PlayerBundle do
   def fairy_morph(%PlayerBundle{} = player) do
     case player.fairy do
       :unset -> raise ArgumentError, "you must fetch the Player.FairyComponent first"
-      # FIXME: Not sure about the default value
-      nil -> -1
+      nil -> nil
       fairy -> fairy.type
     end
   end
 
-  def fairy_move_type_id(%PlayerBundle{} = player) do
+  def fairy_move(%PlayerBundle{} = player) do
     case player.fairy do
       :unset -> raise ArgumentError, "you must fetch the Player.FairyComponent first"
-      # FIXME: Not sure about the default value
-      nil -> -1
+      nil -> nil
       fairy -> fairy.move_type
     end
   end

@@ -49,7 +49,7 @@ defmodule ElvenPackets.ServerPackets.VisibilityPacketsTest do
       assert Enum.at(params, 15) == "0"
       # field :group_id
       assert Enum.at(params, 16) == "9999"
-      # field :fairy_move_type_id
+      # field :fairy_move
       assert Enum.at(params, 17) == "1"
       # field :fairy_element
       assert Enum.at(params, 18) == "3"
@@ -147,9 +147,9 @@ defmodule ElvenPackets.ServerPackets.VisibilityPacketsTest do
       mp_percent: 60,
       is_sitting: false,
       group_id: 9999,
-      fairy_move_type_id: 1,
+      fairy_move: :static,
       fairy_element: :light,
-      fairy_morph: 42,
+      fairy_morph: :rumial,
       spawn_effect: :falling,
       morph: :demon_hunter,
       weapon_upgrade: weapon_upgrade,
