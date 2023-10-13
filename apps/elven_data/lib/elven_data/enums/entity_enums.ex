@@ -8,7 +8,7 @@ defmodule ElvenData.Enums.EntityEnums do
   # Type portal is unknown yet
   defenum :entity_type, player: 1, npc: 2, monster: 3, map_object: 9, portal: 1000
   defenum :element_type, [:neutral, :fire, :water, :light, :darkness]
-  defenum :fairy_move_type, static: 1, circle: 2, slow_circle: 3, fly_around: 4
+  defenum :fairy_move_type, static: 1, circle: 2, slow_circle: 3, big_circle: 4
 
   defenum :direction_type, [
     :north,

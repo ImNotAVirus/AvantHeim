@@ -56,7 +56,7 @@ defmodule ElvenPackets.Server.VisibilityPackets do
     field :mp_percent, NsInteger
     field :is_sitting, NsBoolean
     field :group_id, NsInteger
-    field :fairy_move, NsEnum, values: fairy_move_type(:__enumerators__), default: :static
+    field :fairy_move, NsEnum, values: fairy_move_type(:__enumerators__), default: :big_circle
     field :fairy_element, NsEnum, values: element_type(:__enumerators__)
     field :unknown1, NsInteger, default: 0
     field :fairy_morph, NsEnum, values: fairy_morph_type(:__enumerators__)
