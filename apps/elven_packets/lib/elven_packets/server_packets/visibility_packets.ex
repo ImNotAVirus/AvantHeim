@@ -9,7 +9,9 @@ defmodule ElvenPackets.Server.VisibilityPackets do
     only: [
       entity_type: 1,
       element_type: 1,
-      direction_type: 1
+      direction_type: 1,
+      fairy_move_type: 1,
+      fairy_morph_type: 1
     ]
 
   import ElvenData.Enums.MapEnums, only: [spawn_effect_type: 1]
@@ -54,10 +56,10 @@ defmodule ElvenPackets.Server.VisibilityPackets do
     field :mp_percent, NsInteger
     field :is_sitting, NsBoolean
     field :group_id, NsInteger
-    field :fairy_move_type_id, NsInteger
+    field :fairy_move, NsEnum, values: fairy_move_type(:__enumerators__), default: :static
     field :fairy_element, NsEnum, values: element_type(:__enumerators__)
     field :unknown1, NsInteger, default: 0
-    field :fairy_morph, NsInteger
+    field :fairy_morph, NsEnum, values: fairy_morph_type(:__enumerators__)
     field :spawn_effect, NsEnum, values: spawn_effect_type(:__enumerators__), default: :summon
     field :morph, NsEnum, default: :default, values: morph(:__enumerators__)
     field :weapon_upgrade, UpgradeRarity
