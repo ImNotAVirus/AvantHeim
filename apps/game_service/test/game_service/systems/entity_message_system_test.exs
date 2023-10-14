@@ -8,7 +8,7 @@ defmodule GameService.EntityMessageSystemTest do
   ## Tests
 
   describe "EntityMessage" do
-    test "system event on entity writting in general chat" do
+    test "system souldn't send back our messages" do
       # Register our process to receive message
       ref = make_ref()
       position = %E.PositionComponent{map_ref: ref}
@@ -26,31 +26,37 @@ defmodule GameService.EntityMessageSystemTest do
       _ = EntityMessageSystem.run(event, 0)
 
       # # We shouldn't receive an event
-      refute_received {:chat_message, _, _, _}
+      refute_received {:entity_message, _, _, _}
     end
 
-    test "system event on another entity writting in general chat" do
+    test "system notify on Entity change writting" do
       # Register our process to receive message
       ref = make_ref()
       position = %E.PositionComponent{map_ref: ref}
       endpoint = %P.EndpointComponent{pid: self()}
-      entity = spawn_monster(components: [endpoint, position])
+      _ = spawn_player(components: [endpoint, position])
+
+      # Create our fake Entity
+      entity = spawn_player(components: [position])
 
       # Call our System with a EntityMessage event
       event = %Evt.EntityMessage{
         entity_type: GameService.entity_type(entity),
         entity_id: GameService.entity_id(entity),
         scope: :map,
-        message: "Best message"
+        message: "Best message from other player"
       }
 
       _ = EntityMessageSystem.run(event, 0)
 
-      # # We shouldn't receive an event
-      refute_received {:chat_message, _, _, _}
+      # # We should receive an event
+      assert_received {:entity_message, entity_type, entity_id, message}
+      assert entity_type == event.entity_type
+      assert entity_id == event.entity_id
+      assert message == event.message
     end
 
-    test "system event on entity writting in private message" do
+    test "system shouldn't send back our event for private messages" do
       # Register our process to receive message
       ref = make_ref()
       position = %E.PositionComponent{map_ref: ref}
@@ -64,13 +70,13 @@ defmodule GameService.EntityMessageSystemTest do
         entity_id: GameService.entity_id(entity),
         scope: :private,
         message: "Best private message",
-        target_id: GameService.entity_id(target_entity)
+        player_name: "DarkyZ"
       }
 
       _ = EntityMessageSystem.run(event, 0)
 
       # # We shouldn't receive an event
-      refute_received {:chat_message, _, _, _}
+      refute_received {:entity_message, _, _, _}
     end
   end
 end

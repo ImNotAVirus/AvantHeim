@@ -30,7 +30,7 @@ defmodule GameService.EntityMessageSystem do
     with {:ok, entity} <- Query.fetch_entity(ecs_id),
          {:ok, position} <- Query.fetch_component(entity, E.PositionComponent) do
       # Finally, notify all players on map
-      event = {:chat_message, entity_type, entity_id, message}
+      event = {:entity_message, entity_type, entity_id, message}
 
       # Here, the 3rd component means that we don't want to send the event to ourself
       GameService.System.map_event(event, position, [entity])
@@ -42,7 +42,7 @@ defmodule GameService.EntityMessageSystem do
     %EntityMessage{
       entity_type: entity_type,
       entity_id: entity_id,
-      target_name: target_name,
+      player_name: player_name,
       message: message
     } = event
 
@@ -51,13 +51,13 @@ defmodule GameService.EntityMessageSystem do
 
     endpoint =
       P.EndpointComponent
-      |> Query.select(with: [{P.PlayerComponent, [{:==, :name, target_name}]}])
+      |> Query.select(with: [{P.PlayerComponent, [{:==, :name, player_name}]}])
       |> Query.one()
 
     # Check if the Entity exists
     with :ok <- Query.fetch_entity(ecs_id) do
       # Finally, notify player with target_name
-      event = {:chat_message, entity_type, entity_id, message}
+      event = {:entity_message, entity_type, entity_id, message}
 
       GameService.send_to(event, endpoint)
     end
