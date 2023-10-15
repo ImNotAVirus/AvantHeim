@@ -23,4 +23,10 @@ defmodule ElvenPackets.Server.ChatPackets do
     field :color, NsEnum, default: :default, values: color_type(:__enumerators__)
     field :message, NsString
   end
+
+  @serializable true
+  defpacket "whisper", as: Whisper do
+    field :player_name, NsString
+    field :message, NsString
+  end
 end

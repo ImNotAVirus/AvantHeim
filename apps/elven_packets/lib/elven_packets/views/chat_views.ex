@@ -7,7 +7,7 @@ defmodule ElvenPackets.Views.ChatViews do
 
   import ElvenPackets.View, only: [optional_param: 2, required_param: 2]
 
-  alias ElvenPackets.Server.ChatPackets.{Bn, Say}
+  alias ElvenPackets.Server.ChatPackets.{Bn, Say, Whisper}
 
   @impl true
   def render(:bn, args) do
@@ -23,6 +23,13 @@ defmodule ElvenPackets.Views.ChatViews do
       entity_id: required_param(args, :entity_id),
       color: optional_param(args, :color),
       message: required_param(args, :message)
+    }
+  end
+
+  def render(:whisper, args) do
+    %Whisper{
+      player_name: required_param(args, :player_name),
+      message: required_param(args, :player_name)
     }
   end
 end

@@ -40,14 +40,11 @@ defmodule GameService.EntityMessageSystem do
   @impl true
   def run(%EntityMessage{scope: :private} = event, _context) do
     %EntityMessage{
-      entity_type: entity_type,
-      entity_id: entity_id,
       player_name: player_name,
       message: message
     } = event
 
-    # In the GameService, Entity's id is a combination of it's type and it's id
-    ecs_id = GameService.real_entity_id(entity_type, entity_id)
+    message = String.slice(message, 0, 60)
 
     endpoint =
       P.EndpointComponent
@@ -55,9 +52,9 @@ defmodule GameService.EntityMessageSystem do
       |> Query.one()
 
     # Check if the Entity exists
-    with :ok <- Query.fetch_entity(ecs_id) do
+    with :ok <- endpoint do
       # Finally, notify player with target_name
-      event = {:entity_message, entity_type, entity_id, message}
+      event = {:whisper, player_name, message}
 
       GameService.send_to(event, endpoint)
     end

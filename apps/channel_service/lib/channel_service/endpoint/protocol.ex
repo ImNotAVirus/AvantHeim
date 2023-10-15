@@ -136,6 +136,12 @@ defmodule ChannelService.Endpoint.Protocol do
     {:noreply, socket}
   end
 
+  def handle_info({:private_message, player_name, message}, socket) do
+    attrs = %{player_name: player_name, message: message}
+    Socket.send(socket, ChatViews.render(:whisper, attrs))
+    {:noreply, socket}
+  end
+
   ## UI
 
   def handle_info({:open_bank_window, gold, bank_gold, bank_rank, bank_tax}, socket) do

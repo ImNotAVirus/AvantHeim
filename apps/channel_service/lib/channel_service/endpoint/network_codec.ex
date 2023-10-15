@@ -39,6 +39,7 @@ defmodule ChannelService.Endpoint.NetworkCodec do
   def decode(raw, socket) do
     case unpack_packet(raw) do
       [packet_id | _] when packet_id in @ignore -> :ignore
+      ["/" <> player, message] -> WorldPackets.deserialize("whisper", player_name <> " " <> message, socket)
       [packet_id] -> WorldPackets.deserialize(packet_id, "", socket)
       [packet_id, params] -> WorldPackets.deserialize(packet_id, params, socket)
     end

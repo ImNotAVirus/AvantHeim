@@ -1,7 +1,7 @@
 defmodule ElvenPackets.Server.ChatPacketsTest do
   use ElvenPackets.PacketCase, async: true
 
-  alias ElvenPackets.Server.ChatPackets.{Bn, Say}
+  alias ElvenPackets.Server.ChatPackets.{Bn, Say, Whisper}
 
   ## Tests
 
@@ -43,6 +43,17 @@ defmodule ElvenPackets.Server.ChatPacketsTest do
       assert Enum.at(params, 1) == "2"
       assert Enum.at(params, 2) == "0"
       assert Enum.at(params, 3) == "This is a message"
+    end
+  end
+
+  describe "whisper" do
+    test "can be serialized" do
+      packet = %Whisper{player_name: "Fizo", message: "Hello this is my private message"}
+      assert {"whisper", params} = serialize_packet(packet)
+      assert is_list(params)
+      assert length(params) == 2
+      assert Enum.at(params, 0) == "Fizo"
+      assert Enum.at(params, 1) == "Hello this is my private message"
     end
   end
 end

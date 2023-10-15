@@ -29,7 +29,7 @@ defmodule GameService.EntityMessageSystemTest do
       refute_received {:entity_message, _, _, _}
     end
 
-    test "system notify on Entity change writting" do
+    test "system notify on entity map writting" do
       # Register our process to receive message
       ref = make_ref()
       position = %E.PositionComponent{map_ref: ref}
@@ -76,7 +76,32 @@ defmodule GameService.EntityMessageSystemTest do
       _ = EntityMessageSystem.run(event, 0)
 
       # # We shouldn't receive an event
-      refute_received {:entity_message, _, _, _}
+      refute_received {:whisper, _, _, _}
+    end
+
+    test "system notify on entity private writting" do
+      # Register our process to receive message
+      ref = make_ref()
+      position = %E.PositionComponent{map_ref: ref}
+      endpoint = %P.EndpointComponent{pid: self()}
+      _ = spawn_player(components: [endpoint, position])
+
+      # Create our fake Entity
+      entity = spawn_player(components: [position])
+
+      # Call our System with a EntityMessage event
+      event = %Evt.EntityMessage{
+        scope: :private,
+        player_name: "PlayerName",
+        message: "Best private message from other player"
+      }
+
+      _ = EntityMessageSystem.run(event, 0)
+
+      # # We should receive an event
+      assert_received {:private_message, player_name, message}
+      assert player_name == event.player_name
+      assert message == event.message
     end
   end
 end
