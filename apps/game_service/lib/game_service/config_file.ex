@@ -15,7 +15,7 @@ defmodule GameService.ConfigFile do
     file
     |> YamlElixir.read_from_file!()
     |> Enum.filter(&("IS_BASE_MAP" in (&1["flags"] || [])))
-    |> Enum.map(& &1["map_id"])
+    |> Enum.map(& &1["map_vnum"])
   end
 
   @spec map_grid(map_id()) :: {width, height, binary}
