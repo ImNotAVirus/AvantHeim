@@ -84,7 +84,16 @@ defmodule GameService.EntityMessageSystemTest do
       ref = make_ref()
       position = %E.PositionComponent{map_ref: ref}
       endpoint = %P.EndpointComponent{pid: self()}
-      _ = spawn_player(components: [endpoint, position])
+
+      player_component = %P.PlayerComponent{
+        name: "Fizo",
+        gender: :male,
+        class: :archer,
+        hair_color: :dark_purple,
+        hair_style: :hair_style_a
+      }
+
+      _ = spawn_player(components: [endpoint, position, player_component])
 
       # Create our fake Entity
       entity = spawn_player(components: [position])
@@ -92,7 +101,7 @@ defmodule GameService.EntityMessageSystemTest do
       # Call our System with a EntityMessage event
       event = %Evt.EntityMessage{
         scope: :private,
-        player_name: "PlayerName",
+        player_name: "Fizo",
         message: "Best private message from other player"
       }
 
