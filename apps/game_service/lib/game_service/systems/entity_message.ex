@@ -23,6 +23,8 @@ defmodule GameService.EntityMessageSystem do
       message: message
     } = event
 
+    message = String.slice(message, 0, 60)
+
     # In the GameService, Entity's id is a combination of it's type and it's id
     ecs_id = GameService.real_entity_id(entity_type, entity_id)
 
