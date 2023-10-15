@@ -53,12 +53,11 @@ defmodule GameService.EntityMessageSystem do
       |> Query.select(with: [{P.PlayerComponent, [{:==, :name, player_name}]}])
       |> Query.one()
 
-    # Check if the Entity exists
-    with :ok <- endpoint do
-      # Finally, notify player with target_name
-      event = {:whisper, player_name, message}
+    event = {:private_message, player_name, message}
 
-      GameService.send_to(event, endpoint)
+    case endpoint do
+      nil -> Logger.warn("A player tried to whisper to a not connected character")
+      _ -> GameService.send_to(event, endpoint)
     end
   end
 end

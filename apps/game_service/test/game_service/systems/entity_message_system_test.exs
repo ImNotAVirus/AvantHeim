@@ -1,8 +1,6 @@
 defmodule GameService.EntityMessageSystemTest do
   use GameService.SystemCase
 
-  import ExUnit.CaptureLog
-
   alias GameService.EntityMessageSystem
 
   ## Tests
@@ -62,7 +60,6 @@ defmodule GameService.EntityMessageSystemTest do
       position = %E.PositionComponent{map_ref: ref}
       endpoint = %P.EndpointComponent{pid: self()}
       entity = spawn_player(components: [endpoint, position])
-      target_entity = spawn_player(components: [endpoint, position])
 
       # Call our System with a EntityMessage event
       event = %Evt.EntityMessage{
@@ -94,9 +91,6 @@ defmodule GameService.EntityMessageSystemTest do
       }
 
       _ = spawn_player(components: [endpoint, position, player_component])
-
-      # Create our fake Entity
-      entity = spawn_player(components: [position])
 
       # Call our System with a EntityMessage event
       event = %Evt.EntityMessage{
