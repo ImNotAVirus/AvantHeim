@@ -9,6 +9,15 @@ defmodule GameService.ConfigFile do
 
   ## Public API
 
+  def static_map_ids() do
+    file = Path.join(priv_dir(), "maps/official_maps.yaml")
+
+    file
+    |> YamlElixir.read_from_file!()
+    |> Enum.filter(&("IS_BASE_MAP" in (&1["flags"] || [])))
+    |> Enum.map(& &1["map_id"])
+  end
+
   @spec map_grid(map_id()) :: {width, height, binary}
         when width: non_neg_integer(), height: non_neg_integer()
   def map_grid(map_id) do
