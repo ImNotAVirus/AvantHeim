@@ -52,5 +52,25 @@ defmodule GameService.InitStaticMapSystemTest do
       assert {:ok, _} = Query.fetch_entity(GameService.real_entity_id(:monster, ref1))
       assert {:ok, _} = Query.fetch_entity(GameService.real_entity_id(:monster, ref2))
     end
+
+    test "load npcs", %{map_id: map_id} do
+      ref1 = make_ref()
+      ref2 = make_ref()
+
+      npcs = [
+        %{id: ref1, vnum: 1, map_id: 2, map_x: 3, map_y: 4, dialog: 5},
+        %{id: ref2, vnum: 5, map_id: 6, map_x: 7, map_y: 8, dialog: 9}
+      ]
+
+      # Patch ConfigFile
+      patch(GameService.ConfigFile, :map_npcs, fn ^map_id -> npcs end)
+
+      # Call our system
+      _ = InitStaticMapSystem.run(%{partition: map_id})
+
+      # Entities should exists in the system
+      assert {:ok, _} = Query.fetch_entity(GameService.real_entity_id(:npc, ref1))
+      assert {:ok, _} = Query.fetch_entity(GameService.real_entity_id(:npc, ref2))
+    end
   end
 end
