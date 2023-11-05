@@ -5,13 +5,23 @@ defmodule GameService.Application do
 
   use Application
 
-  alias GameService.ConfigFile
+  require Logger
+
+  alias GameService.GameConfig
+  alias ElvenGard.ECS.Topology
 
   ## Application behaviour
 
   @impl true
   def start(_type, _args) do
     topologies = Application.get_env(:libcluster, :topologies, [])
+
+    # Init and populate ETS tables
+    Logger.info("Init GameService...")
+    # FIXME: OTP 26: use :milisecond instead of /1000
+    {time, stats} = :timer.tc(&GameConfig.init/0)
+    time = Float.round(time / 1000, 1)
+    Logger.info("Initialization done (#{time}ms): #{build_debug_stats(stats)}")
 
     # FIXME: Remove hash and use event.partition
     partition_hash = fn event -> {event, event.partition} end
@@ -23,7 +33,7 @@ defmodule GameService.Application do
       {DynamicSupervisor, strategy: :one_for_one, name: static_map_supervisor()},
       # Start a Partition with the ":system" id
       {GameService.SystemPartition, []},
-      # Start a partition for each static maps
+      # Load configs and start a partition for each static maps
       {Task, &start_map_partitions/0}
     ]
 
@@ -37,13 +47,30 @@ defmodule GameService.Application do
 
   defp static_map_supervisor(), do: GameService.StaticMapSupervisor
 
+  defp build_debug_stats(stats) do
+    stats |> Enum.map(&"#{elem(&1, 1)} #{elem(&1, 0)}") |> Enum.join(" - ")
+  end
+
   defp start_map_partitions() do
-    Enum.each(ConfigFile.static_map_ids(), fn map_id ->
-      {:ok, _} =
-        DynamicSupervisor.start_child(
-          static_map_supervisor(),
-          {GameService.StaticMapPartition, [id: map_id]}
-        )
-    end)
+    start = ElvenGard.ECS.now()
+
+    Logger.info("Starting maps...")
+
+    static_pids =
+      Enum.map(GameConfig.static_map_info_ids(), fn map_id ->
+        {:ok, pid} =
+          DynamicSupervisor.start_child(
+            static_map_supervisor(),
+            {GameService.StaticMapPartition, [id: map_id]}
+          )
+
+        pid
+      end)
+
+    # FIXME: Support for :infinity
+    :ok = Topology.wait_for_partitions(static_pids, 10000)
+    time = ElvenGard.ECS.now() - start
+
+    Logger.info("#{length(static_pids)} static maps loaded (#{time}ms)")
   end
 end

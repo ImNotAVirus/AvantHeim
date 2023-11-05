@@ -25,15 +25,15 @@ defmodule GameService.StaticMapPartition do
 
   defp startup_systems() do
     [
-      GameService.InitStaticMapSystem
+      GameService.InitMapSystem
     ]
   end
 
   defp systems() do
     [
-      GameService.EntityVisibilitySystem,
-      GameService.EntityMapActionsSystem,
-      GameService.AIMovementSystem
+      # GameService.EntityVisibilitySystem,
+      # GameService.EntityMapActionsSystem
+      # GameService.AIMovementSystem
     ]
   end
 end
