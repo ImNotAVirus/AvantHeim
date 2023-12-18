@@ -8,6 +8,7 @@ defmodule GameService.Application do
   require Logger
 
   alias GameService.GameConfig
+  alias GameService.TelemetryForwarder
   alias ElvenGard.ECS.Topology
 
   ## Application behaviour
@@ -15,6 +16,9 @@ defmodule GameService.Application do
   @impl true
   def start(_type, _args) do
     topologies = Application.get_env(:libcluster, :topologies, [])
+
+    # Setup Telemetry to forward events to the admin service
+    :ok = TelemetryForwarder.setup()
 
     # Init and populate ETS tables
     Logger.info("Init GameService...")

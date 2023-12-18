@@ -16,8 +16,10 @@ defmodule ElvenGard.ECS.LiveDashboard.Handler do
   # [:elvengard_ecs, :system_run, :exception]
 
   def handle_event([:elvengard_ecs, :partition_init], measurements, metadata, _config) do
+    measurements |> IO.inspect()
+
     info = %{
-      id: metadata.partition,
+      id: metadata.id,
       startup_systems: metadata.startup_systems,
       duration: System.convert_time_unit(measurements.duration, :native, :millisecond)
     }
@@ -27,6 +29,9 @@ defmodule ElvenGard.ECS.LiveDashboard.Handler do
   end
 
   def handle_event([:elvengard_ecs, :startup_system_run, action], measurements, metadata, _config) do
+    IO.inspect(action)
+    IO.inspect(metadata)
+
     info = %{
       partition: metadata.partition,
       system: metadata.system
