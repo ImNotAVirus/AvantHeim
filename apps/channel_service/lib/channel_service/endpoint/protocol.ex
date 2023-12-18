@@ -175,7 +175,7 @@ defmodule ChannelService.Endpoint.Protocol do
   ## Default handlers
 
   def handle_info(msg, socket) do
-    Logger.warn("unhandled message: #{inspect(msg)}")
+    Logger.warning("unhandled message: #{inspect(msg)}")
     {:noreply, socket}
   end
 end

@@ -31,7 +31,7 @@ defmodule ChannelService.LobbyActions do
     new_socket =
       case Characters.get_by_account_id_and_slot(account_id, slot) do
         nil ->
-          Logger.warn("Invalid character slot", socket_id: socket.id)
+          Logger.warning("Invalid character slot", socket_id: socket.id)
           socket
 
         character ->

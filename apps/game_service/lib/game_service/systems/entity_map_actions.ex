@@ -91,7 +91,7 @@ defmodule GameService.EntityMapActionsSystem do
   end
 
   def run(event, _context) do
-    Logger.warn("#{inspect(__MODULE__)} unhandled event #{inspect(event)}")
+    Logger.warning("#{inspect(__MODULE__)} unhandled event #{inspect(event)}")
   end
 
   ## Helpers

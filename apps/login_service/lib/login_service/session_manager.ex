@@ -55,7 +55,7 @@ defmodule LoginService.SessionManager do
     session_tuple = state |> Map.to_list() |> Enum.find(&(elem(&1, 1).monitor == ref))
 
     if reason != :normal do
-      Logger.warn("session exited with reason #{inspect(reason)}")
+      Logger.warning("session exited with reason #{inspect(reason)}")
     end
 
     case session_tuple do

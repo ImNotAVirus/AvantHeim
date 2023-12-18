@@ -114,23 +114,23 @@ defmodule LoginService.AuthActions do
   end
 
   defp render_error({:error, :client_version}, args) do
-    Logger.warn("Invalid client version (got: #{args.client_version})")
+    Logger.warning("Invalid client version (got: #{args.client_version})")
     LoginViews.render(:failc, %{error: :old_client})
   end
 
   defp render_error({:error, :client_checksum}, args) do
-    Logger.warn("Invalid client checksum (got: #{args.client_checksum})")
+    Logger.warning("Invalid client checksum (got: #{args.client_checksum})")
     LoginViews.render(:failc, %{error: :old_client})
   end
 
   defp render_error({:error, :bad_credentials}, _args) do
-    Logger.warn("Invalid credentials")
+    Logger.warning("Invalid credentials")
     LoginViews.render(:failc, %{error: :bad_credentials})
   end
 
   defp render_error({:error, :already_connected}, args) do
     user = Map.get(args, :username) || "token:#{Map.get(args, :token)}"
-    Logger.warn("Already connected (user: #{user})")
+    Logger.warning("Already connected (user: #{user})")
     LoginViews.render(:failc, %{error: :already_connected})
   end
 end

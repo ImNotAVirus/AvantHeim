@@ -26,7 +26,7 @@ defmodule ChannelService.Endpoint.PacketHandler do
     enc_key = String.to_integer(enc_key)
 
     if enc_key == 0 and @mix_env == :prod do
-      Logger.warn("Encryption key is 0", socket_id: socket.id)
+      Logger.warning("Encryption key is 0", socket_id: socket.id)
     end
 
     {:cont, assign(socket, :enc_key, enc_key)}
@@ -161,7 +161,7 @@ defmodule ChannelService.Endpoint.PacketHandler do
           partition: socket.assigns.map_ref
         )
     else
-      _ -> Logger.warn("invalid emote id: #{inspect(emote_id)}")
+      _ -> Logger.warning("invalid emote id: #{inspect(emote_id)}")
     end
 
     {:cont, socket}
@@ -172,7 +172,7 @@ defmodule ChannelService.Endpoint.PacketHandler do
   def handle_packet(:ignore, socket), do: {:cont, socket}
 
   def handle_packet(packet, socket) do
-    Logger.warn("unimplemented handler for #{inspect(packet)}")
+    Logger.warning("unimplemented handler for #{inspect(packet)}")
     {:cont, socket}
   end
 

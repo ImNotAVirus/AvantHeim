@@ -1,6 +1,8 @@
 {
 	"folders": [
 		{"name": "root", "path": ".."},
+		{"path": "../apps/admin_service"},
+		{"path": "../apps/live_dashboard"},
 		{"path": "../apps/game_service"},
 		{"path": "../apps/login_service"},
 		{"path": "../apps/channel_service"},
@@ -21,7 +23,7 @@
 		"[elixir]": {
 			"editor.insertSpaces": true,
 			"editor.tabSize": 2,
-			"editor.wordBasedSuggestions": false,
+			"editor.wordBasedSuggestions": "off",
 			"editor.formatOnType": true,
 			"editor.detectIndentation": true,
 			"files.trimTrailingWhitespace": false,
