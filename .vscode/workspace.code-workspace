@@ -1,8 +1,6 @@
 {
 	"folders": [
 		{"name": "root", "path": ".."},
-		{"path": "../apps/admin_service"},
-		{"path": "../apps/live_dashboard"},
 		{"path": "../apps/game_service"},
 		{"path": "../apps/login_service"},
 		{"path": "../apps/channel_service"},

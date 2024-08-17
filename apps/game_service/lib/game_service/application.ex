@@ -8,7 +8,6 @@ defmodule GameService.Application do
   require Logger
 
   alias GameService.GameConfig
-  alias GameService.TelemetryForwarder
   alias ElvenGard.ECS.Topology
 
   ## Application behaviour
@@ -17,14 +16,9 @@ defmodule GameService.Application do
   def start(_type, _args) do
     topologies = Application.get_env(:libcluster, :topologies, [])
 
-    # Setup Telemetry to forward events to the admin service
-    :ok = TelemetryForwarder.setup()
-
     # Init and populate ETS tables
     Logger.info("Init GameService...")
-    # FIXME: OTP 26: use :milisecond instead of /1000
-    {time, stats} = :timer.tc(&GameConfig.init/0)
-    time = Float.round(time / 1000, 1)
+    {time, stats} = :timer.tc(&GameConfig.init/0, :milisecond)
     Logger.info("Initialization done (#{time}ms): #{build_debug_stats(stats)}")
 
     # FIXME: Remove hash and use event.partition
