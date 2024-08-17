@@ -55,6 +55,7 @@ defmodule GameService.MonsterBundle do
 
     Entity.entity_spec(
       id: {:monster, id},
+      partition: Keyword.fetch!(position_specs(attrs), :map_ref),
       components: [
         # Basics components
         {M.MonsterComponent, monster_specs(attrs)},

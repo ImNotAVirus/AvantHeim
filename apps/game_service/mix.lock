@@ -2,7 +2,7 @@
   "astar": {:hex, :astar, "0.1.0", "b6050fc866c8e506fdb0f957d5e071886799fdb0ac3032ddcece731153d32eab", [:mix], [{:rustler, "~> 0.29", [hex: :rustler, repo: "hexpm", optional: true]}, {:rustler_precompiled, "~> 0.7", [hex: :rustler_precompiled, repo: "hexpm", optional: false]}], "hexpm", "7b68224d2e9aa95bcd136a35c6cb24eea2899af90828dfdef36c0f110fd353d3"},
   "castore": {:hex, :castore, "1.0.8", "dedcf20ea746694647f883590b82d9e96014057aff1d44d03ec90f36a5c0dc6e", [:mix], [], "hexpm", "0b2b66d2ee742cb1d9cb8c8be3b43c3a70ee8651f37b75a8b982e036752983f1"},
   "elvengard_cluster": {:git, "https://github.com/elvengard-mmo/elvengard_cluster.git", "31d2d3fdc3b42f5355ed799427355a214c49d5e6", []},
-  "elvengard_ecs": {:git, "https://github.com/elvengard-mmo/elvengard_ecs.git", "df47210a2a43c3c597f6f4745367fb130622c648", []},
+  "elvengard_ecs": {:git, "https://github.com/elvengard-mmo/elvengard_ecs.git", "9603d14d07dbb33dccba0a3bde391bbd2c1e7225", []},
   "jason": {:hex, :jason, "1.4.4", "b9226785a9aa77b6857ca22832cffa5d5011a667207eb2a0ad56adb5db443b8a", [:mix], [{:decimal, "~> 1.0 or ~> 2.0", [hex: :decimal, repo: "hexpm", optional: true]}], "hexpm", "c5eb0cab91f094599f94d55bc63409236a8ec69a21a67814529e8d5f6cc90b3b"},
   "libcluster": {:hex, :libcluster, "3.3.3", "a4f17721a19004cfc4467268e17cff8b1f951befe428975dd4f6f7b84d927fe0", [:mix], [{:jason, "~> 1.1", [hex: :jason, repo: "hexpm", optional: false]}], "hexpm", "7c0a2275a0bb83c07acd17dab3c3bfb4897b145106750eeccc62d302e3bdfee5"},
   "patch": {:hex, :patch, "0.12.0", "2da8967d382bade20344a3e89d618bfba563b12d4ac93955468e830777f816b0", [:mix], [], "hexpm", "ffd0e9a7f2ad5054f37af84067ee88b1ad337308a1cb227e181e3967127b0235"},

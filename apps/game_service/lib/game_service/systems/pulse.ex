@@ -69,10 +69,6 @@ defmodule GameService.PulseSystem do
         # If Pulse event is invalid, we must notify the Endpoint
         {:ok, endpoint} = Query.fetch_component(entity, P.EndpointComponent)
         GameService.send_to(error, endpoint)
-
-      _ ->
-        # This case match if the PulseComponent is not found so it shouldn't happen
-        :ignore
     end
   end
 

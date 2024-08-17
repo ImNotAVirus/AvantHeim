@@ -30,7 +30,8 @@ defmodule GameService.AIMovementSystem do
     # FIXME: Why this doesn't work wtf
     # |> Query.select(with: [{M.AIMovementComponent, [{:>=, :next_move, now}]}])
     |> Query.select(
-      with: [M.AIMovementComponent, {E.PositionComponent, [{:==, :map_ref, map_ref}]}]
+      with: [M.AIMovementComponent],
+      partition: map_ref
     )
     |> Query.all()
     |> Enum.filter(&(elem(&1, 2).next_move <= now))

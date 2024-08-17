@@ -43,7 +43,7 @@ defmodule GameService.System do
 
   defp get_endpoints(map_ref, []) do
     EndpointComponent
-    |> Query.select(with: [{PositionComponent, [{:==, :map_ref, map_ref}]}])
+    |> Query.select(partition: map_ref)
     |> Query.all()
   end
 
@@ -52,7 +52,7 @@ defmodule GameService.System do
     entities =
       Query.select(
         {ElvenGard.ECS.Entity, EndpointComponent},
-        with: [{PositionComponent, [{:==, :map_ref, map_ref}]}],
+        partition: map_ref,
         preload: [EndpointComponent]
       )
       |> Query.all()

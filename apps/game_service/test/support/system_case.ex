@@ -38,6 +38,7 @@ defmodule GameService.SystemCase do
       |> Keyword.put(:components, components)
       |> Entity.entity_spec()
       |> Map.update!(:id, &{:player, &1})
+      |> update_partition()
       |> Command.spawn_entity()
 
     entity
@@ -75,5 +76,10 @@ defmodule GameService.SystemCase do
         compliment: 500
       }
     ]
+  end
+
+  defp update_partition(specs) do
+    partition = Enum.find(specs.components, &(&1.__struct__ == E.PositionComponent)).map_ref
+    Map.replace!(specs, :partition, partition)
   end
 end
