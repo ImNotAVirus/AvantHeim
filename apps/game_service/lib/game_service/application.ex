@@ -18,16 +18,13 @@ defmodule GameService.Application do
 
     # Init and populate ETS tables
     Logger.info("Init GameService...")
-    {time, stats} = :timer.tc(&GameConfig.init/0, :milisecond)
+    {time, stats} = :timer.tc(&GameConfig.init/0, :millisecond)
     Logger.info("Initialization done (#{time}ms): #{build_debug_stats(stats)}")
-
-    # FIXME: Remove hash and use event.partition
-    partition_hash = fn event -> {event, event.partition} end
 
     children = [
       {Cluster.Supervisor, [topologies, [name: GameService.ClusterSupervisor]]},
       {ElvenGard.Cluster.MnesiaClusterManager, []},
-      {ElvenGard.ECS.Topology.EventSource, [hash: partition_hash]},
+      {ElvenGard.ECS.Topology.EventSource, []},
       {DynamicSupervisor, strategy: :one_for_one, name: static_map_supervisor()},
       # Start a Partition with the ":system" id
       {GameService.SystemPartition, []},
@@ -54,8 +51,9 @@ defmodule GameService.Application do
 
     Logger.info("Starting maps...")
 
+    # Enum.map(GameConfig.static_map_info_ids(), fn map_id ->
     static_pids =
-      Enum.map(GameConfig.static_map_info_ids(), fn map_id ->
+      Enum.map([1], fn map_id ->
         {:ok, pid} =
           DynamicSupervisor.start_child(
             static_map_supervisor(),

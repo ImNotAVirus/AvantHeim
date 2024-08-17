@@ -6,7 +6,7 @@ defmodule GameService.TelemetryForwarder do
   ## Public API
 
   def setup() do
-    events =
+    _events =
       :telemetry.attach_many(
         "elvengard_ecs-telemetry-handler",
         events(),
@@ -37,6 +37,6 @@ defmodule GameService.TelemetryForwarder do
   end
 
   defp admin_service() do
-    admin_service = Application.fetch_env!(:game_service, :admin_service)
+    _admin_service = Application.fetch_env!(:game_service, :admin_service)
   end
 end

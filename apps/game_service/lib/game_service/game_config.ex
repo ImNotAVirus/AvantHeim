@@ -12,19 +12,25 @@ defmodule GameService.GameConfig do
 
   """
 
+  @init_timeout :timer.seconds(30)
+
   ## Public API
 
   def init() do
     _ = create_tables()
 
-    Task.await_many([
-      Task.async(fn -> {:map_info, load_map_info()} end),
-      Task.async(fn -> {:map_cells, load_map_cells()} end)
-    ])
+    Task.await_many(
+      [
+        Task.async(fn -> {map_info_table(), load_map_info()} end),
+        Task.async(fn -> {map_cells_table(), load_map_cells()} end)
+      ],
+      @init_timeout
+    )
   end
 
   def static_map_info_ids() do
     map_info_table()
+    # {id, vnum, name_id, music_id, "IS_BASE_MAP" in flags}
     |> :ets.match({:"$1", :_, :_, :_, true})
     |> List.flatten()
   end
