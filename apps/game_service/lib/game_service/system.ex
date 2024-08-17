@@ -50,11 +50,8 @@ defmodule GameService.System do
   defp get_endpoints(map_ref, ignore_entities) do
     # Get all Entities with an endpoints on the current map
     entities =
-      Query.select(
-        {ElvenGard.ECS.Entity, EndpointComponent},
-        partition: map_ref,
-        preload: [EndpointComponent]
-      )
+      {ElvenGard.ECS.Entity, EndpointComponent}
+      |> Query.select(partition: map_ref)
       |> Query.all()
 
     # Get Endpoints
