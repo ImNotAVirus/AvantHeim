@@ -107,6 +107,7 @@ defmodule ChannelService.Endpoint.PacketHandler do
     {:cont, socket}
   end
 
+  # TODO: Not handled yet
   def handle_packet(%AreaPackets.Say{} = packet, socket) do
     %AreaPackets.Say{message: message} = packet
 
@@ -124,6 +125,7 @@ defmodule ChannelService.Endpoint.PacketHandler do
     {:cont, socket}
   end
 
+  # TODO: Not handled yet
   def handle_packet(%AreaPackets.Ncif{} = packet, socket) do
     %AreaPackets.Ncif{entity_type: entity_type, entity_id: entity_id} = packet
 
@@ -143,6 +145,7 @@ defmodule ChannelService.Endpoint.PacketHandler do
 
   # Display the emote on the map
   # FIXME: Emote for other than the current player is not supported yet
+  # TODO: Not handled yet
   def handle_packet(
         %AreaPackets.Guri{type: :emoji, entity_type: :player, entity_id: entity_id} = packet,
         socket

@@ -5,4 +5,5 @@ defmodule ElvenViews.MapEnumsTest do
   alias ElvenData.Enums.MapEnums
 
   test_enum MapEnums, :spawn_effect_type
+  test_enum MapEnums, :portal_direction_type
 end

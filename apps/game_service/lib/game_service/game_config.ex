@@ -12,6 +12,10 @@ defmodule GameService.GameConfig do
 
   """
 
+  require Logger
+
+  alias GameService.Structures.PortalStructure
+
   @init_timeout :timer.seconds(30)
 
   ## Public API
@@ -22,7 +26,8 @@ defmodule GameService.GameConfig do
     Task.await_many(
       [
         Task.async(fn -> {map_info_table(), load_map_info()} end),
-        Task.async(fn -> {map_cells_table(), load_map_cells()} end)
+        Task.async(fn -> {map_cells_table(), load_map_cells()} end),
+        Task.async(fn -> {map_portals_table(), load_map_portals()} end)
       ],
       @init_timeout
     )
@@ -50,17 +55,25 @@ defmodule GameService.GameConfig do
     end
   end
 
+  def portals(map_id) do
+    map_portals_table()
+    |> :ets.lookup(map_id)
+    |> Enum.map(&elem(&1, 1))
+  end
+
   ## Helpers
 
   defp priv_dir(), do: :code.priv_dir(:game_service)
   defp map_info_files(), do: Path.join(priv_dir(), "maps/*.yaml")
   defp map_cells_files(), do: Path.join(priv_dir(), "map_cells/*")
+  defp map_portals_files(), do: Path.join(priv_dir(), "map_portals/portals_*.yaml")
 
   defp map_monsters_file(map_id),
     do: Path.join(priv_dir(), "map_monster_placement/map_#{map_id}_monsters.yaml")
 
   defp map_info_table(), do: :map_info
   defp map_cells_table(), do: :map_cells
+  defp map_portals_table(), do: :map_portals
 
   defp create_tables() do
     _ =
@@ -80,18 +93,48 @@ defmodule GameService.GameConfig do
         read_concurrency: true,
         write_concurrency: :auto
       ])
+
+    _ =
+      :ets.new(map_portals_table(), [
+        :bag,
+        :public,
+        :named_table,
+        read_concurrency: true,
+        write_concurrency: :auto
+      ])
   end
 
   defp load_map_info() do
     map_info_files()
     |> Path.wildcard()
-    |> Enum.flat_map(&parse_map_info_file!/1)
-    |> Enum.map(fn tuple ->
+    |> Stream.flat_map(&parse_map_info_file!/1)
+    |> Stream.map(fn tuple ->
       case :ets.insert_new(map_info_table(), tuple) do
         true -> :ok
         false -> raise "duplicate map info with id #{elem(tuple, 0)}"
       end
     end)
+    |> Enum.count()
+  end
+
+  defp load_map_cells() do
+    map_cells_files()
+    |> Path.wildcard()
+    |> Enum.map(&parse_map_cell_file!/1)
+    |> Enum.map(fn tuple ->
+      case :ets.insert_new(map_cells_table(), tuple) do
+        true -> :ok
+        false -> raise "duplicate map cells with id #{elem(tuple, 0)}"
+      end
+    end)
+    |> Enum.count()
+  end
+
+  defp load_map_portals() do
+    map_portals_files()
+    |> Path.wildcard()
+    |> Stream.flat_map(&parse_map_portal_file!/1)
+    |> Stream.map(&:ets.insert(map_portals_table(), &1))
     |> Enum.count()
   end
 
@@ -116,19 +159,6 @@ defmodule GameService.GameConfig do
     end)
   end
 
-  defp load_map_cells() do
-    map_cells_files()
-    |> Path.wildcard()
-    |> Enum.map(&parse_map_cell_file!/1)
-    |> Enum.map(fn tuple ->
-      case :ets.insert_new(map_cells_table(), tuple) do
-        true -> :ok
-        false -> raise "duplicate map cells with id #{elem(tuple, 0)}"
-      end
-    end)
-    |> Enum.count()
-  end
-
   defp parse_map_cell_file!(file) do
     id = file |> Path.basename(Path.extname(file)) |> String.to_integer()
 
@@ -139,5 +169,56 @@ defmodule GameService.GameConfig do
     <<_::bytes-size(total_size)>> = map_grid
 
     {id, width, height, map_grid}
+  end
+
+  defp parse_map_portal_file!(file) do
+    keys = ~w(
+      source_map_id source_map_x source_map_y
+      destination_map_id destination_map_x destination_map_y
+      type
+    )
+
+    map_id =
+      file
+      |> Path.basename(".yaml")
+      |> then(fn "portals_" <> map_vnum -> map_vnum end)
+      |> String.to_integer(10)
+
+    file
+    |> YamlElixir.read_from_file!()
+    |> Map.fetch!("portals")
+    |> Enum.map(&Map.take(&1, keys))
+    |> Enum.map(fn info ->
+      %{
+        "source_map_id" => ^map_id,
+        "source_map_x" => source_map_x,
+        "source_map_y" => source_map_y,
+        "destination_map_id" => destination_map_id,
+        "destination_map_x" => destination_map_x,
+        "destination_map_y" => destination_map_y,
+        "type" => type
+      } = info
+
+      {
+        map_id,
+        %PortalStructure{
+          source_map_id: map_id,
+          source_map_x: source_map_x,
+          source_map_y: source_map_y,
+          destination_map_id: destination_map_id,
+          destination_map_x: destination_map_x,
+          destination_map_y: destination_map_y,
+          type: type
+        }
+      }
+    end)
+  catch
+    kind, payload ->
+      Logger.error("""
+      Unable to parse #{file}:
+        #{Exception.format(kind, payload, __STACKTRACE__)}
+      """)
+
+      []
   end
 end

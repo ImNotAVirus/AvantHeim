@@ -53,7 +53,7 @@ defmodule GameService.Application do
 
     # Enum.map(GameConfig.static_map_info_ids(), fn map_id ->
     static_pids =
-      Enum.map([1], fn map_id ->
+      Enum.map([1, 2], fn map_id ->
         {:ok, pid} =
           DynamicSupervisor.start_child(
             static_map_supervisor(),

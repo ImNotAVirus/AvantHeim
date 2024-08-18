@@ -13,6 +13,7 @@ defmodule GameService.EntityVisibilitySystem do
     ]
 
   alias GameService.Events.{EntityMapEnter, EntityMapLeave}
+  alias GameService.GameConfig
 
   # System behaviour
 
@@ -33,13 +34,20 @@ defmodule GameService.EntityVisibilitySystem do
     # If the Entity has an EndpointComponent, notify the map change and
     # send him all entities on the map
     with {:ok, endpoint} <- Query.fetch_component(entity, P.EndpointComponent) do
+      # Send map change event
       _ = GameService.send_to({:map_change, bundle}, endpoint)
 
+      # Send all entities bundles
       position
       |> list_map_bundles()
       |> Enum.reject(&(&1.id == entity_id))
       |> Enum.map(&{:entity_map_enter, &1})
       |> GameService.send_to(endpoint)
+
+      # Send portals
+      # FIXME: only works for static map, not instances
+      portals = GameConfig.portals(position.map_id)
+      _ = GameService.send_to({:show_portals, portals}, endpoint)
     end
   end
 
@@ -65,8 +73,8 @@ defmodule GameService.EntityVisibilitySystem do
     # Get all Entities with all Components on the map
     ElvenGard.ECS.Entity
     |> Query.select(
-      with: [{E.PositionComponent, [{:==, :map_ref, position.map_ref}]}],
-      preload: :all
+      preload: :all,
+      partition: position.map_ref
     )
     |> Query.all()
     |> Enum.map(&GameService.load_bundle(elem(&1, 0), elem(&1, 1)))

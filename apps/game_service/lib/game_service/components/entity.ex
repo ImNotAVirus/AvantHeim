@@ -6,6 +6,13 @@ defmodule GameService.EntityComponents do
   defmodule PositionComponent do
     use ElvenGard.ECS.Component, state: [:map_id, :map_ref, :map_x, :map_y]
 
+    @type t :: %__MODULE__{
+            map_id: non_neg_integer(),
+            map_ref: non_neg_integer() | reference(),
+            map_x: non_neg_integer(),
+            map_y: non_neg_integer()
+          }
+
     ## Helpers
 
     def map_instance?(%__MODULE__{map_ref: map_ref}), do: is_reference(map_ref)

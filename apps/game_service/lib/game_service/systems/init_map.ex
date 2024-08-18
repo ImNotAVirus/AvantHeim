@@ -12,13 +12,18 @@ defmodule GameService.InitMapSystem do
   alias GameService.GameConfig
   alias GameService.MonsterBundle
 
+  @timeout :timer.seconds(30)
+
   ## System behaviour
 
   @impl true
   def run(%{partition: map_id}) do
-    Task.await_many([
-      Task.async(fn -> load_monsters(map_id) end)
-    ], :infinity)
+    Task.await_many(
+      [
+        Task.async(fn -> load_monsters(map_id) end)
+      ],
+      @timeout
+    )
   end
 
   ## Helpers
