@@ -46,7 +46,7 @@ defmodule GameService.EntityVisibilitySystem do
 
       # Send portals
       # FIXME: only works for static map, not instances
-      portals = GameConfig.portals(position.map_id)
+      portals = GameConfig.map_portals(position.map_id)
       _ = GameService.send_to({:show_portals, portals}, endpoint)
     end
   end

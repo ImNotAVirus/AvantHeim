@@ -17,6 +17,7 @@ defmodule GameService.GameConfig do
   alias GameService.Structures.PortalStructure
 
   @init_timeout :timer.seconds(30)
+  @base_dir Application.compile_env(:game_service, :config_dir, :code.priv_dir(:game_service))
 
   ## Public API
 
@@ -31,6 +32,16 @@ defmodule GameService.GameConfig do
       ],
       @init_timeout
     )
+  end
+
+  def clean() do
+    :ets.delete(map_info_table())
+    :ets.delete(map_cells_table())
+    :ets.delete(map_portals_table())
+  end
+
+  def maps_info() do
+    :ets.tab2list(map_info_table())
   end
 
   def static_map_info_ids() do
@@ -55,7 +66,7 @@ defmodule GameService.GameConfig do
     end
   end
 
-  def portals(map_id) do
+  def map_portals(map_id) do
     map_portals_table()
     |> :ets.lookup(map_id)
     |> Enum.map(&elem(&1, 1))
@@ -63,17 +74,17 @@ defmodule GameService.GameConfig do
 
   ## Helpers
 
-  defp priv_dir(), do: :code.priv_dir(:game_service)
-  defp map_info_files(), do: Path.join(priv_dir(), "maps/*.yaml")
-  defp map_cells_files(), do: Path.join(priv_dir(), "map_cells/*")
-  defp map_portals_files(), do: Path.join(priv_dir(), "map_portals/portals_*.yaml")
-
-  defp map_monsters_file(map_id),
-    do: Path.join(priv_dir(), "map_monster_placement/map_#{map_id}_monsters.yaml")
-
   defp map_info_table(), do: :map_info
   defp map_cells_table(), do: :map_cells
   defp map_portals_table(), do: :map_portals
+
+  defp map_info_files(), do: Path.join(@base_dir, "maps/*.yaml")
+  defp map_cells_files(), do: Path.join(@base_dir, "map_cells/*")
+  defp map_portals_files(), do: Path.join(@base_dir, "map_portals/portals_*.yaml")
+
+  defp map_monsters_file(map_id) do
+    Path.join(@base_dir, "map_monster_placement/map_#{map_id}_monsters.yaml")
+  end
 
   defp create_tables() do
     _ =

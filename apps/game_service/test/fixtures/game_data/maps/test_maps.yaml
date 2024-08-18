@@ -1,0 +1,20 @@
+# NosVille
+- map_id: 1
+  map_vnum: 1
+  map_name_id: 1
+  map_music_id: 0
+  flags:
+  - IS_BASE_MAP
+  - ACT_1
+  - HAS_USER_SHOPS_DISABLED
+  - NOSVILLE
+  - HAS_SEALED_VESSELS_DISABLED
+  - HAS_SIGNPOSTS_ENABLED
+#
+# NosVille Meadows
+- map_id: 2
+  map_vnum: 2
+  map_name_id: 2
+  map_music_id: 1
+  flags:
+  - ACT_1

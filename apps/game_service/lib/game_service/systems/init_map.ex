@@ -29,10 +29,9 @@ defmodule GameService.InitMapSystem do
   ## Helpers
 
   defp load_monsters(map_id) do
-    case GameConfig.map_monsters(map_id) do
-      [] -> Logger.debug("no monster found for map #{map_id}")
-      monsters -> Enum.each(monsters, &spawn_monster/1)
-    end
+    map_id
+    |> GameConfig.map_monsters()
+    |> Enum.each(&spawn_monster/1)
   end
 
   defp spawn_monster(attrs) do
