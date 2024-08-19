@@ -8,14 +8,59 @@ defmodule GameService.EntityVisibilitySystem do
   use GameService.System,
     lock_components: :sync,
     event_subscriptions: [
+      GameService.Events.EntityMapChange,
       GameService.Events.EntityMapEnter,
       GameService.Events.EntityMapLeave
     ]
 
-  alias GameService.Events.{EntityMapEnter, EntityMapLeave}
+  alias GameService.Events.{EntityMapChange, EntityMapEnter, EntityMapLeave}
   alias GameService.GameConfig
 
   # System behaviour
+
+  @impl true
+  def run(%EntityMapChange{} = event, context) do
+    %EntityMapChange{
+      entity_type: entity_type,
+      entity_id: entity_id,
+      destination_map_id: destination_map_id,
+      destination_map_ref: destination_map_ref,
+      destination_map_x: destination_map_x,
+      destination_map_y: destination_map_y
+    } = event
+
+    # First execute the entity leave event
+    _ =
+      run(
+        %EntityMapLeave{
+          entity_type: entity_type,
+          entity_id: entity_id,
+          # FIXME: Don't create the struct manually, use something like
+          # ElvenGard.ECS.Event.new(EntityMapLeave, %{ attrs...})
+          inserted_at: event.inserted_at
+        },
+        context
+      )
+
+    # Then update the PositionComponent
+    ecs_id = GameService.real_entity_id(entity_type, entity_id)
+    {:ok, entity} = Query.fetch_entity(ecs_id)
+
+    {:ok, new_position} =
+      Command.update_component(entity, E.PositionComponent,
+        map_id: destination_map_id,
+        map_ref: destination_map_ref,
+        map_x: destination_map_x,
+        map_y: destination_map_y
+      )
+
+    # Finally push the map enter event to the new partition
+    {:ok, _events} =
+      ElvenGard.ECS.push(
+        %EntityMapEnter{entity_type: entity_type, entity_id: entity_id},
+        partition: new_position.map_ref
+      )
+  end
 
   @impl true
   def run(%EntityMapEnter{entity_type: entity_type, entity_id: entity_id}, _context) do
@@ -51,6 +96,7 @@ defmodule GameService.EntityVisibilitySystem do
     end
   end
 
+  @impl true
   def run(%EntityMapLeave{entity_type: entity_type, entity_id: entity_id}, _context) do
     # Get Entity PositionComponent
     ecs_id = GameService.real_entity_id(entity_type, entity_id)

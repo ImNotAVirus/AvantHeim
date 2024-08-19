@@ -36,6 +36,7 @@ defmodule GameService.GameConfigTest do
                source_map_x: 159,
                source_map_y: 6,
                destination_map_id: 2550,
+               destination_map_ref: 2550,
                destination_map_x: 20,
                destination_map_y: 38,
                type: -1
@@ -45,6 +46,7 @@ defmodule GameService.GameConfigTest do
                source_map_x: 80,
                source_map_y: 66,
                destination_map_id: 147,
+               destination_map_ref: 147,
                destination_map_x: 18,
                destination_map_y: 2,
                type: 20
@@ -54,6 +56,7 @@ defmodule GameService.GameConfigTest do
                source_map_x: 117,
                source_map_y: 177,
                destination_map_id: 145,
+               destination_map_ref: 145,
                destination_map_x: 59,
                destination_map_y: 2,
                type: -1
@@ -63,6 +66,7 @@ defmodule GameService.GameConfigTest do
                source_map_x: 79,
                source_map_y: 2,
                destination_map_id: 2,
+               destination_map_ref: 2,
                destination_map_x: 140,
                destination_map_y: 148,
                type: -1

@@ -2,7 +2,13 @@ defmodule ElvenPackets.Client.AreaPacketsTest do
   use ExUnit.Case, async: true
 
   alias ElvenGard.Network.Socket
-  alias ElvenPackets.Client.AreaPackets.{Walk, Say, Ncif, Guri, Dir}
+  alias ElvenPackets.Client.AreaPackets.{Walk, Say, Ncif, Guri, Dir, Preq}
+
+  describe "preq" do
+    test "can be deserialized" do
+      assert %Preq{} = Preq.deserialize("preq", "", %Socket{})
+    end
+  end
 
   describe "walk" do
     test "can be deserialized" do

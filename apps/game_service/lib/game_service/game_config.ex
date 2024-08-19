@@ -217,6 +217,7 @@ defmodule GameService.GameConfig do
           source_map_x: source_map_x,
           source_map_y: source_map_y,
           destination_map_id: destination_map_id,
+          destination_map_ref: destination_map_id,
           destination_map_x: destination_map_x,
           destination_map_y: destination_map_y,
           type: type

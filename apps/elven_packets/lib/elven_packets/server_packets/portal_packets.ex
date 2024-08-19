@@ -12,7 +12,7 @@ defmodule ElvenPackets.Server.PortalPackets do
   #######
   # Portal display
   # ---
-  # Example: "gp 123 456 1 -1 42 0"
+  # Example: "gp 123 456 1 -1 1 0"
   #######
   @serializable true
   defpacket "gp", as: Gp do

@@ -4,6 +4,7 @@ defmodule ElvenPackets.SubPackets.Player.Family do
   use ElvenGard.Network.Type
 
   alias __MODULE__
+  alias ElvenData.Enums.PlayerEnums
   alias ElvenData.I18n.PacketConstString
 
   @enforce_keys [:id]

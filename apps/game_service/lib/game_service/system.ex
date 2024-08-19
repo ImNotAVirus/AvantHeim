@@ -28,7 +28,6 @@ defmodule GameService.System do
 
   @spec map_event(any(), PositionComponent.t(), [Entity.t()]) :: any()
   def map_event(event, %PositionComponent{map_ref: map_ref}, ignore_entities \\ []) do
-    # Broadcast the entity spawn to players
     GameService.broadcast_to(event, get_endpoints(map_ref, ignore_entities))
   end
 

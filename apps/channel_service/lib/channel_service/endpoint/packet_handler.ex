@@ -143,6 +143,16 @@ defmodule ChannelService.Endpoint.PacketHandler do
     {:cont, socket}
   end
 
+  def handle_packet(%AreaPackets.Preq{}, socket) do
+    {:ok, _events} =
+      ElvenGard.ECS.push(
+        %Evt.UsePortalRequest{player_id: socket.assigns.character_id},
+        partition: socket.assigns.map_ref
+      )
+
+    {:cont, socket}
+  end
+
   # Display the emote on the map
   # FIXME: Emote for other than the current player is not supported yet
   # TODO: Not handled yet

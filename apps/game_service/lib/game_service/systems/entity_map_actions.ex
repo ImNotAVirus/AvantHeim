@@ -18,16 +18,22 @@ defmodule GameService.EntityMapActionsSystem do
       GameService.Events.EntityChangeDirection,
       GameService.Events.EntityInfoRequest,
       GameService.Events.EntityMove,
-      GameService.Events.EntitySit
+      GameService.Events.EntitySit,
+      GameService.Events.UsePortalRequest
     ]
 
   require Logger
 
+  alias GameService.Structures.PortalStructure
+  alias GameService.GameConfig
+
   alias GameService.Events.{
     EntityChangeDirection,
     # EntityInfoRequest,
-    EntityMove
-    # EntitySit
+    EntityMapChange,
+    EntityMove,
+    # EntitySit,
+    UsePortalRequest
   }
 
   # System behaviour
@@ -53,11 +59,14 @@ defmodule GameService.EntityMapActionsSystem do
       event = {:direction_changed, entity_type, entity_id, value}
 
       # Here, the 3rd component means that we don't want to send the event to ourself
-      GameService.System.map_event(event, position, [entity])
+      _ = GameService.System.map_event(event, position, [entity])
+
+      :ok
     end
     |> maybe_print_error(event)
   end
 
+  @impl true
   def run(%EntityMove{} = event, _context) do
     %EntityMove{
       entity_type: entity_type,
@@ -85,11 +94,44 @@ defmodule GameService.EntityMapActionsSystem do
       event = {:entity_move, entity_type, entity_id, pos_x, pos_y, speed}
 
       # Here, the 3rd component means that we don't want to send the event to ourself
-      GameService.System.map_event(event, position, [entity])
+      _ = GameService.System.map_event(event, position, [entity])
+
+      :ok
     end
     |> maybe_print_error(event)
   end
 
+  @impl true
+  def run(%UsePortalRequest{player_id: entity_id} = event, _context) do
+    entity_type = :player
+
+    # In the GameService, Entity's id is a combination of it's type and it's id 
+    ecs_id = GameService.real_entity_id(entity_type, entity_id)
+
+    # Check if the Entity exists
+    with {:ok, entity} <- Query.fetch_entity(ecs_id),
+         # Then get the current map
+         {:ok, position} <- Query.fetch_component(entity, E.PositionComponent),
+         # Then fetch current portal using player position
+         {:ok, %PortalStructure{} = portal} <- find_portal(position) do
+      # Then send the map change event
+      {:ok, _events} =
+        ElvenGard.ECS.push(
+          %EntityMapChange{
+            entity_type: entity_type,
+            entity_id: entity_id,
+            destination_map_id: portal.destination_map_id,
+            destination_map_ref: portal.destination_map_ref,
+            destination_map_x: portal.destination_map_x,
+            destination_map_y: portal.destination_map_y
+          },
+          partition: position.map_ref
+        )
+    end
+    |> maybe_print_error(event)
+  end
+
+  @impl true
   def run(event, _context) do
     Logger.warning("#{inspect(__MODULE__)} unhandled event #{inspect(event)}")
   end
@@ -110,9 +152,24 @@ defmodule GameService.EntityMapActionsSystem do
     end
   end
 
+  defp find_portal(%E.PositionComponent{} = position) do
+    portals = GameConfig.map_portals(position.map_id)
+
+    fun = fn %PortalStructure{} = portal ->
+      position.map_x in (portal.source_map_x - 1)..(portal.source_map_x + 1) and
+        position.map_y in (portal.source_map_y - 1)..(portal.source_map_y + 1)
+    end
+
+    case Enum.find(portals, fun) do
+      nil -> {:error, :portal_not_found}
+      portal -> {:ok, portal}
+    end
+  end
+
+  defp maybe_print_error(:ok, _), do: :ok
+  defp maybe_print_error({:ok, _}, _), do: :ok
+
   defp maybe_print_error({:error, _} = error, event) do
     System.error(__MODULE__, error, event)
   end
-
-  defp maybe_print_error(_, _), do: :ok
 end

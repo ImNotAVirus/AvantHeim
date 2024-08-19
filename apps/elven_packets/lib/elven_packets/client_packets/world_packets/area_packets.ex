@@ -11,6 +11,14 @@ defmodule ElvenPackets.Client.AreaPackets do
   alias ElvenPackets.Types.{NsInteger, NsString, NsEnum}
 
   #######
+  # Use a portal on the current position
+  # ---
+  # Example: "preq"
+  #######
+  @deserializable true
+  defpacket "preq", as: Preq
+
+  #######
   # Walk around the map
   # ---
   # Example: "walk 3 1 313 25"

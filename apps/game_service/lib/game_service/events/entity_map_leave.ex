@@ -1,6 +1,6 @@
 defmodule GameService.Events.EntityMapLeave do
   @moduledoc """
-  Event triggered when a new entity leave the map.
+  Event triggered when an entity leave the map.
   """
 
   use ElvenGard.ECS.Event, fields: [:entity_type, :entity_id]
