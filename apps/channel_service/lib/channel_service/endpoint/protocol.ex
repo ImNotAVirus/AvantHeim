@@ -10,14 +10,16 @@ defmodule ChannelService.Endpoint.Protocol do
   alias ElvenPackets.Views.{
     ChatViews,
     EntityViews,
-    PlayerViews,
     MapViews,
+    PlayerViews,
+    PortalViews,
     UIViews,
     VisibilityViews
   }
 
   alias ElvenGard.Network.Socket
   alias GameService.{MonsterBundle, PlayerBundle}
+  alias GameService.Structures.PortalStructure
 
   ## Endpoint.Protocol behaviour
 
@@ -107,6 +109,21 @@ defmodule ChannelService.Endpoint.Protocol do
     {:noreply, socket}
   end
 
+  def handle_info({:show_portals, portals}, socket) do
+    for %PortalStructure{} = portal <- portals do
+      attrs = %{
+        source_x: portal.source_map_x,
+        source_y: portal.source_map_y,
+        map_id: portal.destination_map_id,
+        portal_type: portal.type
+      }
+
+      Socket.send(socket, PortalViews.render(:gp, attrs))
+    end
+
+    {:noreply, socket}
+  end
+
   ## Entity events
 
   def handle_info({:update_condition, entity_type, entity_id, no_attack, no_move, speed}, socket) do
@@ -175,7 +192,7 @@ defmodule ChannelService.Endpoint.Protocol do
   ## Default handlers
 
   def handle_info(msg, socket) do
-    Logger.warn("unhandled message: #{inspect(msg)}")
+    Logger.warning("unhandled message: #{inspect(msg)}")
     {:noreply, socket}
   end
 end

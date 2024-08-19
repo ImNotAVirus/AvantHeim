@@ -1,0 +1,14 @@
+map_id: 1
+monsters:
+- id: 6300
+  map_x: 30
+  map_y: 165
+  vnum: 333
+- id: 6301
+  map_x: 24
+  map_y: 157
+  vnum: 333
+- id: 6302
+  map_x: 22
+  map_y: 158
+  vnum: 333

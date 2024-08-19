@@ -45,7 +45,7 @@ defmodule ChannelService.Endpoint.NetworkCodec do
   catch
     :error, :function_clause ->
       packet = unpack_packet(raw)
-      Logger.warn("no serializer found for #{inspect(packet)}")
+      Logger.warning("no serializer found for #{inspect(packet)}")
       :ignore
   end
 

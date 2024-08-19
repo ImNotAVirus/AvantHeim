@@ -21,7 +21,7 @@
 		"[elixir]": {
 			"editor.insertSpaces": true,
 			"editor.tabSize": 2,
-			"editor.wordBasedSuggestions": false,
+			"editor.wordBasedSuggestions": "off",
 			"editor.formatOnType": true,
 			"editor.detectIndentation": true,
 			"files.trimTrailingWhitespace": false,

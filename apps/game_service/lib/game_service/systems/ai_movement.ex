@@ -19,17 +19,20 @@ defmodule GameService.AIMovementSystem do
   # System behaviour
 
   @impl true
-  def run(%{partition: map_id}) do
+  def run(%{partition: map_ref}) do
     now = ElvenGard.ECS.now()
 
     # TODO: Maybe create a module for the map grid put/get
-    grid = :persistent_term.get({:map_grid, map_id})
+    grid = :persistent_term.get({:map_grid, map_ref})
 
     # Get monster that need to move
     {ElvenGard.ECS.Entity, E.PositionComponent, M.AIMovementComponent, E.SpeedComponent}
     # FIXME: Why this doesn't work wtf
     # |> Query.select(with: [{M.AIMovementComponent, [{:>=, :next_move, now}]}])
-    |> Query.select(with: [M.AIMovementComponent])
+    |> Query.select(
+      with: [M.AIMovementComponent],
+      partition: map_ref
+    )
     |> Query.all()
     |> Enum.filter(&(elem(&1, 2).next_move <= now))
     |> Enum.filter(&(elem(&1, 3).value > 0))

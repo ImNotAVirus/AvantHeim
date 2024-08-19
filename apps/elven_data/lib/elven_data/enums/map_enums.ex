@@ -10,4 +10,11 @@ defmodule ElvenData.Enums.MapEnums do
     :no_effect,
     :falling
   ]
+
+  defenum :portal_direction_type, [
+    :north,
+    :east,
+    :south,
+    :west
+  ]
 end

@@ -4,6 +4,8 @@ defmodule GameService.EntityMapActionsSystemTest do
   import ExUnit.CaptureLog
 
   alias GameService.EntityMapActionsSystem
+  alias GameService.Events.EntityMapChange
+  alias GameService.GameConfig
 
   ## Tests
 
@@ -26,7 +28,7 @@ defmodule GameService.EntityMapActionsSystemTest do
         value: :north
       }
 
-      _ = EntityMapActionsSystem.run(event, 0)
+      assert {:ok, _} = EntityMapActionsSystem.run(event, 0)
 
       # Check that the DirectionComponent was updated
       {:ok, component} = Query.fetch_component(entity, E.DirectionComponent)
@@ -54,7 +56,7 @@ defmodule GameService.EntityMapActionsSystemTest do
         value: :north
       }
 
-      _ = EntityMapActionsSystem.run(event, 0)
+      assert {:ok, _} = EntityMapActionsSystem.run(event, 0)
 
       # Check that the DirectionComponent was updated
       {:ok, component} = Query.fetch_component(entity, E.DirectionComponent)
@@ -88,7 +90,7 @@ defmodule GameService.EntityMapActionsSystemTest do
         checksum: 0
       }
 
-      _ = EntityMapActionsSystem.run(event, 0)
+      assert {:ok, _} = EntityMapActionsSystem.run(event, 0)
 
       # Check that the PositionComponent was updated
       {:ok, component} = Query.fetch_component(entity, E.PositionComponent)
@@ -123,7 +125,10 @@ defmodule GameService.EntityMapActionsSystemTest do
       }
 
       # We should have an error message
-      fun = fn -> _ = EntityMapActionsSystem.run(event, 0) end
+      fun = fn ->
+        assert {:error, :bad_checksum} = EntityMapActionsSystem.run(event, 0)
+      end
+
       assert capture_log(fun) =~ "failed with value {:error, :bad_checksum}"
 
       # Check that the PositionComponent was updated
@@ -157,7 +162,7 @@ defmodule GameService.EntityMapActionsSystemTest do
       }
 
       fun = fn ->
-        _ = EntityMapActionsSystem.run(event, 0)
+        assert {:error, :invalid_speed} = EntityMapActionsSystem.run(event, 0)
       end
 
       # We should have an error message
@@ -169,6 +174,64 @@ defmodule GameService.EntityMapActionsSystemTest do
 
       # # We should receive an event
       refute_received {:entity_move, _, _, _, _, _}
+    end
+  end
+
+  describe "UsePortalRequest" do
+    test "send an EntityMapChange event" do
+      # Get the portal from map 1 to map 2
+      source_map_id = 1
+      destination_map_id = 2
+
+      portal =
+        source_map_id
+        |> GameConfig.map_portals()
+        |> Enum.find(&(&1.destination_map_id == destination_map_id))
+
+      # Register our process to receive message
+      ref = make_ref()
+
+      position = %E.PositionComponent{
+        map_id: source_map_id,
+        map_ref: ref,
+        map_x: portal.source_map_x,
+        map_y: portal.source_map_y
+      }
+
+      endpoint = %P.EndpointComponent{pid: self()}
+      entity = spawn_player(components: [endpoint, position])
+
+      # Call our System with a UsePortalRequest event
+      event = %Evt.UsePortalRequest{player_id: GameService.entity_id(entity)}
+      assert {:ok, result} = EntityMapActionsSystem.run(event, 0)
+      # FIXME: instead of pattern maching on result,
+      # write a mock for a partition and forward all received events
+      assert [%EntityMapChange{}] = result
+    end
+
+    test "do nothing if not on a portal" do
+      # Register our process to receive message
+      ref = make_ref()
+
+      position = %E.PositionComponent{
+        map_id: 1,
+        map_ref: ref,
+        map_x: 0,
+        map_y: 0
+      }
+
+      endpoint = %P.EndpointComponent{pid: self()}
+      entity = spawn_player(components: [endpoint, position])
+
+      # Call our System with a UsePortalRequest event
+      event = %Evt.UsePortalRequest{player_id: GameService.entity_id(entity)}
+
+      fun = fn ->
+        assert {:error, :portal_not_found} = EntityMapActionsSystem.run(event, 0)
+      end
+
+      # We should have an error message
+      assert capture_log(fun) =~ "failed with value {:error, :portal_not_found}"
     end
   end
 end

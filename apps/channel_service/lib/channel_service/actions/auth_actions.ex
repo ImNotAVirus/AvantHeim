@@ -29,7 +29,7 @@ defmodule ChannelService.AuthActions do
       {:cont, assign(socket, :account, account)}
     else
       e ->
-        Logger.warn("Invalid Handshake (reason: #{inspect(e)})")
+        Logger.warning("Invalid Handshake (reason: #{inspect(e)})")
         {:halt, socket}
     end
   end

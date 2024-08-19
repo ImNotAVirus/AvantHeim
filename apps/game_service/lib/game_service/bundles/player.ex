@@ -82,6 +82,7 @@ defmodule GameService.PlayerBundle do
 
     Entity.entity_spec(
       id: {:player, id},
+      partition: Keyword.fetch!(position_specs(attrs), :map_ref),
       components:
         [
           # Basics components

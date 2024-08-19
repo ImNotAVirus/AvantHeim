@@ -36,5 +36,7 @@ defmodule GameService.SessionDisconnectionSystem do
     GameService.System.map_event(event, position, [entity])
 
     # TODO: Later, also remove from group, update friendlist, ...
+
+    {:ok, {}}
   end
 end
