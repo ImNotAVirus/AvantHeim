@@ -14,6 +14,7 @@ defmodule GameService.GameConfig do
 
   require Logger
 
+  alias GameService.EntityComponents.PositionComponent
   alias GameService.Structures.PortalStructure
 
   @init_timeout :timer.seconds(30)
@@ -66,6 +67,7 @@ defmodule GameService.GameConfig do
     end
   end
 
+  @spec map_portals(PositionComponent.map_id()) :: [PortalStructure.t()]
   def map_portals(map_id) do
     map_portals_table()
     |> :ets.lookup(map_id)

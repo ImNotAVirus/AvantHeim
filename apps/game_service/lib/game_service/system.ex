@@ -26,9 +26,10 @@ defmodule GameService.System do
     end
   end
 
-  @spec map_event(any(), PositionComponent.t(), [Entity.t()]) :: any()
-  def map_event(event, %PositionComponent{map_ref: map_ref}, ignore_entities \\ []) do
-    GameService.broadcast_to(event, get_endpoints(map_ref, ignore_entities))
+  @spec map_event(event | [event], PositionComponent.t(), [Entity.t()]) :: [event]
+        when event: any()
+  def map_event(events, %PositionComponent{map_ref: map_ref}, ignore_entities \\ []) do
+    GameService.broadcast_to(events, get_endpoints(map_ref, ignore_entities))
   end
 
   def error(mod, error, event) do

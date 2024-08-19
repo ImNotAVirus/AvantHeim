@@ -103,6 +103,11 @@ defmodule GameService.EntityMapActionsSystem do
 
   @impl true
   def run(%UsePortalRequest{player_id: entity_id} = event, _context) do
+    # TODO: add checks for
+    # - is player alive
+    # - is in combat
+    # - is trading
+    # - ...
     entity_type = :player
 
     # In the GameService, Entity's id is a combination of it's type and it's id 
@@ -167,7 +172,7 @@ defmodule GameService.EntityMapActionsSystem do
   end
 
   defp maybe_print_error(:ok, _), do: :ok
-  defp maybe_print_error({:ok, _}, _), do: :ok
+  defp maybe_print_error({:ok, _} = value, _), do: value
 
   defp maybe_print_error({:error, _} = error, event) do
     System.error(__MODULE__, error, event)

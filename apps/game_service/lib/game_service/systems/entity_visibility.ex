@@ -92,8 +92,10 @@ defmodule GameService.EntityVisibilitySystem do
       # Send portals
       # FIXME: only works for static map, not instances
       portals = GameConfig.map_portals(position.map_id)
-      _ = GameService.send_to({:show_portals, portals}, endpoint)
+      _events = GameService.send_to({:show_portals, portals}, endpoint)
     end
+
+    {:ok, {}}
   end
 
   @impl true
@@ -110,7 +112,9 @@ defmodule GameService.EntityVisibilitySystem do
 
     # Notify all Endpoint on the same map except ourself
     event = {:entity_map_leave, entity_type, entity_id}
-    GameService.System.map_event(event, position, [entity])
+    _events = GameService.System.map_event(event, position, [entity])
+
+    {:ok, {}}
   end
 
   ## Helpers
