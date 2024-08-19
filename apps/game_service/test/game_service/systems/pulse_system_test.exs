@@ -15,7 +15,7 @@ defmodule GameService.PulseSystemTest do
       entity = spawn_player(components: [endpoint, pulse])
 
       # Call our System
-      _ = PulseSystem.run(0)
+      assert {:ok, _} = PulseSystem.run(0)
 
       # Nothing happened, the PulseComponent is valid
       refute_received {:invalid_pulse, _}
@@ -24,7 +24,7 @@ defmodule GameService.PulseSystemTest do
       _ = Command.update_component(entity, P.PulseComponent, last_time: last_time() - 6_000)
 
       # Call our System
-      PulseSystem.run(0)
+      assert {:error, {:invalid_pulse, :expired}} = PulseSystem.run(0)
 
       # We should received a message
       assert_received {:invalid_pulse, :expired}
@@ -41,7 +41,7 @@ defmodule GameService.PulseSystemTest do
 
       # Call our System with a PlayerPulse event
       event = %Evt.PlayerPulse{entity_type: type, entity_id: id, value: 120, inserted_at: now()}
-      _ = PulseSystem.run(event, 0)
+      assert {:ok, _} = PulseSystem.run(event, 0)
 
       # PlayerPulse should have been modified
       {:ok, component} = Query.fetch_component(entity, P.PulseComponent)
@@ -59,7 +59,7 @@ defmodule GameService.PulseSystemTest do
 
       # Call our System with a PlayerPulse event
       event = %Evt.PlayerPulse{entity_type: type, entity_id: id, value: 120, inserted_at: now()}
-      _ = PulseSystem.run(event, 0)
+      assert {:ok, _} = PulseSystem.run(event, 0)
 
       # Nothing happened, the PulseComponent is valid
       refute_received {:invalid_pulse, _}
@@ -69,7 +69,7 @@ defmodule GameService.PulseSystemTest do
       event = %Evt.PlayerPulse{entity_type: type, entity_id: id, value: 180, inserted_at: now()}
 
       # We should have an error message
-      fun = fn -> _ = PulseSystem.run(event, 0) end
+      fun = fn -> assert {:error, {:invalid_pulse, :time}} = PulseSystem.run(event, 0) end
       assert capture_log(fun) =~ "failed with value {:invalid_pulse, :time}"
 
       # We should received a message
@@ -80,7 +80,7 @@ defmodule GameService.PulseSystemTest do
       event = %Evt.PlayerPulse{entity_type: type, entity_id: id, value: 0, inserted_at: now()}
 
       # We should have an error message
-      fun = fn -> _ = PulseSystem.run(event, 0) end
+      fun = fn -> assert {:error, {:invalid_pulse, :value}} = PulseSystem.run(event, 0) end
       assert capture_log(fun) =~ "failed with value {:invalid_pulse, :value}"
 
       # We should received a message

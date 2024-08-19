@@ -20,7 +20,7 @@ defmodule GameService.SessionDisconnectionSystemTest do
 
       # Call our System with a PlayerDisconnected event
       event = %Evt.PlayerDisconnected{account_id: account_ref}
-      _ = SessionDisconnectionSystem.run(event, 0)
+      assert {:ok, _} = SessionDisconnectionSystem.run(event, 0)
 
       # We should receive an event
       assert_received {:entity_map_leave, ^type, ^id}
@@ -36,7 +36,7 @@ defmodule GameService.SessionDisconnectionSystemTest do
 
       # Call our System with a PlayerDisconnected event
       event = %Evt.PlayerDisconnected{account_id: account_ref}
-      _ = SessionDisconnectionSystem.run(event, 0)
+      assert {:ok, _} = SessionDisconnectionSystem.run(event, 0)
 
       # Player should be removed
       assert {:error, :not_found} = Query.fetch_entity(id)

@@ -63,7 +63,7 @@ defmodule GameService.EntityMapActionsSystem do
 
       :ok
     end
-    |> maybe_print_error(event)
+    |> format_result(event)
   end
 
   @impl true
@@ -98,7 +98,7 @@ defmodule GameService.EntityMapActionsSystem do
 
       :ok
     end
-    |> maybe_print_error(event)
+    |> format_result(event)
   end
 
   @impl true
@@ -133,7 +133,7 @@ defmodule GameService.EntityMapActionsSystem do
           partition: position.map_ref
         )
     end
-    |> maybe_print_error(event)
+    |> format_result(event)
   end
 
   @impl true
@@ -171,10 +171,11 @@ defmodule GameService.EntityMapActionsSystem do
     end
   end
 
-  defp maybe_print_error(:ok, _), do: :ok
-  defp maybe_print_error({:ok, _} = value, _), do: value
+  defp format_result(:ok, _), do: {:ok, {}}
+  defp format_result({:ok, _} = value, _), do: value
 
-  defp maybe_print_error({:error, _} = error, event) do
+  defp format_result({:error, _} = error, event) do
     System.error(__MODULE__, error, event)
+    error
   end
 end

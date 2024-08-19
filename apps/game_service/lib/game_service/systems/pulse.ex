@@ -32,8 +32,13 @@ defmodule GameService.PulseSystem do
       |> Query.all()
 
     case endpoints do
-      [] -> :ok
-      _ -> GameService.broadcast_to({:invalid_pulse, :expired}, endpoints)
+      [] ->
+        {:ok, {}}
+
+      _ ->
+        error = {:invalid_pulse, :expired}
+        GameService.broadcast_to(error, endpoints)
+        {:error, error}
     end
   end
 
@@ -51,7 +56,7 @@ defmodule GameService.PulseSystem do
     {:ok, entity} = Query.fetch_entity(ecs_id)
 
     # Get the prev pulse
-    with {:ok, old_pulse} <- Query.fetch_component(entity, P.PulseComponent),
+    with {:ok, old_pulse} = Query.fetch_component(entity, P.PulseComponent),
          # Validate the pulse
          :ok <- validate_value(old_pulse, value),
          :ok <- validate_time(old_pulse, inserted_at) do
@@ -68,7 +73,9 @@ defmodule GameService.PulseSystem do
 
         # If Pulse event is invalid, we must notify the Endpoint
         {:ok, endpoint} = Query.fetch_component(entity, P.EndpointComponent)
-        GameService.send_to(error, endpoint)
+        _event = GameService.send_to(error, endpoint)
+
+        {:error, error}
     end
   end
 

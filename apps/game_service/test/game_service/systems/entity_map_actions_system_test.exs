@@ -28,7 +28,7 @@ defmodule GameService.EntityMapActionsSystemTest do
         value: :north
       }
 
-      _ = EntityMapActionsSystem.run(event, 0)
+      assert {:ok, _} = EntityMapActionsSystem.run(event, 0)
 
       # Check that the DirectionComponent was updated
       {:ok, component} = Query.fetch_component(entity, E.DirectionComponent)
@@ -56,7 +56,7 @@ defmodule GameService.EntityMapActionsSystemTest do
         value: :north
       }
 
-      _ = EntityMapActionsSystem.run(event, 0)
+      assert {:ok, _} = EntityMapActionsSystem.run(event, 0)
 
       # Check that the DirectionComponent was updated
       {:ok, component} = Query.fetch_component(entity, E.DirectionComponent)
@@ -90,7 +90,7 @@ defmodule GameService.EntityMapActionsSystemTest do
         checksum: 0
       }
 
-      _ = EntityMapActionsSystem.run(event, 0)
+      assert {:ok, _} = EntityMapActionsSystem.run(event, 0)
 
       # Check that the PositionComponent was updated
       {:ok, component} = Query.fetch_component(entity, E.PositionComponent)
@@ -125,7 +125,10 @@ defmodule GameService.EntityMapActionsSystemTest do
       }
 
       # We should have an error message
-      fun = fn -> _ = EntityMapActionsSystem.run(event, 0) end
+      fun = fn ->
+        assert {:error, :bad_checksum} = EntityMapActionsSystem.run(event, 0)
+      end
+
       assert capture_log(fun) =~ "failed with value {:error, :bad_checksum}"
 
       # Check that the PositionComponent was updated
@@ -159,7 +162,7 @@ defmodule GameService.EntityMapActionsSystemTest do
       }
 
       fun = fn ->
-        _ = EntityMapActionsSystem.run(event, 0)
+        assert {:error, :invalid_speed} = EntityMapActionsSystem.run(event, 0)
       end
 
       # We should have an error message
@@ -224,7 +227,7 @@ defmodule GameService.EntityMapActionsSystemTest do
       event = %Evt.UsePortalRequest{player_id: GameService.entity_id(entity)}
 
       fun = fn ->
-        _ = EntityMapActionsSystem.run(event, 0)
+        assert {:error, :portal_not_found} = EntityMapActionsSystem.run(event, 0)
       end
 
       # We should have an error message
