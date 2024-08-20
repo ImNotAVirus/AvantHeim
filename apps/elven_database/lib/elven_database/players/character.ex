@@ -8,6 +8,8 @@ defmodule ElvenDatabase.Players.Character do
 
   require ElvenData.Enums.PlayerEnums, as: PlayerEnums
 
+  alias ElvenDatabase.Players.Item
+
   # FIXME: Later improve this typespec
   @type t :: %__MODULE__{}
 
@@ -82,6 +84,8 @@ defmodule ElvenDatabase.Players.Character do
     field :miniland_makepoints, :integer
 
     # field :game_options, GameOptions
+
+    has_many :items, Item, foreign_key: :owner_id
 
     timestamps()
   end

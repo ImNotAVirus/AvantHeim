@@ -19,5 +19,7 @@ defmodule ElvenDatabase.Repo.Migrations.CreateItems do
 
       timestamps()
     end
+    
+    create unique_index(:items, [:owner_id, :inventory_type, :slot], name: :owner_inventory_slot) 
   end
 end

@@ -3,7 +3,7 @@ defmodule ElvenDatabase.Players.Items do
   TODO: Documentation
   """
 
-  # import Ecto.Query, only: [from: 2]
+  import Ecto.Query, only: [from: 2]
 
   alias ElvenDatabase.Players.Item
   alias ElvenDatabase.Repo
@@ -29,5 +29,35 @@ defmodule ElvenDatabase.Players.Items do
     %Item{}
     |> Item.changeset(attrs)
     |> Repo.insert!()
+  end
+
+  @spec list_by_owner(non_neg_integer()) :: [Item.t()]
+  def list_by_owner(character_id) do
+    from(c in Item, where: c.owner_id == ^character_id)
+    |> Repo.all()
+  end
+
+  @spec update(Item.t(), map()) :: {:ok, Ecto.Schema.t()} | {:error, Ecto.Changeset.t()}
+  def update(%Item{} = item, attrs) do
+    item
+    |> Item.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @spec update!(Item.t(), map()) :: {:ok, Ecto.Schema.t()} | {:error, Ecto.Changeset.t()}
+  def update!(%Item{} = item, attrs) do
+    item
+    |> Item.changeset(attrs)
+    |> Repo.update!()
+  end
+
+  @spec delete(Item.t()) :: {:ok, Ecto.Schema.t()} | {:error, Ecto.Changeset.t()}
+  def delete(%Item{} = item) do
+    Repo.delete(item)
+  end
+
+  @spec delete!(Item.t()) :: {:ok, Ecto.Schema.t()} | {:error, Ecto.Changeset.t()}
+  def delete!(%Item{} = item) do
+    Repo.delete!(item)
   end
 end
