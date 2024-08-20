@@ -55,7 +55,8 @@ defmodule ElvenDatabase.Players.Item do
 
     item
     |> cast(attrs, @fields)
-    |> cast_assoc(:owner)
+    # |> cast_assoc(:owner)
+    |> foreign_key_constraint(:owner_id)
     |> validate_required(@fields)
     |> unique_constraint(:slot, name: :owner_inventory_slot)
   end
