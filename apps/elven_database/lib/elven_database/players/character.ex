@@ -10,6 +10,8 @@ defmodule ElvenDatabase.Players.Character do
 
   alias ElvenData.Enums.PlayerEnums
 
+  @type t :: %__MODULE__{}
+
   # defbitfield GameOptions,
   #   exchange_blocked: round(:math.pow(2, 1)),
   #   friend_request_blocked: round(:math.pow(2, 2)),
