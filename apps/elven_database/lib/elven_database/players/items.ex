@@ -8,6 +8,13 @@ defmodule ElvenDatabase.Players.Items do
   alias ElvenDatabase.Players.Item
   alias ElvenDatabase.Repo
 
+  # Dyalizer doesn't like `Item.changeset(%Item{}, attrs)`
+  # because fields on Item struct can't be nil
+  @dialyzer [
+    {:no_return, create: 1, create!: 1},
+    {:no_fail_call, create: 1, create!: 1}
+  ]
+
   ## Public API
 
   @spec create(map()) :: {:ok, Ecto.Schema.t()} | {:error, Ecto.Changeset.t()}

@@ -15,7 +15,11 @@ defmodule ElvenDatabase.Players.Item do
           inventory_type: ItemEnums.inventory_type_keys(),
           slot: ItemEnums.slot_type() | non_neg_integer(),
           vnum: non_neg_integer(),
-          quantity: non_neg_integer()
+          quantity: non_neg_integer(),
+          # Ecto fields
+          __meta__: Ecto.Schema.Metadata.t(),
+          inserted_at: any(),
+          updated_at: any()
         }
 
   ## Schema
@@ -42,7 +46,7 @@ defmodule ElvenDatabase.Players.Item do
   ]
 
   @spec changeset(Item.t(), map()) :: Ecto.Changeset.t()
-  def changeset(item, attrs) do
+  def changeset(%Item{} = item, attrs) do
     attrs =
       case attrs do
         %{slot: slot} when is_atom(slot) -> Map.put(attrs, :slot, ItemEnums.slot_type(slot))
