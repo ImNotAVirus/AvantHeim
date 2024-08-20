@@ -63,7 +63,7 @@ defmodule GameService.Application do
       end)
 
     # FIXME: Support for :infinity
-    :ok = Topology.wait_for_partitions(static_pids, 10000)
+    :ok = Topology.wait_for_partitions(static_pids, :timer.seconds(10))
     time = ElvenGard.ECS.now() - start
 
     Logger.info("#{length(static_pids)} static maps loaded (#{time}ms)")
