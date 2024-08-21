@@ -17,18 +17,31 @@ defmodule ElvenDatabase.Players.Items do
 
   ## Public API
 
-  @spec create(map()) :: {:ok, Ecto.Schema.t()} | {:error, Ecto.Changeset.t()}
+  @spec create(map()) :: {:ok, Item.t()} | {:error, Ecto.Changeset.t()}
   def create(attrs) do
     %Item{}
     |> Item.changeset(attrs)
     |> Repo.insert()
   end
 
-  @spec create!(map()) :: Ecto.Schema.t()
+  @spec create!(map()) :: Item.t()
   def create!(attrs) do
     %Item{}
     |> Item.changeset(attrs)
     |> Repo.insert!()
+  end
+
+  @spec get(Item.id()) :: {:ok, Item.t()} | {:error, :not_found}
+  def get(id) do
+    case Repo.get(Item, id) do
+      nil -> {:error, :not_found}
+      item -> {:ok, item}
+    end
+  end
+
+  @spec get!(Item.id()) :: Item.t()
+  def get!(id) do
+    Repo.get!(Item, id)
   end
 
   @spec list_by_owner(non_neg_integer()) :: [Item.t()]
@@ -37,26 +50,26 @@ defmodule ElvenDatabase.Players.Items do
     |> Repo.all()
   end
 
-  @spec update(Item.t(), map()) :: {:ok, Ecto.Schema.t()} | {:error, Ecto.Changeset.t()}
+  @spec update(Item.t(), map()) :: {:ok, Item.t()} | {:error, Ecto.Changeset.t()}
   def update(%Item{} = item, attrs) do
     item
     |> Item.changeset(attrs)
     |> Repo.update()
   end
 
-  @spec update!(Item.t(), map()) :: {:ok, Ecto.Schema.t()} | {:error, Ecto.Changeset.t()}
+  @spec update!(Item.t(), map()) :: {:ok, Item.t()} | {:error, Ecto.Changeset.t()}
   def update!(%Item{} = item, attrs) do
     item
     |> Item.changeset(attrs)
     |> Repo.update!()
   end
 
-  @spec delete(Item.t()) :: {:ok, Ecto.Schema.t()} | {:error, Ecto.Changeset.t()}
+  @spec delete(Item.t()) :: {:ok, Item.t()} | {:error, Ecto.Changeset.t()}
   def delete(%Item{} = item) do
     Repo.delete(item)
   end
 
-  @spec delete!(Item.t()) :: {:ok, Ecto.Schema.t()} | {:error, Ecto.Changeset.t()}
+  @spec delete!(Item.t()) :: {:ok, Item.t()} | {:error, Ecto.Changeset.t()}
   def delete!(%Item{} = item) do
     Repo.delete!(item)
   end

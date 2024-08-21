@@ -8,9 +8,11 @@ defmodule ElvenDatabase.Players.Item do
   require ElvenData.Enums.ItemEnums, as: ItemEnums
 
   alias __MODULE__
+  alias ElvenDatabase.Players.Character
 
+  @type id :: non_neg_integer()
   @type t :: %Item{
-          id: non_neg_integer(),
+          id: id(),
           owner_id: non_neg_integer(),
           inventory_type: ItemEnums.inventory_type_keys(),
           slot: ItemEnums.slot_type() | non_neg_integer(),
@@ -53,9 +55,14 @@ defmodule ElvenDatabase.Players.Item do
         attrs -> attrs
       end
 
+    attrs =
+      case attrs do
+        %{owner: %Character{} = owner} -> Map.put(attrs, :owner_id, owner.id)
+        attrs -> attrs
+      end
+
     item
     |> cast(attrs, @fields)
-    # |> cast_assoc(:owner)
     |> foreign_key_constraint(:owner_id)
     |> validate_required(@fields)
     |> unique_constraint(:slot, name: :owner_inventory_slot)

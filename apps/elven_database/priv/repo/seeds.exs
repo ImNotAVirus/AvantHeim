@@ -13,7 +13,6 @@
 alias ElvenDatabase.Players.{
   Account,
   Accounts,
-  Character,
   Characters,
   Items
 }
@@ -35,7 +34,7 @@ alias ElvenDatabase.Players.{
 
 ## Characters
 
-%Character{id: admin_char_id} = Characters.create!(%{
+admin_char = Characters.create!(%{
   account_id: admin_id,
   slot: 1,
   name: "DarkyZ",
@@ -63,7 +62,7 @@ alias ElvenDatabase.Players.{
   compliment: 500
 })
 
-%Character{id: user_char_id} = Characters.create!(%{
+user_char = Characters.create!(%{
   account_id: user_id,
   slot: 0,
   name: "ExampleUser",
@@ -118,8 +117,8 @@ base_items = [
   }
 ]
 
-for item <- base_items, character_id <- [admin_char_id, user_char_id] do
+for item <- base_items, character <- [admin_char, user_char] do
   item
-  |> Map.put(:owner_id, character_id)
+  |> Map.put(:owner, character)
   |> Items.create!()
 end
