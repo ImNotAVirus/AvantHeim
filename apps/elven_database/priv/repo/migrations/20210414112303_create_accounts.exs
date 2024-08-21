@@ -1,13 +1,10 @@
 defmodule ElvenDatabase.Repo.Migrations.CreateAccounts do
   use Ecto.Migration
 
-  require ElvenDatabase.EctoEnumHelpers
-  require ElvenData.Enums.PlayerEnums
+  require ElvenDatabase.EctoEnumHelpers, as: EctoEnumHelpers
+  require ElvenData.Enums.PlayerEnums, as: PlayerEnums
 
-  alias ElvenDatabase.EctoEnumHelpers
-  alias ElvenData.Enums.PlayerEnums
-
-  def change do
+  def change() do
     execute(
       EctoEnumHelpers.create_query(PlayerEnums, :authority),
       EctoEnumHelpers.drop_query(:authority)

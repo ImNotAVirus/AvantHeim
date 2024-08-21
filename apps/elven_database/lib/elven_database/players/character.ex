@@ -6,9 +6,12 @@ defmodule ElvenDatabase.Players.Character do
   import Ecto.Changeset
   # import EctoBitfield
 
-  require ElvenData.Enums.PlayerEnums
+  require ElvenData.Enums.PlayerEnums, as: PlayerEnums
 
-  alias ElvenData.Enums.PlayerEnums
+  alias ElvenDatabase.Players.Item
+
+  # FIXME: Later improve this typespec
+  @type t :: %__MODULE__{}
 
   # defbitfield GameOptions,
   #   exchange_blocked: round(:math.pow(2, 1)),
@@ -25,6 +28,8 @@ defmodule ElvenDatabase.Players.Character do
   #   miniland_invite_blocked: round(:math.pow(2, 15)),
   #   hats_hidden: round(:math.pow(2, 16)),
   #   ui_locked: round(:math.pow(2, 17))
+
+  ## Schema
 
   schema "characters" do
     belongs_to :account, ElvenDatabase.Players.Account
@@ -79,6 +84,8 @@ defmodule ElvenDatabase.Players.Character do
     field :miniland_makepoints, :integer
 
     # field :game_options, GameOptions
+
+    has_many :items, Item, foreign_key: :owner_id
 
     timestamps()
   end
@@ -136,8 +143,8 @@ defmodule ElvenDatabase.Players.Character do
   @name_regex ~r/^[\x21-\x7E\xA1-\xAC\xAE-\xFF\x{4e00}-\x{9fa5}\x{0E01}-\x{0E3A}\x{0E3F}-\x{0E5B}\x2E]{4,14}$/u
 
   @doc false
-  def changeset(account, attrs) do
-    account
+  def changeset(character, attrs) do
+    character
     |> cast(attrs, @fields)
     |> cast_assoc(:account)
     |> validate_required(@required_fields)
@@ -147,8 +154,8 @@ defmodule ElvenDatabase.Players.Character do
   end
 
   @doc false
-  def disabled_changeset(account, attrs) do
-    account
+  def disabled_changeset(character, attrs) do
+    character
     |> cast(attrs, @fields)
     |> cast_assoc(:account)
     |> validate_required(@required_fields)

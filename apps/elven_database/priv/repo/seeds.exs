@@ -10,7 +10,12 @@
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.
 
-alias ElvenDatabase.Players.{Account, Accounts, Characters}
+alias ElvenDatabase.Players.{
+  Account,
+  Accounts,
+  Characters,
+  Items
+}
 
 ## Accounts
 
@@ -29,7 +34,7 @@ alias ElvenDatabase.Players.{Account, Accounts, Characters}
 
 ## Characters
 
-Characters.create!(%{
+admin_char = Characters.create!(%{
   account_id: admin_id,
   slot: 1,
   name: "DarkyZ",
@@ -57,7 +62,7 @@ Characters.create!(%{
   compliment: 500
 })
 
-Characters.create!(%{
+user_char = Characters.create!(%{
   account_id: user_id,
   slot: 0,
   name: "ExampleUser",
@@ -76,3 +81,44 @@ Characters.create!(%{
   dignity: 100,
   compliment: 50
 })
+
+## Base items
+
+base_items = [
+  %{
+    inventory_type: :equipped,
+    slot: :main_weapon,
+    vnum: 1,
+    quantity: 1,
+  },
+  %{
+    inventory_type: :equipped,
+    slot: :armor,
+    vnum: 12,
+    quantity: 1,
+  },
+  %{
+    inventory_type: :equipped,
+    slot: :secondary_weapon,
+    vnum: 8,
+    quantity: 1,
+  },
+  %{
+    inventory_type: :etc,
+    slot: 0,
+    vnum: 2024,
+    quantity: 10,
+  },
+  %{
+    inventory_type: :etc,
+    slot: 1,
+    vnum: 2081,
+    quantity: 1,
+  }
+]
+
+for item <- base_items, character <- [admin_char, user_char] do
+  item
+  |> Map.put(:owner, character)
+  |> Items.create!()
+end
