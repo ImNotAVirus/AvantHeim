@@ -49,6 +49,7 @@ defmodule ElvenDatabase.Players.Account do
   def changeset(account, attrs) do
     account
     |> cast(attrs, @fields)
+    |> cast_assoc(:characters)
     |> unique_constraint(:username)
     |> maybe_hash_password()
     |> validate_required([:username, :hashed_password])

@@ -17,8 +17,10 @@ defmodule ElvenDatabase.Players.ItemsTest do
 
     # Create characters for each account
     characters =
-      for account <- accounts, _ <- 1..characters_count do
-        Characters.create!(character_attrs(account.id))
+      for account <- accounts, index <- 0..(characters_count - 1) do
+        %{account: account, slot: index}
+        |> character_attrs()
+        |> Characters.create!()
       end
 
     # Return state
@@ -87,7 +89,7 @@ defmodule ElvenDatabase.Players.ItemsTest do
       }
 
       assert {:error, changeset} = Items.create(attrs)
-      assert changeset_error(changeset) == "owner_id does not exist"
+      assert changeset_error(changeset) == "owner does not exist"
     end
 
     @tag characters: 2
@@ -225,7 +227,7 @@ defmodule ElvenDatabase.Players.ItemsTest do
         })
 
       assert Items.get(item.id) == {:ok, item}
-      assert Items.get(10_000) == {:error, :not_found}
+      assert Items.get(-1) == {:error, :not_found}
     end
   end
 
@@ -243,7 +245,7 @@ defmodule ElvenDatabase.Players.ItemsTest do
       assert Items.get!(item.id) == item
 
       assert_raise Ecto.NoResultsError, fn ->
-        Items.get!(10_000)
+        Items.get!(-1)
       end
     end
   end

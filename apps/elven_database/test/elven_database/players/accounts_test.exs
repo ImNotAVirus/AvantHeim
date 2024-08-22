@@ -1,7 +1,7 @@
 defmodule ElvenDatabase.Players.AccountsTest do
   use ElvenDatabase.RepoCase, async: true
 
-  alias ElvenDatabase.Players.{Account, Accounts}
+  alias ElvenDatabase.Players.{Account, Accounts, Character}
 
   ## Tests
 
@@ -21,6 +21,7 @@ defmodule ElvenDatabase.Players.AccountsTest do
       assert account.hashed_password == hash(attrs.password)
       assert account.authority == nil
       assert account.language == nil
+      assert %Ecto.Association.NotLoaded{} = account.characters
 
       # Check data inserted 
       account = Accounts.get!(account.id)
@@ -33,6 +34,7 @@ defmodule ElvenDatabase.Players.AccountsTest do
       assert account.authority == :player
       # Default to :en language
       assert account.language == :en
+      assert %Ecto.Association.NotLoaded{} = account.characters
     end
 
     test "can create an account with hashed password" do
@@ -66,6 +68,24 @@ defmodule ElvenDatabase.Players.AccountsTest do
 
       assert {:ok, account} = Accounts.create(attrs)
       assert account.language == attrs.language
+    end
+
+    test "can create an account with characters" do
+      attrs = %{
+        username: random_string(),
+        hashed_password: hash(random_string()),
+        characters: [
+          character_attrs(%{slot: 0}),
+          character_attrs(%{slot: 1})
+        ]
+      }
+
+      assert {:ok, account} = Accounts.create(attrs)
+
+      # We need to preload characters first
+      account = Accounts.preload_characters(account)
+
+      assert length(account.characters) == 2
     end
 
     test "username is required" do
@@ -112,6 +132,7 @@ defmodule ElvenDatabase.Players.AccountsTest do
       assert account.hashed_password == hash(attrs.password)
       assert account.authority == nil
       assert account.language == nil
+      assert %Ecto.Association.NotLoaded{} = account.characters
 
       # Check data inserted 
       account = Accounts.get!(account.id)
@@ -124,6 +145,7 @@ defmodule ElvenDatabase.Players.AccountsTest do
       assert account.authority == :player
       # Default to :en language
       assert account.language == :en
+      assert %Ecto.Association.NotLoaded{} = account.characters
     end
 
     test "can create an account with hashed password" do
@@ -202,7 +224,7 @@ defmodule ElvenDatabase.Players.AccountsTest do
         })
 
       assert Accounts.get(account.id) == {:ok, account}
-      assert Accounts.get(10_000) == {:error, :not_found}
+      assert Accounts.get(-1) == {:error, :not_found}
     end
   end
 
@@ -219,7 +241,7 @@ defmodule ElvenDatabase.Players.AccountsTest do
       assert Accounts.get!(account.id) == account
 
       assert_raise Ecto.NoResultsError, fn ->
-        Accounts.get!(10_000)
+        Accounts.get!(-1)
       end
     end
   end
@@ -235,6 +257,42 @@ defmodule ElvenDatabase.Players.AccountsTest do
         })
 
       assert Accounts.authenticate(account.username, account.hashed_password) == {:ok, account}
+    end
+  end
+
+  describe "preload_characters/1" do
+    test "return a list of characters" do
+      account1 =
+        Accounts.create!(%{
+          username: random_string(),
+          password: random_string(),
+          authority: :player,
+          language: :en
+        })
+
+      account2 =
+        Accounts.create!(%{
+          username: random_string(),
+          password: random_string(),
+          authority: :game_master,
+          language: :fr,
+          characters: [
+            character_attrs(%{slot: 0}),
+            character_attrs(%{slot: 1})
+          ]
+        })
+
+      # Get without preload
+      account1 = Accounts.get!(account1.id)
+      account2 = Accounts.get!(account2.id)
+
+      assert %Ecto.Association.NotLoaded{} = account1.characters
+      assert %Account{} = preloaded_account1 = Accounts.preload_characters(account1)
+      assert preloaded_account1.characters == []
+
+      assert %Ecto.Association.NotLoaded{} = account2.characters
+      assert %Account{} = preloaded_account2 = Accounts.preload_characters(account2)
+      assert [%Character{}, %Character{}] = preloaded_account2.characters
     end
   end
 

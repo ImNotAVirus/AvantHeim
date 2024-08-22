@@ -49,4 +49,9 @@ defmodule ElvenDatabase.Players.Accounts do
   def get!(id) do
     Repo.get!(Account, id)
   end
+
+  @spec preload_characters(Account.t()) :: Account.t()
+  def preload_characters(account) do
+    Repo.preload(account, :characters)
+  end
 end

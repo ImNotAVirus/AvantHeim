@@ -51,6 +51,7 @@ defmodule ElvenDatabase.Players.Item do
 
   @spec changeset(Item.t(), map()) :: Ecto.Changeset.t()
   def changeset(%Item{} = item, attrs) do
+    # Convert slot_type atom to integer value
     attrs =
       case attrs do
         %{slot: slot} when is_atom(slot) -> Map.put(attrs, :slot, ItemEnums.slot_type(slot))
@@ -65,8 +66,8 @@ defmodule ElvenDatabase.Players.Item do
 
     item
     |> cast(attrs, @fields)
-    |> foreign_key_constraint(:owner_id)
     |> validate_required(@fields)
+    |> assoc_constraint(:owner)
     |> unique_constraint(:slot, name: :owner_inventory_slot)
   end
 end

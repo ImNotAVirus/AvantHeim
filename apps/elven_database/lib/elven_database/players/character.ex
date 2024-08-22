@@ -10,7 +10,7 @@ defmodule ElvenDatabase.Players.Character do
 
   require ElvenData.Enums.PlayerEnums, as: PlayerEnums
 
-  alias ElvenDatabase.Players.Item
+  alias ElvenDatabase.Players.{Account, Item}
 
   # FIXME: Later improve this typespec
   @type t :: %__MODULE__{}
@@ -35,6 +35,7 @@ defmodule ElvenDatabase.Players.Character do
 
   schema "characters" do
     belongs_to :account, ElvenDatabase.Players.Account
+
     field :name, :string
     field :slot, :integer
     field :disabled, :boolean
@@ -93,7 +94,6 @@ defmodule ElvenDatabase.Players.Character do
   end
 
   @required_fields [
-    :account_id,
     :name,
     :slot,
     :gender,
@@ -105,6 +105,7 @@ defmodule ElvenDatabase.Players.Character do
   ]
 
   @optional_fields [
+    :account_id,
     :disabled,
     :class,
     :faction,
@@ -146,12 +147,18 @@ defmodule ElvenDatabase.Players.Character do
 
   @doc false
   def changeset(character, attrs) do
+    attrs =
+      case attrs do
+        %{account: %Account{} = account} -> Map.put(attrs, :account_id, account.id)
+        attrs -> attrs
+      end
+
     character
     |> cast(attrs, @fields)
-    |> cast_assoc(:account)
     |> validate_required(@required_fields)
     |> validate_format(:name, @name_regex)
     |> update_change(:name, &String.trim/1)
+    |> assoc_constraint(:account)
     |> unique_constraint(:name)
     |> unique_constraint(:slot, name: :account_slot)
   end
@@ -160,9 +167,9 @@ defmodule ElvenDatabase.Players.Character do
   def disabled_changeset(character, attrs) do
     character
     |> cast(attrs, @fields)
-    |> cast_assoc(:account)
     |> validate_required(@required_fields)
     |> validate_length(:name, min: 4, max: 32)
+    |> assoc_constraint(:account)
     |> unique_constraint(:name)
     |> unique_constraint(:slot, name: :account_slot)
   end
