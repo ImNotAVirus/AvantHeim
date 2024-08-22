@@ -46,7 +46,7 @@ defmodule ElvenDatabase.RepoCase do
   def character_attrs(attrs \\ %{}) do
     base_attrs =
       %{
-        slot: Enum.random(0..3),
+        slot: 0,
         name: random_string(),
         gender: :female,
         hair_style: :hair_style_a,

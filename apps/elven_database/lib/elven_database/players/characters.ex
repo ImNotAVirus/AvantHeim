@@ -5,10 +5,19 @@ defmodule ElvenDatabase.Players.Characters do
 
   import Ecto.Query, only: [from: 2]
 
-  alias ElvenDatabase.Players.Character
+  alias ElvenDatabase.Players.{Account, Character}
   alias ElvenDatabase.Repo
 
-  @spec all_by_account_id(pos_integer, boolean) :: [Character.t()]
+  # Dyalizer doesn't like `Character.changeset(%Character{}, attrs)`
+  # because fields on Character struct can't be nil
+  @dialyzer [
+    {:no_return, create: 1, create!: 1},
+    {:no_fail_call, create: 1, create!: 1}
+  ]
+
+  ## Public API
+
+  @spec all_by_account_id(Account.id(), boolean()) :: [Character.t()]
   def all_by_account_id(account_id, include_disabled \\ false)
 
   def all_by_account_id(account_id, true) do
@@ -21,7 +30,7 @@ defmodule ElvenDatabase.Players.Characters do
     |> Repo.all()
   end
 
-  @spec get_by_account_id_and_slot(pos_integer, non_neg_integer) :: Character.t() | nil
+  @spec get_by_account_id_and_slot(Account.id(), Character.slot()) :: Character.t() | nil
   def get_by_account_id_and_slot(account_id, slot) do
     from(a in Character,
       where:
@@ -31,17 +40,35 @@ defmodule ElvenDatabase.Players.Characters do
     |> Repo.one()
   end
 
-  @spec create(map) :: {:ok, Ecto.Schema.t()} | {:error, Ecto.Changeset.t()}
+  @spec create(map()) :: {:ok, Character.t()} | {:error, Ecto.Changeset.t()}
   def create(attrs) do
     %Character{}
     |> Character.changeset(attrs)
     |> Repo.insert()
   end
 
-  @spec create!(map) :: Ecto.Schema.t()
+  @spec create!(map()) :: Character.t()
   def create!(attrs) do
     %Character{}
     |> Character.changeset(attrs)
     |> Repo.insert!()
+  end
+
+  @spec get(Character.id()) :: {:ok, Character.t()} | {:error, :not_found}
+  def get(id) do
+    case Repo.get(Character, id) do
+      nil -> {:error, :not_found}
+      item -> {:ok, item}
+    end
+  end
+
+  @spec get!(Character.id()) :: Character.t()
+  def get!(id) do
+    Repo.get!(Character, id)
+  end
+
+  @spec preload_items(Character.t()) :: Character.t()
+  def preload_items(account) do
+    Repo.preload(account, :items)
   end
 end

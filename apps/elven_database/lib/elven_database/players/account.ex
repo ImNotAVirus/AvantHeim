@@ -45,11 +45,11 @@ defmodule ElvenDatabase.Players.Account do
 
   @fields [:username, :password, :hashed_password, :authority, :language]
 
-  @spec changeset(Account.t(), map()) :: Ecto.Changeset.t()
+  @spec changeset(t(), map()) :: Ecto.Changeset.t()
   def changeset(account, attrs) do
     account
     |> cast(attrs, @fields)
-    |> cast_assoc(:characters)
+    |> cast_assoc(:characters, with: &Character.assoc_changeset/2)
     |> unique_constraint(:username)
     |> maybe_hash_password()
     |> validate_required([:username, :hashed_password])

@@ -13,12 +13,13 @@ defmodule ElvenDatabase.Players.Item do
   alias ElvenDatabase.Players.Character
 
   @type id :: non_neg_integer()
+  @type vnum :: non_neg_integer()
   @type t :: %Item{
           id: id(),
-          owner_id: non_neg_integer(),
+          owner_id: Character.id(),
           inventory_type: ItemEnums.inventory_type_keys(),
           slot: ItemEnums.slot_type() | non_neg_integer(),
-          vnum: non_neg_integer(),
+          vnum: vnum(),
           quantity: non_neg_integer(),
           # Ecto fields
           __meta__: Ecto.Schema.Metadata.t(),
@@ -49,7 +50,7 @@ defmodule ElvenDatabase.Players.Item do
     :quantity
   ]
 
-  @spec changeset(Item.t(), map()) :: Ecto.Changeset.t()
+  @spec changeset(t(), map()) :: Ecto.Changeset.t()
   def changeset(%Item{} = item, attrs) do
     # Convert slot_type atom to integer value
     attrs =
