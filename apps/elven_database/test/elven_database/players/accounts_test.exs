@@ -191,6 +191,53 @@ defmodule ElvenDatabase.Players.AccountsTest do
     end
   end
 
+  describe "get/1" do
+    test "get account by id" do
+      account =
+        Accounts.create!(%{
+          username: random_string(),
+          password: random_string(),
+          authority: :game_master,
+          language: :fr
+        })
+
+      assert Accounts.get(account.id) == {:ok, account}
+      assert Accounts.get(10_000) == {:error, :not_found}
+    end
+  end
+
+  describe "get!/1" do
+    test "get account by id" do
+      account =
+        Accounts.create!(%{
+          username: random_string(),
+          password: random_string(),
+          authority: :game_master,
+          language: :fr
+        })
+
+      assert Accounts.get!(account.id) == account
+
+      assert_raise Ecto.NoResultsError, fn ->
+        Accounts.get!(10_000)
+      end
+    end
+  end
+
+  describe "authenticate/2" do
+    test "get account by username and hashed_password" do
+      account =
+        Accounts.create!(%{
+          username: random_string(),
+          password: random_string(),
+          authority: :game_master,
+          language: :fr
+        })
+
+      assert Accounts.authenticate(account.username, account.hashed_password) == {:ok, account}
+    end
+  end
+
   ## Private functions
 
   defp hash(password) do

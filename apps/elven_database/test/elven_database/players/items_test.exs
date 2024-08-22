@@ -215,7 +215,7 @@ defmodule ElvenDatabase.Players.ItemsTest do
 
   describe "get/1" do
     test "get item by id", %{characters: [character]} do
-      item1 =
+      item =
         Items.create!(%{
           owner: character,
           inventory_type: :etc,
@@ -224,14 +224,14 @@ defmodule ElvenDatabase.Players.ItemsTest do
           quantity: 3
         })
 
-      assert Items.get(item1.id) == {:ok, item1}
+      assert Items.get(item.id) == {:ok, item}
       assert Items.get(10_000) == {:error, :not_found}
     end
   end
 
   describe "get!/1" do
     test "get item by id", %{characters: [character]} do
-      item1 =
+      item =
         Items.create!(%{
           owner: character,
           inventory_type: :etc,
@@ -240,7 +240,7 @@ defmodule ElvenDatabase.Players.ItemsTest do
           quantity: 3
         })
 
-      assert Items.get!(item1.id) == item1
+      assert Items.get!(item.id) == item
 
       assert_raise Ecto.NoResultsError, fn ->
         Items.get!(10_000)
