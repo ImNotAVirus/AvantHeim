@@ -28,7 +28,7 @@ defmodule ElvenDatabase.Players.ItemsTest do
   ## Tests
 
   describe "create/1" do
-    test "can create an item using owner", %{characters: [character]} do
+    test "can create an item with owner", %{characters: [character]} do
       attrs = %{
         owner: character,
         inventory_type: :etc,
@@ -46,7 +46,7 @@ defmodule ElvenDatabase.Players.ItemsTest do
       assert item.quantity == 3
     end
 
-    test "can create an item using owner_id", %{characters: [character]} do
+    test "can create an item with owner_id", %{characters: [character]} do
       attrs = %{
         owner_id: character.id,
         inventory_type: :etc,
@@ -248,8 +248,8 @@ defmodule ElvenDatabase.Players.ItemsTest do
     end
   end
 
-  @tag characters: 2
   describe "list_by_owner/1" do
+    @tag characters: 2
     test "list items by owner", %{characters: characters} do
       [character1, character2] = characters
 

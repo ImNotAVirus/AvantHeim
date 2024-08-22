@@ -1,5 +1,7 @@
 defmodule ElvenDatabase.Players.Character do
-  @moduledoc false
+  @moduledoc """
+  Holds information about a Character.
+  """
 
   use Ecto.Schema
 
@@ -151,6 +153,7 @@ defmodule ElvenDatabase.Players.Character do
     |> validate_format(:name, @name_regex)
     |> update_change(:name, &String.trim/1)
     |> unique_constraint(:name)
+    |> unique_constraint(:slot, name: :account_slot)
   end
 
   @doc false
@@ -161,5 +164,6 @@ defmodule ElvenDatabase.Players.Character do
     |> validate_required(@required_fields)
     |> validate_length(:name, min: 4, max: 32)
     |> unique_constraint(:name)
+    |> unique_constraint(:slot, name: :account_slot)
   end
 end

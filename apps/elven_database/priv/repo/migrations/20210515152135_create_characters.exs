@@ -93,5 +93,6 @@ defmodule ElvenDatabase.Repo.Migrations.CreateCharacters do
     end
 
     create unique_index(:characters, [:name])
+    create unique_index(:characters, [:account_id, :slot], name: :account_slot)
   end
 end

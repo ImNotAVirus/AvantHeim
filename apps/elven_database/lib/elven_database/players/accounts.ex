@@ -1,27 +1,52 @@
 defmodule ElvenDatabase.Players.Accounts do
   @moduledoc """
-  TODO: Documentation
+  Module for querying Accounts information from the database.
   """
 
   alias ElvenDatabase.Players.Account
   alias ElvenDatabase.Repo
 
-  @spec log_in(String.t(), String.t()) :: Ecto.Schema.t() | nil
-  def log_in(username, hashed_password) do
-    Repo.get_by(Account, username: username, hashed_password: hashed_password)
+  # Dyalizer doesn't like `Account.changeset(%Account{}, attrs)`
+  # because fields on Account struct can't be nil
+  @dialyzer [
+    {:no_return, create: 1, create!: 1},
+    {:no_fail_call, create: 1, create!: 1}
+  ]
+
+  ## Public API
+
+  @spec authenticate(String.t(), String.t()) :: {:ok, Account.t()} | {:error, :not_found}
+  def authenticate(username, hashed_password) do
+    case Repo.get_by(Account, username: username, hashed_password: hashed_password) do
+      %Account{} = account -> {:ok, account}
+      nil -> {:error, :not_found}
+    end
   end
 
-  @spec create(map) :: {:ok, Ecto.Schema.t()} | {:error, Ecto.Changeset.t()}
+  @spec create(map()) :: {:ok, Account.t()} | {:error, Ecto.Changeset.t()}
   def create(attrs) do
     %Account{}
     |> Account.changeset(attrs)
     |> Repo.insert()
   end
 
-  @spec create!(map) :: Ecto.Schema.t()
+  @spec create!(map()) :: Account.t()
   def create!(attrs) do
     %Account{}
     |> Account.changeset(attrs)
     |> Repo.insert!()
+  end
+
+  @spec get(Account.id()) :: {:ok, Account.t()} | {:error, :not_found}
+  def get(id) do
+    case Repo.get(Account, id) do
+      nil -> {:error, :not_found}
+      item -> {:ok, item}
+    end
+  end
+
+  @spec get!(Account.id()) :: Account.t()
+  def get!(id) do
+    Repo.get!(Account, id)
   end
 end

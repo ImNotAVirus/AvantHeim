@@ -1,5 +1,7 @@
 defmodule ElvenDatabase.Players.Item do
-  @moduledoc false
+  @moduledoc """
+  Holds information about an Item.
+  """
 
   use Ecto.Schema
 

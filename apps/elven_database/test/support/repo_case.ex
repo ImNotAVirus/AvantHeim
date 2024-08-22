@@ -24,6 +24,10 @@ defmodule ElvenDatabase.RepoCase do
 
   ## Public API
 
+  def random_string() do
+    :crypto.strong_rand_bytes(5) |> Base.encode16(case: :lower)
+  end
+
   def changeset_error(%Ecto.Changeset{errors: [{field, {error, _}}]}) do
     "#{field} #{error}"
   end
@@ -64,11 +68,5 @@ defmodule ElvenDatabase.RepoCase do
       sp_additional_points: 500_000,
       compliment: 500
     }
-  end
-
-  ## Private API
-
-  defp random_string() do
-    :crypto.strong_rand_bytes(5) |> Base.encode16(case: :lower)
   end
 end

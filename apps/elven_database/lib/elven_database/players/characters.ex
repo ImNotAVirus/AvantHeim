@@ -1,6 +1,6 @@
 defmodule ElvenDatabase.Players.Characters do
   @moduledoc """
-  TODO: Documentation
+  Module for querying Characters information from the database.
   """
 
   import Ecto.Query, only: [from: 2]

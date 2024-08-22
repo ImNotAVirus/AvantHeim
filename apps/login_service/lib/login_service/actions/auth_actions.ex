@@ -93,9 +93,9 @@ defmodule LoginService.AuthActions do
   end
 
   defp check_credentials(%{username: username, password: password}, _socket) do
-    case Accounts.log_in(username, password) do
-      %Account{} = account -> {:ok, account}
-      nil -> {:error, :bad_credentials}
+    case Accounts.authenticate(username, password) do
+      {:ok, account} -> {:ok, account}
+      {:error, :not_found} -> {:error, :bad_credentials}
     end
   end
 

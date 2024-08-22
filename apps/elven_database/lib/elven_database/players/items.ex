@@ -1,6 +1,6 @@
 defmodule ElvenDatabase.Players.Items do
   @moduledoc """
-  TODO: Documentation
+  Module for querying Items information from the database.
   """
 
   import Ecto.Query, only: [from: 2]

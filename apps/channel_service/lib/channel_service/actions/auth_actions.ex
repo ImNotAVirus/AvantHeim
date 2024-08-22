@@ -44,9 +44,9 @@ defmodule ChannelService.AuthActions do
     # FIXME: maybe use the Session struct here
     %{username: username, password: password} = session
 
-    case Accounts.log_in(username, password) do
-      %Account{} = acc -> {:ok, acc}
-      _ -> {:error, :cant_fetch_account}
+    case Accounts.authenticate(username, password) do
+      {:ok, account} -> {:ok, account}
+      {:error, :not_found} -> {:error, :cant_fetch_account}
     end
   end
 
