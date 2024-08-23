@@ -51,7 +51,20 @@ defmodule ElvenDatabase.Players.Item do
   ]
 
   @spec changeset(t(), map()) :: Ecto.Changeset.t()
-  def changeset(%Item{} = item, attrs) do
+  def changeset(%Item{} = character, attrs) do
+    changeset(character, attrs, @fields)
+  end
+
+  @spec assoc_changeset(t(), map()) :: Ecto.Changeset.t()
+  def assoc_changeset(%Item{} = character, attrs) do
+    # In case of cast_assoc, :owner_id field is automatically created so it's
+    # not required
+    changeset(character, attrs, List.delete(@fields, :owner_id))
+  end
+
+  ## Private functions
+
+  defp changeset(item, attrs, required_fields) do
     # Convert slot_type atom to integer value
     attrs =
       case attrs do
@@ -67,7 +80,7 @@ defmodule ElvenDatabase.Players.Item do
 
     item
     |> cast(attrs, @fields)
-    |> validate_required(@fields)
+    |> validate_required(required_fields)
     |> assoc_constraint(:owner)
     |> unique_constraint(:slot, name: :owner_inventory_slot)
   end

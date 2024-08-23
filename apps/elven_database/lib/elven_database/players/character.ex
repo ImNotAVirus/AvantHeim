@@ -196,21 +196,23 @@ defmodule ElvenDatabase.Players.Character do
   ## Public API
 
   @fields @required_fields ++ @optional_fields
-  @name_regex ~r/^[\x21-\x7E\xA1-\xAC\xAE-\xFF\x{4e00}-\x{9fa5}\x{0E01}-\x{0E3A}\x{0E3F}-\x{0E5B}\x2E]{4,14}$/u
+  @name_regex ~r/^[\x21-\x7E\xA1-\xAC\xAE-\xFF\x{4e00}-\x{9fa5}\x{0E01}-\x{0E3A}\x{0E3F}-\x{0E5B}\x2E]+$/u
 
   @spec changeset(t(), map()) :: Ecto.Changeset.t()
-  def changeset(character, attrs) do
+  def changeset(%Character{} = character, attrs) do
     changeset(character, attrs, @required_fields)
   end
 
   @spec assoc_changeset(t(), map()) :: Ecto.Changeset.t()
-  def assoc_changeset(character, attrs) do
+  def assoc_changeset(%Character{} = character, attrs) do
+    # In case of cast_assoc, :account_id field is automatically created so it's
+    # not required
     changeset(character, attrs, List.delete(@required_fields, :account_id))
   end
 
   # FIXME: Refacto soft deletion
   @spec disabled_changeset(t(), map()) :: Ecto.Changeset.t()
-  def disabled_changeset(character, attrs) do
+  def disabled_changeset(%Character{} = character, attrs) do
     character
     |> cast(attrs, @fields)
     |> validate_required(@required_fields)
@@ -231,10 +233,11 @@ defmodule ElvenDatabase.Players.Character do
 
     character
     |> cast(attrs, @fields)
+    |> cast_assoc(:items, with: &Item.assoc_changeset/2)
     |> validate_required(required_fields)
     # TODO: Later support encoding for others languages like CH, JP, ...
+    |> validate_length(:name, min: 4, max: 14)
     |> validate_format(:name, @name_regex)
-    |> update_change(:name, &String.trim/1)
     |> assoc_constraint(:account)
     |> unique_constraint(:name)
     |> unique_constraint(:slot, name: :account_slot)

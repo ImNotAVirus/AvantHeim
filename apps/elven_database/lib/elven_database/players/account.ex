@@ -46,7 +46,7 @@ defmodule ElvenDatabase.Players.Account do
   @fields [:username, :password, :hashed_password, :authority, :language]
 
   @spec changeset(t(), map()) :: Ecto.Changeset.t()
-  def changeset(account, attrs) do
+  def changeset(%Account{} = account, attrs) do
     account
     |> cast(attrs, @fields)
     |> cast_assoc(:characters, with: &Character.assoc_changeset/2)

@@ -26,8 +26,8 @@ defmodule ElvenDatabase.Players.AccountsTest do
       # Check data inserted 
       account = Accounts.get!(account.id)
 
-      assert %Account{} = account
       assert account.username == attrs.username
+      # Password shouln't be persisted
       assert account.password == nil
       assert account.hashed_password == hash(attrs.password)
       # Default to :player authority
@@ -137,8 +137,8 @@ defmodule ElvenDatabase.Players.AccountsTest do
       # Check data inserted 
       account = Accounts.get!(account.id)
 
-      assert %Account{} = account
       assert account.username == attrs.username
+      # Password shouldn't be persisted
       assert account.password == nil
       assert account.hashed_password == hash(attrs.password)
       # Default to :player authority

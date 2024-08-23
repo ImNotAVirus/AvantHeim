@@ -25,16 +25,37 @@ defmodule ElvenDatabase.RepoCase do
 
   ## Public API
 
+  @doc """
+  Return a random string.
+  """
+  @spec random_string() :: String.t()
   def random_string() do
     :crypto.strong_rand_bytes(5) |> Base.encode16(case: :lower)
   end
 
+  @doc """
+  Transform an `Ecto.Changeset.t()` into a string.
+  """
+  @spec changeset_error(Ecto.Changeset.t()) :: String.t()
   def changeset_error(%Ecto.Changeset{errors: errors}) do
     errors
-    |> Enum.map(fn {field, {error, _}} -> "#{field} #{error}" end)
+    |> Enum.map(fn {field, {error, opts}} ->
+      full_error =
+        error
+        |> then(&Regex.scan(~r/%\{(\w+)\}/, &1, capture: :all_but_first))
+        |> List.flatten()
+        |> Enum.uniq()
+        |> Enum.reduce(error, &String.replace(&2, "%{#{&1}}", "#{opts[String.to_atom(&1)]}"))
+
+      "#{field} #{full_error}"
+    end)
     |> Enum.join(" - ")
   end
 
+  @doc """
+  Return a map containing random attributes for an account creation.
+  """
+  @spec account_attrs() :: map()
   def account_attrs() do
     %{
       username: random_string(),
@@ -43,6 +64,10 @@ defmodule ElvenDatabase.RepoCase do
     }
   end
 
+  @doc """
+  Return a map containing random attributes for a character creation.
+  """
+  @spec character_attrs(map()) :: map()
   def character_attrs(attrs \\ %{}) do
     base_attrs =
       %{
@@ -77,6 +102,28 @@ defmodule ElvenDatabase.RepoCase do
     case attrs do
       %{account: account} -> Map.put(base_attrs, :account, account)
       %{account_id: account_id} -> Map.put(base_attrs, :account_id, account_id)
+      _ -> base_attrs
+    end
+  end
+
+  @doc """
+  Return a map containing random attributes for an item creation.
+  """
+  @spec item_attrs(map()) :: map()
+  def item_attrs(attrs \\ %{}) do
+    base_attrs =
+      %{
+        inventory_type: :etc,
+        slot: 0,
+        vnum: Enum.random(1..9999),
+        quantity: Enum.random(1..100)
+      }
+
+    base_attrs = Map.merge(base_attrs, attrs)
+
+    case attrs do
+      %{owner: owner} -> Map.put(base_attrs, :owner, owner)
+      %{owner_id: owner_id} -> Map.put(base_attrs, :owner_id, owner_id)
       _ -> base_attrs
     end
   end
