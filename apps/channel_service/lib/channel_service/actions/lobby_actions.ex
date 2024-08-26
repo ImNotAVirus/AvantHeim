@@ -29,7 +29,7 @@ defmodule ChannelService.LobbyActions do
     %Account{id: account_id} = account
 
     new_socket =
-      case Characters.get_by_account_id_and_slot(account_id, slot) do
+      case Characters.get_by_account_and_slot(account_id, slot) do
         nil ->
           Logger.warning("Invalid character slot", socket_id: socket.id)
           socket

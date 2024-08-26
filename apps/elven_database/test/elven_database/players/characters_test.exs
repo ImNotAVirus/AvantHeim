@@ -1,7 +1,7 @@
 defmodule ElvenDatabase.Players.CharactersTest do
   use ElvenDatabase.RepoCase, async: true
 
-  alias ElvenDatabase.Players.{Accounts, Character, Characters}
+  alias ElvenDatabase.Players.{Accounts, Character, Characters, Item}
 
   ## Setup
 
@@ -559,6 +559,144 @@ defmodule ElvenDatabase.Players.CharactersTest do
       assert_raise Ecto.NoResultsError, fn ->
         Characters.get!(-1)
       end
+    end
+  end
+
+  describe "get_by_account_and_slot/2" do
+    test "return the character by account and slot", %{accounts: [account]} do
+      attrs = %{
+        account: account,
+        name: random_string(),
+        slot: 0,
+        gender: :female,
+        hair_color: :dark_purple,
+        hair_style: :hair_style_a,
+        map_id: 1,
+        map_x: 77,
+        map_y: 113
+      }
+
+      character = Characters.create!(attrs)
+
+      # Fetch all attributes from database
+      db_character = Characters.get!(character.id)
+
+      assert Characters.get_by_account_and_slot(account, 0) == {:ok, db_character}
+      assert Characters.get_by_account_and_slot(account, 1) == {:error, :not_found}
+    end
+
+    test "return the character by account_id and slot", %{accounts: [account]} do
+      attrs = %{
+        account: account,
+        name: random_string(),
+        slot: 0,
+        gender: :female,
+        hair_color: :dark_purple,
+        hair_style: :hair_style_a,
+        map_id: 1,
+        map_x: 77,
+        map_y: 113
+      }
+
+      character = Characters.create!(attrs)
+
+      # Fetch all attributes from database
+      db_character = Characters.get!(character.id)
+
+      assert Characters.get_by_account_and_slot(account.id, 0) == {:ok, db_character}
+      assert Characters.get_by_account_and_slot(account.id, 1) == {:error, :not_found}
+    end
+  end
+
+  describe "list_by_account/2" do
+    test "return the character list by account", %{accounts: [account]} do
+      attrs = %{
+        account: account,
+        name: random_string(),
+        slot: 0,
+        gender: :female,
+        hair_color: :dark_purple,
+        hair_style: :hair_style_a,
+        map_id: 1,
+        map_x: 77,
+        map_y: 113
+      }
+
+      character = Characters.create!(attrs)
+
+      # Fetch all attributes from database
+      db_character = Characters.get!(character.id)
+
+      assert Characters.list_by_account(account) == [db_character]
+    end
+
+    test "return the character list by account_id", %{accounts: [account]} do
+      attrs = %{
+        account: account,
+        name: random_string(),
+        slot: 0,
+        gender: :female,
+        hair_color: :dark_purple,
+        hair_style: :hair_style_a,
+        map_id: 1,
+        map_x: 77,
+        map_y: 113
+      }
+
+      character = Characters.create!(attrs)
+
+      # Fetch all attributes from database
+      db_character = Characters.get!(character.id)
+
+      assert Characters.list_by_account(account.id) == [db_character]
+      assert Characters.list_by_account(-1) == []
+    end
+  end
+
+  describe "preload_items/1" do
+    test "return a list of items", %{accounts: [account]} do
+      character1 =
+        Characters.create!(%{
+          account: account,
+          name: random_string(),
+          slot: 0,
+          gender: :female,
+          hair_color: :dark_purple,
+          hair_style: :hair_style_a,
+          map_id: 1,
+          map_x: 77,
+          map_y: 113
+        })
+
+      character2 =
+        Characters.create!(%{
+          account: account,
+          name: random_string(),
+          slot: 1,
+          gender: :female,
+          hair_color: :dark_purple,
+          hair_style: :hair_style_a,
+          map_id: 1,
+          map_x: 77,
+          map_y: 113,
+          items: [
+            item_attrs(%{slot: 0}),
+            item_attrs(%{slot: 1}),
+            item_attrs(%{slot: 2})
+          ]
+        })
+
+      # Get without preload
+      character1 = Characters.get!(character1.id)
+      character2 = Characters.get!(character2.id)
+
+      assert %Ecto.Association.NotLoaded{} = character1.items
+      assert %Character{} = preloaded_character1 = Characters.preload_items(character1)
+      assert preloaded_character1.items == []
+
+      assert %Ecto.Association.NotLoaded{} = character2.items
+      assert %Character{} = preloaded_character2 = Characters.preload_items(character2)
+      assert [%Item{}, %Item{}, %Item{}] = preloaded_character2.items
     end
   end
 end

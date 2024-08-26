@@ -20,7 +20,6 @@ defmodule ElvenDatabase.Players.Character do
           account_id: Account.id(),
           name: String.t(),
           slot: slot(),
-          disabled: boolean(),
           class: PlayerEnums.character_class_keys(),
           faction: PlayerEnums.faction_keys(),
           gender: PlayerEnums.gender_keys(),
@@ -84,12 +83,11 @@ defmodule ElvenDatabase.Players.Character do
 
   ## Schema
 
-  schema "characters" do
+  schema "visible_characters" do
     belongs_to :account, ElvenDatabase.Players.Account
 
     field :name, :string
     field :slot, :integer
-    field :disabled, :boolean
 
     field :class, Ecto.Enum, values: PlayerEnums.character_class(:__keys__)
     field :faction, Ecto.Enum, values: PlayerEnums.faction(:__keys__)
@@ -141,6 +139,7 @@ defmodule ElvenDatabase.Players.Character do
 
     has_many :items, Item, foreign_key: :owner_id
 
+    field :deleted_at, :utc_datetime
     timestamps()
   end
 
@@ -157,7 +156,6 @@ defmodule ElvenDatabase.Players.Character do
   ]
 
   @optional_fields [
-    :disabled,
     :class,
     :faction,
     :additional_hp,
@@ -239,7 +237,7 @@ defmodule ElvenDatabase.Players.Character do
     |> validate_length(:name, min: 4, max: 14)
     |> validate_format(:name, @name_regex)
     |> assoc_constraint(:account)
-    |> unique_constraint(:name)
+    |> unique_constraint(:name, name: :characters_name)
     |> unique_constraint(:slot, name: :account_slot)
   end
 end

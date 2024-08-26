@@ -15,30 +15,9 @@ defmodule ElvenDatabase.Players.Characters do
     {:no_fail_call, create: 1, create!: 1}
   ]
 
+  @typep account :: Account.t() | Account.id()
+
   ## Public API
-
-  @spec all_by_account_id(Account.id(), boolean()) :: [Character.t()]
-  def all_by_account_id(account_id, include_disabled \\ false)
-
-  def all_by_account_id(account_id, true) do
-    from(c in Character, where: c.account_id == ^account_id)
-    |> Repo.all()
-  end
-
-  def all_by_account_id(account_id, false) do
-    from(c in Character, where: c.account_id == ^account_id and c.disabled == false)
-    |> Repo.all()
-  end
-
-  @spec get_by_account_id_and_slot(Account.id(), Character.slot()) :: Character.t() | nil
-  def get_by_account_id_and_slot(account_id, slot) do
-    from(a in Character,
-      where:
-        a.account_id == ^account_id and
-          a.slot == ^slot and a.disabled == false
-    )
-    |> Repo.one()
-  end
 
   @spec create(map()) :: {:ok, Character.t()} | {:error, Ecto.Changeset.t()}
   def create(attrs) do
@@ -65,6 +44,29 @@ defmodule ElvenDatabase.Players.Characters do
   @spec get!(Character.id()) :: Character.t()
   def get!(id) do
     Repo.get!(Character, id)
+  end
+
+  @spec get_by_account_and_slot(account(), Character.slot()) ::
+          {:ok, Character.t()} | {:error, :not_found}
+  def get_by_account_and_slot(%Account{id: account_id}, slot) do
+    get_by_account_and_slot(account_id, slot)
+  end
+
+  def get_by_account_and_slot(account_id, slot) do
+    case Repo.get_by(Character, account_id: account_id, slot: slot) do
+      %Character{} = character -> {:ok, character}
+      nil -> {:error, :not_found}
+    end
+  end
+
+  @spec list_by_account(account()) :: [Character.t()]
+  def list_by_account(%Account{id: account_id}) do
+    list_by_account(account_id)
+  end
+
+  def list_by_account(account_id) do
+    from(c in Character, where: c.account_id == ^account_id)
+    |> Repo.all()
   end
 
   @spec preload_items(Character.t()) :: Character.t()
