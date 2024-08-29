@@ -106,6 +106,15 @@ defmodule ElvenDatabase.Repo.Migrations.CreateCharacters do
       "CREATE OR REPLACE VIEW visible_characters AS SELECT * FROM characters WHERE deleted_at IS NULL",
       "DROP VIEW IF EXISTS visible_characters"
     )
+    
+    # To HARD delete a character:
+    #
+    #     Repo.transaction(fn ->
+    #       Repo.query!("ALTER TABLE characters DISABLE RULE soft_deletion")
+    #       Repo.delete!(character)
+    #       Repo.query!("ALTER TABLE characters ENABLE RULE soft_deletion")
+    #     end)
+    #
 
     create unique_index(:characters, [:name], name: :characters_name, where: "deleted_at IS NULL")
     create unique_index(:characters, [:account_id, :slot], name: :account_slot, where: "deleted_at IS NULL")

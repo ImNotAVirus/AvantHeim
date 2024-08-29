@@ -699,4 +699,138 @@ defmodule ElvenDatabase.Players.CharactersTest do
       assert [%Item{}, %Item{}, %Item{}] = preloaded_character2.items
     end
   end
+
+  describe "update/2" do
+    test "update a character", %{accounts: [account]} do
+      character =
+        Characters.create!(%{
+          account: account,
+          name: random_string(),
+          slot: 0,
+          gender: :female,
+          hair_color: :dark_purple,
+          hair_style: :hair_style_a,
+          map_id: 1,
+          map_x: 77,
+          map_y: 113
+        })
+
+      assert Characters.update(character, %{gender: :male}) ==
+               {:ok, %Character{character | gender: :male}}
+    end
+  end
+
+  describe "update!/2" do
+    test "update a character", %{accounts: [account]} do
+      character =
+        Characters.create!(%{
+          account: account,
+          name: random_string(),
+          slot: 0,
+          gender: :female,
+          hair_color: :dark_purple,
+          hair_style: :hair_style_a,
+          map_id: 1,
+          map_x: 77,
+          map_y: 113
+        })
+
+      assert Characters.update!(character, %{gender: :male}) ==
+               %Character{character | gender: :male}
+    end
+  end
+
+  describe "delete/1" do
+    test "delete a character", %{accounts: [account]} do
+      character =
+        Characters.create!(%{
+          account: account,
+          name: random_string(),
+          slot: 0,
+          gender: :female,
+          hair_color: :dark_purple,
+          hair_style: :hair_style_a,
+          map_id: 1,
+          map_x: 77,
+          map_y: 113
+        })
+
+      assert {:ok, %Character{}} = Characters.delete(character)
+      assert Characters.get(character.id) == {:error, :not_found}
+    end
+  end
+
+  describe "delete!/1" do
+    test "delete a character", %{accounts: [account]} do
+      character =
+        Characters.create!(%{
+          account: account,
+          name: random_string(),
+          slot: 0,
+          gender: :female,
+          hair_color: :dark_purple,
+          hair_style: :hair_style_a,
+          map_id: 1,
+          map_x: 77,
+          map_y: 113
+        })
+
+      assert %Character{} = Characters.delete!(character)
+      assert Characters.get(character.id) == {:error, :not_found}
+    end
+  end
+
+  describe "list_deleted_characters_by_account/1" do
+    test "return the deleted characters list by account", %{accounts: [account]} do
+      attrs = %{
+        account: account,
+        name: random_string(),
+        slot: 0,
+        gender: :female,
+        hair_color: :dark_purple,
+        hair_style: :hair_style_a,
+        map_id: 1,
+        map_x: 77,
+        map_y: 113
+      }
+
+      assert [] = Characters.list_deleted_characters_by_account(account)
+
+      character1 = Characters.create!(attrs)
+      %Character{id: character1_id} = Characters.delete!(character1)
+
+      # Create a Character with the same slot + name
+      # The first one is deleted so it should work
+      _character2 = Characters.create!(attrs)
+
+      assert [%Character{id: ^character1_id}] =
+               Characters.list_deleted_characters_by_account(account)
+    end
+
+    test "return the deleted characters list by account_id", %{accounts: [account]} do
+      attrs = %{
+        account: account,
+        name: random_string(),
+        slot: 0,
+        gender: :female,
+        hair_color: :dark_purple,
+        hair_style: :hair_style_a,
+        map_id: 1,
+        map_x: 77,
+        map_y: 113
+      }
+
+      assert [] = Characters.list_deleted_characters_by_account(account.id)
+
+      character1 = Characters.create!(attrs)
+      %Character{id: character1_id} = Characters.delete!(character1)
+
+      # Create a Character with the same slot + name
+      # The first one is deleted so it should work
+      _character2 = Characters.create!(attrs)
+
+      assert [%Character{id: ^character1_id}] =
+               Characters.list_deleted_characters_by_account(account.id)
+    end
+  end
 end

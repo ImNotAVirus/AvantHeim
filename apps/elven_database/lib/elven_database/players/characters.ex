@@ -73,4 +73,42 @@ defmodule ElvenDatabase.Players.Characters do
   def preload_items(account) do
     Repo.preload(account, :items)
   end
+
+  @spec update(Character.t(), map()) :: {:ok, Character.t()} | {:error, Ecto.Changeset.t()}
+  def update(%Character{} = character, attrs) do
+    character
+    |> Character.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @spec update!(Character.t(), map()) :: Character.t()
+  def update!(%Character{} = character, attrs) do
+    character
+    |> Character.changeset(attrs)
+    |> Repo.update!()
+  end
+
+  @spec delete(Character.t()) :: {:ok, Character.t()} | {:error, Ecto.Changeset.t()}
+  def delete(%Character{} = character) do
+    # Soft delete so we have a stale struct
+    Repo.delete(character, allow_stale: true)
+  end
+
+  @spec delete!(Character.t()) :: Character.t()
+  def delete!(%Character{} = character) do
+    # Soft delete so we have a stale struct
+    Repo.delete!(character, allow_stale: true)
+  end
+
+  @spec list_deleted_characters_by_account(account()) :: [Character.t()]
+  def list_deleted_characters_by_account(%Account{id: account_id}) do
+    list_deleted_characters_by_account(account_id)
+  end
+
+  def list_deleted_characters_by_account(account_id) do
+    from(c in {"characters", Character},
+      where: c.account_id == ^account_id and not is_nil(c.deleted_at)
+    )
+    |> Repo.all()
+  end
 end
