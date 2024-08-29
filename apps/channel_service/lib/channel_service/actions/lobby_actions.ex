@@ -5,8 +5,8 @@ defmodule ChannelService.LobbyActions do
 
   require Logger
 
+  alias ElvenDatabase.Players.Characters
   alias ElvenGard.Network.Socket
-  alias ElvenDatabase.Players.{Account, Characters}
   alias ElvenPackets.Views.LobbyViews
 
   ## Public API
@@ -26,19 +26,18 @@ defmodule ChannelService.LobbyActions do
   @spec select_character(String.t(), map, Socket.t()) :: {:cont, Socket.t()}
   def select_character("select", %{slot: slot}, socket) do
     account = socket.assigns.account
-    %Account{id: account_id} = account
 
     new_socket =
-      case Characters.get_by_account_and_slot(account_id, slot) do
-        nil ->
-          Logger.warning("Invalid character slot", socket_id: socket.id)
-          socket
-
-        character ->
+      case Characters.get_by_account_and_slot(account, slot) do
+        {:ok, character} ->
           Socket.send(socket, LobbyViews.render(:ok))
 
           # Temporary store the character (deleted when you enter in game)
           Socket.assign(socket, character_id: character.id, character: character)
+
+        {:error, :not_found} ->
+          Logger.warning("Invalid character slot", socket_id: socket.id)
+          socket
       end
 
     {:cont, new_socket}

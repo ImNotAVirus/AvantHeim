@@ -208,18 +208,6 @@ defmodule ElvenDatabase.Players.Character do
     changeset(character, attrs, List.delete(@required_fields, :account_id))
   end
 
-  # FIXME: Refacto soft deletion
-  @spec disabled_changeset(t(), map()) :: Ecto.Changeset.t()
-  def disabled_changeset(%Character{} = character, attrs) do
-    character
-    |> cast(attrs, @fields)
-    |> validate_required(@required_fields)
-    |> validate_length(:name, min: 4, max: 32)
-    |> assoc_constraint(:account)
-    |> unique_constraint(:name)
-    |> unique_constraint(:slot, name: :account_slot)
-  end
-
   ## Private functions
 
   defp changeset(character, attrs, required_fields) do
