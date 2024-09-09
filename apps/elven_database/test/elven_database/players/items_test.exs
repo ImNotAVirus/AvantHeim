@@ -17,8 +17,10 @@ defmodule ElvenDatabase.Players.ItemsTest do
 
     # Create characters for each account
     characters =
-      for account <- accounts, _ <- 1..characters_count do
-        Characters.create!(character_attrs(account.id))
+      for account <- accounts, index <- 0..(characters_count - 1) do
+        %{account: account, slot: index}
+        |> character_attrs()
+        |> Characters.create!()
       end
 
     # Return state
@@ -28,7 +30,7 @@ defmodule ElvenDatabase.Players.ItemsTest do
   ## Tests
 
   describe "create/1" do
-    test "can create an item using owner", %{characters: [character]} do
+    test "can create an item with owner", %{characters: [character]} do
       attrs = %{
         owner: character,
         inventory_type: :etc,
@@ -46,7 +48,7 @@ defmodule ElvenDatabase.Players.ItemsTest do
       assert item.quantity == 3
     end
 
-    test "can create an item using owner_id", %{characters: [character]} do
+    test "can create an item with owner_id", %{characters: [character]} do
       attrs = %{
         owner_id: character.id,
         inventory_type: :etc,
@@ -87,7 +89,7 @@ defmodule ElvenDatabase.Players.ItemsTest do
       }
 
       assert {:error, changeset} = Items.create(attrs)
-      assert changeset_error(changeset) == "owner_id does not exist"
+      assert changeset_error(changeset) == "owner does not exist"
     end
 
     @tag characters: 2
@@ -215,7 +217,7 @@ defmodule ElvenDatabase.Players.ItemsTest do
 
   describe "get/1" do
     test "get item by id", %{characters: [character]} do
-      item1 =
+      item =
         Items.create!(%{
           owner: character,
           inventory_type: :etc,
@@ -224,14 +226,14 @@ defmodule ElvenDatabase.Players.ItemsTest do
           quantity: 3
         })
 
-      assert Items.get(item1.id) == {:ok, item1}
-      assert Items.get(10_000) == {:error, :not_found}
+      assert Items.get(item.id) == {:ok, item}
+      assert Items.get(-1) == {:error, :not_found}
     end
   end
 
   describe "get!/1" do
     test "get item by id", %{characters: [character]} do
-      item1 =
+      item =
         Items.create!(%{
           owner: character,
           inventory_type: :etc,
@@ -240,16 +242,16 @@ defmodule ElvenDatabase.Players.ItemsTest do
           quantity: 3
         })
 
-      assert Items.get!(item1.id) == item1
+      assert Items.get!(item.id) == item
 
       assert_raise Ecto.NoResultsError, fn ->
-        Items.get!(10_000)
+        Items.get!(-1)
       end
     end
   end
 
-  @tag characters: 2
   describe "list_by_owner/1" do
+    @tag characters: 2
     test "list items by owner", %{characters: characters} do
       [character1, character2] = characters
 

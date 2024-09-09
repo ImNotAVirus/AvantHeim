@@ -1,5 +1,7 @@
 defmodule ElvenDatabase.Players.Item do
-  @moduledoc false
+  @moduledoc """
+  Holds information about an Item.
+  """
 
   use Ecto.Schema
 
@@ -11,12 +13,13 @@ defmodule ElvenDatabase.Players.Item do
   alias ElvenDatabase.Players.Character
 
   @type id :: non_neg_integer()
+  @type vnum :: non_neg_integer()
   @type t :: %Item{
           id: id(),
-          owner_id: non_neg_integer(),
+          owner_id: Character.id(),
           inventory_type: ItemEnums.inventory_type_keys(),
           slot: ItemEnums.slot_type() | non_neg_integer(),
-          vnum: non_neg_integer(),
+          vnum: vnum(),
           quantity: non_neg_integer(),
           # Ecto fields
           __meta__: Ecto.Schema.Metadata.t(),
@@ -47,8 +50,22 @@ defmodule ElvenDatabase.Players.Item do
     :quantity
   ]
 
-  @spec changeset(Item.t(), map()) :: Ecto.Changeset.t()
-  def changeset(%Item{} = item, attrs) do
+  @spec changeset(t(), map()) :: Ecto.Changeset.t()
+  def changeset(%Item{} = character, attrs) do
+    changeset(character, attrs, @fields)
+  end
+
+  @spec assoc_changeset(t(), map()) :: Ecto.Changeset.t()
+  def assoc_changeset(%Item{} = character, attrs) do
+    # In case of cast_assoc, :owner_id field is automatically created so it's
+    # not required
+    changeset(character, attrs, List.delete(@fields, :owner_id))
+  end
+
+  ## Private functions
+
+  defp changeset(item, attrs, required_fields) do
+    # Convert slot_type atom to integer value
     attrs =
       case attrs do
         %{slot: slot} when is_atom(slot) -> Map.put(attrs, :slot, ItemEnums.slot_type(slot))
@@ -63,8 +80,8 @@ defmodule ElvenDatabase.Players.Item do
 
     item
     |> cast(attrs, @fields)
-    |> foreign_key_constraint(:owner_id)
-    |> validate_required(@fields)
+    |> validate_required(required_fields)
+    |> assoc_constraint(:owner)
     |> unique_constraint(:slot, name: :owner_inventory_slot)
   end
 end

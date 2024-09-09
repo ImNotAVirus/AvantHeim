@@ -1,5 +1,7 @@
 defmodule ElvenDatabase.Players.Character do
-  @moduledoc false
+  @moduledoc """
+  Holds information about a Character.
+  """
 
   use Ecto.Schema
 
@@ -8,10 +10,60 @@ defmodule ElvenDatabase.Players.Character do
 
   require ElvenData.Enums.PlayerEnums, as: PlayerEnums
 
-  alias ElvenDatabase.Players.Item
+  alias __MODULE__
+  alias ElvenDatabase.Players.{Account, Item}
 
-  # FIXME: Later improve this typespec
-  @type t :: %__MODULE__{}
+  @type id :: non_neg_integer()
+  @type slot :: 0..4
+  @type t :: %Character{
+          id: id(),
+          account_id: Account.id(),
+          name: String.t(),
+          slot: slot(),
+          class: PlayerEnums.character_class_keys(),
+          faction: PlayerEnums.faction_keys(),
+          gender: PlayerEnums.gender_keys(),
+          hair_color: PlayerEnums.hair_color_keys(),
+          hair_style: PlayerEnums.hair_style_keys(),
+          map_id: non_neg_integer(),
+          map_x: non_neg_integer(),
+          map_y: non_neg_integer(),
+          additional_hp: integer(),
+          additional_mp: integer(),
+          gold: non_neg_integer(),
+          bank_gold: non_neg_integer(),
+          biography: String.t(),
+          level: pos_integer(),
+          job_level: pos_integer(),
+          hero_level: non_neg_integer(),
+          level_xp: non_neg_integer(),
+          job_level_xp: non_neg_integer(),
+          hero_level_xp: non_neg_integer(),
+          sp_points: non_neg_integer(),
+          sp_additional_points: non_neg_integer(),
+          rage_points: non_neg_integer(),
+          max_mate_count: non_neg_integer(),
+          reputation: non_neg_integer(),
+          dignity: non_neg_integer(),
+          compliment: non_neg_integer(),
+          act4_dead: non_neg_integer(),
+          act4_kill: non_neg_integer(),
+          act4_points: non_neg_integer(),
+          arena_winner: boolean(),
+          talent_win: non_neg_integer(),
+          talent_lose: non_neg_integer(),
+          talent_surrender: non_neg_integer(),
+          master_points: non_neg_integer(),
+          master_ticket: non_neg_integer(),
+          miniland_intro: String.t(),
+          miniland_state: PlayerEnums.miniland_state_keys(),
+          miniland_makepoints: non_neg_integer(),
+          items: [Item.t()],
+          # Ecto fields
+          __meta__: Ecto.Schema.Metadata.t(),
+          inserted_at: any(),
+          updated_at: any()
+        }
 
   # defbitfield GameOptions,
   #   exchange_blocked: round(:math.pow(2, 1)),
@@ -31,11 +83,11 @@ defmodule ElvenDatabase.Players.Character do
 
   ## Schema
 
-  schema "characters" do
+  schema "visible_characters" do
     belongs_to :account, ElvenDatabase.Players.Account
+
     field :name, :string
     field :slot, :integer
-    field :disabled, :boolean
 
     field :class, Ecto.Enum, values: PlayerEnums.character_class(:__keys__)
     field :faction, Ecto.Enum, values: PlayerEnums.faction(:__keys__)
@@ -87,6 +139,7 @@ defmodule ElvenDatabase.Players.Character do
 
     has_many :items, Item, foreign_key: :owner_id
 
+    field :deleted_at, :utc_datetime
     timestamps()
   end
 
@@ -103,7 +156,6 @@ defmodule ElvenDatabase.Players.Character do
   ]
 
   @optional_fields [
-    :disabled,
     :class,
     :faction,
     :additional_hp,
@@ -139,27 +191,41 @@ defmodule ElvenDatabase.Players.Character do
     # :game_options
   ]
 
-  @fields @required_fields ++ @optional_fields
-  @name_regex ~r/^[\x21-\x7E\xA1-\xAC\xAE-\xFF\x{4e00}-\x{9fa5}\x{0E01}-\x{0E3A}\x{0E3F}-\x{0E5B}\x2E]{4,14}$/u
+  ## Public API
 
-  @doc false
-  def changeset(character, attrs) do
-    character
-    |> cast(attrs, @fields)
-    |> cast_assoc(:account)
-    |> validate_required(@required_fields)
-    |> validate_format(:name, @name_regex)
-    |> update_change(:name, &String.trim/1)
-    |> unique_constraint(:name)
+  @fields @required_fields ++ @optional_fields
+  @name_regex ~r/^[\x21-\x7E\xA1-\xAC\xAE-\xFF\x{4e00}-\x{9fa5}\x{0E01}-\x{0E3A}\x{0E3F}-\x{0E5B}\x2E]+$/u
+
+  @spec changeset(t(), map()) :: Ecto.Changeset.t()
+  def changeset(%Character{} = character, attrs) do
+    changeset(character, attrs, @required_fields)
   end
 
-  @doc false
-  def disabled_changeset(character, attrs) do
+  @spec assoc_changeset(t(), map()) :: Ecto.Changeset.t()
+  def assoc_changeset(%Character{} = character, attrs) do
+    # In case of cast_assoc, :account_id field is automatically created so it's
+    # not required
+    changeset(character, attrs, List.delete(@required_fields, :account_id))
+  end
+
+  ## Private functions
+
+  defp changeset(character, attrs, required_fields) do
+    attrs =
+      case attrs do
+        %{account: %Account{} = account} -> Map.put(attrs, :account_id, account.id)
+        attrs -> attrs
+      end
+
     character
     |> cast(attrs, @fields)
-    |> cast_assoc(:account)
-    |> validate_required(@required_fields)
-    |> validate_length(:name, min: 4, max: 32)
-    |> unique_constraint(:name)
+    |> cast_assoc(:items, with: &Item.assoc_changeset/2)
+    |> validate_required(required_fields)
+    # TODO: Later support encoding for others languages like CH, JP, ...
+    |> validate_length(:name, min: 4, max: 14)
+    |> validate_format(:name, @name_regex)
+    |> assoc_constraint(:account)
+    |> unique_constraint(:name, name: :characters_name)
+    |> unique_constraint(:slot, name: :account_slot)
   end
 end

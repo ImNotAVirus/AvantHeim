@@ -1,15 +1,31 @@
 defmodule ElvenDatabase.Players.Account do
   @moduledoc """
-  TODO: Documentation
+  Holds information about an Account.
   """
 
   use Ecto.Schema
 
   import Ecto.Changeset
 
-  require ElvenData.Enums.PlayerEnums
+  require ElvenData.Enums.PlayerEnums, as: PlayerEnums
 
-  alias ElvenData.Enums.PlayerEnums
+  alias __MODULE__
+  alias ElvenDatabase.Players.Character
+
+  @type id :: non_neg_integer()
+  @type t :: %Account{
+          id: id(),
+          username: String.t(),
+          password: String.t(),
+          hashed_password: String.t(),
+          authority: PlayerEnums.authority_keys(),
+          language: PlayerEnums.language_keys(),
+          characters: [Character.t()],
+          # Ecto fields
+          __meta__: Ecto.Schema.Metadata.t(),
+          inserted_at: any(),
+          updated_at: any()
+        }
 
   ## Schema
 
@@ -18,16 +34,22 @@ defmodule ElvenDatabase.Players.Account do
     field :password, :string, virtual: true
     field :hashed_password, :string
     field :authority, Ecto.Enum, values: PlayerEnums.authority(:__keys__)
-    field :language, Ecto.Enum, values: [:en, :fr]
+    field :language, Ecto.Enum, values: PlayerEnums.language(:__keys__)
+
+    has_many :characters, Character
 
     timestamps()
   end
 
   ## Public API
 
-  def changeset(account, attrs) do
+  @fields [:username, :password, :hashed_password, :authority, :language]
+
+  @spec changeset(t(), map()) :: Ecto.Changeset.t()
+  def changeset(%Account{} = account, attrs) do
     account
-    |> cast(attrs, [:username, :password, :authority, :language])
+    |> cast(attrs, @fields)
+    |> cast_assoc(:characters, with: &Character.assoc_changeset/2)
     |> unique_constraint(:username)
     |> maybe_hash_password()
     |> validate_required([:username, :hashed_password])
@@ -39,8 +61,8 @@ defmodule ElvenDatabase.Players.Account do
     password = get_change(changeset, :password)
     hashed_password = get_change(changeset, :hashed_password)
 
-    if changeset.valid?() && password && is_nil(hashed_password) do
-      new_password = :sha512 |> :crypto.hash(password) |> Base.encode16()
+    if changeset.valid?() and not is_nil(password) and is_nil(hashed_password) do
+      new_password = password |> then(&:crypto.hash(:sha512, &1)) |> Base.encode16()
 
       changeset
       |> put_change(:hashed_password, new_password)

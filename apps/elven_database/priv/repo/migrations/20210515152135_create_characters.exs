@@ -39,7 +39,6 @@ defmodule ElvenDatabase.Repo.Migrations.CreateCharacters do
       add :account_id, references(:accounts), null: false
       add :name, :string, size: 32, null: false
       add :slot, :int2, null: false
-      add :disabled, :boolean, default: false, null: false
 
       add :class, :character_class_enum, default: "adventurer", null: false
       add :faction, :faction_enum, default: "neutral", null: false
@@ -89,9 +88,35 @@ defmodule ElvenDatabase.Repo.Migrations.CreateCharacters do
 
       # add :game_options, :int8, default: 0, null: false
 
+      add :deleted_at, :utc_datetime
       timestamps()
     end
+    
+    # Soft deletion - rule
+    execute("""
+    CREATE OR REPLACE RULE soft_deletion AS ON DELETE TO characters
+    DO INSTEAD UPDATE characters SET deleted_at = NOW() WHERE id = OLD.id AND deleted_at IS NULL RETURNING OLD.*;
+    """,
+    """
+    DROP RULE IF EXISTS soft_deletion ON characters;
+    """)
+    
+    # Soft deletion - view
+    execute(
+      "CREATE OR REPLACE VIEW visible_characters AS SELECT * FROM characters WHERE deleted_at IS NULL",
+      "DROP VIEW IF EXISTS visible_characters"
+    )
+    
+    # To HARD delete a character:
+    #
+    #     Repo.transaction(fn ->
+    #       Repo.query!("ALTER TABLE characters DISABLE RULE soft_deletion")
+    #       Repo.delete!(character)
+    #       Repo.query!("ALTER TABLE characters ENABLE RULE soft_deletion")
+    #     end)
+    #
 
-    create unique_index(:characters, [:name])
+    create unique_index(:characters, [:name], name: :characters_name, where: "deleted_at IS NULL")
+    create unique_index(:characters, [:account_id, :slot], name: :account_slot, where: "deleted_at IS NULL")
   end
 end

@@ -44,14 +44,14 @@ defmodule ChannelService.AuthActions do
     # FIXME: maybe use the Session struct here
     %{username: username, password: password} = session
 
-    case Accounts.log_in(username, password) do
-      %Account{} = acc -> {:ok, acc}
-      _ -> {:error, :cant_fetch_account}
+    case Accounts.authenticate(username, password) do
+      {:ok, account} -> {:ok, account}
+      {:error, :not_found} -> {:error, :cant_fetch_account}
     end
   end
 
   defp send_character_list(%Account{} = account, socket) do
-    character_list = Characters.all_by_account_id(account.id)
+    character_list = Characters.list_by_account(account)
     Socket.send(socket, LobbyViews.render(:clist_start, %{}))
 
     Enum.each(character_list, fn character ->
